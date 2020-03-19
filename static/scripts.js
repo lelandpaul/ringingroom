@@ -1,11 +1,11 @@
 
 /* SOCKET */
 
-var socket = io();
+var socketio = io();
 
 /* Listen for ringing events */
 
-socket.on('ringing_event', function(msg,cb){
+socketio.on('ringing_event', function(msg,cb){
 	console.log('Received event: ' + msg);
 	bell_circle.ring_bell(msg.bell);
 });
@@ -32,8 +32,8 @@ Vue.component("bell-rope", {
 
 	methods: {
 	  ring: function() {
+		socketio.emit('ringing_event',{bell: this.number, stroke = this.stroke});
 		this.stroke = !this.stroke;
-		sock
 		console.log("Bell " + this.number + " rang a " + stroke ? "backstroke":"handstroke"
 	  },
 	},
