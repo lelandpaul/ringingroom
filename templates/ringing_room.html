@@ -14,7 +14,14 @@
   <body>
 
     <div id="bell_circle">
-  <!-- This is where the app will go -->
+
+        <bell-comp
+          v-for="bell in bells"
+          v-bind:key="bell.number"
+          v-bind:number="bell.number"
+          v-bind:pos="bell.pos"
+          ref="bells"
+        ></bell-comp>
 
     </div>
 
