@@ -12,6 +12,23 @@ socketio.on('ringing_event', function(msg,cb){
 });
 
 
+/* AUDIO */
+
+
+var testbell = new Howl({
+  src: ['static/audio/tenor.WAV']
+});
+
+/* RING BY KEYBOARD */
+
+document.onkeypress = function (e) {
+    e = e || window.event;
+	key = parseInt(String.fromCharCode(e.keyCode));
+    console.log(key);
+	if (key-1 in [...Array(8).keys()]){
+		bell_circle.pull_rope(key);
+	};
+};
 
 /* BELLS */
 
@@ -43,6 +60,7 @@ Vue.component("bell-rope", {
 
 	  ring: function(){
 		this.stroke = !this.stroke;
+		testbell.play();
 		report = "Bell " + this.number + " rang a " + (this.stroke ? "backstroke":"handstroke");
 		console.log(report);
 	  },
@@ -85,6 +103,11 @@ var bell_circle = new Vue({
 	  ring_bell: function(bell) {
 		console.log("Ringing the " + bell)
 		this.$refs.bells[bell-1].ring()
+	  },
+
+	  pull_rope: function(bell) {
+		console.log("Pulling the " + bell)
+		this.$refs.bells[bell-1].pull_rope()
 	  }
 	},
 
