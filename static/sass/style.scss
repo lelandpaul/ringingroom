@@ -1,0 +1,52 @@
+/* Mixin to arrange things in a circle easily */
+@mixin on-circle($item-count, $circle-size, $item-size) {
+  position: relative;
+  width:  $circle-size;
+  height: $circle-size;
+  padding: 0;
+  border-radius: 50%; 
+  list-style: none;       
+  
+  > * {
+    display: block;
+    position: absolute;
+    top:  50%; 
+    left: 50%;
+    width:  $item-size;
+    height: $item-size;
+    margin: -($item-size / 2);
+  
+    $angle: (360 / $item-count);
+    $rot: 0;
+
+    @for $i from 1 through $item-count {
+      &:nth-of-type(#{$i}) {
+        transform: 
+          rotate($rot * 1deg) 
+          translate($circle-size / 2) 
+          rotate($rot * -1deg);
+      }
+
+      $rot: $rot + $angle;
+    }
+  }
+}
+
+
+#bell-circle {
+  @include on-circle($item-count: 8, $circle-size: 20em, $item-size: 6em); 
+  margin: 5em auto 0;
+  border: solid 5px tomato;
+  // position: fixed;
+  // top: 50%;
+  // left: 50%;
+  // margin-top: -12em;
+  // margin-left: -12em;
+  /* width: 24em; */
+  /* height: 24em; */
+  /* padding: 2.8em; */
+  /*2.8em = 2em*1.4 (2em = half the width of a link with img, 1.4 = sqrt(2))*/
+  /* border: dashed 1px; */
+  /* border-radius: 50%; */
+  /* margin: 1.75em auto 0; */
+}

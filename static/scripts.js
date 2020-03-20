@@ -47,11 +47,10 @@ Vue.component("bell-rope", {
 	},
 
 	template:
-	  `<h3
-		:class='pos' 
+	  `<li
 		@click='ring'>
 	  [[ number ]] - [[ stroke ? 'H': 'B' ]]
-	  </h3>`
+	  </li>`
 
 });
 

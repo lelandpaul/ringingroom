@@ -1,9 +1,16 @@
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
+from sassutils.wsgi import SassMiddleware
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 's7WUt93.ir_bFya7'
 socketio = SocketIO(app)
+
+# set up automatic sass compilation
+app.wsgi_app = SassMiddleware(app.wsgi_app, {
+    'app': ('static/sass', 'static/css', '/static/css')
+})
 
 
 # Serve the basic template
