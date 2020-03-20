@@ -33,10 +33,23 @@
 }
 
 
+html,
+body {
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
+}
+
 #bell-circle {
-  @include on-circle($item-count: 8, $circle-size: 20em, $item-size: 6em); 
-  margin: 5em auto 0;
+  @include on-circle($item-count: 8, $circle-size: 40em, $item-size: 6em); 
+  // margin: 5em auto 0;
   border: solid 5px tomato;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   // position: fixed;
   // top: 50%;
   // left: 50%;
