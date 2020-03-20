@@ -1,3 +1,4 @@
+window.onload = function() {
 
 /* SOCKET */
 
@@ -32,9 +33,10 @@ Vue.component("bell-rope", {
 
 	methods: {
 	  ring: function() {
-		socketio.emit('ringing_event',{bell: this.number, stroke = this.stroke});
+		socketio.emit('ringing_event',{bell: this.number, stroke: this.stroke});
 		this.stroke = !this.stroke;
-		console.log("Bell " + this.number + " rang a " + stroke ? "backstroke":"handstroke"
+		report = "Bell " + this.number + " rang a " + (this.stroke ? "backstroke":"handstroke");
+		console.log(report);
 	  },
 	},
 
@@ -62,7 +64,7 @@ var bell_circle = new Vue({
 		{ number: 1, pos: "deg0" },
 		{ number: 2, pos: "deg45" },
 		{ number: 3, pos: "deg90" },
-		{ number: 4, pos: "deg135" }
+		{ number: 4, pos: "deg135" },
 		{ number: 5, pos: "deg180" },
 		{ number: 6, pos: "deg225" },
 		{ number: 7, pos: "deg270" },
@@ -80,3 +82,4 @@ var bell_circle = new Vue({
 
 });
 
+}
