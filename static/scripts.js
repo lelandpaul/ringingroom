@@ -25,7 +25,7 @@ Vue.component("bell-rope", {
 
 	delimiters: ['[[',']]'], // don't interfere with flask
 
-	props: ["number", "pos"],
+	props: ["number"],
 
 	data: function() {
 	  return { stroke: true };
@@ -49,7 +49,8 @@ Vue.component("bell-rope", {
 	template:
 	  `<li
 		@click='ring'>
-	  [[ number ]] - [[ stroke ? 'H': 'B' ]]
+	  <span class="bell-number"> [[ number ]] </span>
+	  <span class="rope">[[ stroke ? 'H': 'B' ]]</span>
 	  </li>`
 
 });
@@ -61,19 +62,19 @@ var bell_circle = new Vue({
 
 	delimiters: ['[[',']]'], // don't interfere with flask
 
-	el: "#bell-circle",
+	el: "#ringing-circle",
 
 	data: {
 
 	bells: [ // for now: define bells manually
-		{ number: 1, pos: "deg0" },
-		{ number: 2, pos: "deg45" },
-		{ number: 3, pos: "deg90" },
-		{ number: 4, pos: "deg135" },
-		{ number: 5, pos: "deg180" },
-		{ number: 6, pos: "deg225" },
-		{ number: 7, pos: "deg270" },
-		{ number: 8, pos: "deg315" }
+		{ number: 1 },
+		{ number: 2 },
+		{ number: 3 },
+		{ number: 4 },
+		{ number: 5 },
+		{ number: 6 },
+		{ number: 7 },
+		{ number: 8 }
 	  ]
 
 	},
@@ -84,6 +85,19 @@ var bell_circle = new Vue({
 		this.$refs.bells[bell-1].ring_silently()
 	  }
 	},
+
+	template: `
+    <ul id="bell-circle">
+
+        <bell-rope
+          v-for="bell in bells"
+          v-bind:key="bell.number"
+          v-bind:number="bell.number"
+          ref="bells"
+          ></bell-rope>
+
+    </ul>
+	`
 
 });
 
