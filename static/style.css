@@ -1,11 +1,16 @@
+.spacer {
+position:relative;
+height:4em;
+padding:4em;
+}
 #bell-circle {
   position: relative;
   width: 24em;
   height: 24em;
   padding: 2.8em;
   /*2.8em = 2em*1.4 (2em = half the width of a link with img, 1.4 = sqrt(2))*/
-  border: dashed 1px;
-  border-radius: 50%;
+  /* border: dashed 1px; */
+  /* border-radius: 50%; */
   margin: 1.75em auto 0;
 }
 
