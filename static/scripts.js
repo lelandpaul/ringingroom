@@ -7,7 +7,7 @@ var socketio = io();
 /* Listen for ringing events */
 
 socketio.on('ringing_event', function(msg,cb){
-	console.log('Received event: ' + msg);
+	console.log('Received event: ' + msg.bell + msg.stroke);
 	bell_circle.ring_bell(msg.bell);
 });
 
@@ -32,14 +32,16 @@ Vue.component("bell-rope", {
 	},
 
 	methods: {
-	  ring: function() {
-		socketio.emit('ringing_event',
+
+	  pull_rope: function() {
+		socketio.emit('pulling-event',
 				{bell: this.number, stroke: this.stroke});
-		this.stroke = !this.stroke;
-		report = "Bell " + this.number + " rang a " + (this.stroke ? "backstroke":"handstroke");
+		// this.stroke = !this.stroke;
+		report = "Bell " + this.number + " will ring a " + (this.stroke ? "handstroke":"backstroke");
 		console.log(report);
 	  },
-	  ring_silently: function() {
+
+	  ring: function(){
 		this.stroke = !this.stroke;
 		report = "Bell " + this.number + " rang a " + (this.stroke ? "backstroke":"handstroke");
 		console.log(report);
@@ -48,7 +50,7 @@ Vue.component("bell-rope", {
 
 	template:
 	  `<li
-		@click='ring'>
+		@click='pull_rope'>
 	  <span class="bell-number"> [[ number ]] </span>
 	  <span class="rope">[[ stroke ? 'H': 'B' ]]</span>
 	  </li>`
@@ -82,7 +84,7 @@ var bell_circle = new Vue({
 	methods: {
 	  ring_bell: function(bell) {
 		console.log("Ringing the " + bell)
-		this.$refs.bells[bell-1].ring_silently()
+		this.$refs.bells[bell-1].ring()
 	  }
 	},
 
