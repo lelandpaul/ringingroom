@@ -41,7 +41,8 @@ def messageReceived(methods=['GET', 'POST']):
 @socketio.on('message_sent')
 def on_message_sent(json):
 	print('A message was sent: ' + str(json))
-	socketio.emit('message_received',json,broadcast=True,include_self=True)
+	socketio.emit('message_received',json,broadcast=True,include_self=True,
+			room=json['room'])
 
 
 @socketio.on('join')

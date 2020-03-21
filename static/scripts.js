@@ -178,19 +178,38 @@ var room_selector = new Vue({
 	data: {
 		cur_username: '',
 		cur_message: '',
+		cur_room: '',
+		room_selected: '',
 	},
 
 	methods: {
 
 		submit_message: function(un,msg){
 			console.log('sending message: ' + un + msg);
-			socketio.emit('message_sent', { user_name : un, message : msg })
+			socketio.emit('message_sent', { user_name : un, 
+											message : msg,
+											room : this.cur_room})
+		},
+
+		enter_room: function(){
+			if (this.cur_room) {
+				console.log('leaving room: ' + this.cur_room);
+				socketio.emit('leave',{username: this.cur_username, room: this.cur_room});
+			}
+			console.log('entering room: ' + this.room_selected);
+			socketio.emit('join', {username: this.cur_username, room: this.room_selected});
+			this.cur_room = this.room_selected;
 		}
 
 	},
 
 	template: `
-	<form v-on:submit.prevent="submit_message(cur_username,cur_message)" id = "selector">
+	<form v-on:submit.prevent="submit_message(cur_username,cur_message)">
+		<select v-model="room_selected" v-on:change="enter_room">
+		  <option disabled value="">Please select a room</option>
+		  <option>Advent</option>
+		  <option>Old North</option>
+		</select>
 		<input v-model="cur_username" placeholder="User Name"/>
 		<input v-model="cur_message" placeholder="Message"/>
 		<input type="submit"/>
