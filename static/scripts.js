@@ -14,40 +14,14 @@ socketio.on('ringing_event', function(msg,cb){
 
 /* AUDIO */
 
+var request = new XMLHttpRequest();
+request.open("GET", "static/audio/bells.json", false);
+request.send(null)
+const bells_sprite_data = JSON.parse(request.responseText);
 
-var sound_b1 = new Howl({
-  src: ['static/audio/1.mp3']
-});
+const bells_sprite = new Howl({...bells_sprite_data });
 
-var sound_b2 = new Howl({
-  src: ['static/audio/2sharp.mp3']
-});
-
-var sound_b3 = new Howl({
-  src: ['static/audio/3.mp3']
-});
-
-var sound_b4 = new Howl({
-  src: ['static/audio/4.mp3']
-});
-
-var sound_b5 = new Howl({
-  src: ['static/audio/5.mp3']
-});
-
-var sound_b6 = new Howl({
-  src: ['static/audio/6.mp3']
-});
-
-var sound_b7 = new Howl({
-  src: ['static/audio/7.mp3']
-});
-
-var sound_b8 = new Howl({
-  src: ['static/audio/8.mp3']
-});
-
-sounds = [ sound_b1, sound_b2, sound_b3, sound_b4, sound_b5, sound_b6, sound_b7, sound_b8]
+const bells_mapping = ['1','2sharp','3','4','5','6','7','8']
 
 /* RING BY KEYBOARD */
 
@@ -102,7 +76,7 @@ Vue.component("bell-rope", {
 
 	  ring: function(){
 		this.stroke = !this.stroke;
-		sounds[this.number - 1].play()
+		bells_sprite.play(bells_mapping[this.number - 1]);
 		report = "Bell " + this.number + " rang a " + (this.stroke ? "backstroke":"handstroke");
 		console.log(report);
 	  },
