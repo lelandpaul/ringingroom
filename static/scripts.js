@@ -85,7 +85,9 @@ Vue.component("bell-rope", {
 
 	data: function() {
 	  return { stroke: true,
-		circled_digits: ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧" ] };
+			   circled_digits: ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧" ],
+			   images: ["handstroke", "backstroke"]
+	  };
 	},
 
 	methods: {
@@ -110,7 +112,8 @@ Vue.component("bell-rope", {
 	  `<li
 		@click='pull_rope'>
 	  <span class="bell-number"> [[ circled_digits[number-1] ]] </span>
-	  <span class="rope">[[ stroke ? 'H': 'B' ]]</span>
+	  <span class="rope">
+		<img :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"/></span>
 	  </li>`
 
 });

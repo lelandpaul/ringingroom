@@ -10,7 +10,17 @@ body {
   overflow: hidden;
   font-size: x-large;
   font-family: serif;
-  background-color: #9cc8c6;
+  background-color: #F0EAD6;
+}
+
+
+/* Bell ropes */
+
+.rope img {
+	position:absolute;
+	height: 4em;
+	width: 4em;
+	transform: translate(-35%,-25%);
 }
 
 /* Putting the ropes in a circle */
@@ -57,7 +67,7 @@ body {
 				position:absolute;
 				top:  50%; 
 				left: 50%;
-				width:  0;
+				width: 0;
 				height: 0;
 				margin: 0;
 				transform: 
@@ -74,7 +84,7 @@ body {
 
 
 #bell-circle {
-  @include on-circle($item-count: 8, $circle-size: 25em, $item-size: 3em); 
+  @include on-circle($item-count: 8, $circle-size: 25em, $item-size: 4em); 
   // margin: 5em auto 0;
   // border: solid 5px tomato;
   position: absolute;
