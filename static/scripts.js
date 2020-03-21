@@ -93,7 +93,7 @@ Vue.component("bell-rope", {
 	methods: {
 
 	  pull_rope: function() {
-		socketio.emit('pulling-event',
+		socketio.emit('pulling_event',
 				{bell: this.number, stroke: this.stroke});
 		// this.stroke = !this.stroke;
 		report = "Bell " + this.number + " will ring a " + (this.stroke ? "handstroke":"backstroke");

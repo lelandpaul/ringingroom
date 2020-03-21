@@ -19,10 +19,10 @@ def index():
 	return render_template('ringing_room.html')
 
 
-@socketio.on('pulling-event')
+@socketio.on('pulling_event')
 def broadcast_ringing(json):
 	emit('ringing_event',json,broadcast=True,include_self=True)
 
 
 if __name__ == '__main__':
-	app.run(host='0.0.0.0')
+	app.run()
