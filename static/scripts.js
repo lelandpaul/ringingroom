@@ -15,6 +15,16 @@ socketio.on('ringing_event', function(msg,cb){
 /* AUDIO */
 
 
+var sound = new Howl({
+  src: ['bells.mp3'],
+  sprite: {
+    blast: [0, 3000],
+    laser: [4000, 1000],
+    winner: [6000, 5000]
+  }
+});
+
+
 var sound_b1 = new Howl({
   src: ['static/audio/1.mp3']
 });
