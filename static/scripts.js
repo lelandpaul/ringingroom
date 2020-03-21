@@ -169,4 +169,55 @@ var bell_circle = new Vue({
 
 });
 
+var room_selector = new Vue({
+
+	delimiters: ['[[',']]'], // don't interfere with flask
+
+	el: "#message-sender",
+
+	data: {
+		cur_username: '',
+		cur_message: '',
+	},
+
+	methods: {
+
+		submit_message: function(un,msg){
+			socketio.emit('message_sent', { user_name : un, message : msg })
+		}
+
+	},
+
+	template: `
+	<form :submit.prevent="submit_message(cur_username,cur_message)" id = "selector">
+		<input v-model="cur_username" placeholder="User Name"/>
+		<input v-model="cur_message" placeholder="Message"/>
+		<input type="submit"/>
+	</form>
+
+	`
+
+});
+
+/* Listeners for chat function */
+
+socketio.on('message_received',function(msg){
+	console.log(ms)
+	message_display.data.messages.push('<b>' + msg.username + '</b>: ' + msg.message)
+});
+
+var message_display = new Vue({
+	delimiters: ['[[',']]'], // don't interfere with flask
+
+	el: "#message-container",
+
+	data : {messages: []},
+
+	template: `<h3 v-html='messages.join("<br/>")'></h3>`
+
+
+});
+
+
+
 }
