@@ -53,10 +53,17 @@ sounds = [ sound_b1, sound_b2, sound_b3, sound_b4, sound_b5, sound_b6, sound_b7,
 
 document.onkeypress = function (e) {
     e = e || window.event;
-	key = parseInt(String.fromCharCode(e.keyCode));
+	key = String.fromCharCode(e.keyCode);
     console.log(key);
-	if (key-1 in [...Array(8).keys()]){
-		bell_circle.pull_rope(key);
+	home_row = ['a','s','d','f','j','k','l',';'];
+
+	if (parseInt(key-1) in [...Array(8).keys()]){
+		bell_circle.pull_rope(parseInt(key));
+	};
+
+	if (home_row.includes(key)){
+		console.log()
+		bell_circle.pull_rope(home_row.indexOf(key) + 1);
 	};
 };
 
