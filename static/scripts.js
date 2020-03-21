@@ -20,6 +20,10 @@ socketio.on('global_state',function(msg,cb){
 	};
 });
 
+/* Keeping track of rooms */
+
+var cur_room = ''
+
 
 /* AUDIO */
 
@@ -77,7 +81,7 @@ Vue.component("bell-rope", {
 
 	  pull_rope: function() {
 		socketio.emit('pulling_event',
-				{bell: this.number, stroke: this.stroke});
+				{bell: this.number, stroke: this.stroke, room: cur_room});
 		// this.stroke = !this.stroke;
 		report = "Bell " + this.number + " will ring a " + (this.stroke ? "handstroke":"backstroke");
 		console.log(report);
@@ -166,7 +170,6 @@ var room_selector = new Vue({
 	data: {
 		cur_username: '',
 		cur_message: '',
-		cur_room: '',
 		room_selected: '',
 	},
 
@@ -176,17 +179,17 @@ var room_selector = new Vue({
 			console.log('sending message: ' + un + msg);
 			socketio.emit('message_sent', { user_name : un, 
 											message : msg,
-											room : this.cur_room})
+											room : cur_room})
 		},
 
 		enter_room: function(){
-			if (this.cur_room) {
-				console.log('leaving room: ' + this.cur_room);
-				socketio.emit('leave',{username: this.cur_username, room: this.cur_room});
-			}
+			if (cur_room) {
+				console.log('leaving room: ' + cur_room);
+				socketio.emit('leave',{username: this.cur_username, room: cur_room});
+			};
 			console.log('entering room: ' + this.room_selected);
 			socketio.emit('join', {username: this.cur_username, room: this.room_selected});
-			this.cur_room = this.room_selected;
+			cur_room = this.room_selected;
 		}
 
 	},

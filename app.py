@@ -8,8 +8,9 @@ app.config['SECRET_KEY'] = 's7WUt93.ir_bFya7'
 socketio = SocketIO(app)
 
 n_bells = 8
-global_bell_state = [True] * n_bells
-global_rooms = ["Advent","Old North"]
+# global_bell_state = [True] * n_bells
+global_room_names = ["Advent","Old North"]
+global_rooms = {name : [True]*n_bells for name in global_room_names}
 
 # set up automatic sass compilation
 app.wsgi_app = SassMiddleware(app.wsgi_app, {
@@ -31,12 +32,14 @@ def index():
 @socketio.on('pulling_event')
 def on_pulling_event(event_dict):
     cur_bell = event_dict["bell"]
+    cur_room = event_dict["room"]
+    global_bell_state = global_rooms[cur_room]
     if global_bell_state[cur_bell - 1] is event_dict["stroke"]:
         global_bell_state[cur_bell - 1] = not global_bell_state[cur_bell - 1]
     else:
         print('Current stroke disagrees between server and client')
     emit('ringing_event', {"global_bell_state": global_bell_state, "who_rang": cur_bell},
-         broadcast=True, include_self=True)
+         broadcast=True, include_self=True, room=cur_room)
 
 
 def messageReceived(methods=['GET', 'POST']):
@@ -57,6 +60,7 @@ def on_join(data):
     join_room(room)
     emit(username + ' has entered the room.', room=room,
          broadcast=True, include_self=True)
+    emit('global_state',{'global_bell_state': global_rooms[room]})
 
 
 @socketio.on('leave')
