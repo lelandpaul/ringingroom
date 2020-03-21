@@ -183,13 +183,14 @@ var room_selector = new Vue({
 	methods: {
 
 		submit_message: function(un,msg){
+			console.log('sending message: ' + un + msg);
 			socketio.emit('message_sent', { user_name : un, message : msg })
 		}
 
 	},
 
 	template: `
-	<form :submit.prevent="submit_message(cur_username,cur_message)" id = "selector">
+	<form v-on:submit.prevent="submit_message(cur_username,cur_message)" id = "selector">
 		<input v-model="cur_username" placeholder="User Name"/>
 		<input v-model="cur_message" placeholder="Message"/>
 		<input type="submit"/>
@@ -199,13 +200,6 @@ var room_selector = new Vue({
 
 });
 
-/* Listeners for chat function */
-
-socketio.on('message_received',function(msg){
-	console.log(ms)
-	message_display.data.messages.push('<b>' + msg.username + '</b>: ' + msg.message)
-});
-
 var message_display = new Vue({
 	delimiters: ['[[',']]'], // don't interfere with flask
 
@@ -213,11 +207,19 @@ var message_display = new Vue({
 
 	data : {messages: []},
 
-	template: `<h3 v-html='messages.join("<br/>")'></h3>`
+	template: `<div v-html='messages.join("<br/>")'></div>`
 
 
 });
 
 
+/* Listeners for chat function */
 
-}
+socketio.on('message_received',function(msg){
+	console.log(msg)
+	message_display.messages.push('<b>' + msg.user_name + '</b>: ' + msg.message)
+});
+
+
+};
+

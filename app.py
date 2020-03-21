@@ -38,10 +38,10 @@ def messageReceived(methods=['GET', 'POST']):
     print('message was received!!!')
 
 
-@socketio.on('my event')
-def handle_my_custom_event(json, methods=['GET', 'POST']):
-    print('received my event: ' + str(json))
-    socketio.emit('my response', json, callback=messageReceived)
+@socketio.on('message_sent')
+def on_message_sent(json):
+	print('A message was sent: ' + str(json))
+	socketio.emit('message_received',json,broadcast=True,include_self=True)
 
 
 @socketio.on('join')
