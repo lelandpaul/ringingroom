@@ -13,7 +13,12 @@ global_rooms = ["Advent","Old North"]
 
 # set up automatic sass compilation
 app.wsgi_app = SassMiddleware(app.wsgi_app, {
-    'app': ('static/sass', 'static/css', '/static/css')
+    'app': {
+        'sass_path': 'static/sass',
+        'css_path': 'static/css',
+        'wsgi_path': '/static/css',
+        'strip_extension': True
+    }
 })
 
 
