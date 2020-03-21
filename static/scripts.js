@@ -7,8 +7,8 @@ var socketio = io();
 /* Listen for ringing events */
 
 socketio.on('ringing_event', function(msg,cb){
-	console.log('Received event: ' + msg.bell + msg.stroke);
-	bell_circle.ring_bell(msg.bell);
+	console.log('Received event: ' + msg.global_bell_state + msg.who_rang);
+	bell_circle.ring_bell(msg.who_rang);
 });
 
 
