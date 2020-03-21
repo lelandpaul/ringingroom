@@ -26,8 +26,8 @@ def index():
 @socketio.on('pulling_event')
 def broadcast_ringing(event_dict):
 	cur_bell = event_dict["bell"]
-	if global_bell_state[cur_bell] is event_dict["stroke"]:
-		global_bell_state[cur_bell] = not global_bell_state[cur_bell]
+	if global_bell_state[cur_bell-1] is event_dict["stroke"]:
+		global_bell_state[cur_bell-1] = not global_bell_state[cur_bell-1]
 	else:
 		print('Current stroke disagrees between server and client')
 	emit('ringing_event',{"global_bell_state": global_bell_state, "who_rang": cur_bell},broadcast=True,include_self=True)
