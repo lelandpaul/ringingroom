@@ -12,6 +12,15 @@ socketio.on('ringing_event', function(msg,cb){
 });
 
 
+socketio.on('global_state',function(msg,cb){
+	console.log('Setting global state: ' + msg.global_bell_state);
+	gstate = msg.global_bell_state;
+	for (i = 0; i < gstate.length; i++){
+		bell_circle.$refs.bells[i].set_state_silently(gstate[i]);
+	};
+});
+
+
 /* AUDIO */
 
 var request = new XMLHttpRequest();
@@ -80,6 +89,11 @@ Vue.component("bell-rope", {
 		report = "Bell " + this.number + " rang a " + (this.stroke ? "backstroke":"handstroke");
 		console.log(report);
 	  },
+	
+	  set_state_silently: function(new_state){
+		  console.log('Bell ' + this.number + ' set to ' + new_state)
+		  this.stroke = new_state
+	  }
 	},
 
 	template:
