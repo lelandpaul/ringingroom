@@ -75,6 +75,8 @@ document.onkeypress = function (e) {
 // stroke — boolean — is the bell currently at hand?
 // ring() — toggle the stroke, then 
 
+
+
 Vue.component("bell-rope", {
 
 	delimiters: ['[[',']]'], // don't interfere with flask
@@ -82,7 +84,8 @@ Vue.component("bell-rope", {
 	props: ["number"],
 
 	data: function() {
-	  return { stroke: true };
+	  return { stroke: true,
+		circled_digits: ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧" ] };
 	},
 
 	methods: {
@@ -106,7 +109,7 @@ Vue.component("bell-rope", {
 	template:
 	  `<li
 		@click='pull_rope'>
-	  <span class="bell-number"> [[ number ]] </span>
+	  <span class="bell-number"> [[ circled_digits[number-1] ]] </span>
 	  <span class="rope">[[ stroke ? 'H': 'B' ]]</span>
 	  </li>`
 

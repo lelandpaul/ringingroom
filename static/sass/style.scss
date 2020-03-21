@@ -1,3 +1,20 @@
+
+/* Global style */
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
+  font-size: x-large;
+  font-family: serif;
+  background-color: #9cc8c6;
+}
+
+/* Putting the ropes in a circle */
+
 /* Mixin to arrange things in a circle easily */
 @mixin on-circle($item-count, $circle-size, $item-size) {
   position: relative;
@@ -55,21 +72,13 @@
 }
 
 
-html,
-body {
-  height: 100%;
-}
-
-body {
-  overflow: hidden;
-}
 
 #bell-circle {
-  @include on-circle($item-count: 8, $circle-size: 40em, $item-size: 6em); 
+  @include on-circle($item-count: 8, $circle-size: 25em, $item-size: 3em); 
   // margin: 5em auto 0;
   // border: solid 5px tomato;
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -60%);
 }
