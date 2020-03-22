@@ -23,12 +23,72 @@ socketio.on('global_state',function(msg,cb){
 
 /* AUDIO */
 
-var request = new XMLHttpRequest();
-request.open("GET", "static/audio/bells.json", false);
-request.send(null)
-const bells_sprite_data = JSON.parse(request.responseText);
+const bells_sprite = new Howl(
+{
+  "src": [
+    "static/audio/bells.ogg",
+    "static/audio/bells.m4a",
+    "static/audio/bells.mp3",
+    "static/audio/bells.ac3"
+  ],
+  "sprite": {
+    "0": [
+      0,
+      5929.7959183673465
+    ],
+    "1": [
+      7000,
+      6008.163265306123
+    ],
+    "2": [
+      15000,
+      6008.163265306123
+    ],
+    "3": [
+      30000,
+      4780.408163265307
+    ],
+    "4": [
+      36000,
+      5877.551020408163
+    ],
+    "5": [
+      43000,
+      5955.918367346939
+    ],
+    "6": [
+      50000,
+      5955.918367346939
+    ],
+    "7": [
+      57000,
+      6034.285714285716
+    ],
+    "8": [
+      65000,
+      6008.163265306123
+    ],
+    "9": [
+      73000,
+      6008.163265306123
+    ],
+    "2sharp": [
+      23000,
+      5982.040816326531
+    ],
+    "E": [
+      81000,
+      6008.163265306123
+    ],
+    "T": [
+      89000,
+      6008.163265306123
+    ]
+  }
+}
+);
 
-const bells_sprite = new Howl({...bells_sprite_data });
+
 
 const bells_mapping = ['1','2sharp','3','4','5','6','7','8']
 
