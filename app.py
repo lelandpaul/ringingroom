@@ -15,8 +15,8 @@ app.wsgi_app = SassMiddleware(app.wsgi_app, {
     'app': {
         'sass_path': 'static/sass',
         'css_path': 'static/css',
-        'wsgi_path': '/static/css',
-        'strip_extension': True
+        'wsgi_path': 'static/css',
+        'strip_extension': False
     }
 })
 

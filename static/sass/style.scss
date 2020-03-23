@@ -92,3 +92,17 @@ body {
   left: 50%;
   transform: translate(-50%, -60%);
 }
+
+
+/* Call display */
+
+h2#call-display {
+	position: absolute;
+	text-align: center;
+	width: 4em;
+	height:4em;
+	top: 50%;
+	left: 50%;
+	transform: translate(-40%, -50%);
+
+}
