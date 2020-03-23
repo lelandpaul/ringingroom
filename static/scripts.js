@@ -2,7 +2,7 @@ window.onload = function() {
 
 /* SOCKET */
 
-var socketio = io.connect('ringingroom.com',{secure:true, transports:['websocket']});
+var socketio = io()
 
 /* Listen for ringing events */
 
@@ -105,9 +105,14 @@ document.onkeypress = function (e) {
 	};
 
 	if (home_row.includes(key)){
-		console.log()
 		bell_circle.pull_rope(home_row.indexOf(key) + 1);
 	};
+
+	if (['b'].includes(key)){
+		console.log('calling bob');
+		bell_circle.make_call('Bob');
+
+	}
 };
 
 /* BELLS */
@@ -166,6 +171,30 @@ Vue.component("bell-rope", {
 
 });
 
+
+Vue.component('call-display', {
+
+	delimiters: ['[[',']]'], // don't interfere with flask
+
+	data: function(){
+		return { cur_call: '' };
+	},
+
+	methods: {
+
+		make_call: function(call){
+			console.log('changing cur_call to: ' + call);
+			this.cur_call = call;
+			var self = this;
+			setTimeout(function() { self.cur_call = ''; 
+						console.log('changing cur_call back');}, 2000);
+		}
+	},
+
+	template: "<h2 id='call-display'>[[ cur_call ]]</h2>"
+});
+
+
 // The master view
 // ring_bell: Ring a specific bell
 
@@ -199,10 +228,16 @@ var bell_circle = new Vue({
 	  pull_rope: function(bell) {
 		console.log("Pulling the " + bell)
 		this.$refs.bells[bell-1].pull_rope()
-	  }
+	  },
+	
+	  make_call: function(call){
+		  this.$refs.display.make_call(call);
+	  },
 	},
 
 	template: `
+	<div>
+	<call-display ref="display"></call-display>
     <ul id="bell-circle">
 
         <bell-rope
@@ -213,8 +248,10 @@ var bell_circle = new Vue({
           ></bell-rope>
 
     </ul>
+	</div>
 	`
 
 });
 
 }
+
