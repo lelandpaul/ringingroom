@@ -115,6 +115,10 @@ document.onkeypress = function (e) {
 	if (['b'].includes(key)){
 		console.log('calling bob');
 		bell_circle.make_call('Bob');
+	}
+	if (['n'].includes(key)){
+		console.log('calling single');
+		bell_circle.make_call('Single');
 
 	}
 };
