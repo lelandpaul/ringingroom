@@ -15,8 +15,8 @@ app.wsgi_app = SassMiddleware(app.wsgi_app, {
     'app': {
         'sass_path': 'static/sass',
         'css_path': 'static/css',
-        'wsgi_path': '/static/css',
-        'strip_extension': True
+        'wsgi_path': 'static/css',
+        'strip_extension': False
     }
 })
 
@@ -36,6 +36,10 @@ def broadcast_ringing(event_dict):
         print('Current stroke disagrees between server and client')
     emit('ringing_event', {"global_bell_state": global_bell_state, "who_rang": cur_bell}, broadcast=True,
          include_self=True)
+
+@socketio.on('call_made')
+def on_call_made(call_dict):
+	emit('call_received',call_dict, broadcast=True,include_self=True)
 
 
 if __name__ == '__main__':
