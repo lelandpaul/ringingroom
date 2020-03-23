@@ -171,6 +171,9 @@ Vue.component("bell-rope", {
 	  };
 	},
 
+	computed: { position: function() {
+					return this.number } }, // Later, this will rotate the circle
+
 	methods: {
 
 	  pull_rope: function() {
@@ -194,13 +197,27 @@ Vue.component("bell-rope", {
 	  }
 	},
 
-	template:
-	  `<li
-		@click='pull_rope'>
-	  <span class="bell-number"> [[ circled_digits[number-1] ]] </span>
-	  <span class="rope">
-		<img :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"/></span>
-	  </li>`
+	template:`
+	  <div class='rope'>
+
+	  <img v-if="position <= 4"
+		   @click='pull_rope'
+		   class="rope-img" 
+		   :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"/>
+
+	  <div class='number' v-bind:class="{ left_number: position > 4}">
+
+	  [[ circled_digits[number-1] ]]
+
+	  </div>
+
+	  <img v-if="position > 4"
+		   @click='pull_rope'
+		   class="rope-img" 
+		   :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"/>
+
+	  </div>
+		   `
 
 });
 
@@ -273,7 +290,7 @@ var bell_circle = new Vue({
 	template: `
 	<div>
 	<call-display ref="display"></call-display>
-    <ul id="bell-circle">
+    <div id="bell-circle">
 
         <bell-rope
           v-for="bell in bells"
@@ -282,7 +299,7 @@ var bell_circle = new Vue({
           ref="bells"
           ></bell-rope>
 
-    </ul>
+    </div>
 	</div>
 	`
 
