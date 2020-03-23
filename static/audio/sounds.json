@@ -1,9 +1,9 @@
 {
   "src": [
-    "static/audio/sounds.ogg",
-    "static/audio/sounds.m4a",
-    "static/audio/sounds.mp3",
-    "static/audio/sounds.ac3"
+    "sounds.ogg",
+    "sounds.m4a",
+    "sounds.mp3",
+    "sounds.ac3"
   ],
   "sprite": {
     "0-f": [
@@ -58,12 +58,20 @@
       48000,
       2510.3174603174593
     ],
-    "bob": [
+    "all": [
       52000,
+      809.7959183673495
+    ],
+    "bob": [
+      54000,
       705.3061224489809
     ],
+    "go": [
+      56000,
+      1201.6326530612246
+    ],
     "single": [
-      54000,
+      59000,
       757.5510204081652
     ]
   }
