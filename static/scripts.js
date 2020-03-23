@@ -14,10 +14,70 @@ socketio.on('ringing_event', function(msg,cb){
 
 /* AUDIO */
 
-var request = new XMLHttpRequest();
-request.open("GET", "static/audio/bells.json", false);
-request.send(null)
-const bells_sprite_data = JSON.parse(request.responseText);
+const bells_sprite = new Howl(
+{
+  "src": [
+    "static/audio/bells-f.ogg",
+    "static/audio/bells-f.m4a",
+    "static/audio/bells-f.mp3",
+    "static/audio/bells-f.ac3"
+  ],
+  "sprite": {
+    "0": [
+      0,
+      2503.9909297052154
+    ],
+    "1": [
+      4000,
+      2507.392290249433
+    ],
+    "2": [
+      8000,
+      2496.893424036282
+    ],
+    "2sharp": [
+      12000,
+      2515.238095238095
+    ],
+    "3": [
+      16000,
+      2507.1882086167816
+    ],
+    "4": [
+      20000,
+      2509.863945578232
+    ],
+    "5": [
+      24000,
+      2505.283446712017
+    ],
+    "6": [
+      28000,
+      2518.0498866213165
+    ],
+    "7": [
+      32000,
+      2511.1337868480705
+    ],
+    "8": [
+      36000,
+      2508.5034013605423
+    ],
+    "9": [
+      40000,
+      2506.2811791383197
+    ],
+    "E": [
+      44000,
+      2509.092970521543
+    ],
+    "T": [
+      48000,
+      2510.3174603174593
+    ]
+  }
+}
+);
 
 const bells_sprite = new Howl({...bells_sprite_data });
 
