@@ -27,13 +27,13 @@ socketio.on('call_received',function(msg,cb){
 
 /* AUDIO */
 
-const bells_sprite = new Howl(
+const sounds = new Howl(
 {
   "src": [
-    "static/audio/bells-f.ogg",
-    "static/audio/bells-f.m4a",
-    "static/audio/bells-f.mp3",
-    "static/audio/bells-f.ac3"
+    "static/audio/sounds.ogg",
+    "static/audio/sounds.m4a",
+    "static/audio/sounds.mp3",
+    "static/audio/sounds.ac3"
   ],
   "sprite": {
     "0": [
@@ -87,6 +87,14 @@ const bells_sprite = new Howl(
     "T": [
       48000,
       2510.3174603174593
+    ],
+    "Bob": [
+      52000,
+      705.3061224489809
+    ],
+    "Single": [
+      54000,
+      757.5510204081652
     ]
   }
 }
@@ -157,7 +165,7 @@ Vue.component("bell-rope", {
 
 	  ring: function(){
 		this.stroke = !this.stroke;
-		bells_sprite.play(bells_mapping[this.number - 1]);
+		sounds.play(bells_mapping[this.number - 1]);
 		report = "Bell " + this.number + " rang a " + (this.stroke ? "backstroke":"handstroke");
 		console.log(report);
 	  },
@@ -192,6 +200,7 @@ Vue.component('call-display', {
 		make_call: function(call){
 			console.log('changing cur_call to: ' + call);
 			this.cur_call = call;
+			sounds.play(call);
 			var self = this;
 			setTimeout(function() { self.cur_call = ''; 
 						console.log('changing cur_call back');}, 2000);

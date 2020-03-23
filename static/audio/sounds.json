@@ -1,9 +1,9 @@
 {
   "src": [
-    "bells-f.ogg",
-    "bells-f.m4a",
-    "bells-f.mp3",
-    "bells-f.ac3"
+    "static/audio/sounds.ogg",
+    "static/audio/sounds.m4a",
+    "static/audio/sounds.mp3",
+    "static/audio/sounds.ac3"
   ],
   "sprite": {
     "0-f": [
@@ -57,6 +57,14 @@
     "T-f": [
       48000,
       2510.3174603174593
+    ],
+    "bob": [
+      52000,
+      705.3061224489809
+    ],
+    "single": [
+      54000,
+      757.5510204081652
     ]
   }
 }
