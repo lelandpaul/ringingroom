@@ -88,12 +88,20 @@ const sounds = new Howl(
       48000,
       2510.3174603174593
     ],
-    "Bob": [
+    "That's all": [
       52000,
+      809.7959183673495
+    ],
+    "Bob": [
+      54000,
       705.3061224489809
     ],
+    "Go": [
+      56000,
+      1201.6326530612246
+    ],
     "Single": [
-      54000,
+      59000,
       757.5510204081652
     ]
   }
@@ -126,8 +134,18 @@ document.onkeypress = function (e) {
 	if (['n'].includes(key)){
 		console.log('calling single');
 		bell_circle.make_call('Single');
-
 	}
+	
+	if(['g'].includes(key)){
+		console.log('calling go');
+		bell_circle.make_call('Go');
+	}
+
+	if (['h'].includes(key)){
+		console.log('calling stop');
+		bell_circle.make_call("That's all");
+	}
+
 };
 
 /* BELLS */
