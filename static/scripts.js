@@ -120,7 +120,7 @@ document.onkeypress = function (e) {
 	home_row = ['a','s','d','f','j','k','l',';'];
 
 	if (parseInt(key-1) in [...Array(8).keys()]){
-		bell_circle.pull_rope(parseInt(key));
+		bell_circle.rotate(parseInt(key));
 	};
 
 	if (home_row.includes(key)){
@@ -162,7 +162,7 @@ Vue.component("bell-rope", {
 
 	delimiters: ['[[',']]'], // don't interfere with flask
 
-	props: ["number"],
+	props: ["number", "position"],
 
 	data: function() {
 	  return { stroke: true,
@@ -171,8 +171,8 @@ Vue.component("bell-rope", {
 	  };
 	},
 
-	computed: { position: function() {
-					return this.number } }, // Later, this will rotate the circle
+	// computed: { position: function() {
+	// 				return this.number } }, // Later, this will rotate the circle
 
 	methods: {
 
@@ -258,14 +258,14 @@ var bell_circle = new Vue({
 	data: {
 
 	bells: [ // for now: define bells manually
-		{ number: 1 },
-		{ number: 2 },
-		{ number: 3 },
-		{ number: 4 },
-		{ number: 5 },
-		{ number: 6 },
-		{ number: 7 },
-		{ number: 8 }
+		{ number: 1, position: 1},
+		{ number: 2, position: 2},
+		{ number: 3, position: 3},
+		{ number: 4, position: 4},
+		{ number: 5, position: 5},
+		{ number: 6, position: 6},
+		{ number: 7, position: 7},
+		{ number: 8, position: 8}
 	  ]
 
 	},
@@ -285,6 +285,22 @@ var bell_circle = new Vue({
 		  socketio.emit('call_made',{call: call});
 		  // this.$refs.display.make_call(call);
 	  },
+	
+	  rotate: function(newposs){
+		  offset = 8 - newposs;
+		  var oldposs = 0;
+
+
+		  for (bell in this.bells){
+			  number = this.bells[bell]['number'];
+			  this.bells[bell]['position'] = (number + offset)%8 + 1;
+		  };
+
+		  this.bells = this.bells.sort(
+			  function(a,b){
+				  return a['position'] - b['position'];
+			  });
+	  },
 	},
 
 	template: `
@@ -296,6 +312,8 @@ var bell_circle = new Vue({
           v-for="bell in bells"
           v-bind:key="bell.number"
           v-bind:number="bell.number"
+		  v-bind:position="bell.position"
+		  v-bind:id="bell.number"
           ref="bells"
           ></bell-rope>
 
