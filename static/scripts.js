@@ -20,6 +20,10 @@ socketio.on('global_state',function(msg,cb){
 	};
 });
 
+socketio.on('call_received',function(msg,cb){
+	console.log('Received call: ' + msg.call);
+	bell_circle.$refs.display.make_call(msg.call);
+});
 
 /* AUDIO */
 
@@ -191,7 +195,7 @@ Vue.component('call-display', {
 		}
 	},
 
-	template: "<h2 id='call-display'>[[ cur_call ]]</h2>"
+	template: "<h2 id='call-display' ref='display'>[[ cur_call ]]</h2>"
 });
 
 
@@ -231,7 +235,8 @@ var bell_circle = new Vue({
 	  },
 	
 	  make_call: function(call){
-		  this.$refs.display.make_call(call);
+		  socketio.emit('call_made',{call: call});
+		  // this.$refs.display.make_call(call);
 	  },
 	},
 

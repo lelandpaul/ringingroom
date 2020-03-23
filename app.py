@@ -37,6 +37,10 @@ def broadcast_ringing(event_dict):
     emit('ringing_event', {"global_bell_state": global_bell_state, "who_rang": cur_bell}, broadcast=True,
          include_self=True)
 
+@socketio.on('call_made')
+def on_call_made(call_dict):
+	emit('call_received',call_dict, broadcast=True,include_self=True)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
