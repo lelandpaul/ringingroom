@@ -205,7 +205,8 @@ Vue.component("bell-rope", {
 		   class="rope-img" 
 		   :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"/>
 
-	  <div class='number' v-bind:class="{ left_number: position > 4}">
+	  <div class='number' v-bind:class="[position > 4 ? 'left_number' : '', 
+										 number == 1 ? 'treble' : '']">
 
 	  [[ circled_digits[number-1] ]]
 
