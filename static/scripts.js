@@ -2,7 +2,12 @@ window.onload = function() {
 
 /* SOCKET */
 
+	// for development
 var socketio = io()
+
+
+	// for server
+// var socketio = io.connect('ringingroom.com',{secure:true, transports:['websocket']});
 
 /* Listen for ringing events */
 
