@@ -7,6 +7,7 @@ Flask-Cors==3.0.8
 Flask-SocketIO==4.2.1
 Flask-WTF==0.14.3
 greenlet==0.4.15
+gunicorn==20.0.4
 itsdangerous==1.1.0
 Jinja2==2.11.1
 libsass==0.19.4
