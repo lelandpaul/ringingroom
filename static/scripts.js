@@ -125,7 +125,7 @@ document.onkeydown = function (e) {
 
 	// The numberkeys 1-8 ring those bells
 	if (parseInt(key)-1 in [...Array(8).keys()]){
-		bell_circle.ring_bell(parseInt(key));
+		bell_circle.pull_rope(parseInt(key));
 	};
 
 	change_keys = ['!','@','#','$','%','^','&','*']
@@ -137,12 +137,12 @@ document.onkeydown = function (e) {
 
 	// Space, j, and ArrowRight ring the bell in position 4
 	if ([' ','j','ArrowRight'].includes(key)){
-		bell_circle.ring_bell_by_pos(4);
+		bell_circle.pull_rope_by_pos(4);
 	}
 
 	// f and ArrowLeft ring the bell in position 5
 	if (['f','ArrowLeft'].includes(key)){
-		bell_circle.ring_bell_by_pos(5);
+		bell_circle.pull_rope_by_pos(5);
 	}
 
 	// Calls are: g = go; h = stop; b = bob; n = single.
@@ -322,10 +322,19 @@ var bell_circle = new Vue({
 			  });
 	  },
 
-		ring_bell_by_pos: function(pos){
+	  ring_bell_by_pos: function(pos){
 			for (bell in this.bells){
 				if (this.bells[bell]['position'] == pos){
 					this.ring_bell(this.bells[bell]['number']);
+					return true;
+					}
+				}
+		},
+
+	  pull_rope_by_pos: function(pos){
+			for (bell in this.bells){
+				if (this.bells[bell]['position'] == pos){
+					this.pull_rope(this.bells[bell]['number']);
 					return true;
 					}
 				}
