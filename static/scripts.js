@@ -118,20 +118,34 @@ const bells_mapping = ['1','2sharp','3','4','5','6','7','8']
 
 /* RING BY KEYBOARD */
 
-document.onkeypress = function (e) {
+document.onkeydown = function (e) {
     e = e || window.event;
-	key = String.fromCharCode(e.keyCode);
-    console.log(key);
-	home_row = ['a','s','d','f','j','k','l',';'];
+	key = e.key
 
-	if (parseInt(key-1) in [...Array(8).keys()]){
-		bell_circle.rotate(parseInt(key));
+
+	// The numberkeys 1-8 ring those bells
+	if (parseInt(key)-1 in [...Array(8).keys()]){
+		bell_circle.ring_bell(parseInt(key));
 	};
 
-	if (home_row.includes(key)){
-		bell_circle.pull_rope(home_row.indexOf(key) + 1);
-	};
+	change_keys = ['!','@','#','$','%','^','&','*']
+	// Shift+numkey rotates the circle so that that bell is in position 4
+	if (change_keys.includes(key)){
+		bell_circle.rotate(change_keys.indexOf(key) + 1);
 
+	}
+
+	// Space, j, and ArrowRight ring the bell in position 4
+	if ([' ','j','ArrowRight'].includes(key)){
+		bell_circle.ring_bell_by_pos(4);
+	}
+
+	// f and ArrowLeft ring the bell in position 5
+	if (['f','ArrowLeft'].includes(key)){
+		bell_circle.ring_bell_by_pos(5);
+	}
+
+	// Calls are: g = go; h = stop; b = bob; n = single.
 	if (['b'].includes(key)){
 		console.log('calling bob');
 		bell_circle.make_call('Bob');
@@ -299,7 +313,7 @@ var bell_circle = new Vue({
 
 		  for (bell in this.bells){
 			  number = this.bells[bell]['number'];
-			  this.bells[bell]['position'] = (number + offset)%8 + 1;
+			  this.bells[bell]['position'] = (number + offset + 3)%8 + 1;
 		  };
 
 		  this.bells = this.bells.sort(
@@ -307,6 +321,15 @@ var bell_circle = new Vue({
 				  return a['position'] - b['position'];
 			  });
 	  },
+
+		ring_bell_by_pos: function(pos){
+			for (bell in this.bells){
+				if (this.bells[bell]['position'] == pos){
+					this.ring_bell(this.bells[bell]['number']);
+					return true;
+					}
+				}
+		},
 	},
 
 	template: `
