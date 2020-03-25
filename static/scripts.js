@@ -5,6 +5,8 @@ window.onload = function() {
 	// for development
 var socketio = io()
 
+/* immediately join the main room, for consistency */
+socketio.emit('join_main_room');
 
 	// for server
 // var socketio = io.connect('ringingroom.com',{secure:true, transports:['websocket']});

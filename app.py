@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, join_room
 from sassutils.wsgi import SassMiddleware
 import json
 
@@ -27,6 +27,11 @@ def index():
     return render_template('ringing_room.html')
 
 
+@socketio.on('join_main_room')
+def on_join_main_room():
+	join_room('main')
+
+
 @socketio.on('pulling_event')
 def broadcast_ringing(event_dict):
     cur_bell = event_dict["bell"]
@@ -35,12 +40,13 @@ def broadcast_ringing(event_dict):
     else:
         print('Current stroke disagrees between server and client')
     emit('ringing_event', {"global_bell_state": global_bell_state, "who_rang": cur_bell}, broadcast=True,
-         include_self=True)
+         include_self=True, room='main')
 
 @socketio.on('call_made')
 def on_call_made(call_dict):
-	emit('call_received',call_dict, broadcast=True,include_self=True)
+	emit('call_received',call_dict,
+	broadcast=True,include_self=True,room='main')
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    socketio.run(app=app,host='0.0.0.0')
