@@ -30,6 +30,7 @@ def index():
 @socketio.on('join_main_room')
 def on_join_main_room():
 	join_room('main')
+	emit('global_state',{'global_bell_state': global_bell_state})
 
 
 @socketio.on('pulling_event')
