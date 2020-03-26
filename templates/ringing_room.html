@@ -9,7 +9,9 @@
     <script src="{{url_for('static',filename='howler.core.min.js')}}"></script>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
-  <script src="{{url_for('static', filename = 'scripts.js')}}"></script>
+
+  <script src="{{url_for('static', filename = 'scripts.js') +
+    '?' + range(0,9999) | random | string }}"></script>
 
 
   <!-- Favicon nonsense -->
