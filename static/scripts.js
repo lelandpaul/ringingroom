@@ -32,6 +32,14 @@ socketio.on('call_received',function(msg,cb){
 	bell_circle.$refs.display.make_call(msg.call);
 });
 
+
+socketio.on('size_change_event', function(msg,cb){
+	new_size = msg.size;
+	console.log('changing size to: ' + new_size);
+	bell_circle.number_of_bells = new_size;
+
+});
+
 /* AUDIO */
 
 const sounds = new Howl(
@@ -328,11 +336,10 @@ var bell_circle = new Vue({
 
 	},
 
-
 	watch: {
 		number_of_bells: function(new_count, old_count){
 			list = [];
-			for (i=1; i <= this.new_count; i++){
+			for (i=1; i <= new_count; i++){
 				list.push({number: i, position: i});
 			}
 			this.bells = list;

@@ -49,5 +49,17 @@ def on_call_made(call_dict):
 	broadcast=True,include_self=True,room='main')
 
 
+# Manage tower size
+
+@socketio.on('request_size_change')
+def on_size_change(size):
+	size = size['new_size']
+	n_bells = size
+	global_bell_state = [True] * n_bells
+	emit('size_change_event', {'size': n_bells}, 
+			broadcast=True, include_self=True, room='main')
+	emit('global_state',{'global_bell_state': global_bell_state})
+
+
 if __name__ == '__main__':
     socketio.run(app=app,host='0.0.0.0')
