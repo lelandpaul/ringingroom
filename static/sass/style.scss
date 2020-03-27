@@ -14,81 +14,143 @@ body {
 }
 
 
-/* Bell ropes */
-
-.rope img {
-	position:absolute;
-	height: 4em;
-	width: 4em;
-	transform: translate(-35%,-25%);
-}
 
 /* Putting the ropes in a circle */
 
-/* Mixin to arrange things in a circle easily */
-@mixin on-circle($item-count, $circle-size, $item-size) {
-  position: relative;
+/* Mixins to arrange things in a circle easily
+/* We need multiple precomputed mixins for different tower sizes */
+@mixin on-circle($item-count, $circle-size, $img-size) {
   width:  $circle-size;
   height: $circle-size;
   padding: 0;
-  border-radius: 50%; 
-  list-style: none;       
-  
+  border-radius: 50%;
+  list-style: none;
+
   > * {
-    display: block;
     position: absolute;
     top:  50%; 
     left: 50%;
-    width:  0;
-    height: 0;
-    margin: -1%; // hack for marginally better alignment
-	border: 0;
+    // width:  0;
+    // height: 0;
+	// border: 0;
   
     $angle: (360 / $item-count);
-    $rot: 0;
+	$rot: 0; // initialize for scope
 
-    @for $i from 1 through $item-count {
+	@if $item-count == 6 { $rot: -1*$angle; }
+	@if $item-count == 8 { $rot: -3*$angle/2; }
+	@if $item-count == 10 { $rot: -2*$angle; }
+	@if $item-count == 12 { $rot: -5*$angle/2; }
+
+
+	@for $i from 1 through $item-count {
       &:nth-of-type(#{$i}) {
-		  span.bell-number {
-				display:block;
-				position:absolute;
-				top:  50%; 
-				left: 50%;
-				width:  0;
-				height: 0;
-				margin: 0;
-				transform: 
-				  rotate($rot * 1deg) 
-				  translate($circle-size / 2) 
-				  rotate($rot * -1deg);
-			  }
-		  span.rope {
-				display:block;
-				position:absolute;
-				top:  50%; 
-				left: 50%;
-				width: 0;
-				height: 0;
-				margin: 0;
-				transform: 
-				  rotate($rot * 1deg) 
-				  translate($circle-size / 2 + $item-size) 
-				  rotate($rot * -1deg);
-			  }
+        transform: 
+          rotate($rot * 1deg) 
+          translate($circle-size / 2) 
+          rotate($rot * -1deg);
+
+		  > * {
+			  transform: translate(-$img-size/2,-$img-size/2);
 		  }
+      }
+
       $rot: $rot + $angle;
     }
-  }
+    }
 }
 
 
+@mixin on-circle-six($circle-size, $img-size){
+	@include on-circle(6, $circle-size, $img-size);
+}
+
+@mixin on-circle-eight($circle-size, $img-size){
+	@include on-circle(8, $circle-size, $img-size);
+}
+
+@mixin on-circle-ten($circle-size, $img-size){
+	@include on-circle(10, $circle-size, $img-size);
+}
+
+@mixin on-circle-twelve($circle-size, $img-size){
+	@include on-circle(12, $circle-size, $img-size);
+}
+
+/* Other positioning */
+
+.rope {
+	display: table-cell;
+	vertical-align: bottom;
+	> img {
+		display: inline-block;
+		vertical-align: bottom;
+		width: 5em;
+		height: 5em;
+	}
+	> .number {
+		margin-left: -1em;
+		display: inline-block;
+		vertical-align: bottom;
+		margin-bottom: -4px;
+	}
+	> .left_number {
+		margin-right: -1em;
+		margin-left: 0em;
+	}
+}
+
+.treble {
+	color: #ff000d;
+
+}
+
+.rope-img {
+	// transform: translate(-50%,-50%);
+}
+
 
 #bell-circle {
-  @include on-circle($item-count: 8, $circle-size: 25em, $item-size: 4em); 
+  $circ-size: 25em;
+  $img-size: 5em;
+
+
   // margin: 5em auto 0;
   // border: solid 5px tomato;
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -60%);
+  transform: translate(-50%, -50%);
+
+  &.six   { @include on-circle-six($circ-size,$img-size); }
+  &.eight { @include on-circle-eight($circ-size,$img-size); }
+  &.ten { @include on-circle-ten($circ-size,$img-size); }
+  &.twelve { @include on-circle-twelve($circ-size,$img-size); }
+}
+
+
+/* Call display */
+
+h2#call-display {
+	position: absolute;
+	text-align: center;
+	display: inline-block;
+	height:4em;
+	top: 50%;
+	left: 50%;
+	transform: translate(-40%, -50%);
+
+}
+
+
+/* Tower controls */
+
+
+.tower-control {
+	list-style-type: none;
+	display: inline;
+	margin: 0.5em;
+	font-size: x-large;
+	opacity: 0.5;
+
 }

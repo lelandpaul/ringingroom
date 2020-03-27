@@ -46,8 +46,8 @@ app.wsgi_app = SassMiddleware(app.wsgi_app, {
     'app': {
         'sass_path': 'static/sass',
         'css_path': 'static/css',
-        'wsgi_path': '/static/css',
-        'strip_extension': True
+        'wsgi_path': 'static/css',
+        'strip_extension': False
     }
 })
 
@@ -64,6 +64,13 @@ def tower(tower_code):
 		global_rooms[tower_code] = Tower(tower_code)
 	join_room(tower_code)
 	return render_template('ringing_room.html')
+
+
+@socketio.on('join_main_room')
+def on_join_main_room():
+	join_room('main')
+	emit('size_change_event',{'size': n_bells})
+	emit('global_state',{'global_bell_state': global_bell_state})
 
 
 @socketio.on('pulling_event')
@@ -118,6 +125,26 @@ def new_room(data):
     # Notification about new user joined room
     send({"msg": username + " has created the " + room + " room."}, room=room)
 
+@socketio.on('call_made')
+def on_call_made(call_dict):
+	emit('call_received',call_dict,
+	broadcast=True,include_self=True,room='main')
+
+
+# Manage tower size
+
+@socketio.on('request_size_change')
+def on_size_change(size):
+	size = size['new_size']
+	global n_bells
+	n_bells = size
+	global global_bell_state
+	global_bell_state = [True] * n_bells
+	emit('size_change_event', {'size': n_bells}, 
+			broadcast=True, include_self=True, room='main')
+	emit('global_state',{'global_bell_state': global_bell_state},
+			broadcast=True,include_self=True, room='main')
+
 
 if __name__ == '__main__':
-    app.run()
+    socketio.run(app=app,host='0.0.0.0')
