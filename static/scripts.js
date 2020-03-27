@@ -116,7 +116,11 @@ const sounds = new Howl(
 );
 
 
-const bells_mapping = ['1','2sharp','3','4','5','6','7','8']
+const bell_mappings = {  6: ['3','4','5','6','7','8'],
+					     8: ['1','2sharp','3','4','5','6','7','8'],
+						10: ['3','4','5','6','7','8','9','0','E','T'],
+						12: ['1','2','3','4','5','6','7','8','9','0','E','T']
+					  }
 
 /* RING BY KEYBOARD */
 
@@ -125,16 +129,23 @@ document.onkeydown = function (e) {
 	key = e.key
 
 
-	// The numberkeys 1-8 ring those bells
+	// The numberkeys 1-0 ring those bells, with -, = ringing E, T
 	if (parseInt(key)-1 in [...Array(8).keys()]){
+		if (parseInt(key) == 0){
+			bell_circle.pull_rope(10);
+			return true;
+		}
 		bell_circle.pull_rope(parseInt(key));
-	};
+	} else if (['-'].includes(key)){
+		bell_circle.pull_rope(11);
+	} else if (['='].includes(key)) {
+		bell_circle.pull_rope(12);
+	}
 
-	change_keys = ['!','@','#','$','%','^','&','*']
+	change_keys = ['!','@','#','$','%','^','&','*','(',')','_','+']
 	// Shift+numkey rotates the circle so that that bell is in position 4
 	if (change_keys.includes(key)){
 		bell_circle.rotate(change_keys.indexOf(key) + 1);
-
 	}
 
 	// Space, j, and ArrowRight ring the bell in position 4
@@ -183,31 +194,28 @@ Vue.component("bell-rope", {
 
 	delimiters: ['[[',']]'], // don't interfere with flask
 
-	props: ["number", "position"],
+	props: ["number", "position", "no_of_bells"],
 
 	data: function() {
 	  return { stroke: true,
-			   circled_digits: ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧" ],
+			   circled_digits: ["①", "②", "③", "④", "⑤", "⑥", 
+								"⑦", "⑧", "⑨", "⑩", "⑪ ","⑫"],
 			   images: ["handstroke", "backstroke"]
 	  };
 	},
-
-	// computed: { position: function() {
-	// 				return this.number } }, // Later, this will rotate the circle
 
 	methods: {
 
 	  pull_rope: function() {
 		socketio.emit('pulling_event',
 				{bell: this.number, stroke: this.stroke});
-		// this.stroke = !this.stroke;
 		report = "Bell " + this.number + " will ring a " + (this.stroke ? "handstroke":"backstroke");
 		console.log(report);
 	  },
 
 	  ring: function(){
 		this.stroke = !this.stroke;
-		sounds.play(bells_mapping[this.number - 1]);
+		sounds.play(bell_mappings[this.no_of_bells][this.number - 1]);
 		report = "Bell " + this.number + " rang a " + (this.stroke ? "backstroke":"handstroke");
 		console.log(report);
 	  },
@@ -268,6 +276,42 @@ Vue.component('call-display', {
 });
 
 
+Vue.component('tower-controls', {
+
+	delimiters: ['[[',']]'], // don't interfere with flask
+
+	
+			   circled_digits: ["①", "②", "③", "④", "⑤", "⑥", 
+								"⑦", "⑧", "⑨", "⑩", "⑪ ","⑫"],
+	data: function(){ 
+		return {tower_sizes: [6,8,10,12],
+			buttons: { 6: "⑥",
+					   8: "⑧",
+					  10: "⑩",
+					  12: "⑫"} } },
+
+	methods: {
+		set_tower_size: function(size){
+			console.log('setting tower size to ' + size);
+			socketio.emit('request_size_change',{new_size: size});
+		}
+	},
+
+	template: `<ul> 
+				<li class = "tower-control"
+					v-for="size in tower_sizes"
+					v-bind:size="size"
+					@click="set_tower_size(size)">
+					[[ buttons[size] ]]
+				</li> 
+			   </ul>`,
+
+
+
+
+});
+
+
 // The master view
 // ring_bell: Ring a specific bell
 
@@ -279,17 +323,28 @@ var bell_circle = new Vue({
 
 	data: {
 
-	bells: [ // for now: define bells manually
-		{ number: 1, position: 1},
-		{ number: 2, position: 2},
-		{ number: 3, position: 3},
-		{ number: 4, position: 4},
-		{ number: 5, position: 5},
-		{ number: 6, position: 6},
-		{ number: 7, position: 7},
-		{ number: 8, position: 8}
-	  ]
+		number_of_bells: 8,
+		bells: []
 
+	},
+
+
+	watch: {
+		number_of_bells: function(new_count, old_count){
+			list = [];
+			for (i=1; i <= this.new_count; i++){
+				list.push({number: i, position: i});
+			}
+			this.bells = list;
+		}
+	},
+
+	created: function() {
+		list = [];
+		for (i=1; i <= this.number_of_bells; i++){
+			list.push({number: i, position: i});
+		}
+		this.bells = list;
 	},
 
 	methods: {
@@ -305,17 +360,16 @@ var bell_circle = new Vue({
 	
 	  make_call: function(call){
 		  socketio.emit('call_made',{call: call});
-		  // this.$refs.display.make_call(call);
 	  },
 	
 	  rotate: function(newposs){
-		  offset = 8 - newposs;
+		  offset = this.number_of_bells - newposs;
 		  var oldposs = 0;
-
+		  n_b = this.number_of_bells
 
 		  for (bell in this.bells){
 			  number = this.bells[bell]['number'];
-			  this.bells[bell]['position'] = (number + offset + 3)%8 + 1;
+			  this.bells[bell]['position'] = (number + offset + (n_b/2)-1)%n_b + 1;
 		  };
 
 		  this.bells = this.bells.sort(
@@ -345,6 +399,7 @@ var bell_circle = new Vue({
 
 	template: `
 	<div>
+	<tower-controls ref="controls"></tower-controls>
 	<call-display ref="display"></call-display>
     <div id="bell-circle">
 
@@ -353,6 +408,7 @@ var bell_circle = new Vue({
           v-bind:key="bell.number"
           v-bind:number="bell.number"
 		  v-bind:position="bell.position"
+		  v-bind:no_of_bells="number_of_bells"
 		  v-bind:id="bell.number"
           ref="bells"
           ></bell-rope>
