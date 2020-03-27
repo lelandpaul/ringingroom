@@ -288,8 +288,6 @@ Vue.component('tower-controls', {
 	delimiters: ['[[',']]'], // don't interfere with flask
 
 	
-			   circled_digits: ["①", "②", "③", "④", "⑤", "⑥", 
-								"⑦", "⑧", "⑨", "⑩", "⑪ ","⑫"],
 	data: function(){ 
 		return {tower_sizes: [6,8,10,12],
 			buttons: { 6: "⑥",
