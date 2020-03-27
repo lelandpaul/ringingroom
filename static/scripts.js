@@ -237,19 +237,19 @@ Vue.component("bell-rope", {
 	template:`
 	  <div class='rope'>
 
-	  <img v-if="position <= 4"
+	  <img v-if="position <= no_of_bells/2"
 		   @click='pull_rope'
 		   class="rope-img" 
 		   :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"/>
 
-	  <div class='number' v-bind:class="[position > 4 ? 'left_number' : '', 
+	  <div class='number' v-bind:class="[position > no_of_bells/2 ? 'left_number' : '', 
 										 number == 1 ? 'treble' : '']">
 
 	  [[ circled_digits[number-1] ]]
 
 	  </div>
 
-	  <img v-if="position > 4"
+	  <img v-if="position > no_of_bells/2"
 		   @click='pull_rope'
 		   class="rope-img" 
 		   :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"/>
@@ -408,7 +408,11 @@ var bell_circle = new Vue({
 	<div>
 	<tower-controls ref="controls"></tower-controls>
 	<call-display ref="display"></call-display>
-    <div id="bell-circle">
+    <div id="bell-circle"
+		 v-bind:class="[ number_of_bells == 6  ? 'six'    : '',
+						 number_of_bells == 8  ? 'eight'  : '',
+						 number_of_bells == 10 ? 'ten'    : '',
+						 number_of_bells == 12 ? 'twelve' : '']">
 
         <bell-rope
           v-for="bell in bells"

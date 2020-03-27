@@ -17,9 +17,9 @@ body {
 
 /* Putting the ropes in a circle */
 
-/* Mixin to arrange things in a circle easily */
+/* Mixins to arrange things in a circle easily
+/* We need multiple precomputed mixins for different tower sizes */
 @mixin on-circle($item-count, $circle-size, $img-size) {
-  position: relative;
   width:  $circle-size;
   height: $circle-size;
   padding: 0;
@@ -35,7 +35,13 @@ body {
 	// border: 0;
   
     $angle: (360 / $item-count);
-    $rot: -3*$angle/2;
+	$rot: 0; // initialize for scope
+
+	@if $item-count == 6 { $rot: -1*$angle; }
+	@if $item-count == 8 { $rot: -3*$angle/2; }
+	@if $item-count == 10 { $rot: -2*$angle; }
+	@if $item-count == 12 { $rot: -5*$angle/2; }
+
 
 	@for $i from 1 through $item-count {
       &:nth-of-type(#{$i}) {
@@ -53,6 +59,25 @@ body {
     }
     }
 }
+
+
+@mixin on-circle-six($circle-size, $img-size){
+	@include on-circle(6, $circle-size, $img-size);
+}
+
+@mixin on-circle-eight($circle-size, $img-size){
+	@include on-circle(8, $circle-size, $img-size);
+}
+
+@mixin on-circle-ten($circle-size, $img-size){
+	@include on-circle(10, $circle-size, $img-size);
+}
+
+@mixin on-circle-twelve($circle-size, $img-size){
+	@include on-circle(12, $circle-size, $img-size);
+}
+
+/* Other positioning */
 
 .rope {
 	display: table-cell;
@@ -80,21 +105,27 @@ body {
 
 }
 
-
-
 .rope-img {
 	// transform: translate(-50%,-50%);
 }
 
 
 #bell-circle {
-  @include on-circle($item-count: 8, $circle-size: 25em, $img-size: 5em); 
+  $circ-size: 25em;
+  $img-size: 5em;
+
+
   // margin: 5em auto 0;
   // border: solid 5px tomato;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+
+  &.six   { @include on-circle-six($circ-size,$img-size); }
+  &.eight { @include on-circle-eight($circ-size,$img-size); }
+  &.ten { @include on-circle-ten($circ-size,$img-size); }
+  &.twelve { @include on-circle-twelve($circ-size,$img-size); }
 }
 
 
