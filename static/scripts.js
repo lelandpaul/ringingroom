@@ -369,6 +369,9 @@ var bell_circle = new Vue({
 	  },
 	
 	  rotate: function(newposs){
+		  if (newposs > this.number_of_bells) {
+			  return false;
+		  }
 		  offset = this.number_of_bells - newposs;
 		  var oldposs = 0;
 		  n_b = this.number_of_bells
