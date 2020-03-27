@@ -138,7 +138,7 @@ document.onkeydown = function (e) {
 
 
 	// The numberkeys 1-0 ring those bells, with -, = ringing E, T
-	if (parseInt(key)-1 in [...Array(8).keys()]){
+	if (parseInt(key)-1 in [...Array(0,9).keys()]){
 		if (parseInt(key) == 0){
 			bell_circle.pull_rope(10);
 			return true;
@@ -156,14 +156,15 @@ document.onkeydown = function (e) {
 		bell_circle.rotate(change_keys.indexOf(key) + 1);
 	}
 
-	// Space, j, and ArrowRight ring the bell in position 4
+	// Space, j, and ArrowRight ring the bell in position n/2
 	if ([' ','j','ArrowRight'].includes(key)){
-		bell_circle.pull_rope_by_pos(4);
+		n_b = bell_circle.number_of_bells;
+		bell_circle.pull_rope_by_pos(n_b / 2);
 	}
 
-	// f and ArrowLeft ring the bell in position 5
+	// f and ArrowLeft ring the bell in position n/2 + 1
 	if (['f','ArrowLeft'].includes(key)){
-		bell_circle.pull_rope_by_pos(5);
+		bell_circle.pull_rope_by_pos((n_b / 2) + 1);
 	}
 
 	// Calls are: g = go; h = stop; b = bob; n = single.

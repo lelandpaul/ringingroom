@@ -29,13 +29,16 @@ def index():
 
 @socketio.on('join_main_room')
 def on_join_main_room():
+	print('joining main ',n_bells)
 	join_room('main')
+	emit('size_change_event',{'size': n_bells})
 	emit('global_state',{'global_bell_state': global_bell_state})
 
 
 @socketio.on('pulling_event')
 def broadcast_ringing(event_dict):
     cur_bell = event_dict["bell"]
+    global global_bell_state
     if global_bell_state[cur_bell - 1] is event_dict["stroke"]:
         global_bell_state[cur_bell - 1] = not global_bell_state[cur_bell - 1]
     else:
@@ -54,7 +57,9 @@ def on_call_made(call_dict):
 @socketio.on('request_size_change')
 def on_size_change(size):
 	size = size['new_size']
+	global n_bells
 	n_bells = size
+	global global_bell_state
 	global_bell_state = [True] * n_bells
 	emit('size_change_event', {'size': n_bells}, 
 			broadcast=True, include_self=True, room='main')
