@@ -138,12 +138,10 @@ document.onkeydown = function (e) {
 
 
 	// The numberkeys 1-0 ring those bells, with -, = ringing E, T
-	if (parseInt(key)-1 in [...Array(0,9).keys()]){
-		if (parseInt(key) == 0){
-			bell_circle.pull_rope(10);
-			return true;
-		}
+	if (parseInt(key)-1 in [...Array(9).keys()]){
 		bell_circle.pull_rope(parseInt(key));
+	} else if (parseInt(key) == 0){
+			bell_circle.pull_rope(10);
 	} else if (['-'].includes(key)){
 		bell_circle.pull_rope(11);
 	} else if (['='].includes(key)) {

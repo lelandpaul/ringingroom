@@ -29,7 +29,6 @@ def index():
 
 @socketio.on('join_main_room')
 def on_join_main_room():
-	print('joining main ',n_bells)
 	join_room('main')
 	emit('size_change_event',{'size': n_bells})
 	emit('global_state',{'global_bell_state': global_bell_state})
@@ -63,7 +62,8 @@ def on_size_change(size):
 	global_bell_state = [True] * n_bells
 	emit('size_change_event', {'size': n_bells}, 
 			broadcast=True, include_self=True, room='main')
-	emit('global_state',{'global_bell_state': global_bell_state})
+	emit('global_state',{'global_bell_state': global_bell_state},
+			broadcast=True,include_self=True, room='main')
 
 
 if __name__ == '__main__':
