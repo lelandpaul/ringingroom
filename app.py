@@ -65,17 +65,31 @@ towers = {clean_tower_name('Ringing Room'): Tower('Ringing Room')}
 
 
 
-# Serve the basic template
-# For now: Redirect to a room called "main" if the user hasn't specified a room
+# Serve the landing page
 @app.route('/', methods=('GET', 'POST'))
 def index():
-  return redirect('/tower/ringing_room')
+  print('serving landing page')
+  return render_template('landing_page.html')
+
+# Catch names thrown from the client
+@socketio.on('room_name_entered')
+def on_room_name_entered(data):
+  global clean_tower_name
+  global towers
+  room_name = data['room_name']
+  cleaned_room_name = clean_tower_name(room_name)
+  if cleaned_room_name not in towers.keys():
+    towers[cleaned_room_name] = Tower(room_name)
+  emit('redirection', 'tower/' + cleaned_room_name)
+
+
+
+
+
 
 # Create / find other towers/rooms
 @app.route('/tower/<tower_code>')
 def tower(tower_code):
-  if tower_code not in towers:
-    towers[tower_code] = Tower(tower_code)
   return render_template('ringing_room.html', 
                          tower_name = towers[tower_code].name)
 

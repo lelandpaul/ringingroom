@@ -1,0 +1,22 @@
+
+/* Global style */
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
+  font-size: x-large;
+  font-family: serif;
+  background-color: #F0EAD6;
+}
+
+
+form {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
