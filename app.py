@@ -2,8 +2,10 @@ from flask import Flask, render_template, redirect, send_from_directory
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from sassutils.wsgi import SassMiddleware
 import json
+import re
+import os
 
-app = Flask(__name__)
+app = Flask(__name__,static_folder=os.path.join(os.getcwd(),'static'))
 app.config['SECRET_KEY'] = 's7WUt93.ir_bFya7'
 socketio = SocketIO(app)
 
@@ -53,7 +55,13 @@ class Tower:
   def bell_state(self,new_state):
     self._bell_state = new_state
 
-towers = {'main': Tower('Ringing Room')}
+def clean_tower_name(name):
+  out = re.sub('\s','_',name)
+  out = re.sub('\W','',out)
+  return out.lower()
+
+
+towers = {clean_tower_name('Ringing Room'): Tower('Ringing Room')}
 
 
 
@@ -61,21 +69,15 @@ towers = {'main': Tower('Ringing Room')}
 # For now: Redirect to a room called "main" if the user hasn't specified a room
 @app.route('/', methods=('GET', 'POST'))
 def index():
-  return redirect('/tower/main')
+  return redirect('/tower/ringing_room')
 
 # Create / find other towers/rooms
 @app.route('/tower/<tower_code>')
 def tower(tower_code):
   if tower_code not in towers:
     towers[tower_code] = Tower(tower_code)
-  return render_template('ringing_room.html')
-
-# Serve static files even when in the /tower/ namespace
-# If there's a less kludgey way to do this, I can't find it
-@app.route('/tower/static/<path:path>')
-def serve_static(path):
-  return send_from_directory('static', path)
-
+  return render_template('ringing_room.html', 
+                         tower_name = towers[tower_code].name)
 
 # SocketIO Handlers
 
@@ -86,12 +88,13 @@ def join_tower(json):
   join_room(tower_code)
   emit('size_change_event',{'size': towers[tower_code].n_bells})
   emit('global_state',{'global_bell_state': towers[tower_code].bell_state})
+  emit('tower_name_change',{'new_name': towers[tower_code].name})
 
 # A rope was pulled; ring the bell
 @socketio.on('pulling_event')
 def on_pulling_event(event_dict):
     cur_bell = event_dict["bell"]
-    cur_room = event_dict["room"]
+    cur_room = event_dict["tower_code"]
     cur_tower = towers[cur_room]
     bell_state = cur_tower.bell_state
     if bell_state[cur_bell - 1] is event_dict["stroke"]:

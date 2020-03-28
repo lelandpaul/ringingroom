@@ -145,12 +145,22 @@ h2#call-display {
 
 /* Tower controls */
 
+h2.tower-name {
+  padding-left: 0.5em;
+  margin-bottom: -0.5em;
+  opacity: 0.75;
+}
 
 .tower-control {
-	list-style-type: none;
-	display: inline;
-	margin: 0.5em;
-	font-size: x-large;
-	opacity: 0.5;
+  padding-left: 0.5em;
+  li {
+    padding-left: 0em;
+    list-style-type: none;
+    display: inline;
+    margin: 0.5em;
+    margin-left: 0.25em;
+    font-size: x-large;
+    opacity: 0.75;
+  }
 
 }
