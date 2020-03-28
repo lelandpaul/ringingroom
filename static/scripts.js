@@ -5,11 +5,10 @@ window.onload = function() {
 	// for development
 var socketio = io()
 
-/* immediately join the main room, for consistency */
-socketio.emit('join_main_room');
 
 	// for server
 // var socketio = io.connect('ringingroom.com',{secure:true, transports:['websocket']});
+
 
 /* Listen for ringing events */
 
@@ -29,7 +28,9 @@ socketio.on('global_state',function(msg,cb){
 
 /* Keeping track of rooms */
 
-var cur_room = ''
+
+var cur_room = window.location.pathname.split('/')[1] // the current tower_code
+socketio.emit('join',{tower_code: cur_room})
 
 socketio.on('call_received',function(msg,cb){
 	console.log('Received call: ' + msg.call);
@@ -305,7 +306,7 @@ Vue.component('tower-controls', {
 	methods: {
 		set_tower_size: function(size){
 			console.log('setting tower size to ' + size);
-			socketio.emit('request_size_change',{new_size: size});
+			socketio.emit('request_size_change',{new_size: size, room: cur_room});
 		}
 	},
 
@@ -437,66 +438,66 @@ var bell_circle = new Vue({
 
 });
 
-var room_selector = new Vue({
+// var room_selector = new Vue({
 
-	delimiters: ['[[',']]'], // don't interfere with flask
+// 	delimiters: ['[[',']]'], // don't interfere with flask
 
-	el: "#message-sender",
+// 	el: "#message-sender",
 
-	data: {
-		cur_username: '',
-		cur_message: '',
-		room_selected: '',
-	},
+// 	data: {
+// 		cur_username: '',
+// 		cur_message: '',
+// 		room_selected: '',
+// 	},
 
-	methods: {
+// 	methods: {
 
-		submit_message: function(un,msg){
-			console.log('sending message: ' + un + msg);
-			socketio.emit('message_sent', { user_name : un, 
-											message : msg,
-											room : cur_room})
-		},
+// 		submit_message: function(un,msg){
+// 			console.log('sending message: ' + un + msg);
+// 			socketio.emit('message_sent', { user_name : un, 
+// 											message : msg,
+// 											room : cur_room})
+// 		},
 
-		enter_room: function(){
-			if (cur_room) {
-				console.log('leaving room: ' + cur_room);
-				socketio.emit('leave',{username: this.cur_username, room: cur_room});
-			};
-			console.log('entering room: ' + this.room_selected);
-			socketio.emit('join', {username: this.cur_username, room: this.room_selected});
-			cur_room = this.room_selected;
-		}
+// 		enter_room: function(){
+// 			if (cur_room) {
+// 				console.log('leaving room: ' + cur_room);
+// 				socketio.emit('leave',{username: this.cur_username, room: cur_room});
+// 			};
+// 			console.log('entering room: ' + this.room_selected);
+// 			socketio.emit('join', {username: this.cur_username, room: this.room_selected});
+// 			cur_room = this.room_selected;
+// 		}
 
-	},
+// 	},
 
-	template: `
-	<form v-on:submit.prevent="submit_message(cur_username,cur_message)">
-		<select v-model="room_selected" v-on:change="enter_room">
-		  <option disabled value="">Please select a room</option>
-		  <option>Advent</option>
-		  <option>Old North</option>
-		</select>
-		<input v-model="cur_username" placeholder="User Name"/>
-		<input v-model="cur_message" placeholder="Message"/>
-		<input type="submit"/>
-	</form>
+// 	template: `
+// 	<form v-on:submit.prevent="submit_message(cur_username,cur_message)">
+// 		<select v-model="room_selected" v-on:change="enter_room">
+// 		  <option disabled value="">Please select a room</option>
+// 		  <option>Advent</option>
+// 		  <option>Old North</option>
+// 		</select>
+// 		<input v-model="cur_username" placeholder="User Name"/>
+// 		<input v-model="cur_message" placeholder="Message"/>
+// 		<input type="submit"/>
+// 	</form>
 
-	`
+// 	`
 
-});
+// });
 
-var message_display = new Vue({
-	delimiters: ['[[',']]'], // don't interfere with flask
+// var message_display = new Vue({
+// 	delimiters: ['[[',']]'], // don't interfere with flask
 
-	el: "#message-container",
+// 	el: "#message-container",
 
-	data : {messages: []},
+// 	data : {messages: []},
 
-	template: `<div v-html='messages.join("<br/>")'></div>`
+// 	template: `<div v-html='messages.join("<br/>")'></div>`
 
 
-});
+// });
 
 
 /* Listeners for chat function */
