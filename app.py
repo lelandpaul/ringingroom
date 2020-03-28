@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, send_from_directory
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from sassutils.wsgi import SassMiddleware
 import json
@@ -61,14 +61,20 @@ towers = {'main': Tower('Ringing Room')}
 # For now: Redirect to a room called "main" if the user hasn't specified a room
 @app.route('/', methods=('GET', 'POST'))
 def index():
-  return redirect('/main')
+  return redirect('/tower/main')
 
 # Create / find other towers/rooms
-@app.route('/<tower_code>')
+@app.route('/tower/<tower_code>')
 def tower(tower_code):
   if tower_code not in towers:
     towers[tower_code] = Tower(tower_code)
   return render_template('ringing_room.html')
+
+# Serve static files even when in the /tower/ namespace
+# If there's a less kludgey way to do this, I can't find it
+@app.route('/tower/static/<path:path>')
+def serve_static(path):
+  return send_from_directory('static', path)
 
 
 # SocketIO Handlers

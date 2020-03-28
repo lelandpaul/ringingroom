@@ -29,7 +29,8 @@ socketio.on('global_state',function(msg,cb){
 /* Keeping track of rooms */
 
 
-var cur_room = window.location.pathname.split('/')[1] // the current tower_code
+var cur_path = window.location.pathname.split('/')
+var cur_room = cur_path[cur_path.length - 1]
 socketio.emit('join',{tower_code: cur_room})
 
 socketio.on('call_received',function(msg,cb){
