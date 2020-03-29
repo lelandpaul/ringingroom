@@ -1,13 +1,7 @@
 
 /* Global style */
 
-html,
 body {
-  height: 100%;
-}
-
-body {
-  overflow: hidden;
   font-size: x-large;
   font-family: serif;
   background-color: #F0EAD6;
@@ -66,14 +60,16 @@ fieldset {
 
 }
 
-.pure-g {
-	height: 100%;
-
-}
 
 .copy {
 	padding-top: 2em;
 	font-size: smaller;
+
+	li {
+
+		padding-top: 0.5em;
+
+	}
 }
 
 .pure-menu {
