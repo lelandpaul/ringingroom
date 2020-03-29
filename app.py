@@ -1,6 +1,7 @@
-from flask import Flask, render_template, redirect, send_from_directory
+from flask import Flask, render_template, redirect, send_from_directory, url_for
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from sassutils.wsgi import SassMiddleware
+from random import sample
 import json
 import re
 import os
@@ -55,15 +56,21 @@ class Tower:
   def bell_state(self,new_state):
     self._bell_state = new_state
 
+
+
+
+
+
 def clean_tower_name(name):
   out = re.sub('\s','_',name)
   out = re.sub('\W','',out)
   return out.lower()
 
+def generate_random_change():
+	# generate a random royal change, for use as uid
+	return int(''.join(map(str,sample(range(10),k=10))))
 
-towers = {clean_tower_name('Ringing Room'): Tower('Ringing Room')}
-
-
+towers = {}
 
 # Serve the landing page
 @app.route('/', methods=('GET', 'POST'))
@@ -71,34 +78,35 @@ def index():
   print('serving landing page')
   return render_template('landing_page.html')
 
-# Catch names thrown from the client
-@socketio.on('room_name_entered')
+@app.route('/tower/<int:tower_id>/static/<path:path>')
+def redirect_static(tower_id,path):
+	return redirect(url_for('static',filename=path))
+
+# Create a new room with the user's name
+@socketio.on('create_room')
 def on_room_name_entered(data):
-  global clean_tower_name
-  global towers
   room_name = data['room_name']
-  cleaned_room_name = clean_tower_name(room_name)
-  if cleaned_room_name not in towers.keys():
-    towers[cleaned_room_name] = Tower(room_name)
-  emit('redirection', 'tower/' + cleaned_room_name)
-
-
-
-
+  new_room = Tower(room_name)
+  new_uid = generate_random_change()
+  global towers
+  towers[new_uid] = new_room
+  print(towers)
+  emit('redirection', 'tower/' + str(new_uid))
 
 
 # Create / find other towers/rooms
-@app.route('/tower/<tower_code>')
-def tower(tower_code):
+@app.route('/tower/<int:tower_id>')
+@app.route('/tower/<int:tower_id>/<decorator>')
+def tower(tower_id,decorator = None):
   return render_template('ringing_room.html', 
-                         tower_name = towers[tower_code].name)
+                         tower_name = towers[tower_id].name)
 
 # SocketIO Handlers
 
 # Join a room — happens on connection, but with more information passed
 @socketio.on('join')
 def join_tower(json):
-  tower_code = json['tower_code']
+  tower_code = int(json['tower_code'])
   join_room(tower_code)
   emit('size_change_event',{'size': towers[tower_code].n_bells})
   emit('global_state',{'global_bell_state': towers[tower_code].bell_state})

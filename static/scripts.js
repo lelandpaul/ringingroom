@@ -30,7 +30,7 @@ socketio.on('global_state',function(msg,cb){
 
 
 var cur_path = window.location.pathname.split('/')
-var cur_room = cur_path[cur_path.length - 1]
+var cur_room = cur_path[2]
 socketio.emit('join',{tower_code: cur_room})
 
 socketio.on('tower_name_change',function(msg,cb){

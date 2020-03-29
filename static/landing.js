@@ -26,18 +26,18 @@ tower_selector = new Vue({
 
 		send_room_name: function(room_name){
 			console.log('Sending name: ' + this.room_name);
-			socketio.emit('room_name_entered',{room_name: this.room_name});
+			socketio.emit('create_room',{room_name: this.room_name});
 		},
 	},
 
 	template: `<form class="pure-form"
 					v-on:submit.prevent="send_room_name">
 				<fieldset>
-					<legend>Where would you like to ring?</legend>
+					<legend>Create a new tower:</legend>
 				<input type="text" 
 				       class="pure-input"
 					   v-model="room_name" placeholder="Tower Name" required>
-				<button type="submit" class="pure-button pure-button-primary">Go</button>
+				<button type="submit" class="pure-button pure-button-primary">Create</button>
 				</fieldset>
 				</form>
 				`
