@@ -69,7 +69,7 @@ def clean_tower_name(name):
 
 def generate_random_change():
 	# generate a random royal change, for use as uid
-	return int(''.join(map(str,sample(range(10),k=10))))
+	return int(''.join(map(str,sample([i+1 for i in range(9)],k=9))))
 
 towers = {}
 

@@ -173,6 +173,7 @@ document.onkeydown = function (e) {
 
 	// f and ArrowLeft ring the bell in position n/2 + 1
 	if (['f','ArrowLeft'].includes(key)){
+		n_b = bell_circle.number_of_bells
 		bell_circle.pull_rope_by_pos((n_b / 2) + 1);
 	}
 

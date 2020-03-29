@@ -51,7 +51,7 @@ tower_selector = new Vue({
 
 		check_room_code: function(){
 			console.log('checking, length is: ' + this.room_name.length);
-			if (this.room_name.length == 10) {
+			if (this.room_name.length == 9) {
 				console.log('checking for integer');
 				console.log(parseInt(this.room_name));
 				try {

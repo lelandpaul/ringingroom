@@ -10,7 +10,7 @@ body {
 .title {
 	position: absolute;
 	left: 50%;
-	top: 15%;
+	top: 5%;
 
 	transform: translate(-50%);
 
@@ -35,7 +35,7 @@ body {
 form.pure-form { 
   position: absolute;
   width: 19em;
-  top: 50%;
+  top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
@@ -76,6 +76,7 @@ fieldset {
 	// position: absolute;
 	// top: 15%;
 	// left: 5%;
+	padding: 1em;
 	display: inline-block;
 	font-size: x-large;
 }
