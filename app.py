@@ -76,7 +76,6 @@ towers = {}
 # Serve the landing page
 @app.route('/', methods=('GET', 'POST'))
 def index():
-  print('serving landing page')
   return render_template('landing_page.html')
 
 @app.route('/<int:tower_id>/static/<path:path>')
@@ -86,14 +85,11 @@ def redirect_static(tower_id,path):
 # The user entered a tower code; check it
 @socketio.on('check_room_code')
 def on_check_room_code(json):
-	print('checking room code')
 	global towers
 	room_code = int(json['room_code'])
 	if room_code in towers.keys():
-		print('success')
 		emit('check_code_success',{'tower_name': towers[room_code].name})
 	else:
-		print('failure')
 		emit('check_code_failure')
 
 # The user entered a valid tower code and joined it
@@ -113,7 +109,6 @@ def on_room_name_entered(data):
   new_room = Tower(room_name)
   new_uid = generate_random_change()
   towers[new_uid] = new_room
-  print(towers)
   emit('redirection', str(new_uid) + '/' + clean_tower_name(room_name))
 
 

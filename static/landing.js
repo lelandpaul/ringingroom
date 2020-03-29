@@ -36,7 +36,7 @@ tower_selector = new Vue({
 	data: { room_name: '',
 			join_room: false,
 			button_disabled: false,
-			message: "Or you can enter a tower number to join it.",},
+			message: "Enter a name to create a new tower, or the number of an existing tower to join it.",},
 
 	methods: {
 
@@ -72,7 +72,7 @@ tower_selector = new Vue({
 			} else {
 				this.button_disabled = false;
 				this.join_room = false;
-				this.message =  "Or you can enter a tower number to join it.";
+				this.message = "Enter a name to create a new tower, or the number of an existing tower to join it.";
 			}
 		},
 	},
@@ -80,7 +80,6 @@ tower_selector = new Vue({
 	template: `<form class="pure-form"
 					v-on:submit.prevent="send_room_name">
 				<fieldset>
-					<legend>Create a new tower:</legend>
 				<input type="text" 
 				       class="pure-input"
 					   v-model="room_name" 
