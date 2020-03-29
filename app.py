@@ -177,7 +177,7 @@ def on_call_made(call_dict):
 # Tower size was changed
 @socketio.on('request_size_change')
 def on_size_change(size):
-  room = size['room']
+  room = int(size['room'])
   size = size['new_size']
   towers[room].n_bells = size
   emit('size_change_event', {'size': size}, 
