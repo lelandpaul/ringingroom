@@ -66,15 +66,22 @@ fieldset {
 
 }
 
+.pure-g {
+	height: 100%;
 
+}
+
+.copy {
+	padding-top: 2em;
+	font-size: smaller;
+}
 
 .pure-menu {
-	position: absolute;
-	top: 15%;
-	left: 5%;
+	// position: absolute;
+	// top: 15%;
+	// left: 5%;
 	display: inline-block;
 	font-size: x-large;
-
 }
 
 .pure-menu-link {

@@ -82,6 +82,25 @@ def index():
 def redirect_static(tower_id,path):
 	return send_from_directory(app.static_folder,path)
 
+
+# Serve the static pages
+
+@app.route('/about')
+def about():
+	return render_template('about.html')
+
+@app.route('/help')
+def help():
+	return render_template('help.html')
+
+@app.route('/contact')
+def contact():
+	return render_template('contact.html')
+
+@app.route('/donate')
+def donate():
+	return render_template('donate.html')
+
 # The user entered a tower code; check it
 @socketio.on('check_room_code')
 def on_check_room_code(json):
