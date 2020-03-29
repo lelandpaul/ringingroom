@@ -151,6 +151,12 @@ h2.tower-name {
   opacity: 0.75;
 }
 
+h4.tower-id {
+  padding-left: 0.5em;
+  margin-bottom: -0.5em;
+  opacity: 0.75;
+}
+
 .tower-control {
   padding-left: 0.5em;
   li {
@@ -163,4 +169,15 @@ h2.tower-name {
     opacity: 0.75;
   }
 
+}
+
+/* help bar */
+
+#help {
+  position: absolute;
+  top: 5%;
+  left: 70%;
+  width: 25em;
+  opacity: 0.25;
+  font-size: large;
 }
