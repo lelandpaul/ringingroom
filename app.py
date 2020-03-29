@@ -8,6 +8,7 @@ import os
 
 app = Flask(__name__,static_folder=os.path.join(os.getcwd(),'static'))
 app.config['SECRET_KEY'] = 's7WUt93.ir_bFya7'
+
 socketio = SocketIO(app)
 
 # set up automatic sass compilation
@@ -78,25 +79,47 @@ def index():
   print('serving landing page')
   return render_template('landing_page.html')
 
-@app.route('/tower/<int:tower_id>/static/<path:path>')
+@app.route('/<int:tower_id>/static/<path:path>')
 def redirect_static(tower_id,path):
-	return redirect(url_for('static',filename=path))
+	return send_from_directory(app.static_folder,path)
+
+# The user entered a tower code; check it
+@socketio.on('check_room_code')
+def on_check_room_code(json):
+	print('checking room code')
+	global towers
+	room_code = int(json['room_code'])
+	if room_code in towers.keys():
+		print('success')
+		emit('check_code_success',{'tower_name': towers[room_code].name})
+	else:
+		print('failure')
+		emit('check_code_failure')
+
+# The user entered a valid tower code and joined it
+@socketio.on('join_room_by_code')
+def on_join_by_code(json):
+	tower_code = int(json['tower_code'])
+	tower_name = towers[tower_code].name
+	emit('redirection', str(tower_code) + '/' + clean_tower_name(tower_name))
 
 # Create a new room with the user's name
 @socketio.on('create_room')
 def on_room_name_entered(data):
+  global towers
+  global clean_tower_name
+
   room_name = data['room_name']
   new_room = Tower(room_name)
   new_uid = generate_random_change()
-  global towers
   towers[new_uid] = new_room
   print(towers)
-  emit('redirection', 'tower/' + str(new_uid))
+  emit('redirection', str(new_uid) + '/' + clean_tower_name(room_name))
 
 
 # Create / find other towers/rooms
-@app.route('/tower/<int:tower_id>')
-@app.route('/tower/<int:tower_id>/<decorator>')
+@app.route('/<int:tower_id>')
+@app.route('/<int:tower_id>/<decorator>')
 def tower(tower_id,decorator = None):
   return render_template('ringing_room.html', 
                          tower_name = towers[tower_id].name)
@@ -116,7 +139,7 @@ def join_tower(json):
 @socketio.on('pulling_event')
 def on_pulling_event(event_dict):
     cur_bell = event_dict["bell"]
-    cur_room = event_dict["tower_code"]
+    cur_room = int(event_dict["tower_code"])
     cur_tower = towers[cur_room]
     bell_state = cur_tower.bell_state
     if bell_state[cur_bell - 1] is event_dict["stroke"]:
