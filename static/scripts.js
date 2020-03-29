@@ -36,6 +36,7 @@ socketio.emit('join',{tower_code: cur_room})
 socketio.on('tower_name_change',function(msg,cb){
 	console.log('Received name change: ' + msg.new_name);
 	bell_circle.$refs.controls.tower_name = msg.new_name;
+	bell_circle.$refs.controls.tower_id = parseInt(cur_room);
 });
 
 socketio.on('call_received',function(msg,cb){
@@ -306,7 +307,8 @@ Vue.component('tower-controls', {
 						   8: "⑧",
 						  10: "⑩",
 						  12: "⑫"},
-				tower_name: ''} },
+				tower_name: '',
+				tower_id: 0} },
 
 	methods: {
 		set_tower_size: function(size){
@@ -317,6 +319,7 @@ Vue.component('tower-controls', {
 
 	template: `<div>
 				<h2 class="tower-name">[[ tower_name ]] </h2>
+				<h4 class="tower-id">Tower ID: [[ tower_id ]]</h4>
 				<ul class = "tower-control"> 
 				<li 
 					v-for="size in tower_sizes"
@@ -326,10 +329,6 @@ Vue.component('tower-controls', {
 				</li> 
 			   </ul>
 			   </div>`,
-
-
-
-
 });
 
 
