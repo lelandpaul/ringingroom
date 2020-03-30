@@ -54,14 +54,14 @@ socketio.on('size_change_event', function(msg,cb){
 
 /* AUDIO */
 
-const sounds = new Howl({
+const tower = new Howl({
   src: [
-    "static/audio/sounds.ogg",
-    "static/audio/sounds.m4a",
-    "static/audio/sounds.mp3",
-    "static/audio/sounds.ac3"
+    "static/audio/tower.ogg",
+    "static/audio/tower.m4a",
+    "static/audio/tower.mp3",
+    "static/audio/tower.ac3"
   ],
-  volume: 0.25,
+  volume: 0.2,
   sprite: {
     "0": [
       0,
@@ -115,26 +115,95 @@ const sounds = new Howl({
       32000,
       1011.247165532879
     ],
-    "all": [
+    "Bob": [
       35000,
-      809.7959183673495
+      396.84807256235644
     ],
-    "bob": [
+    "Single": [
       37000,
-      705.3061224489809
+      582.8798185941012
     ],
-    "go": [
+    "Go": [
       39000,
-      1201.6326530612246
+      1009.7732426303878
     ],
-    "single": [
+    "That's all": [
       42000,
-      757.5510204081652
+      654.6938775510184
+    ],
+    "Stand next": [
+      44000,
+      1228.9342403628111
     ]
   }
 }
 );
 
+const hand = new Howl({
+  src: [
+    "static/audio/hand.ogg",
+    "static/audio/hand.m4a",
+    "static/audio/hand.mp3",
+    "static/audio/hand.ac3"
+  ],
+  volume: 0.2,
+  sprite: {
+    "1": [
+      0,
+      1519.8866213151928
+    ],
+    "2sharp": [
+      3000,
+      1495.3514739229022
+    ],
+    "3": [
+      6000,
+      1520.3854875283448
+    ],
+    "4": [
+      9000,
+      1519.841269841269
+    ],
+    "5": [
+      12000,
+      1495.419501133787
+    ],
+    "6": [
+      15000,
+      1507.5736961451262
+    ],
+    "7": [
+      18000,
+      1507.7324263038533
+    ],
+    "8": [
+      21000,
+      1513.6961451247153
+    ],
+    "Bob": [
+      24000,
+      396.84807256236
+    ],
+    "Single": [
+      26000,
+      582.8798185941047
+    ],
+    "Go": [
+      28000,
+      1009.7732426303843
+    ],
+    "That's all": [
+      31000,
+      654.6938775510221
+    ],
+    "Stand next": [
+      33000,
+      1228.9342403628111
+    ]
+  }
+}
+  
+);
 
 const bell_mappings = {  6: ['3','4','5','6','7','8'],
 					     8: ['1','2sharp','3','4','5','6','7','8'],
@@ -236,7 +305,7 @@ Vue.component("bell-rope", {
 
 	  ring: function(){
 		this.stroke = !this.stroke;
-		sounds.play(bell_mappings[this.no_of_bells][this.number - 1]);
+		hand.play(bell_mappings[this.no_of_bells][this.number - 1]);
 		report = "Bell " + this.number + " rang a " + (this.stroke ? "backstroke":"handstroke");
 		console.log(report);
 	  },
@@ -286,7 +355,7 @@ Vue.component('call-display', {
 		make_call: function(call){
 			console.log('changing cur_call to: ' + call);
 			this.cur_call = call;
-			sounds.play(call);
+			hand.play(call);
 			var self = this;
 			setTimeout(function() { self.cur_call = ''; 
 						console.log('changing cur_call back');}, 2000);
@@ -378,7 +447,7 @@ var bell_circle = new Vue({
 	  },
 	
 	  make_call: function(call){
-		  socketio.emit('call_made',{call: call});
+        socketio.emit('call_made',{call: call,room: cur_room});
 	  },
 	
 	  rotate: function(newposs){

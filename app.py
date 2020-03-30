@@ -171,8 +171,7 @@ def on_pulling_event(event_dict):
 @socketio.on('call_made')
 def on_call_made(call_dict):
   room = call_dict['room']
-  emit('call_received',call_dict,
-  broadcast=True,include_self=True,room=room)
+  emit('call_received',call_dict, broadcast=True,include_self=True,room=int(room))
 
 # Tower size was changed
 @socketio.on('request_size_change')
