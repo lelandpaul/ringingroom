@@ -211,6 +211,16 @@ const bell_mappings = {  6: ['3','4','5','6','7','8'],
 						12: ['1','2','3','4','5','6','7','8','9','0','E','T']
 					  }
 
+socketio.on('audio_change_event',function(msg,cb){
+  console.log('changing audio to: ' + msg.new_audio);
+  bell_circle.$refs.controls.audio_type = msg.new_audio;
+  bell_circle.audio = msg.new_audio == 'Tower' ? tower : hand;
+  if (msg.new_audio == 'Hand' && bell_circle.number_of_bells > 8){
+    socketio.emit('request_size_change',{new_size: 8, room:cur_room});
+  }
+});
+
+
 /* RING BY KEYBOARD */
 
 document.onkeydown = function (e) {
@@ -283,13 +293,13 @@ Vue.component("bell-rope", {
 
 	delimiters: ['[[',']]'], // don't interfere with flask
 
-	props: ["number", "position", "no_of_bells"],
+	props: ["number", "position", "no_of_bells","audio"],
 
 	data: function() {
 	  return { stroke: true,
 			   circled_digits: ["①", "②", "③", "④", "⑤", "⑥", 
 								"⑦", "⑧", "⑨", "⑩", "⑪ ","⑫"],
-			   images: ["handstroke", "backstroke"]
+			   images: ["handstroke", "backstroke"],
 	  };
 	},
 
@@ -305,7 +315,7 @@ Vue.component("bell-rope", {
 
 	  ring: function(){
 		this.stroke = !this.stroke;
-		hand.play(bell_mappings[this.no_of_bells][this.number - 1]);
+		this.audio.play(bell_mappings[this.no_of_bells][this.number - 1]);
 		report = "Bell " + this.number + " rang a " + (this.stroke ? "backstroke":"handstroke");
 		console.log(report);
 	  },
@@ -355,7 +365,7 @@ Vue.component('call-display', {
 		make_call: function(call){
 			console.log('changing cur_call to: ' + call);
 			this.cur_call = call;
-			hand.play(call);
+			this.audio.play(call);
 			var self = this;
 			setTimeout(function() { self.cur_call = ''; 
 						console.log('changing cur_call back');}, 2000);
@@ -377,13 +387,18 @@ Vue.component('tower-controls', {
 						  10: "⑩",
 						  12: "⑫"},
 				tower_name: '',
-				tower_id: 0} },
+				tower_id: 0,
+                audio_type: 'Tower'} },
 
 	methods: {
 		set_tower_size: function(size){
 			console.log('setting tower size to ' + size);
 			socketio.emit('request_size_change',{new_size: size, room: cur_room});
 		},
+        swap_audio: function(){
+          console.log('swapping audio');
+          socketio.emit('request_audio_change',{old_audio: this.audio_type, room:cur_room})
+        },
 	},
 
 	template: `<div>
@@ -393,10 +408,13 @@ Vue.component('tower-controls', {
 				<li 
 					v-for="size in tower_sizes"
 					v-bind:size="size"
+                    v-show="audio_type == 'Tower' || size <= 8"
 					@click="set_tower_size(size)">
 					[[ buttons[size] ]]
 				</li> 
 			   </ul>
+               <div class="audio-toggle"
+                    @click="swap_audio">Audio: [[ audio_type ]] bell</div>
 			   </div>`,
 });
 
@@ -413,8 +431,8 @@ var bell_circle = new Vue({
 	data: {
 
 		number_of_bells: 8,
-		bells: []
-
+		bells: [],
+        audio: tower,
 	},
 
 	watch: {
@@ -504,6 +522,7 @@ var bell_circle = new Vue({
           v-bind:number="bell.number"
 		  v-bind:position="bell.position"
 		  v-bind:no_of_bells="number_of_bells"
+          v-bind:audio="audio"
 		  v-bind:id="bell.number"
           ref="bells"
           ></bell-rope>

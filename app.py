@@ -31,6 +31,7 @@ class Tower:
     self._name = name
     self._n = 8
     self._bell_state = [True] * n
+    self._audio = True
   
   @property
   def name(self):
@@ -56,6 +57,14 @@ class Tower:
   @bell_state.setter
   def bell_state(self,new_state):
     self._bell_state = new_state
+
+  @property
+  def audio(self):
+      return('Tower' if self._audio else 'Hand')
+
+  @audio.setter
+  def audio(self,new_state):
+      self._audio = True if new_state == 'Tower' else False
 
 
 
@@ -148,6 +157,7 @@ def join_tower(json):
   emit('size_change_event',{'size': towers[tower_code].n_bells})
   emit('global_state',{'global_bell_state': towers[tower_code].bell_state})
   emit('tower_name_change',{'new_name': towers[tower_code].name})
+  emit('audio_change_event',{'new_audio': towers[tower_code].audio})
 
 # A rope was pulled; ring the bell
 @socketio.on('pulling_event')
@@ -183,6 +193,15 @@ def on_size_change(size):
       broadcast=True, include_self=True, room=room)
   emit('global_state',{'global_bell_state': towers[room].bell_state},
       broadcast=True,include_self=True, room=room)
+
+# Audio type was changed
+@socketio.on('request_audio_change')
+def on_audio_change(json):
+    room = int(json['room'])
+    new_audio = 'Hand' if json['old_audio'] == 'Tower' else 'Tower'
+    towers[room].audio = new_audio
+    emit('audio_change_event', {'new_audio': new_audio},
+            broadcast=True,include_self=True,room=room)
 
 
 if __name__ == '__main__':
