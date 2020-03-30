@@ -401,10 +401,11 @@ Vue.component('tower-controls', {
         },
 	},
 
-	template: `<div>
-				<h2 class="tower-name">[[ tower_name ]] </h2>
-				<h4 class="tower-id">Tower ID: [[ tower_id ]]</h4>
-				<ul class = "tower-control"> 
+	template: `<div class = "tower-control">
+				<h2 class="tower-name">[[ tower_name ]] 
+                    <span class="tower-id">ID: [[tower_id]]</span>
+                      </h2>
+				<ul class = "tower-control-size"> 
 				<li 
 					v-for="size in tower_sizes"
 					v-bind:size="size"

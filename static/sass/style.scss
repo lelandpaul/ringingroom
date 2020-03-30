@@ -82,6 +82,7 @@ body {
 .rope {
 	display: table-cell;
 	vertical-align: bottom;
+    cursor: pointer;
 	> img {
 		display: inline-block;
 		vertical-align: bottom;
@@ -104,11 +105,6 @@ body {
 	color: #ff000d;
 
 }
-
-.rope-img {
-	// transform: translate(-50%,-50%);
-}
-
 
 #bell-circle {
   $circ-size: 25em;
@@ -151,15 +147,17 @@ h2.tower-name {
   opacity: 0.75;
 }
 
-h4.tower-id {
+.tower-id {
   padding-left: 0.5em;
   margin-bottom: -0.5em;
+  font-size: small;
   opacity: 0.75;
 }
 
-.tower-control {
+.tower-control-size {
   padding-left: 0.5em;
   li {
+    cursor: pointer;
     padding-left: 0em;
     list-style-type: none;
     display: inline;
@@ -168,6 +166,19 @@ h4.tower-id {
     font-size: x-large;
     opacity: 0.75;
   }
+
+}
+
+.tower-control{
+  padding-left:0.5em;
+}
+
+.audio-toggle{
+  padding-left:1em;
+  font-size: smaller;
+  opacity: 0.75;
+  margin-top: -0.7em;
+  cursor: pointer;
 
 }
 
