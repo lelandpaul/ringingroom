@@ -12,13 +12,13 @@ var socketio = io()
 
 /* Listen for ringing events */
 
-socketio.on('ringing_event', function(msg,cb){
+socketio.on('s_bell_rung', function(msg,cb){
 	console.log('Received event: ' + msg.global_bell_state + msg.who_rang);
 	bell_circle.ring_bell(msg.who_rang);
 });
 
 
-socketio.on('global_state',function(msg,cb){
+socketio.on('s_global_state',function(msg,cb){
 	console.log('Setting global state: ' + msg.global_bell_state);
 	gstate = msg.global_bell_state;
 	for (i = 0; i < gstate.length; i++){
@@ -31,21 +31,21 @@ socketio.on('global_state',function(msg,cb){
 
 var cur_path = window.location.pathname.split('/')
 var cur_room = cur_path[1]
-socketio.emit('join',{tower_code: cur_room})
+socketio.emit('c_join',{tower_code: cur_room})
 
-socketio.on('tower_name_change',function(msg,cb){
+socketio.on('s_name_change',function(msg,cb){
 	console.log('Received name change: ' + msg.new_name);
 	bell_circle.$refs.controls.tower_name = msg.new_name;
 	bell_circle.$refs.controls.tower_id = parseInt(cur_room);
 });
 
-socketio.on('call_received',function(msg,cb){
+socketio.on('s_call',function(msg,cb){
 	console.log('Received call: ' + msg.call);
 	bell_circle.$refs.display.make_call(msg.call);
 });
 
 
-socketio.on('size_change_event', function(msg,cb){
+socketio.on('s_size_change', function(msg,cb){
 	new_size = msg.size;
 	console.log('changing size to: ' + new_size);
 	bell_circle.number_of_bells = new_size;
@@ -211,12 +211,12 @@ const bell_mappings = {  6: ['3','4','5','6','7','8'],
 						12: ['1','2','3','4','5','6','7','8','9','0','E','T']
 					  }
 
-socketio.on('audio_change_event',function(msg,cb){
+socketio.on('s_audio_change',function(msg,cb){
   console.log('changing audio to: ' + msg.new_audio);
   bell_circle.$refs.controls.audio_type = msg.new_audio;
   bell_circle.audio = msg.new_audio == 'Tower' ? tower : hand;
   if (msg.new_audio == 'Hand' && bell_circle.number_of_bells > 8){
-    socketio.emit('request_size_change',{new_size: 8, room:cur_room});
+    socketio.emit('c_size_change',{new_size: 8, room:cur_room});
   }
 });
 
@@ -306,7 +306,7 @@ Vue.component("bell-rope", {
 	methods: {
 
 	  pull_rope: function() {
-		socketio.emit('pulling_event',
+		socketio.emit('c_bell_rung',
 				{bell: this.number, stroke: this.stroke, tower_code: cur_room});
 		// this.stroke = !this.stroke;
 		report = "Bell " + this.number + " will ring a " + (this.stroke ? "handstroke":"backstroke");
@@ -393,11 +393,11 @@ Vue.component('tower-controls', {
 	methods: {
 		set_tower_size: function(size){
 			console.log('setting tower size to ' + size);
-			socketio.emit('request_size_change',{new_size: size, room: cur_room});
+			socketio.emit('c_size_change',{new_size: size, room: cur_room});
 		},
         swap_audio: function(){
           console.log('swapping audio');
-          socketio.emit('request_audio_change',{old_audio: this.audio_type, room:cur_room})
+          socketio.emit('c_audio_change',{old_audio: this.audio_type, room:cur_room})
         },
 	},
 
@@ -466,7 +466,7 @@ var bell_circle = new Vue({
 	  },
 	
 	  make_call: function(call){
-        socketio.emit('call_made',{call: call,room: cur_room});
+        socketio.emit('c_call',{call: call,room: cur_room});
 	  },
 	
 	  rotate: function(newposs){

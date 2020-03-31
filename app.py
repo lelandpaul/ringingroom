@@ -124,27 +124,27 @@ def tower(tower_id, decorator=None):
 
 
 # The user entered a tower code on the landing page; check it
-@socketio.on('check_room_code')
-def on_check_room_code(json):
+@socketio.on('c_check_tower_id')
+def on_check_tower_id(json):
     global towers
     room_code = int(json['room_code'])
     if room_code in towers.keys():
-        emit('check_code_success', {'tower_name': towers[room_code].name})
+        emit('s_check_id_success', {'tower_name': towers[room_code].name})
     else:
-        emit('check_code_failure')
+        emit('s_check_id_failure')
 
 
 # The user entered a valid tower code and joined it
-@socketio.on('join_room_by_code')
-def on_join_by_code(json):
+@socketio.on('c_join_tower_by_id')
+def on_join_tower_by_id(json):
     tower_code = int(json['tower_code'])
     tower_name = towers[tower_code].name
-    emit('redirection', str(tower_code) + '/' + clean_tower_name(tower_name))
+    emit('s_redirection', str(tower_code) + '/' + clean_tower_name(tower_name))
 
 
 # Create a new room with the user's name
-@socketio.on('create_room')
-def on_room_name_entered(data):
+@socketio.on('c_create_room')
+def on_create_room(data):
     global towers
     global clean_tower_name
 
@@ -152,23 +152,23 @@ def on_room_name_entered(data):
     new_room = Tower(room_name)
     new_uid = generate_random_change()
     towers[new_uid] = new_room
-    emit('redirection', str(new_uid) + '/' + clean_tower_name(room_name))
+    emit('s_redirection', str(new_uid) + '/' + clean_tower_name(room_name))
 
 
 # Join a room — happens on connection, but with more information passed
-@socketio.on('join')
-def join_tower(json):
+@socketio.on('c_join')
+def on_join(json):
     tower_code = int(json['tower_code'])
     join_room(tower_code)
-    emit('size_change_event', {'size': towers[tower_code].n_bells})
-    emit('global_state', {'global_bell_state': towers[tower_code].bell_state})
-    emit('tower_name_change', {'new_name': towers[tower_code].name})
-    emit('audio_change_event', {'new_audio': towers[tower_code].audio})
+    emit('s_size_change', {'size': towers[tower_code].n_bells})
+    emit('s_global_state', {'global_bell_state': towers[tower_code].bell_state})
+    emit('s_name_change', {'new_name': towers[tower_code].name})
+    emit('s_audio_change', {'new_audio': towers[tower_code].audio})
 
 
 # A rope was pulled; ring the bell
-@socketio.on('pulling_event')
-def on_pulling_event(event_dict):
+@socketio.on('c_bell_rung')
+def on_bell_rung(event_dict):
     cur_bell = event_dict["bell"]
     cur_room = int(event_dict["tower_code"])
     cur_tower = towers[cur_room]
@@ -178,7 +178,7 @@ def on_pulling_event(event_dict):
     else:
         print('Current stroke disagrees between server and client')
     disagreement = True
-    emit('ringing_event',
+    emit('s_bell_rung',
          {"global_bell_state": bell_state,
           "who_rang": cur_bell,
           "disagree": disagreement},
@@ -186,32 +186,32 @@ def on_pulling_event(event_dict):
 
 
 # A call was made
-@socketio.on('call_made')
-def on_call_made(call_dict):
+@socketio.on('c_call')
+def on_call(call_dict):
     room = call_dict['room']
-    emit('call_received', call_dict, broadcast=True,
+    emit('s_call', call_dict, broadcast=True,
          include_self=True, room=int(room))
 
 
 # Tower size was changed
-@socketio.on('request_size_change')
+@socketio.on('c_size_change')
 def on_size_change(size):
     room = int(size['room'])
     size = size['new_size']
     towers[room].n_bells = size
-    emit('size_change_event', {'size': size},
+    emit('s_size_change', {'size': size},
          broadcast=True, include_self=True, room=room)
-    emit('global_state', {'global_bell_state': towers[room].bell_state},
+    emit('s_global_state', {'global_bell_state': towers[room].bell_state},
          broadcast=True, include_self=True, room=room)
 
 
 # Audio type was changed
-@socketio.on('request_audio_change')
+@socketio.on('c_audio_change')
 def on_audio_change(json):
     room = int(json['room'])
     new_audio = 'Hand' if json['old_audio'] == 'Tower' else 'Tower'
     towers[room].audio = new_audio
-    emit('audio_change_event', {'new_audio': new_audio},
+    emit('s_audio_change', {'new_audio': new_audio},
          broadcast=True, include_self=True, room=room)
 
 
