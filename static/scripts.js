@@ -226,7 +226,8 @@ socketio.on('s_audio_change',function(msg,cb){
 document.onkeydown = function (e) {
     e = e || window.event;
 	key = e.key
-
+    // Shift+1 produces code "Digit1"; this gets the digit itself
+    code = e.code[e.code.length - 1]
 
 	// The numberkeys 1-0 ring those bells, with -, = ringing E, T
 	if (parseInt(key)-1 in [...Array(9).keys()]){
@@ -239,11 +240,21 @@ document.onkeydown = function (e) {
 		bell_circle.pull_rope(12);
 	}
 
-	change_keys = ['!','@','#','$','%','^','&','*','(',')','_','+']
 	// Shift+numkey rotates the circle so that that bell is in position 4
-	if (change_keys.includes(key)){
-		bell_circle.rotate(change_keys.indexOf(key) + 1);
-	}
+    // This is done in a slightly roundabout way to work on both US & UK keyboards
+    if (e.shiftKey) {
+        console.log(key);
+        if (parseInt(code)-1 in [...Array(9).keys()]){
+            bell_circle.rotate(parseInt(code));
+        } else if (parseInt(code) == 0){
+                bell_circle.rotate(10);
+        } else if (['_'].includes(key)){
+            bell_circle.rotate(11);
+        } else if (['+'].includes(key)) {
+            bell_circle.rotate(12);
+        }
+    }
+    
 
 	// Space, j, and ArrowRight ring the bell in position n/2
 	if ([' ','j','ArrowRight'].includes(key)){
