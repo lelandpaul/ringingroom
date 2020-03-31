@@ -24,7 +24,8 @@ app.wsgi_app = SassMiddleware(app.wsgi_app, {
 
 # Database
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'towers.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + \
+                                        os.path.join(basedir, 'towers.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -46,7 +47,7 @@ class TowerDB(db.Model):
 
 class Tower:
     def __init__(self, name, tower_id=None, n=8):
-        if not tower_id:                                     
+        if not tower_id:
             self._id = self.generate_random_change()
         else:
             self._id = tower_id
@@ -60,7 +61,7 @@ class Tower:
         return int(''.join(map(str, sample([i+1 for i in range(9)], k=9))))
 
     def to_TowerDB(self):
-        return(TowerDB(tower_id = self.tower_id, tower_name = self.name))
+        return(TowerDB(tower_id=self.tower_id, tower_name=self.name))
 
     @property
     def tower_id(self):
@@ -110,6 +111,7 @@ towers = {}
 
 
 # Serve the landing page
+
 @app.route('/', methods=('GET', 'POST'))
 def index():
     return render_template('landing_page.html')
@@ -121,7 +123,6 @@ def redirect_static(tower_id, path):
 
 
 #  Serve the static pages
-
 
 @app.route('/about')
 def about():
@@ -147,6 +148,14 @@ def donate():
 @app.route('/<int:tower_id>')
 @app.route('/<int:tower_id>/<decorator>')
 def tower(tower_id, decorator=None):
+
+    if tower_id not in towers.keys():
+        # Tower wasn't in memory; try the database
+        tower = TowerDB.query.get(tower_id)
+        if tower:
+            # Got it from the database
+            towers[tower_id] = tower.to_Tower()
+
     return render_template('ringing_room.html',
                            tower_name=towers[tower_id].name)
 
@@ -157,12 +166,19 @@ def tower(tower_id, decorator=None):
 # The user entered a tower code on the landing page; check it
 @socketio.on('c_check_tower_id')
 def on_check_tower_id(json):
-    global towers
     room_code = int(json['room_code'])
     if room_code in towers.keys():
         emit('s_check_id_success', {'tower_name': towers[room_code].name})
     else:
-        emit('s_check_id_failure')
+        # Tower isn't in memory; try the database
+        tower = TowerDB.query.get(room_code)
+        if tower:
+            # Got it from the database
+            towers[room_code] = tower.to_Tower()
+            emit('s_check_id_success', {'tower_name': towers[room_code].name})
+        else:
+            # Doesn't exist yet
+            emit('s_check_id_failure')
 
 
 # The user entered a valid tower code and joined it
@@ -176,13 +192,15 @@ def on_join_tower_by_id(json):
 # Create a new room with the user's name
 @socketio.on('c_create_room')
 def on_create_room(data):
-    global towers
-    global clean_tower_name
-
     room_name = data['room_name']
     new_room = Tower(room_name)
     towers[new_room.tower_id] = new_room
-    emit('s_redirection', str(new_room.tower_id) + '/' + clean_tower_name(room_name))
+    
+    # put the new tower in the DB for posterity
+    db.session.add(new_room.to_TowerDB())
+    db.session.commit()
+    emit('s_redirection',
+         str(new_room.tower_id) + '/' + clean_tower_name(room_name))
 
 
 # Join a room — happens on connection, but with more information passed
@@ -191,7 +209,8 @@ def on_join(json):
     tower_code = int(json['tower_code'])
     join_room(tower_code)
     emit('s_size_change', {'size': towers[tower_code].n_bells})
-    emit('s_global_state', {'global_bell_state': towers[tower_code].bell_state})
+    emit('s_global_state',
+         {'global_bell_state': towers[tower_code].bell_state})
     emit('s_name_change', {'new_name': towers[tower_code].name})
     emit('s_audio_change', {'new_audio': towers[tower_code].audio})
 
