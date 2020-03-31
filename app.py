@@ -1,6 +1,8 @@
 from flask import Flask, render_template, send_from_directory
 from flask_socketio import SocketIO, emit, join_room
 from sassutils.wsgi import SassMiddleware
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from random import sample
 import re
 import os
@@ -20,15 +22,49 @@ app.wsgi_app = SassMiddleware(app.wsgi_app, {
     }
 })
 
+# Database
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'towers.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
+
+class TowerDB(db.Model):
+    tower_id = db.Column(db.Integer, primary_key=True)
+    tower_name = db.Column(db.String(32), index=True)
+
+    def __repr__(self):
+        return '<Tower {}: {}>'.format(self.tower_id, self.tower_name)
+
+    def to_Tower(self):
+        return Tower(self.tower_name, tower_id=self.tower_id)
+
+
 # Keep track of towers
 
 
 class Tower:
-    def __init__(self, name, n=8):
+    def __init__(self, name, tower_id=None, n=8):
+        if not tower_id:                                     
+            self._id = self.generate_random_change()
+        else:
+            self._id = tower_id
         self._name = name
         self._n = 8
         self._bell_state = [True] * n
         self._audio = True
+
+    def generate_random_change(self):
+        # generate a random royal change, for use as uid
+        return int(''.join(map(str, sample([i+1 for i in range(9)], k=9))))
+
+    def to_TowerDB(self):
+        return(TowerDB(tower_id = self.tower_id, tower_name = self.name))
+
+    @property
+    def tower_id(self):
+        return(self._id)
 
     @property
     def name(self):
@@ -68,11 +104,6 @@ def clean_tower_name(name):
     out = re.sub(r'\s', '_', name)
     out = re.sub(r'\W', '', out)
     return out.lower()
-
-
-def generate_random_change():
-    # generate a random royal change, for use as uid
-    return int(''.join(map(str, sample([i+1 for i in range(9)], k=9))))
 
 
 towers = {}
@@ -150,9 +181,8 @@ def on_create_room(data):
 
     room_name = data['room_name']
     new_room = Tower(room_name)
-    new_uid = generate_random_change()
-    towers[new_uid] = new_room
-    emit('s_redirection', str(new_uid) + '/' + clean_tower_name(room_name))
+    towers[new_room.tower_id] = new_room
+    emit('s_redirection', str(new_room.tower_id) + '/' + clean_tower_name(room_name))
 
 
 # Join a room — happens on connection, but with more information passed
