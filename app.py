@@ -100,14 +100,55 @@ class Tower:
     def audio(self, new_state):
         self._audio = True if new_state == 'Tower' else False
 
+    @property
+    def url_safe_name(self):
+        out = re.sub(r'\s', '_', self.name)
+        out = re.sub(r'\W', '', out)
+        return out.lower()
 
-def clean_tower_name(name):
-    out = re.sub(r'\s', '_', name)
-    out = re.sub(r'\W', '', out)
-    return out.lower()
+
+class TowerDict(dict):
+    def __init__(self, table=TowerDB, db=db):
+        self._db = db
+        self._table = table
+        self._dict = dict()
+
+    def check_db_for_key(self, key):
+        if key in self._dict.keys():
+            # It's already in memory, don't check the db
+            return True
+
+        tower = self._table.query.get(key)
+        if tower:
+            # load the thing back into memory
+            self._dict[key] = tower.to_Tower()
+            return True
+
+        return False
+
+    def __setitem__(self, key, value):
+        key = int(key)  # just to be sure
+
+        # if it's in the database, load it into memory
+        self.check_db_for_key(key)
+
+        # It's already in use
+        if key in self._dict.keys():
+            raise KeyError('Key already in use.')
+
+        # add it to both memory and database
+        self._dict[key] = value
+        self._db.session.add(value.to_TowerDB())
+        self._db.session.commit()
+
+    def __getitem__(self, key):
+        key = int(key)  # just to be sure
+        self.check_db_for_key(key)
+
+        return self._dict[key]
 
 
-towers = {}
+towers = TowerDict()
 
 
 # Serve the landing page
@@ -148,14 +189,6 @@ def donate():
 @app.route('/<int:tower_id>')
 @app.route('/<int:tower_id>/<decorator>')
 def tower(tower_id, decorator=None):
-
-    if tower_id not in towers.keys():
-        # Tower wasn't in memory; try the database
-        tower = TowerDB.query.get(tower_id)
-        if tower:
-            # Got it from the database
-            towers[tower_id] = tower.to_Tower()
-
     return render_template('ringing_room.html',
                            tower_name=towers[tower_id].name)
 
@@ -167,26 +200,19 @@ def tower(tower_id, decorator=None):
 @socketio.on('c_check_tower_id')
 def on_check_tower_id(json):
     room_code = int(json['room_code'])
-    if room_code in towers.keys():
+    try:
+        # Doing it this way (using towers[id]) tests the database for us
         emit('s_check_id_success', {'tower_name': towers[room_code].name})
-    else:
-        # Tower isn't in memory; try the database
-        tower = TowerDB.query.get(room_code)
-        if tower:
-            # Got it from the database
-            towers[room_code] = tower.to_Tower()
-            emit('s_check_id_success', {'tower_name': towers[room_code].name})
-        else:
-            # Doesn't exist yet
-            emit('s_check_id_failure')
+    except KeyError:
+        emit('s_check_id_failure')
 
 
 # The user entered a valid tower code and joined it
 @socketio.on('c_join_tower_by_id')
 def on_join_tower_by_id(json):
     tower_code = int(json['tower_code'])
-    tower_name = towers[tower_code].name
-    emit('s_redirection', str(tower_code) + '/' + clean_tower_name(tower_name))
+    tower_name = towers[tower_code].url_safe_name
+    emit('s_redirection', str(tower_code) + '/' + tower_name)
 
 
 # Create a new room with the user's name
@@ -195,12 +221,9 @@ def on_create_room(data):
     room_name = data['room_name']
     new_room = Tower(room_name)
     towers[new_room.tower_id] = new_room
-    
-    # put the new tower in the DB for posterity
-    db.session.add(new_room.to_TowerDB())
-    db.session.commit()
+
     emit('s_redirection',
-         str(new_room.tower_id) + '/' + clean_tower_name(room_name))
+         str(new_room.tower_id) + '/' + new_room.url_safe_name)
 
 
 # Join a room — happens on connection, but with more information passed

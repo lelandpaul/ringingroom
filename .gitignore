@@ -140,3 +140,4 @@ static/css/*
 rrenv/
 
 # Don't track the db
+towers.db
