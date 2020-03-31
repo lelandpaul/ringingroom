@@ -3,7 +3,8 @@
   <head>
 
     <title>Ringing Room — {{ tower_name }}</title>
-    <link rel="stylesheet" href="{{url_for('static', filename = 'css/style.scss.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename = 'css/style.scss.css') 
+                                                            + '?nocache202003311353'}}">
 
     <script src="https://unpkg.com/vue"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -11,8 +12,7 @@
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
 
-  <script src="{{url_for('static', filename = 'scripts.js') +
-    '?' + range(0,9999) | random | string }}"></script>
+  <script src="{{url_for('static', filename = 'scripts.js') + '?nocache202003311353'}}"></script>
 
 
   <!-- Favicon nonsense -->
