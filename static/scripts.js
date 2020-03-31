@@ -277,6 +277,11 @@ document.onkeydown = function (e) {
 		bell_circle.make_call("That's all");
 	}
 
+    if (['t'].includes(key)){
+        console.log('calling stand');
+        bell_circle.make_call("Stand next");
+    }
+
 };
 
 /* BELLS */
@@ -353,6 +358,8 @@ Vue.component("bell-rope", {
 
 
 Vue.component('call-display', {
+
+    props: ["audio"],
 
 	delimiters: ['[[',']]'], // don't interfere with flask
 
@@ -510,7 +517,7 @@ var bell_circle = new Vue({
 	template: `
 	<div>
 	<tower-controls ref="controls"></tower-controls>
-	<call-display ref="display"></call-display>
+    <call-display v-bind:audio="audio" ref="display"></call-display>
     <div id="bell-circle"
 		 v-bind:class="[ number_of_bells == 6  ? 'six'    : '',
 						 number_of_bells == 8  ? 'eight'  : '',
