@@ -8,7 +8,6 @@
 
     <link rel="stylesheet" href="{{url_for('static', filename = 'css/landing.scss.css')+ '?nocache202003311353'}}">
 
-    <script src="https://unpkg.com/vue"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
@@ -58,8 +57,23 @@
     <div class="pure-u-2-5 copy">
 
       <p>
-          Here's how to get started with the Ringing Room.
+        Here's how to get started with the Ringing Room.
       </p>
+
+      <h3>Ideal set-up</h3>
+
+      <p>
+        As far as we can tell, Ringing Rooms work best under the following set up:
+      </p>
+
+      <ul>
+        <li>Use Google Chrome on a desktop or laptop where possible (Mac > Windows > Linux >> mobile)</li>
+        <li>Use a separate voice chat like Zoom, discord, Google hangouts, or WhatsApp to coordinate
+          ringing and put calls in.</li>
+      </ul>
+
+      There is a facility for using hot-keys to put in calls (see below), but in some browsers this results in the
+      sound of the bells being interrupted.
 
       <h3>Starting a new room</h3>
 
@@ -79,13 +93,11 @@
       <h3>Setting up and ringing in a ringing room</h3>
 
       <p>
-On the top left, you may set the number of bells in the tower by clicking the
-desired number.  To ring, you may either click on the ropes or use the following hot-keys:
+        On the top left, you may set the number of bells in the tower by clicking the
+        desired number.  To ring, you may either click on the ropes or use the following hot-keys:
       </p>
 
-
       <ul>
-
         <li> <b>[1-0], [-], [=]:</b> Rings bells 1 - 10, 11, and 12
         <li><b>[SPACE]:</b> Rings the bell in the lower right corner.
         <li><b>[LEFT] and [RIGHT] arrow keys:</b> Rings the left and right bottom-most bells.
@@ -93,9 +105,45 @@ desired number.  To ring, you may either click on the ropes or use the following
         <li><b>[SHIFT]+[#]:</b> Rotate the "perspective" of the ringing room to
           put bell '#' in the lower right corner so it may be rung by
           [SPACE] or [j].
-
       </ul>
-      
+
+      <p>
+        There are also hot-keys for various calls, but be aware that in some browsers using these results in the
+        sound of the bells being interrupted.
+      </p>
+
+      <ul>
+        <li><b>[g]</b>o next time</li>
+        <li><b>[b]</b>ob</li>
+        <li>si<b>[n]</b>gle</li>
+        <li>t<b>[h]</b>at's all</li>
+        <li>s<b>[t]</b>and next</li>
+      </ul>
+
+      <p>
+        Currently working on getting audio for some equivalents of "Look to/Treble's going...,"
+        but using "go next time" should suffice for now, we hope!
+      </p>
+
+      <h3>Known bugs and currently available fixes</h3>
+
+      <p>
+        As Ringing Room has been gaining in popularity, we have had several bug reports (thank you!) and have started
+        a list of known bugs and any currently available fix. This list is not exhaustive.
+      </p>
+
+      <ul>
+        <li><b>Bells are sometimes laggy:</b> Sorry, no fix for this yet; but we should have one pushed in the next
+        2 or 3 days. We'll keep you updated on the "News" sidebar of the front page.</li>
+        <li><b>Bells are double-sounding/echoing:</b> First, try headphones. If that doesn't fix it, you are encountering
+          a known problem in some browsers. Re-starting your browser or doing a hard refresh (hard refreshing varies by
+          OS and browser type) has been known to help in some cases. The cause of this bug is not yet identified.</li>
+        <li><b>Ringing Room doesn't work under this non-Chrome browser/Linux OS...:</b> Please email us with the operating
+        system and browser you're using, along with any steps taken to fix the issue (restarting browser, hard refreshing).
+        We'll bear this in mind, but cross-platform testing is currently pretty slow as we both have Macs!</li>
+        <li><b>Ringing Room doesn't work on my phone:</b> A known problem, but one that's it's pretty hard to fix without
+        building a dedicated app as far as we can tell. So probably best to stick to a desktop or laptop for now.</li>
+      </ul>
 
     </div>
 

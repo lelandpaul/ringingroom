@@ -115,7 +115,7 @@ body {
   // border: solid 5px tomato;
   position: absolute;
   top: 50%;
-  left: 50%;
+  left: 40%;
   transform: translate(-50%, -50%);
 
   &.six   { @include on-circle-six($circ-size,$img-size); }
@@ -133,7 +133,7 @@ h2#call-display {
 	display: inline-block;
 	height:4em;
 	top: 50%;
-	left: 50%;
+	left: 40%;
 	transform: translate(-40%, -50%);
 
 }

@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="{{url_for('static', filename = 'css/style.scss.css') 
                                                             + '?nocache202003311353'}}">
 
-    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/vue@2.6.11/dist/vue.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="{{url_for('static',filename='howler.core.min.js')}}"></script>
     <script
@@ -57,6 +57,20 @@
           put bell '#' in the lower right corner so it may be rung by
           [SPACE] or [j].
       </ul>
+
+      <p>
+        There are also hot-keys for various calls, but be aware that in some browsers using these results in the
+        sound of the bells being interrupted.
+      </p>
+
+      <ul>
+        <li><b>[g]</b>o next time</li>
+        <li><b>[b]</b>ob</li>
+        <li>si<b>[n]</b>gle</li>
+        <li>t<b>[h]</b>at's all</li>
+        <li>s<b>[t]</b>and next</li>
+      </ul>
+
     </div>
   </body>
 
