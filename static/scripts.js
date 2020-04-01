@@ -1,3 +1,5 @@
+window.onload = function() {
+
 /* SOCKET */
 
 	// for development
@@ -618,3 +620,7 @@ var bell_circle = new Vue({
 // 	console.log(msg)
 // 	message_display.messages.push('<b>' + msg.user_name + '</b>: ' + msg.message)
 // });
+
+
+};
+
