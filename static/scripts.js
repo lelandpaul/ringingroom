@@ -26,17 +26,17 @@ socketio.on('s_global_state',function(msg,cb){
 	};
 });
 
-/* Keeping track of rooms */
+/* Keeping track of towers */
 
 
 var cur_path = window.location.pathname.split('/')
-var cur_room = parseInt(cur_path[1])
-socketio.emit('c_join',{tower_id: cur_room})
+var cur_tower = parseInt(cur_path[1])
+socketio.emit('c_join',{tower_id: cur_tower})
 
 socketio.on('s_name_change',function(msg,cb){
 	console.log('Received name change: ' + msg.new_name);
 	bell_circle.$refs.controls.tower_name = msg.new_name;
-	bell_circle.$refs.controls.tower_id = parseInt(cur_room);
+	bell_circle.$refs.controls.tower_id = parseInt(cur_tower);
 });
 
 socketio.on('s_call',function(msg,cb){
@@ -216,7 +216,7 @@ socketio.on('s_audio_change',function(msg,cb){
   bell_circle.$refs.controls.audio_type = msg.new_audio;
   bell_circle.audio = msg.new_audio == 'Tower' ? tower : hand;
   if (msg.new_audio == 'Hand' && bell_circle.number_of_bells > 8){
-    socketio.emit('c_size_change',{new_size: 8, tower_id:cur_room});
+    socketio.emit('c_size_change',{new_size: 8, tower_id: cur_tower});
   }
 });
 
@@ -323,7 +323,7 @@ Vue.component("bell-rope", {
 
 	  pull_rope: function() {
 		socketio.emit('c_bell_rung',
-				{bell: this.number, stroke: this.stroke, tower_int: cur_room});
+				{bell: this.number, stroke: this.stroke, tower_id: cur_tower});
 		// this.stroke = !this.stroke;
 		report = "Bell " + this.number + " will ring a " + (this.stroke ? "handstroke":"backstroke");
 		console.log(report);
@@ -411,11 +411,11 @@ Vue.component('tower-controls', {
 	methods: {
 		set_tower_size: function(size){
 			console.log('setting tower size to ' + size);
-			socketio.emit('c_size_change',{new_size: size, room: cur_room});
+			socketio.emit('c_size_change',{new_size: size, tower_id: cur_tower});
 		},
         swap_audio: function(){
           console.log('swapping audio');
-          socketio.emit('c_audio_change',{old_audio: this.audio_type, tower_id:cur_room})
+          socketio.emit('c_audio_change',{old_audio: this.audio_type, tower_id:cur_tower})
         },
 	},
 
@@ -484,7 +484,7 @@ var bell_circle = new Vue({
 	  },
 	
 	  make_call: function(call){
-        socketio.emit('c_call',{call: call,tower_id: cur_room});
+        socketio.emit('c_call',{call: call,tower_id: cur_tower});
 	  },
 	
 	  rotate: function(newposs){
@@ -552,7 +552,7 @@ var bell_circle = new Vue({
 
 });
 
-// var room_selector = new Vue({
+// var tower_selector = new Vue({
 
 // 	delimiters: ['[[',']]'], // don't interfere with flask
 
@@ -561,7 +561,7 @@ var bell_circle = new Vue({
 // 	data: {
 // 		cur_username: '',
 // 		cur_message: '',
-// 		room_selected: '',
+// 		tower_selected: '',
 // 	},
 
 // 	methods: {
@@ -570,25 +570,25 @@ var bell_circle = new Vue({
 // 			console.log('sending message: ' + un + msg);
 // 			socketio.emit('message_sent', { user_name : un, 
 // 											message : msg,
-// 											room : cur_room})
+// 											tower : cur_tower})
 // 		},
 
-// 		enter_room: function(){
-// 			if (cur_room) {
-// 				console.log('leaving room: ' + cur_room);
-// 				socketio.emit('leave',{username: this.cur_username, room: cur_room});
+// 		enter_tower: function(){
+// 			if (cur_tower) {
+// 				console.log('leaving tower: ' + cur_tower);
+// 				socketio.emit('leave',{username: this.cur_username, tower: cur_tower});
 // 			};
-// 			console.log('entering room: ' + this.room_selected);
-// 			socketio.emit('join', {username: this.cur_username, room: this.room_selected});
-// 			cur_room = this.room_selected;
+// 			console.log('entering tower: ' + this.tower_selected);
+// 			socketio.emit('join', {username: this.cur_username, tower: this.tower_selected});
+// 			cur_tower = this.tower_selected;
 // 		}
 
 // 	},
 
 // 	template: `
 // 	<form v-on:submit.prevent="submit_message(cur_username,cur_message)">
-// 		<select v-model="room_selected" v-on:change="enter_room">
-// 		  <option disabled value="">Please select a room</option>
+// 		<select v-model="tower_selected" v-on:change="enter_tower">
+// 		  <option disabled value="">Please select a tower</option>
 // 		  <option>Advent</option>
 // 		  <option>Old North</option>
 // 		</select>

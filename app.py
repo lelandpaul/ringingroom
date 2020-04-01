@@ -257,7 +257,7 @@ def on_bell_rung(event_dict):
          {"global_bell_state": bell_state,
           "who_rang": cur_bell,
           "disagree": disagreement},
-         broadcast=True, include_self=True, room=cur_room)
+         broadcast=True, include_self=True, room=tower_id)
 
 
 # A call was made
