@@ -77,8 +77,29 @@ body {
 	@include on-circle(12, $circle-size, $img-size);
 }
 
+
+// Now, position the bell_circle
+#bell_circle {
+  $circ-size: 25em;
+  $img-size: 5em;
+
+
+  // margin: 5em auto 0;
+  // border: solid 5px tomato;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  &.six   { @include on-circle-six($circ-size,$img-size); }
+  &.eight { @include on-circle-eight($circ-size,$img-size); }
+  &.ten { @include on-circle-ten($circ-size,$img-size); }
+  &.twelve { @include on-circle-twelve($circ-size,$img-size); }
+}
+
 /* Other positioning */
 
+// Position rope images and their numbers
 .rope {
 	display: table-cell;
 	vertical-align: bottom;
@@ -101,33 +122,16 @@ body {
 	}
 }
 
+// make the treble number red
 .treble {
 	color: #ff000d;
 
 }
 
-#bell-circle {
-  $circ-size: 25em;
-  $img-size: 5em;
-
-
-  // margin: 5em auto 0;
-  // border: solid 5px tomato;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-  &.six   { @include on-circle-six($circ-size,$img-size); }
-  &.eight { @include on-circle-eight($circ-size,$img-size); }
-  &.ten { @include on-circle-ten($circ-size,$img-size); }
-  &.twelve { @include on-circle-twelve($circ-size,$img-size); }
-}
-
 
 /* Call display */
 
-h2#call-display {
+h2#call_display {
 	position: absolute;
 	text-align: center;
 	display: inline-block;
@@ -141,20 +145,20 @@ h2#call-display {
 
 /* Tower controls */
 
-h2.tower-name {
+h2.tower_name {
   padding-left: 0.5em;
   margin-bottom: -0.5em;
   opacity: 0.75;
 }
 
-.tower-id {
+.tower_id {
   padding-left: 0.5em;
   margin-bottom: -0.5em;
   font-size: small;
   opacity: 0.75;
 }
 
-.tower-control-size {
+.tower_control_size {
   padding-left: 0.5em;
   li {
     cursor: pointer;
@@ -169,11 +173,11 @@ h2.tower-name {
 
 }
 
-.tower-control{
+.tower_control{
   padding-left:0.5em;
 }
 
-.audio-toggle{
+.audio_toggle{
   padding-left:1em;
   font-size: smaller;
   opacity: 0.75;

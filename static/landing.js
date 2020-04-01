@@ -1,24 +1,54 @@
-window.onload = function() {
+///////////
+/* SETUP */
+///////////
 
-/* SOCKET */
+// Don't log unless needed
+var logger = function()
+{
+    var oldConsoleLog = null;
+    var pub = {};
 
-	// for development
-var socketio = io()
+    pub.enableLogger =  function enableLogger() 
+                        {
+                            if(oldConsoleLog == null){ return;}
+
+                            window['console']['log'] = oldConsoleLog;
+                        };
+
+    pub.disableLogger = function disableLogger()
+                        {
+                            oldConsoleLog = console.log;
+                            window['console']['log'] = function() {};
+                        };
+
+    return pub;
+}();
+logger.disableLogger()
 
 
-	// for server
-// var socketio = io.connect('ringingroom.com',{secure:true, transports:['websocket']});
+// Set up socketio instance
+var socketio = io() // for development
+// var socketio = io.connect('ringingroom.com',{secure:true, transports:['websocket']}); // for server
 
+
+
+////////////////////////
+/* SOCKETIO LISTENERS */
+////////////////////////
+
+// Redirection: The server is sending the client to a tower
 socketio.on('s_redirection', function(destination){
 	window.location.href = destination;
 });
 
 
+// The user has entered (but not submitted) a valid tower_id; display a message
 socketio.on('s_check_id_success', function(msg){
 	console.log('received success');
 	tower_selector.message = "Join tower: " + msg.tower_name + '.';
 });
 
+// The user has entered (but not submitted) an invalid tower_id; display a message
 socketio.on('s_check_id_failure', function(){
 	console.log('received failure');
 	tower_selector.message = "There is no tower with that code.";
@@ -26,77 +56,101 @@ socketio.on('s_check_id_failure', function(){
 });
 
 
+/////////
+/* VUE */
+/////////
 
+Vue.options.delimiters = ['[[', ']]']; // make sure Vue doesn't interfere with jinja
+
+// all vue objects needs to be defined within this block, so that the jinja templates are rendered first
+$(document).ready(function() {
+
+// This is the application instance for the page
 tower_selector = new Vue({
-	
-	delimiters: ['[[',']]'], // don't interfere with flask
 
-	el: "#tower-selector",
+	el: "#tower_selector",
 
-	data: { room_name: '',
-			join_room: false,
+	data: { input_field: '',
+			join_tower: false,
 			button_disabled: false,
-			message: "To create a new tower, enter a name for that tower. To join a tower, enter the Tower ID number.",},
+            default_message: "To create a new tower, enter a name for that tower. To join a tower, enter the Tower ID number.",
+			message: "To create a new tower, enter a name for that tower. To join a tower, enter the Tower ID number."},
 
 	methods: {
 
-		send_room_name: function(){
-			console.log('Sending name: ' + this.room_name);
-			if (this.join_room){
-				socketio.emit('c_join_tower_by_id',{tower_code: this.room_name});
+        // Send the tower (or id) to the tower to create (or join) it
+		send_tower_name: function(){
+			console.log('Sending name: ' + this.input_field);
+
+			if (this.join_tower){
+                // what we have is an ID; parse it as int, then join that tower
+				socketio.emit('c_join_tower_by_id',{tower_id: parseInt(this.input_field)});
 			} else {
-				socketio.emit('c_create_room',{room_name: this.room_name});
+                //what we have is a name; create that tower
+				socketio.emit('c_create_tower',{tower_name: this.input_field});
 			}
 		},
 
+        // Fires on each keypress in the input box: Is this a tower_id?
 		check_tower_id: function(){
-			console.log('checking, length is: ' + this.room_name.length);
-			if (this.room_name.length == 9) {
+			console.log('checking, length is: ' + this.input_field.length);
+
+			if (this.input_field.length == 9) {
+                // It's a valid length
 				console.log('checking for integer');
-				console.log(parseInt(this.room_name));
+				console.log(parseInt(this.input_field));
 				try {
-					room_code = parseInt(this.room_name)
-					console.log('int: ' + room_code);
+                    // it's an int, so it's a plausible tower_id
+					tower_id = parseInt(this.input_field)
 				}
 				catch(error){
-					console.log('nope')
-					room_code = null
+                    // it's  not a plausible tower_id
+					console.log('not a valid tower_id')
+					tower_id = null
 				}
 
-				if (room_code){
-					this.join_room = true;
-					socketio.emit('c_check_tower_id',{room_code: this.room_name});
+				if (tower_id){
+                    // we found a valid tower_id
+                    this.join_tower = true; //flag: on submit, try to join (rather than create)
+                    // Ask the server if it's a known tower_id
+					socketio.emit('c_check_tower_id',{tower_id: tower_id});
 				} else {
-					this.join_room = false;
+                    // not a valid tower_id
+                    this.join_tower = false;//flag: on submit, try to create
 				}
 			} else {
+                // this doesn't look like a tower_id; make sure everything is back at default
 				this.button_disabled = false;
-				this.join_room = false;
-				this.message = "To create a new tower, enter a name for that tower. To join a tower, enter the Tower ID number.";
+				this.join_tower = false;
+				this.message = this.default_message;
 			}
 		},
 	},
 
 	template: `<form class="pure-form"
-					v-on:submit.prevent="send_room_name">
-				<fieldset>
-				<input type="text" 
-				       class="pure-input"
-					   v-model="room_name" 
-					   placeholder="Tower name or ID number" 
-					   v-on:input="check_tower_id"
-					   required>
-				<button type="submit" 
-						:disabled="button_disabled"
-						class="pure-button pure-button-primary">
-					[[ join_room ? "Join" : "Create" ]]
-				</button>
-				</fieldset>
-				<div id="join-message">[[ message ]]</div>
+					 v-on:submit.prevent="send_tower_name"
+                     >
+                    <fieldset>
+                        <input class="pure-input"
+                               type="text" 
+                               placeholder="Tower name or ID number" 
+                               v-model="input_field" 
+                               v-on:input="check_tower_id"
+                               required
+                               >
+                        <button type="submit" 
+                                :disabled="button_disabled"
+                                class="pure-button pure-button-primary"
+                                >
+                            [[ join_tower ? "Join" : "Create" ]]
+                        </button>
+                    </fieldset>
+                    <div id="join-message"> 
+                        [[ message ]]
+                    </div>
 				</form>
 				`
+}); // end tower_selector
 
-});
 
-
-};
+}); // end document.ready
