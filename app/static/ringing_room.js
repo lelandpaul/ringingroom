@@ -23,7 +23,7 @@ var logger = function()
 
     return pub;
 }();
-logger.disableLogger()
+// logger.disableLogger()
 
 // Set up socketio instance
 var socketio = io() // for development
@@ -51,10 +51,17 @@ socketio.on('s_call',function(msg,cb){
 	bell_circle.$refs.display.make_call(msg.call);
 });
 
-// The server sent us the global state; set all bells accordintgly
+// The server told us the number of bells in the tower
+socketio.on('s_size_change', function(msg,cb){
+	var new_size = msg.size;
+	bell_circle.number_of_bells = new_size;
+});
+
+
+// The server sent us the global state; set all bells accordingly
 socketio.on('s_global_state',function(msg,cb){
-	console.log('Setting global state: ' + msg.global_bell_state);
 	var gstate = msg.global_bell_state;
+    bell_circle.number_of_bells = gstate.length
 	for (var i = 0; i < gstate.length; i++){
 		bell_circle.$refs.bells[i].set_state_silently(gstate[i]);
 	};
@@ -65,15 +72,6 @@ socketio.on('s_name_change',function(msg,cb){
 	console.log('Received name change: ' + msg.new_name);
 	bell_circle.$refs.controls.tower_name = msg.new_name;
 	bell_circle.$refs.controls.tower_id = parseInt(cur_tower_id);
-});
-
-
-// The server told us the number of bells in the tower
-socketio.on('s_size_change', function(msg,cb){
-	var new_size = msg.size;
-	console.log('changing size to: ' + new_size);
-	bell_circle.number_of_bells = new_size;
-
 });
 
 
@@ -360,24 +358,26 @@ bell_circle = new Vue({
         audio: tower,
 	},
 
-    // On creattion: Create a list of bells
-	created: function() {
-		var list = [];
-		for (var i=1; i <= this.number_of_bells; i++){
-			list.push({number: i, position: i});
-		}
-		this.bells = list;
-	},
 
 	watch: {
         // Change the list of bells to track the current number
-		number_of_bells: function(new_count, old_count){
+		number_of_bells: function(new_count){
+            console.log('changing number of bells to ' + new_count)
 			var list = [];
 			for (var i=1; i <= new_count; i++){
 				list.push({number: i, position: i});
 			}
 			this.bells = list;
 		}
+	},
+
+    // On creation: Create a list of bells
+	created: function() {
+		var list = [];
+		for (var i=1; i <= this.number_of_bells; i++){
+			list.push({number: i, position: i});
+		}
+		this.bells = list;
 	},
 
 	methods: {
