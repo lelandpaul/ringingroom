@@ -38,12 +38,12 @@ def on_create_tower(data):
 # Join a room — happens on connection, but with more information passed
 @socketio.on('c_join')
 def on_join(json):
+    def emit_global_state():
+        emit('s_global_state', {'global_bell_state': tower.bell_state})
     tower_id = json['tower_id']
     tower = towers[tower_id]
     join_room(tower_id)
     emit('s_size_change', {'size': tower.n_bells})
-    emit('s_global_state',
-         {'global_bell_state': tower.bell_state})
     emit('s_name_change', {'new_name': tower.name})
     emit('s_audio_change', {'new_audio': tower.audio})
 
@@ -78,13 +78,15 @@ def on_call(call_dict):
 # Tower size was changed
 @socketio.on('c_size_change')
 def on_size_change(size):
+    def emit_global_state():
+        emit('s_global_state', {'global_bell_state': towers[tower_id].bell_state},
+             broadcast=True, include_self=True, room=tower_id)
+
     tower_id = size['tower_id']
     size = size['new_size']
     towers[tower_id].n_bells = size
     emit('s_size_change', {'size': size},
-         broadcast=True, include_self=True, room=tower_id)
-    emit('s_global_state', {'global_bell_state': towers[tower_id].bell_state},
-         broadcast=True, include_self=True, room=tower_id)
+         broadcast=True, include_self=True, room=tower_id, callback = emit_global_state)
 
 
 # Audio type was changed
