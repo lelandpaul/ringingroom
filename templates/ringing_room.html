@@ -3,7 +3,7 @@
   <head>
 
     <title>Ringing Room — {{ tower_name }}</title>
-    <link rel="stylesheet" href="{{url_for('static', filename = 'css/style.scss.css') 
+    <link rel="stylesheet" href="{{url_for('static', filename = 'css/ringing_room.scss.css') 
                                                             + '?nocache202003311353'}}">
 
     <script src="https://unpkg.com/vue@2.6.11/dist/vue.min.js"></script>
@@ -12,7 +12,7 @@
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
 
-  <script type="module" src="{{url_for('static', filename = 'scripts.js') + '?nocache202003311353'}}"></script>
+  <script type="module" src="{{url_for('static', filename = 'ringing_room.js') + '?nocache202003311353'}}"></script>
 
 
   <!-- Favicon nonsense -->
@@ -38,7 +38,7 @@
 
     <div>
     <!-- <div class='spacer'></div> -->
-    <div id="ringing_circle">
+    <div id="bell_circle">
       <!-- app will go here -->
     </div>
     </div>

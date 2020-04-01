@@ -19,15 +19,15 @@ A space where socially-distanced ringers can practice together.
 │   │   └── tower.json              => offsets for towerbell audiosprite
 │   ├── css/                        => compiled css, maintained by sass (don't modify!)
 │   ├── sass
-│   │   ├── landing.scss            => sass for for static pages
-│   │   └── style.scss              => sass for ringing_room itself
+│   │   ├── static.scss            => sass for for static pages
+│   │   └── ringing_room.scss       => sass for ringing_room itself
 │   ├── howler.core.min.js          => javascript audio library
 │   ├── images
 │   │   ├── favicon/                => favicon assets
 │   │   ├── backstroke.png          => rope at backstroke
 │   │   └── handstroke.png          => rope at handstroke
 │   ├── landing.js                  => client scripts for landing page
-│   └── scripts.js                  => client scripts for ringing_room itself
+│   └── ringing_room.js             => client scripts for ringing_room itself
 └── templates                       => jinja2 templates for all pages
     ├── about.html
     ├── contact.html

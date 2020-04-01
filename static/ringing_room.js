@@ -351,7 +351,7 @@ Vue.component('tower_controls', {
 // The master Vue application
 bell_circle = new Vue({
 
-	el: "#ringing_circle",
+	el: "#bell_circle",
 
 	data: {
 
