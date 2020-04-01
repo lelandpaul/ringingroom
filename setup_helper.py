@@ -5,13 +5,13 @@ from datetime import datetime
 from re import sub
 
 # compile sass
-os.system("sass static/sass/style.scss static/css/style.scss.css")
-os.system("sass static/sass/landing.scss static/css/landing.scss.css")
+os.system("sass app/static/sass/style.scss static/css/style.scss.css")
+os.system("sass app/static/sass/landing.scss static/css/landing.scss.css")
 
 # prevent caching bad versions by updating requests
 
-templates = ['templates/' + f for f in os.listdir('templates/') 
-             if os.path.isfile(os.path.join('templates/', f))
+templates = ['app/templates/' + f for f in os.listdir('app/templates/') 
+             if os.path.isfile(os.path.join('app/templates/', f))
              and f[-4:] == 'html' ]
 
 
