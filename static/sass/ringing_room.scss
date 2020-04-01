@@ -77,8 +77,29 @@ body {
 	@include on-circle(12, $circle-size, $img-size);
 }
 
+
+// Now, position the bell_circle
+#bell_circle {
+  $circ-size: 25em;
+  $img-size: 5em;
+
+
+  // margin: 5em auto 0;
+  // border: solid 5px tomato;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  &.six   { @include on-circle-six($circ-size,$img-size); }
+  &.eight { @include on-circle-eight($circ-size,$img-size); }
+  &.ten { @include on-circle-ten($circ-size,$img-size); }
+  &.twelve { @include on-circle-twelve($circ-size,$img-size); }
+}
+
 /* Other positioning */
 
+// Position rope images and their numbers
 .rope {
 	display: table-cell;
 	vertical-align: bottom;
@@ -101,27 +122,10 @@ body {
 	}
 }
 
+// make the treble number red
 .treble {
 	color: #ff000d;
 
-}
-
-#bell_circle {
-  $circ-size: 25em;
-  $img-size: 5em;
-
-
-  // margin: 5em auto 0;
-  // border: solid 5px tomato;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-  &.six   { @include on-circle-six($circ-size,$img-size); }
-  &.eight { @include on-circle-eight($circ-size,$img-size); }
-  &.ten { @include on-circle-ten($circ-size,$img-size); }
-  &.twelve { @include on-circle-twelve($circ-size,$img-size); }
 }
 
 
