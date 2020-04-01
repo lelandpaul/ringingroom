@@ -1,74 +1,47 @@
 <!doctype html>
 <html>
-  <head>
 
-    <title>Ringing Room</title>
+<head>
+	<title>Ringing Room</title>
+    <!-- external resouces -->
+	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css" integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous">
+    <!-- internal resouces -->
+	<link rel="stylesheet" href="{{url_for('static', filename = 'css/static.scss.css')+ '?nocache202003311353'}}">
+	<!-- Favicon nonsense -->
+	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-196x196.png')}}" sizes="196x196" />
+	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-96x96.png')}}" sizes="96x96" />
+	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-32x32.png')}}" sizes="32x32" />
+	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-16x16.png')}}" sizes="16x16" />
+	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-128.png')}}" sizes="128x128" />
+</head>
 
-    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css" integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous">
-
-    <link rel="stylesheet" href="{{url_for('static', filename = 'css/static.scss.css')+ '?nocache202003311353'}}">
-
-  <!-- Favicon nonsense -->
-  <link rel="icon" type="image/png" 
-        href="{{url_for('static', filename = 'images/favicon/favicon-196x196.png')}}" 
-        sizes="196x196" />
-  <link rel="icon" type="image/png" 
-        href="{{url_for('static', filename = 'images/favicon/favicon-96x96.png')}}" 
-        sizes="96x96" />
-  <link rel="icon" type="image/png" 
-        href="{{url_for('static', filename = 'images/favicon/favicon-32x32.png')}}" 
-        sizes="32x32" />
-  <link rel="icon" type="image/png" 
-        href="{{url_for('static', filename = 'images/favicon/favicon-16x16.png')}}" 
-        sizes="16x16" />
-  <link rel="icon" type="image/png" 
-        href="{{url_for('static', filename = 'images/favicon/favicon-128.png')}}" 
-        sizes="128x128" />
-
-  </head>
-
-  <body>
-
-
-    <div class="pure-g">
-
-    <div class="pure-u-1-4 nav">
-    <div class="pure-menu">
-    <ul class="pure-menu-list">
-        <li class="pure-menu-item"><a href="/" class="pure-menu-link
-            home">Ringing Room</a></li>
-        <li class="pure-menu-item"><a href="/about" class="pure-menu-link">About</a></li>
-        <li class="pure-menu-item"><a href="/help" class="pure-menu-link">Help</a></li>
-        <li class="pure-menu-item"><a href="/contact"
-            class="pure-menu-link">Contact</a></li>
-        <li class="pure-menu-item"><a href="/donate"
-            class="pure-menu-link">Donate</a></li>
-    </ul>
-  </div>
-    </div>
-
-
-
-    <div class="pure-u-2-5 copy">
-
-
-      <p>
-      We decided to create the Ringing Room in order to facilitate continued
-      engagement with ringing during the coronavirus crisis. There are ongoing
-      costs associated with sustaining the site; if you'd like to help us keep
-      the site up and running, we're accepting donations by Venmo or Paypal. 
-      </p>
-
-      <ul>
-        <li> Venmo: <a href="https://venmo.com/lelandpaul">@lelandpaul</a></li>
-        <li> Paypal: 
-          <a href="https://paypal.me/ringingroom">paypal.me/ringingroom</a></li>
-
-     
-    </div>
-
-
-  </body>
-
+<body>
+	<div class="pure-g">
+		<div class="pure-u-1-4 nav">
+			<div class="pure-menu">
+				<ul class="pure-menu-list">
+					<li class="pure-menu-item"><a href="/" class="pure-menu-link
+            home">Ringing Room</a>
+					</li>
+					<li class="pure-menu-item"><a href="/about" class="pure-menu-link">About</a>
+					</li>
+					<li class="pure-menu-item"><a href="/help" class="pure-menu-link">Help</a>
+					</li>
+					<li class="pure-menu-item"><a href="/contact" class="pure-menu-link">Contact</a>
+					</li>
+					<li class="pure-menu-item"><a href="/donate" class="pure-menu-link">Donate</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="pure-u-2-5 copy">
+			<p>We decided to create the Ringing Room in order to facilitate continued engagement with ringing during the coronavirus crisis. There are ongoing costs associated with sustaining the site; if you'd like to help us keep the site up and running, we're accepting donations by Venmo or Paypal.</p>
+			<ul>
+				<li>Venmo: <a href="https://venmo.com/lelandpaul">@lelandpaul</a>
+				</li>
+				<li>Paypal: <a href="https://paypal.me/ringingroom">paypal.me/ringingroom</a>
+				</li>
+		</div>
+</body>
 
 </html>
