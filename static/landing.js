@@ -43,9 +43,9 @@ tower_selector = new Vue({
 		send_room_name: function(){
 			console.log('Sending name: ' + this.room_name);
 			if (this.join_room){
-				socketio.emit('c_join_tower_by_id',{tower_code: this.room_name});
+				socketio.emit('c_join_tower_by_id',{tower_id: parseInt(this.room_name)});
 			} else {
-				socketio.emit('c_create_room',{room_name: this.room_name});
+				socketio.emit('c_create_tower',{tower_name: this.room_name});
 			}
 		},
 
@@ -65,7 +65,7 @@ tower_selector = new Vue({
 
 				if (room_code){
 					this.join_room = true;
-					socketio.emit('c_check_tower_id',{room_code: this.room_name});
+					socketio.emit('c_check_tower_id',{tower_id: parseInt(this.room_name)});
 				} else {
 					this.join_room = false;
 				}
