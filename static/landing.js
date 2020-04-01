@@ -1,5 +1,3 @@
-window.onload = function() {
-
 /* SOCKET */
 
 	// for development
@@ -97,6 +95,3 @@ tower_selector = new Vue({
 				`
 
 });
-
-
-};
