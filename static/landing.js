@@ -1,4 +1,6 @@
+///////////
 /* SETUP */
+///////////
 
 // Don't log unless needed
 var logger = function()
@@ -24,13 +26,15 @@ var logger = function()
 logger.disableLogger()
 
 
-//Set up socketio instance
+// Set up socketio instance
 var socketio = io() // for development
 // var socketio = io.connect('ringingroom.com',{secure:true, transports:['websocket']}); // for server
 
 
 
+////////////////////////
 /* SOCKETIO LISTENERS */
+////////////////////////
 
 // Redirection: The server is sending the client to a tower
 socketio.on('s_redirection', function(destination){
@@ -52,12 +56,13 @@ socketio.on('s_check_id_failure', function(){
 });
 
 
+/////////
 /* VUE */
+/////////
 
-Vue.options.delimiters = ['[[', ']]'];
+Vue.options.delimiters = ['[[', ']]']; // make sure Vue doesn't interfere with jinja
 
 // all vue objects needs to be defined within this block, so that the jinja templates are rendered first
-//
 $(document).ready(function() {
 
 // This is the application instance for the page

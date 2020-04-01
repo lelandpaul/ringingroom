@@ -1,3 +1,8 @@
+///////////
+/* SETUP */
+///////////
+
+// Don't log unless needed
 var logger = function()
 {
     var oldConsoleLog = null;
@@ -18,240 +23,88 @@ var logger = function()
 
     return pub;
 }();
-
 logger.disableLogger()
 
+// Set up socketio instance
+var socketio = io() // for development
+// var socketio = io.connect('ringingroom.com',{secure:true, transports:['websocket']}); // for server
 
-$(document).ready(function() {
-
-/* SOCKET */
-
-	// for development
-var socketio = io()
-
-
-	// for server
-// var socketio = io.connect('ringingroom.com',{secure:true, transports:['websocket']});
+// Get the current tower_id and let the server know where we are
+var cur_path = window.location.pathname.split('/')
+var cur_tower_id = parseInt(cur_path[1])
+socketio.emit('c_join',{tower_id: cur_tower_id})
 
 
-/* Listen for ringing events */
+////////////////////////
+/* SOCKETIO LISTENERS */
+////////////////////////
 
+// A bell was rung
 socketio.on('s_bell_rung', function(msg,cb){
 	console.log('Received event: ' + msg.global_bell_state + msg.who_rang);
 	bell_circle.ring_bell(msg.who_rang);
 });
 
-
-socketio.on('s_global_state',function(msg,cb){
-	console.log('Setting global state: ' + msg.global_bell_state);
-	gstate = msg.global_bell_state;
-	for (i = 0; i < gstate.length; i++){
-		bell_circle.$refs.bells[i].set_state_silently(gstate[i]);
-	};
-});
-
-/* Keeping track of towers */
-
-
-var cur_path = window.location.pathname.split('/')
-var cur_tower = parseInt(cur_path[1])
-socketio.emit('c_join',{tower_id: cur_tower})
-
-socketio.on('s_name_change',function(msg,cb){
-	console.log('Received name change: ' + msg.new_name);
-	bell_circle.$refs.controls.tower_name = msg.new_name;
-	bell_circle.$refs.controls.tower_id = parseInt(cur_tower);
-});
-
+// A call was made
 socketio.on('s_call',function(msg,cb){
 	console.log('Received call: ' + msg.call);
 	bell_circle.$refs.display.make_call(msg.call);
 });
 
+// The server sent us the global state; set all bells accordintgly
+socketio.on('s_global_state',function(msg,cb){
+	console.log('Setting global state: ' + msg.global_bell_state);
+	var gstate = msg.global_bell_state;
+	for (var i = 0; i < gstate.length; i++){
+		bell_circle.$refs.bells[i].set_state_silently(gstate[i]);
+	};
+});
 
+// The server told us the name of the tower
+socketio.on('s_name_change',function(msg,cb){
+	console.log('Received name change: ' + msg.new_name);
+	bell_circle.$refs.controls.tower_name = msg.new_name;
+	bell_circle.$refs.controls.tower_id = parseInt(cur_tower_id);
+});
+
+
+// The server told us the number of bells in the tower
 socketio.on('s_size_change', function(msg,cb){
-	new_size = msg.size;
+	var new_size = msg.size;
 	console.log('changing size to: ' + new_size);
 	bell_circle.number_of_bells = new_size;
 
 });
 
-/* AUDIO */
 
-const tower = new Howl({
-  src: [
-    "static/audio/tower.ogg",
-    "static/audio/tower.m4a",
-    "static/audio/tower.mp3",
-    "static/audio/tower.ac3"
-  ],
-  volume: 0.2,
-  sprite: {
-    "0": [
-      0,
-      997.7551020408163
-    ],
-    "1": [
-      2000,
-      998.6167800453516
-    ],
-    "2": [
-      4000,
-      1010.9523809523813
-    ],
-    "2sharp": [
-      7000,
-      998.3673469387755
-    ],
-    "3": [
-      9000,
-      1000.5442176870752
-    ],
-    "4": [
-      12000,
-      997.0294784580495
-    ],
-    "5": [
-      14000,
-      1018.4580498866218
-    ],
-    "6": [
-      17000,
-      1010.3174603174593
-    ],
-    "7": [
-      20000,
-      1007.0975056689342
-    ],
-    "8": [
-      23000,
-      1010.9523809523821
-    ],
-    "9": [
-      26000,
-      1010.9523809523821
-    ],
-    "E": [
-      29000,
-      1003.0385487528335
-    ],
-    "T": [
-      32000,
-      1011.247165532879
-    ],
-    "Bob": [
-      35000,
-      396.84807256235644
-    ],
-    "Single": [
-      37000,
-      582.8798185941012
-    ],
-    "Go": [
-      39000,
-      1009.7732426303878
-    ],
-    "That's all": [
-      42000,
-      654.6938775510184
-    ],
-    "Stand next": [
-      44000,
-      1228.9342403628111
-    ]
-  }
-}
-);
-
-const hand = new Howl({
-  src: [
-    "static/audio/hand.ogg",
-    "static/audio/hand.m4a",
-    "static/audio/hand.mp3",
-    "static/audio/hand.ac3"
-  ],
-  volume: 0.2,
-  sprite: {
-    "1": [
-      0,
-      1519.8866213151928
-    ],
-    "2sharp": [
-      3000,
-      1495.3514739229022
-    ],
-    "3": [
-      6000,
-      1520.3854875283448
-    ],
-    "4": [
-      9000,
-      1519.841269841269
-    ],
-    "5": [
-      12000,
-      1495.419501133787
-    ],
-    "6": [
-      15000,
-      1507.5736961451262
-    ],
-    "7": [
-      18000,
-      1507.7324263038533
-    ],
-    "8": [
-      21000,
-      1513.6961451247153
-    ],
-    "Bob": [
-      24000,
-      396.84807256236
-    ],
-    "Single": [
-      26000,
-      582.8798185941047
-    ],
-    "Go": [
-      28000,
-      1009.7732426303843
-    ],
-    "That's all": [
-      31000,
-      654.6938775510221
-    ],
-    "Stand next": [
-      33000,
-      1228.9342403628111
-    ]
-  }
-}
-  
-);
-
-const bell_mappings = {  6: ['3','4','5','6','7','8'],
-					     8: ['1','2sharp','3','4','5','6','7','8'],
-						10: ['3','4','5','6','7','8','9','0','E','T'],
-						12: ['1','2','3','4','5','6','7','8','9','0','E','T']
-					  }
-
+// The server told us whether ot use handbells or towerbells
 socketio.on('s_audio_change',function(msg,cb){
   console.log('changing audio to: ' + msg.new_audio);
   bell_circle.$refs.controls.audio_type = msg.new_audio;
   bell_circle.audio = msg.new_audio == 'Tower' ? tower : hand;
   if (msg.new_audio == 'Hand' && bell_circle.number_of_bells > 8){
-    socketio.emit('c_size_change',{new_size: 8, tower_id: cur_tower});
+    socketio.emit('c_size_change',{new_size: 8, tower_id: cur_tower_id});
   }
 });
 
 
-/* RING BY KEYBOARD */
+///////////
+/* AUDIO */
+///////////
+
+import {tower, hand, bell_mappings} from './audio.js';
+
+
+
+/////////////
+/* HOTKEYS */
+/////////////
 
 document.onkeydown = function (e) {
     e = e || window.event;
-	key = e.key
+	const key = e.key // this wil be the character generated by the keypress
     // Shift+1 produces code "Digit1"; this gets the digit itself
-    code = e.code[e.code.length - 1]
+    const code = e.code[e.code.length - 1]
 
 	// The numberkeys 1-0 ring those bells, with -, = ringing E, T
 	if (parseInt(key)-1 in [...Array(9).keys()]){
@@ -278,17 +131,15 @@ document.onkeydown = function (e) {
             bell_circle.rotate(12);
         }
     }
-    
 
+    const n_b = bell_circle.number_of_bells;
 	// Space, j, and ArrowRight ring the bell in position n/2
 	if ([' ','j','ArrowRight'].includes(key)){
-		n_b = bell_circle.number_of_bells;
 		bell_circle.pull_rope_by_pos(n_b / 2);
 	}
 
 	// f and ArrowLeft ring the bell in position n/2 + 1
 	if (['f','ArrowLeft'].includes(key)){
-		n_b = bell_circle.number_of_bells
 		bell_circle.pull_rope_by_pos((n_b / 2) + 1);
 	}
 
@@ -316,25 +167,35 @@ document.onkeydown = function (e) {
         console.log('calling stand');
         bell_circle.make_call("Stand next");
     }
+}; // end hotkey block
 
-};
+
+/////////
+/* VUE */
+/////////
+
+// all vue objects needs to be defined within  document.read, so that the jinja
+// templates are rendered first
+
+// However, we need the main Vue to be accessible in the main scope
+var bell_circle
+
+$(document).ready(function() {
+
+Vue.options.delimiters = ['[[', ']]']; // make sure vue doesn't interfere with jinja
 
 /* BELLS */
 
-// First, set up the bell class
+// First, set up the bell component
 // number — what bell
 // poss — where in the tower (the css class)
 // stroke — boolean — is the bell currently at hand?
 // ring() — toggle the stroke, then 
+Vue.component("bell_rope", {
 
+	props: ["number", "position", "number_of_bells","audio"],
 
-
-Vue.component("bell-rope", {
-
-	delimiters: ['[[',']]'], // don't interfere with flask
-
-	props: ["number", "position", "no_of_bells","audio"],
-
+    // data in props should be a function, to maintain scope
 	data: function() {
 	  return { stroke: true,
 			   circled_digits: ["①", "②", "③", "④", "⑤", "⑥", 
@@ -345,21 +206,24 @@ Vue.component("bell-rope", {
 
 	methods: {
 
-	  pull_rope: function() {
+      
+      // emit a ringing event ot the server
+	  emit_ringing_event: function() {
 		socketio.emit('c_bell_rung',
-				{bell: this.number, stroke: this.stroke, tower_id: cur_tower});
-		// this.stroke = !this.stroke;
-		report = "Bell " + this.number + " will ring a " + (this.stroke ? "handstroke":"backstroke");
+				{bell: this.number, stroke: this.stroke, tower_id: cur_tower_id});
+		var report = "Bell " + this.number + " will ring a " + (this.stroke ? "handstroke":"backstroke");
 		console.log(report);
 	  },
 
+      // Ringing event received; now ring the bell
 	  ring: function(){
 		this.stroke = !this.stroke;
-		this.audio.play(bell_mappings[this.no_of_bells][this.number - 1]);
-		report = "Bell " + this.number + " rang a " + (this.stroke ? "backstroke":"handstroke");
+		this.audio.play(bell_mappings[this.number_of_bells][this.number - 1]);
+		var report = "Bell " + this.number + " rang a " + (this.stroke ? "backstroke":"handstroke");
 		console.log(report);
 	  },
 	
+      // global_state received; set the bell to the correct stroke
 	  set_state_silently: function(new_state){
 		  console.log('Bell ' + this.number + ' set to ' + new_state)
 		  this.stroke = new_state
@@ -367,61 +231,71 @@ Vue.component("bell-rope", {
 	},
 
 	template:`
-	  <div class='rope'>
+             <div class='rope'>
 
-	  <img v-if="position <= no_of_bells/2"
-		   @click='pull_rope'
-		   class="rope-img" 
-		   :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"/>
+                 <img v-if="position <= number_of_bells/2"
+                      @click='emit_ringing_event'
+                      class="rope_img" 
+                      :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"
+                      />
 
-	  <div class='number' v-bind:class="[position > no_of_bells/2 ? 'left_number' : '', 
-										 number == 1 ? 'treble' : '']">
+                 <div class='number' 
+                      v-bind:class="[position > number_of_bells/2 ? 'left_number' : '', 
+                                     number == 1 ? 'treble' : '']"
+                      >
 
-	  [[ circled_digits[number-1] ]]
+                 [[ circled_digits[number-1] ]]
 
-	  </div>
+                 </div>
 
-	  <img v-if="position > no_of_bells/2"
-		   @click='pull_rope'
-		   class="rope-img" 
-		   :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"/>
+                 <img class="rope_img" 
+                      v-if="position > number_of_bells/2"
+                      @click='emit_ringing_event'
+                      :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"
+                      />
 
-	  </div>
-		   `
+             </div>
+		     `
 
-});
+}); // End bell_rope component
 
 
-Vue.component('call-display', {
+
+// The call_display is where call messages are flashed
+Vue.component('call_display', {
 
     props: ["audio"],
 
-	delimiters: ['[[',']]'], // don't interfere with flask
-
+    // data in components should be a function, to maintain scope
 	data: function(){
 		return { cur_call: '' };
 	},
 
 	methods: {
 
+        // a call was received from the server; display it and play audio
 		make_call: function(call){
 			console.log('changing cur_call to: ' + call);
 			this.cur_call = call;
 			this.audio.play(call);
 			var self = this;
+            // remove the call after 2 seconds
 			setTimeout(function() { self.cur_call = ''; 
 						console.log('changing cur_call back');}, 2000);
 		}
 	},
 
-	template: "<h2 id='call-display' ref='display'>[[ cur_call ]]</h2>"
-});
+	template: `<h2 id='call_display' 
+                   ref='display'>[[ cur_call ]]
+               </h2>
+              `
+}); // end call_display component
 
 
-Vue.component('tower-controls', {
+// tower_controls holds title, id, size buttons, audio toggle
+Vue.component('tower_controls', {
 
-	delimiters: ['[[',']]'], // don't interfere with flask
-
+    // data in components should be a function, to maintain scope
 	data: function(){ 
 		return {tower_sizes: [6,8,10,12],
 				buttons: { 6: "⑥",
@@ -433,43 +307,51 @@ Vue.component('tower-controls', {
                 audio_type: 'Tower'} },
 
 	methods: {
+
+        // the user clicked a tower-size button
 		set_tower_size: function(size){
 			console.log('setting tower size to ' + size);
-			socketio.emit('c_size_change',{new_size: size, tower_id: cur_tower});
+			socketio.emit('c_size_change',{new_size: size, tower_id: cur_tower_id});
 		},
+
+        // the user clicked the audio toggle
         swap_audio: function(){
           console.log('swapping audio');
-          socketio.emit('c_audio_change',{old_audio: this.audio_type, tower_id:cur_tower})
+          socketio.emit('c_audio_change',{old_audio: this.audio_type, tower_id: cur_tower_id})
+
         },
 	},
 
-	template: `<div class = "tower-control">
-				<h2 class="tower-name">[[ tower_name ]] 
-                    <span class="tower-id">ID: [[tower_id]]</span>
-                      </h2>
-				<ul class = "tower-control-size"> 
-				<li 
-					v-for="size in tower_sizes"
-					v-bind:size="size"
-                    v-show="audio_type == 'Tower' || size <= 8"
-					@click="set_tower_size(size)">
-					[[ buttons[size] ]]
-				</li> 
-			   </ul>
-               <div class="audio-toggle"
-                    @click="swap_audio">Audio: [[ audio_type ]] bell</div>
-			   </div>`,
-});
+	template: `
+              <div class="tower_control">
+                  <h2 class="tower_name">
+                      [[ tower_name ]] 
+                      <span class="tower_id">ID: [[tower_id]]</span>
+                  </h2>
+			      <ul class = "tower_control_size"> 
+			        <li v-for="size in tower_sizes"
+				        v-bind:size="size"
+                        v-show="audio_type == 'Tower' || size <= 8"
+				        @click="set_tower_size(size)"
+                        >
+                        [[ buttons[size] ]]
+                    </li> 
+			      </ul>
+                  <div class="audio_toggle"
+                       @click="swap_audio"
+                       >
+                       Audio: [[ audio_type ]] bell
+                  </div>
+			   </div>
+               `,
+}); // End tower_controls
 
 
-// The master view
-// ring_bell: Ring a specific bell
 
-var bell_circle = new Vue({
+// The master Vue application
+bell_circle = new Vue({
 
-	delimiters: ['[[',']]'], // don't interfere with flask
-
-	el: "#ringing-circle",
+	el: "#ringing_circle",
 
 	data: {
 
@@ -478,58 +360,42 @@ var bell_circle = new Vue({
         audio: tower,
 	},
 
+    // On creattion: Create a list of bells
+	created: function() {
+		var list = [];
+		for (var i=1; i <= this.number_of_bells; i++){
+			list.push({number: i, position: i});
+		}
+		this.bells = list;
+	},
+
 	watch: {
+        // Change the list of bells to track the current number
 		number_of_bells: function(new_count, old_count){
-			list = [];
-			for (i=1; i <= new_count; i++){
+			var list = [];
+			for (var i=1; i <= new_count; i++){
 				list.push({number: i, position: i});
 			}
 			this.bells = list;
 		}
 	},
 
-	created: function() {
-		list = [];
-		for (i=1; i <= this.number_of_bells; i++){
-			list.push({number: i, position: i});
-		}
-		this.bells = list;
-	},
-
 	methods: {
+      
+      // the server rang a bell; find the correct one and ring it
 	  ring_bell: function(bell) {
 		console.log("Ringing the " + bell)
 		this.$refs.bells[bell-1].ring()
 	  },
 
+    
+      // Trigger a specific bell to emit a ringing event
 	  pull_rope: function(bell) {
 		console.log("Pulling the " + bell)
-		this.$refs.bells[bell-1].pull_rope()
+		this.$refs.bells[bell-1].emit_ringing_event()
 	  },
 	
-	  make_call: function(call){
-        socketio.emit('c_call',{call: call,tower_id: cur_tower});
-	  },
-	
-	  rotate: function(newposs){
-		  if (newposs > this.number_of_bells) {
-			  return false;
-		  }
-		  offset = this.number_of_bells - newposs;
-		  var oldposs = 0;
-		  n_b = this.number_of_bells
-
-		  for (bell in this.bells){
-			  number = this.bells[bell]['number'];
-			  this.bells[bell]['position'] = (number + offset + (n_b/2)-1)%n_b + 1;
-		  };
-
-		  this.bells = this.bells.sort(
-			  function(a,b){
-				  return a['position'] - b['position'];
-			  });
-	  },
-
+      // Like ring_bell, but calculated by the position in the circle (respecting rotation)
 	  ring_bell_by_pos: function(pos){
 			for (bell in this.bells){
 				if (this.bells[bell]['position'] == pos){
@@ -539,42 +405,84 @@ var bell_circle = new Vue({
 				}
 		},
 
+      // Like pull_rope, but calculated by the position in the circle (respecting rotation)
 	  pull_rope_by_pos: function(pos){
-			for (bell in this.bells){
+			for (var bell in this.bells){
 				if (this.bells[bell]['position'] == pos){
 					this.pull_rope(this.bells[bell]['number']);
 					return true;
 					}
 				}
 		},
+
+      // emit a call
+	  make_call: function(call){
+        socketio.emit('c_call',{call: call,tower_id: cur_tower_id});
+	  },
+	
+      // rotate the view of the circle
+	  rotate: function(newposs){
+		  if (newposs > this.number_of_bells) {
+              // the user tried to rotate to a bell that doesn't exist
+			  return false;
+		  }
+
+          // how many positions to rotate?
+		  var offset = this.number_of_bells - newposs;
+		  var oldposs = 0;
+		  var n_b = this.number_of_bells
+
+		  for (var bell in this.bells){
+              // change the position of each bell
+			  var number = this.bells[bell]['number'];
+			  this.bells[bell]['position'] = (number + offset + (n_b/2)-1)%n_b + 1;
+		  };
+
+          // We need the Vue's list to be sorted by position
+		  this.bells = this.bells.sort(
+			  function(a,b){
+				  return a['position'] - b['position'];
+			  });
+	  },
+
 	},
 
 	template: `
-	<div>
-	<tower-controls ref="controls"></tower-controls>
-    <call-display v-bind:audio="audio" ref="display"></call-display>
-    <div id="bell-circle"
-		 v-bind:class="[ number_of_bells == 6  ? 'six'    : '',
-						 number_of_bells == 8  ? 'eight'  : '',
-						 number_of_bells == 10 ? 'ten'    : '',
-						 number_of_bells == 12 ? 'twelve' : '']">
+              <div>
+                  <tower_controls ref="controls"></tower_controls>
+                  <call_display v-bind:audio="audio" ref="display"></call_display>
+                  <div id="bell_circle"
+                       v-bind:class="[ number_of_bells == 6  ? 'six'    : '',
+                                       number_of_bells == 8  ? 'eight'  : '',
+                                       number_of_bells == 10 ? 'ten'    : '',
+                                       number_of_bells == 12 ? 'twelve' : '']">
 
-        <bell-rope
-          v-for="bell in bells"
-          v-bind:key="bell.number"
-          v-bind:number="bell.number"
-		  v-bind:position="bell.position"
-		  v-bind:no_of_bells="number_of_bells"
-          v-bind:audio="audio"
-		  v-bind:id="bell.number"
-          ref="bells"
-          ></bell-rope>
+                      <bell_rope v-for="bell in bells"
+                                 v-bind:key="bell.number"
+                                 v-bind:number="bell.number"
+                                 v-bind:position="bell.position"
+                                 v-bind:number_of_bells="number_of_bells"
+                                 v-bind:audio="audio"
+                                 v-bind:id="bell.number"
+                                 ref="bells"
+                                 ></bell_rope>
 
-    </div>
-	</div>
-	`
+                  </div>
+              </div>
+              `
 
-});
+}); // end Vue bell_circle
+
+}); // end document.ready
+
+
+
+
+////////////////////////
+/* Chat functionality */
+////////////////////////
+// This was temporary for testing room functionality when we first added it. 
+// It may be useful later.
 
 // var tower_selector = new Vue({
 
@@ -594,17 +502,17 @@ var bell_circle = new Vue({
 // 			console.log('sending message: ' + un + msg);
 // 			socketio.emit('message_sent', { user_name : un, 
 // 											message : msg,
-// 											tower : cur_tower})
+// 											tower : cur_tower_id})
 // 		},
 
 // 		enter_tower: function(){
-// 			if (cur_tower) {
-// 				console.log('leaving tower: ' + cur_tower);
-// 				socketio.emit('leave',{username: this.cur_username, tower: cur_tower});
+// 			if (cur_tower_id) {
+// 				console.log('leaving tower: ' + cur_tower_id);
+// 				socketio.emit('leave',{username: this.cur_username, tower: cur_tower_id});
 // 			};
 // 			console.log('entering tower: ' + this.tower_selected);
 // 			socketio.emit('join', {username: this.cur_username, tower: this.tower_selected});
-// 			cur_tower = this.tower_selected;
+// 			cur_tower_id = this.tower_selected;
 // 		}
 
 // 	},
@@ -646,4 +554,3 @@ var bell_circle = new Vue({
 // });
 
 
-});

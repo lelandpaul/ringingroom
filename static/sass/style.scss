@@ -106,7 +106,7 @@ body {
 
 }
 
-#bell-circle {
+#bell_circle {
   $circ-size: 25em;
   $img-size: 5em;
 
@@ -127,7 +127,7 @@ body {
 
 /* Call display */
 
-h2#call-display {
+h2#call_display {
 	position: absolute;
 	text-align: center;
 	display: inline-block;
@@ -141,20 +141,20 @@ h2#call-display {
 
 /* Tower controls */
 
-h2.tower-name {
+h2.tower_name {
   padding-left: 0.5em;
   margin-bottom: -0.5em;
   opacity: 0.75;
 }
 
-.tower-id {
+.tower_id {
   padding-left: 0.5em;
   margin-bottom: -0.5em;
   font-size: small;
   opacity: 0.75;
 }
 
-.tower-control-size {
+.tower_control_size {
   padding-left: 0.5em;
   li {
     cursor: pointer;
@@ -169,11 +169,11 @@ h2.tower-name {
 
 }
 
-.tower-control{
+.tower_control{
   padding-left:0.5em;
 }
 
-.audio-toggle{
+.audio_toggle{
   padding-left:1em;
   font-size: smaller;
   opacity: 0.75;
