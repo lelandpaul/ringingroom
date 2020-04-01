@@ -1,3 +1,6 @@
+/* SETUP */
+
+// Don't log unless needed
 var logger = function()
 {
     var oldConsoleLog = null;
@@ -18,31 +21,30 @@ var logger = function()
 
     return pub;
 }();
-
 logger.disableLogger()
 
 
-$(document).ready(function() {
-
-/* SOCKET */
-
-	// for development
-var socketio = io()
+//Set up socketio instance
+var socketio = io() // for development
+// var socketio = io.connect('ringingroom.com',{secure:true, transports:['websocket']}); // for server
 
 
-	// for server
-// var socketio = io.connect('ringingroom.com',{secure:true, transports:['websocket']});
 
+/* SOCKETIO LISTENERS */
+
+// Redirection: The server is sending the client to a tower
 socketio.on('s_redirection', function(destination){
 	window.location.href = destination;
 });
 
 
+// The user has entered (but not submitted) a valid tower_id; display a message
 socketio.on('s_check_id_success', function(msg){
 	console.log('received success');
 	tower_selector.message = "Join tower: " + msg.tower_name + '.';
 });
 
+// The user has entered (but not submitted) an invalid tower_id; display a message
 socketio.on('s_check_id_failure', function(){
 	console.log('received failure');
 	tower_selector.message = "There is no tower with that code.";
@@ -50,77 +52,100 @@ socketio.on('s_check_id_failure', function(){
 });
 
 
+/* VUE */
 
+Vue.options.delimiters = ['[[', ']]'];
+
+// all vue objects needs to be defined within this block, so that the jinja templates are rendered first
+//
+$(document).ready(function() {
+
+// This is the application instance for the page
 tower_selector = new Vue({
-	
-	delimiters: ['[[',']]'], // don't interfere with flask
 
-	el: "#tower-selector",
+	el: "#tower_selector",
 
-	data: { tower_name: '',
+	data: { input_field: '',
 			join_tower: false,
 			button_disabled: false,
-			message: "To create a new tower, enter a name for that tower. To join a tower, enter the Tower ID number.",},
+            default_message: "To create a new tower, enter a name for that tower. To join a tower, enter the Tower ID number.",
+			message: "To create a new tower, enter a name for that tower. To join a tower, enter the Tower ID number."},
 
 	methods: {
 
+        // Send the tower (or id) to the tower to create (or join) it
 		send_tower_name: function(){
-			console.log('Sending name: ' + this.tower_name);
+			console.log('Sending name: ' + this.input_field);
+
 			if (this.join_tower){
-				socketio.emit('c_join_tower_by_id',{tower_id: parseInt(this.tower_name)});
+                // what we have is an ID; parse it as int, then join that tower
+				socketio.emit('c_join_tower_by_id',{tower_id: parseInt(this.input_field)});
 			} else {
-				socketio.emit('c_create_tower',{tower_name: this.tower_name});
+                //what we have is a name; create that tower
+				socketio.emit('c_create_tower',{tower_name: this.input_field});
 			}
 		},
 
+        // Fires on each keypress in the input box: Is this a tower_id?
 		check_tower_id: function(){
-			console.log('checking, length is: ' + this.tower_name.length);
-			if (this.tower_name.length == 9) {
+			console.log('checking, length is: ' + this.input_field.length);
+
+			if (this.input_field.length == 9) {
+                // It's a valid length
 				console.log('checking for integer');
-				console.log(parseInt(this.tower_name));
+				console.log(parseInt(this.input_field));
 				try {
-					tower_code = parseInt(this.tower_name)
-					console.log('int: ' + tower_code);
+                    // it's an int, so it's a plausible tower_id
+					tower_id = parseInt(this.input_field)
 				}
 				catch(error){
-					console.log('nope')
-					tower_code = null
+                    // it's  not a plausible tower_id
+					console.log('not a valid tower_id')
+					tower_id = null
 				}
 
-				if (tower_code){
-					this.join_tower = true;
-					socketio.emit('c_check_tower_id',{tower_id: parseInt(this.tower_name)});
+				if (tower_id){
+                    // we found a valid tower_id
+                    this.join_tower = true; //flag: on submit, try to join (rather than create)
+                    // Ask the server if it's a known tower_id
+					socketio.emit('c_check_tower_id',{tower_id: tower_id});
 				} else {
-					this.join_tower = false;
+                    // not a valid tower_id
+                    this.join_tower = false;//flag: on submit, try to create
 				}
 			} else {
+                // this doesn't look like a tower_id; make sure everything is back at default
 				this.button_disabled = false;
 				this.join_tower = false;
-				this.message = "To create a new tower, enter a name for that tower. To join a tower, enter the Tower ID number.";
+				this.message = this.default_message;
 			}
 		},
 	},
 
 	template: `<form class="pure-form"
-					v-on:submit.prevent="send_tower_name">
-				<fieldset>
-				<input type="text" 
-				       class="pure-input"
-					   v-model="tower_name" 
-					   placeholder="Tower name or ID number" 
-					   v-on:input="check_tower_id"
-					   required>
-				<button type="submit" 
-						:disabled="button_disabled"
-						class="pure-button pure-button-primary">
-					[[ join_tower ? "Join" : "Create" ]]
-				</button>
-				</fieldset>
-				<div id="join-message">[[ message ]]</div>
+					 v-on:submit.prevent="send_tower_name"
+                     >
+                    <fieldset>
+                        <input class="pure-input"
+                               type="text" 
+                               placeholder="Tower name or ID number" 
+                               v-model="input_field" 
+                               v-on:input="check_tower_id"
+                               required
+                               >
+                        <button type="submit" 
+                                :disabled="button_disabled"
+                                class="pure-button pure-button-primary"
+                                >
+                            [[ join_tower ? "Join" : "Create" ]]
+                        </button>
+                    </fieldset>
+                    <div id="join-message"> 
+                        [[ message ]]
+                    </div>
 				</form>
 				`
+}); // end tower_selector
 
-});
 
-
-});
+}); // end document.ready
