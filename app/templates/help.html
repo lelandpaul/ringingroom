@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>Ringing Room</title>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-162521976-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-162521976-1');
+    </script>
+    <!-- external resources -->
+	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css" integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous">
+    <!-- internal resources -->
+	<link rel="stylesheet" href="{{url_for('static', filename = 'css/static.scss.css')+ '?nocache202003311353'}}">
+	<!-- Favicon nonsense -->
+	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-196x196.png')}}" sizes="196x196" />
+	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-96x96.png')}}" sizes="96x96" />
+	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-32x32.png')}}" sizes="32x32" />
+	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-16x16.png')}}" sizes="16x16" />
+	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-128.png')}}" sizes="128x128" />
+</head>
+
+<body>
+	<div class="pure-g">
+		<div class="pure-u-1-4 nav">
+			<div class="pure-menu">
+				<ul class="pure-menu-list">
+					<li class="pure-menu-item"><a href="/" class="pure-menu-link
+            home">Ringing Room</a>
+					</li>
+					<li class="pure-menu-item"><a href="/about" class="pure-menu-link">About</a>
+					</li>
+					<li class="pure-menu-item"><a href="/help" class="pure-menu-link">Help</a>
+					</li>
+					<li class="pure-menu-item"><a href="/contact" class="pure-menu-link">Contact</a>
+					</li>
+					<li class="pure-menu-item"><a href="/donate" class="pure-menu-link">Donate</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="pure-u-2-5 copy">
+			<p>Here's how to get started with the Ringing Room.</p>
+			<h3>Ideal set-up</h3>
+			<p>As far as we can tell, Ringing Rooms work best under the following set up:</p>
+			<ul>
+				<li>Use Google Chrome on a desktop or laptop where possible (Mac > Windows > Linux >> mobile). Microsoft Edge users, beware: keyboard hot-keys won't work in that browser.</li>
+				<li>Use a separate voice chat like Zoom, discord, Google hangouts, or WhatsApp to coordinate ringing and put calls in.</li>
+			</ul>There is a facility for using hot-keys to put in calls (see below), but in some browsers this results in the sound of the bells being interrupted.
+			<h3>Starting a new room</h3>
+			<p>Starting a new room is simple: go to the home page by clicking "Ringing Room" at the top left of this page. Then put any name you like in the text box and click "Create". This will create a new "tower" with a sharable URL. You can send this URL to others you would like to ring with.</p>
+			<h3>Joining a room</h3>
+			<p>There are currently two ways to join a room that already exists. The easiest way is to go directly to the link that the room's creator has sent you. Alternatively you may type in <i>just</i> the numerical ID (a ten-digit number) into the textbox on the homepage.</p>
+			<h3>Setting up and ringing in a ringing room</h3>
+			<p>On the top left, you may set the number of bells in the tower by clicking the desired number. To ring, you may either click on the ropes or use the following hot-keys:</p>
+			<ul>
+                <li> <b>[1-9], [0], [-], [=]:</b> Rings bells 1 - 9, 10, 11, and 12</li>
+                <li><b>[SPACE]:</b> Rings the bell in the lower right corner.</li>
+                <li><b>[LEFT] and [RIGHT] arrow keys:</b> Rings the left and right bottom-most bells.</li>
+                <li><b>[f] and [j]:</b> same as [LEFT] and [RIGHT]</li>
+                <li><b>[SHIFT]+[0-9]\[0]\[-]\[=]:</b> Rotate the "perspective" of the ringing room to put that bell in the lower right corner so it may be rung by [SPACE] or [j].</li>
+		    </ul>
+			<p>There are also hot-keys for various calls, but be aware that in some browsers using these results in the sound of the bells being interrupted.</p>
+			<ul>
+				<li><b>[g]</b>o next time</li>
+				<li><b>[b]</b>ob</li>
+				<li>si<b>[n]</b>gle</li>
+				<li>t<b>[h]</b>at's all</li>
+				<li>s<b>[t]</b>and next</li>
+			</ul>
+			<p>Currently working on getting audio for some equivalents of "Look to/Treble's going...," but using "go next time" should suffice for now, we hope!</p>
+			<h3>Known bugs and currently available fixes</h3>
+			<p>As Ringing Room has been gaining in popularity, we have had several bug reports (thank you!) and have started a list of known bugs and any currently available fix. This list is not exhaustive.</p>
+			<ul>
+				<li><b>Bells are sometimes laggy:</b> Sorry, no fix for this yet; but we should have one pushed in the next 2 or 3 days. We'll keep you updated on the "News" sidebar of the front page.</li>
+				<li><b>Bells are double-sounding/echoing:</b> First, try headphones. If that doesn't fix it, you are encountering a known problem in some browsers. Re-starting your browser or doing a hard refresh (hard refreshing varies by OS and browser type) has been known to help in some cases. The cause of this bug is not yet identified.</li>
+				<li><b>Microsoft Edge users can't access hot-keys:</b> A known issue due to the fact that Microsoft Edge handles key presses differently to every other browser on the market. Best fix now is to use another browser, but we're working on a better solution.</li>
+                <li><b>Ringing Room doesn't work under this non-Chrome browser/Linux OS...:</b> Please email us with the operating system and browser you're using, along with any steps taken to fix the issue (restarting browser, hard refreshing). We'll bear this in mind, but cross-platform testing is currently pretty slow as we both have Macs!</li>
+				<li><b>Ringing Room doesn't work on my phone:</b> A known problem, but one that's it's pretty hard to fix without building a dedicated app as far as we can tell. So probably best to stick to a desktop or laptop for now.</li>
+			</ul>
+		</div>
+</body>
+
+</html>
