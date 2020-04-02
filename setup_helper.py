@@ -5,8 +5,8 @@ from datetime import datetime
 from re import sub
 
 # compile sass
-os.system("sass app/static/sass/style.scss static/css/style.scss.css")
-os.system("sass app/static/sass/landing.scss static/css/landing.scss.css")
+os.system("sass app/static/sass/ringing_room.scss static/css/ringing_room.scss.css")
+os.system("sass app/static/sass/static.scss static/css/static.scss.css")
 
 # prevent caching bad versions by updating requests
 
