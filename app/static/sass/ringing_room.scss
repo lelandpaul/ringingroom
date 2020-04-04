@@ -239,11 +239,15 @@ h2#call_display {
 }
 
 .user_list {
-  padding-left: 0.5em;
+    
+  border-width: 2px;
+  border-left-style: solid;
+  padding-left: 0px;
   margin-top: 0px;
+  margin-left: 1em;
+  margin-top: 0.5em;
 
   li {
-    border-style-left:
     cursor: pointer;
     margin-left: 0.5em;
     padding-left: 0.25em;
