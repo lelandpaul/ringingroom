@@ -48,8 +48,10 @@ socketio.on('s_bell_rung', function(msg,cb){
 // getting initial user state
 socketio.on('s_user_change', function(msg, cb){
 	console.log('Getting users: ' + msg.users);
-	if (msg.users.length > 0) {
+	if (msg.users && msg.users.length > 0) {
 		bell_circle.$refs.users.user_names = msg.users
+	} else {
+		bell_circle.$refs.users.user_names = []
 	}
 });
 
@@ -470,9 +472,8 @@ bell_circle = new Vue({
 		}
 		this.bells = list;
 
-		var scoped_un = this.user_name;
-		window.addEventListener('beforeunload', function(e) {
-			socketio.emit('c_user_change', {user_name: scoped_un, tower_id: cur_tower_id});
+		window.addEventListener('beforeunload', e => {
+			socketio.emit('c_user_change', {user_name: this.user_name, tower_id: cur_tower_id});
 			e.preventDefault();
 			e.returnValue = ' ';
 		});

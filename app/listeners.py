@@ -54,9 +54,9 @@ def on_log_in(json):
     tower = towers[json["tower_id"]]
     user = json["user_name"]
     if user in tower.users:
-        tower.users = tower.users.remove(user)
+        tower.remove_user(user)
     else:
-        tower.users.append(user)
+        tower.add_user(user)
     emit('s_user_change', {'users': tower.users},
          broadcast=True, include_self=True, room=json["tower_id"])
 

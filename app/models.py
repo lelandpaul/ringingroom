@@ -50,11 +50,14 @@ class Tower:
         return(self._users)
 
     @users.setter
-    def users(self, user):
-        if user in self._users:
-            self._users.remove(user)
-        else:
-            self._users = self._users.append(user)
+    def users(self, users):
+        self._users = users
+
+    def add_user(self, user):
+        self._users.append(user)
+
+    def remove_user(self, user):
+        self._users.remove(user)
 
     @property
     def n_bells(self,):
