@@ -285,18 +285,28 @@ Vue.component('tower_controls', {
 // user_display holds functionality required for users
 Vue.component('user_display', {
 
+    props: ['user_name'],
+
     // data in components should be a function, to maintain scope
 	data: function(){
-		return {user_names: []} },
+		return { user_names: [],
+                 assignment_mode: false
+        } },
 
 
 	template: `
               <div class="user_display">
-                  <h4 class="tower_name">
+                  <h4 class="user_display_title">
                       Users
                   </h4>
-			      <ul> 
+                  <span class="toggle_assign"
+                        :class="{active: assignment_mode}"
+                        @click="assignment_mode = !assignment_mode">
+                        [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
+                  </span>
+			      <ul class="user_list"> 
 			        <li v-for="user in user_names"
+                        :class="{cur_user: user == user_name}"
                         >
                         [[ user ]]
                     </li> 
@@ -606,7 +616,7 @@ bell_circle = new Vue({
 			  </div>
               <div v-show="logged_in">
                   <tower_controls ref="controls"></tower_controls>
-                  <user_display ref="users"></user_display>
+                  <user_display ref="users" :user_name="user_name"></user_display>
                   <call_display v-bind:audio="audio" ref="display"></call_display>
                   <div id="bell_circle"
                        v-bind:class="[ 
