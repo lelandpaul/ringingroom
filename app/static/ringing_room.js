@@ -295,8 +295,9 @@ Vue.component('tower_controls', {
 
     // data in components should be a function, to maintain scope
 	data: function(){ 
-		return {tower_sizes: [6,8,10,12],
-				buttons: { 6: "⑥",
+		return {tower_sizes: [4,6,8,10,12],
+				buttons: { 4: "④",
+			  			   6: "⑥",
 						   8: "⑧",
 						  10: "⑩",
 						  12: "⑫"},
@@ -344,6 +345,63 @@ Vue.component('tower_controls', {
                `,
 }); // End tower_controls
 
+// help holds help toggle
+Vue.component('help', {
+
+    // data in components should be a function, to maintain scope
+	data: function(){
+		return {help_showing: false} },
+
+	methods: {
+
+        // the user clicked the audio toggle
+        show_help: function(){
+          console.log('showing or hiding help');
+          this.help_showing = !this.help_showing
+
+        },
+	},
+
+
+	template: `
+			<div class="help">
+				<div v-if="help_showing === false"
+				class="help_toggle"
+				@click="show_help"
+				>
+                       [click for help]
+                </div>
+                <div v-else
+                class="help_showing"
+                @click="show_help">
+                  	[click to close]
+                  	<p>
+                  		On the top left, you may set the number of bells in the tower by clicking the desired number. 
+                  		To ring, you may either click on the ropes or use the following hot-keys:
+                  	</p>
+					<ul>
+						<li> <b>[1-9], [0], [-], [=]:</b> Rings bells 1 - 9, 10, 11, and 12</li>
+						<li><b>[SPACE]:</b> Rings the bell in the lower right corner.</li>
+						<li><b>[LEFT] and [RIGHT] arrow keys:</b> Rings the left and right bottom-most bells.</li>
+						<li><b>[f] and [j]:</b> same as [LEFT] and [RIGHT]</li>
+						<li><b>[SHIFT]+[0-9]\\[0]\\[-]\\[=]:</b> Rotate the "perspective" of the ringing room to put that bell in the lower right corner so it may be rung by [SPACE] or [j].</li>
+					</ul>
+					<p>
+						There are also hot-keys for various calls, but be aware that in some browsers using these 
+						results in the sound of the bells being interrupted.
+					</p>
+					<ul>
+						<li><b>[g]</b>o next time</li>
+						<li><b>[b]</b>ob</li>
+						<li>si<b>[n]</b>gle</li>
+						<li>t<b>[h]</b>at's all</li>
+						<li>s<b>[t]</b>and next</li>
+					</ul>
+				</div>
+			</div>
+               `,
+}); // End help
+
 
 
 // The master Vue application
@@ -352,7 +410,8 @@ bell_circle = new Vue({
 	el: "#bell_circle",
 
 	data: {
-
+		logged_in: false,
+		user_name: "",
 		number_of_bells: 8,
 		bells: [],
         audio: tower,
@@ -381,6 +440,12 @@ bell_circle = new Vue({
 	},
 
 	methods: {
+
+		send_user_name: function(inf) {
+			console.log("it's a username!")
+			console.log(this.user_name)
+			this.logged_in = true
+		},
       
       // the server rang a bell; find the correct one and ring it
 	  ring_bell: function(bell) {
@@ -448,11 +513,36 @@ bell_circle = new Vue({
 	},
 
 	template: `
-              <div>
+			<div>
+              <div v-show="!logged_in">
+              	<form class="pure-form"
+					 v-on:submit.prevent="send_user_name"
+                     >
+                    <fieldset>
+                        <input class="pure-input"
+                               type="text" 
+                               placeholder="username" 
+                               v-model="user_name" 
+                               required
+                               >
+                        <button type="submit"
+                                class="pure-button pure-button-primary"
+                                >
+                            it's a button
+                        </button>
+                    </fieldset>
+                    <div id="username-message"> 
+                        input a user name
+                    </div>
+				</form>
+			  </div>
+              <div v-show="logged_in">
                   <tower_controls ref="controls"></tower_controls>
                   <call_display v-bind:audio="audio" ref="display"></call_display>
                   <div id="bell_circle"
-                       v-bind:class="[ number_of_bells == 6  ? 'six'    : '',
+                       v-bind:class="[ 
+                       				   number_of_bells == 4 ? 'four'    : '',
+                       				   number_of_bells == 6  ? 'six'    : '',
                                        number_of_bells == 8  ? 'eight'  : '',
                                        number_of_bells == 10 ? 'ten'    : '',
                                        number_of_bells == 12 ? 'twelve' : '']">
@@ -468,6 +558,8 @@ bell_circle = new Vue({
                                  ></bell_rope>
 
                   </div>
+                  <help ref="help"></help>
+              </div>
               </div>
               `
 
