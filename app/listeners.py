@@ -4,7 +4,6 @@ from app.models import Tower
 
 # SocketIO Handlers
 
-
 # The user entered a tower code on the landing page; check it
 @socketio.on('c_check_tower_id')
 def on_check_tower_id(json):
@@ -46,6 +45,20 @@ def on_join(json):
     emit('s_size_change', {'size': tower.n_bells})
     emit('s_name_change', {'new_name': tower.name})
     emit('s_audio_change', {'new_audio': tower.audio})
+    emit('s_user_change', {'users': tower.users})
+
+# log in event occurs
+@socketio.on('c_user_change')
+def on_log_in(json):
+    print(json)
+    tower = towers[json["tower_id"]]
+    user = json["user_name"]
+    if user in tower.users:
+        tower.users = tower.users.remove(user)
+    else:
+        tower.users.append(user)
+    emit('s_user_change', {'users': tower.users},
+         broadcast=True, include_self=True, room=json["tower_id"])
 
 
 # A rope was pulled; ring the bell
