@@ -148,7 +148,12 @@ h2#call_display {
 
 /* Tower controls */
 
-h2.tower_name {
+.tower_control{
+  padding-top:5px;
+  padding-left:15px;
+}
+
+.tower_name {
   padding-left: 0.5em;
   margin-bottom: -0.5em;
   opacity: 0.75;
@@ -174,10 +179,6 @@ h2.tower_name {
     opacity: 0.75;
   }
 
-}
-
-.tower_control{
-  padding-left:0.5em;
 }
 
 .audio_toggle{
@@ -206,3 +207,59 @@ h2.tower_name {
   background-color: aliceblue;
   padding: 5px;
 }
+
+
+/* User Display */
+
+.user_display {
+
+    padding: 15px;
+}
+
+.user_display_title {
+  padding-left: 0.75em;
+  opacity: 0.75;
+  display: inline;
+}
+
+.toggle_assign {
+  margin-left: 0.5em;
+  margin-bottom: -0.5em;
+  padding: 0.3em;
+  border-style: solid;
+  border-width: 1pt;
+  border-color: black;
+  border-radius: 5pt;
+  font-size: small;
+  opacity: 0.75;
+  &.active{
+      background: rgba(255,0,0,0.3);
+
+  }
+}
+
+.user_list {
+  padding-left: 0.5em;
+  margin-top: 0px;
+
+  li {
+    border-style-left:
+    cursor: pointer;
+    margin-left: 0.5em;
+    padding-left: 0.25em;
+    padding-bottom:0.25em;
+    list-style-type: none;
+    font-size: x-large;
+    opacity: 0.75;
+    width: 3em;
+    border-radius: 5pt; 
+  }
+
+}
+
+.cur_user {
+    background: rgba(0, 0, 255, 0.3);
+
+}
+
+
