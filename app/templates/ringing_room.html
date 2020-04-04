@@ -13,7 +13,7 @@
       gtag('config', 'UA-162521976-1');
     </script>
     <!-- external resources -->
-	<script src="https://unpkg.com/vue@2.6.11/dist/vue.js"></script>
+	<script src="https://unpkg.com/vue@2.6.11/dist/vue.min.js"></script>
 	<script src="https://www.unpkg.com/howler@2.1.3/dist/howler.core.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
@@ -33,6 +33,24 @@
 		<div id="bell_circle">
 			<!-- app will go here -->
 		</div>
+	</div>
+	<div id="help">
+		<p>On the top left, you may set the number of bells in the tower by clicking the desired number. To ring, you may either click on the ropes or use the following hot-keys:</p>
+		<ul>
+			<li> <b>[1-9], [0], [-], [=]:</b> Rings bells 1 - 9, 10, 11, and 12</li>
+			<li><b>[SPACE]:</b> Rings the bell in the lower right corner.</li>
+			<li><b>[LEFT] and [RIGHT] arrow keys:</b> Rings the left and right bottom-most bells.</li>
+			<li><b>[f] and [j]:</b> same as [LEFT] and [RIGHT]</li>
+			<li><b>[SHIFT]+[0-9]\[0]\[-]\[=]:</b> Rotate the "perspective" of the ringing room to put that bell in the lower right corner so it may be rung by [SPACE] or [j].</li>
+		</ul>
+		<p>There are also hot-keys for various calls, but be aware that in some browsers using these results in the sound of the bells being interrupted.</p>
+		<ul>
+			<li><b>[g]</b>o next time</li>
+			<li><b>[b]</b>ob</li>
+			<li>si<b>[n]</b>gle</li>
+			<li>t<b>[h]</b>at's all</li>
+			<li>s<b>[t]</b>and next</li>
+		</ul>
 	</div>
 </body>
 

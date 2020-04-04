@@ -15,34 +15,8 @@ body {
 #bell_circle {
   position: absolute;
   top: 50%;
-  left: 40%;
+  left: 50%;
   transform: translate(-50%, -50%); }
-  #bell_circle.four {
-    width: 25em;
-    height: 25em;
-    padding: 0;
-    border-radius: 50%;
-    list-style: none; }
-    #bell_circle.four > * {
-      position: absolute;
-      top: 50%;
-      left: 50%; }
-      #bell_circle.four > *:nth-of-type(1) {
-        transform: rotate(-45deg) translate(12.5em) rotate(45deg); }
-        #bell_circle.four > *:nth-of-type(1) > * {
-          transform: translate(-2.5em, -2.5em); }
-      #bell_circle.four > *:nth-of-type(2) {
-        transform: rotate(45deg) translate(12.5em) rotate(-45deg); }
-        #bell_circle.four > *:nth-of-type(2) > * {
-          transform: translate(-2.5em, -2.5em); }
-      #bell_circle.four > *:nth-of-type(3) {
-        transform: rotate(135deg) translate(12.5em) rotate(-135deg); }
-        #bell_circle.four > *:nth-of-type(3) > * {
-          transform: translate(-2.5em, -2.5em); }
-      #bell_circle.four > *:nth-of-type(4) {
-        transform: rotate(225deg) translate(12.5em) rotate(-225deg); }
-        #bell_circle.four > *:nth-of-type(4) > * {
-          transform: translate(-2.5em, -2.5em); }
   #bell_circle.six {
     width: 25em;
     height: 25em;
@@ -241,12 +215,11 @@ body {
   .rope > .number {
     margin-left: -1em;
     display: inline-block;
-    vertical-align: top;
+    vertical-align: bottom;
     margin-bottom: -4px; }
   .rope > .left_number {
     margin-right: -1em;
-    margin-left: -4em;
-    text-align: right; }
+    margin-left: 0em; }
 
 .treble {
   color: #ff000d; }
@@ -296,20 +269,12 @@ h2.tower_name {
   cursor: pointer; }
 
 /* help bar */
-.help {
-  cursor: pointer;
+#help {
   position: absolute;
   top: 5%;
-  left: 60%;
-  width: 20em;
-  opacity: 1;
-  font-size: large;
-  display: inline-block; }
-
-.help_showing {
-  opacity: 1.0;
-  border: 1px solid black;
-  background-color: aliceblue;
-  padding: 5px; }
+  left: 70%;
+  width: 25em;
+  opacity: 0.25;
+  font-size: large; }
 
 /*# sourceMappingURL=ringing_room.scss.css.map */

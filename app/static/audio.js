@@ -154,9 +154,7 @@ export const hand = new Howl({
 );
 
 // What sounds do you play on different numbers of bells? (Allows for ringing the front 8)
-export const bell_mappings = {
-                         4: ['5','6','7','8'],
-                         6: ['3','4','5','6','7','8'],
+export const bell_mappings = {  6: ['3','4','5','6','7','8'],
 					     8: ['1','2sharp','3','4','5','6','7','8'],
 						10: ['3','4','5','6','7','8','9','0','E','T'],
 						12: ['1','2','3','4','5','6','7','8','9','0','E','T']
