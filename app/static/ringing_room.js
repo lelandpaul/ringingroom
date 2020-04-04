@@ -177,6 +177,8 @@ Vue.component("bell_rope", {
                       >
 
                  [[ circled_digits[number-1] ]]
+                 
+                 <p>ottffssentet [x]</p>
 
                  </div>
 
@@ -384,8 +386,8 @@ bell_circle = new Vue({
 		user_name: "",
 		user_name_taken: true,
 		button_disabled: true,
-		user_message: "Please input a username. Must be unique and longer than 0 characters.",
-		def_user_message: "Please input a username. Must be unique and longer than 0 characters.",
+		user_message: "Please input a username. Must be unique and between 1 and 12 characters.",
+		def_user_message: "Please input a username. Must be unique and between 1 and 12 characters.",
 		logged_in: false
 	},
 
@@ -494,7 +496,7 @@ bell_circle = new Vue({
 		check_user_name: function(){
 			console.log('checking username, length is: ' + this.user_name.length);
 
-			if (this.user_name.length > 0) {
+			if (this.user_name.length > 0 && this.user_name.length < 13) {
 				console.log('checking for name');
 				if(this.$refs.users.user_names.includes(this.user_name)) {
 					// not a valid user name
