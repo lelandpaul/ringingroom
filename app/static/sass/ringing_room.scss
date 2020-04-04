@@ -37,6 +37,7 @@ body {
     $angle: (360 / $item-count);
 	$rot: 0; // initialize for scope
 
+    @if $item-count == 4 { $rot: -1*$angle/2; }
 	@if $item-count == 6 { $rot: -1*$angle; }
 	@if $item-count == 8 { $rot: -3*$angle/2; }
 	@if $item-count == 10 { $rot: -2*$angle; }
@@ -60,6 +61,9 @@ body {
     }
 }
 
+@mixin on-circle-four($circle-size, $img-size){
+	@include on-circle(4, $circle-size, $img-size);
+}
 
 @mixin on-circle-six($circle-size, $img-size){
 	@include on-circle(6, $circle-size, $img-size);
@@ -88,12 +92,13 @@ body {
   // border: solid 5px tomato;
   position: absolute;
   top: 50%;
-  left: 50%;
+  left: 40%;
   transform: translate(-50%, -50%);
 
-  &.six   { @include on-circle-six($circ-size,$img-size); }
-  &.eight { @include on-circle-eight($circ-size,$img-size); }
-  &.ten { @include on-circle-ten($circ-size,$img-size); }
+  &.four   { @include on-circle-four($circ-size,$img-size); }
+  &.six    { @include on-circle-six($circ-size,$img-size); }
+  &.eight  { @include on-circle-eight($circ-size,$img-size); }
+  &.ten    { @include on-circle-ten($circ-size,$img-size); }
   &.twelve { @include on-circle-twelve($circ-size,$img-size); }
 }
 
@@ -113,19 +118,19 @@ body {
 	> .number {
 		margin-left: -1em;
 		display: inline-block;
-		vertical-align: bottom;
+		vertical-align: top;
 		margin-bottom: -4px;
 	}
 	> .left_number {
-		margin-right: -1em;
-		margin-left: 0em;
+      margin-right: -1em;
+      margin-left: -4em;
+      text-align: right;
 	}
 }
 
 // make the treble number red
 .treble {
 	color: #ff000d;
-
 }
 
 
@@ -139,7 +144,6 @@ h2#call_display {
 	top: 50%;
 	left: 50%;
 	transform: translate(-40%, -50%);
-
 }
 
 
@@ -183,16 +187,23 @@ h2.tower_name {
   opacity: 0.75;
   margin-top: -0.7em;
   cursor: pointer;
-
 }
 
 /* help bar */
-
-#help {
+.help {
+  cursor: pointer;
   position: absolute;
   top: 5%;
-  left: 70%;
-  width: 25em;
-  opacity: 0.25;
+  left: 60%;
+  width: 20em;
+  opacity: 1;
   font-size: large;
+  display: inline-block;
+}
+
+.help_showing {
+  opacity: 1.0;
+  border: 1px solid black;
+  background-color: aliceblue;
+  padding: 5px;
 }
