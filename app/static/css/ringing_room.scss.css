@@ -241,11 +241,12 @@ body {
   .rope > .number {
     margin-left: -1em;
     display: inline-block;
-    vertical-align: bottom;
+    vertical-align: top;
     margin-bottom: -4px; }
   .rope > .left_number {
     margin-right: -1em;
-    margin-left: 0em; }
+    margin-left: -4em;
+    text-align: right; }
 
 .treble {
   color: #ff000d; }

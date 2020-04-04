@@ -177,6 +177,8 @@ Vue.component("bell_rope", {
                       >
 
                  [[ circled_digits[number-1] ]]
+                 
+                 <p>ottffssentettffs</p>
 
                  </div>
 
