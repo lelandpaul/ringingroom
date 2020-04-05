@@ -180,7 +180,9 @@ Vue.component("bell_rope", {
       // Ringing event received; now ring the bell
 	  ring: function(){
 		this.stroke = !this.stroke;
-		this.audio.play(bell_mappings[this.number_of_bells][this.number - 1]);
+        const audio_type = this.$root.$refs.controls.audio_type;
+        console.log(audio_type + ' ' + this.number_of_bells);
+		this.audio.play(bell_mappings[audio_type][this.number_of_bells][this.number - 1]);
 		var report = "Bell " + this.number + " rang a " + (this.stroke ? "backstroke":"handstroke");
 		console.log(report);
 	  },
@@ -337,7 +339,6 @@ Vue.component('tower_controls', {
 			      <ul class = "tower_control_size"> 
 			        <li v-for="size in tower_sizes"
 				        v-bind:size="size"
-                        v-show="audio_type == 'Tower' || size <= 8"
 				        @click="set_tower_size(size)"
                         >
                         [[ buttons[size] ]]
