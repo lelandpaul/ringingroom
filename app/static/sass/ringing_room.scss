@@ -120,6 +120,9 @@ body {
 		display: inline-block;
 		vertical-align: top;
 		margin-bottom: -4px;
+        &.cur_user{
+            color: blue;
+        }
 	}
 	> .left_number {
       margin-right: -1em;
@@ -129,7 +132,7 @@ body {
 }
 
 // make the treble number red
-.treble {
+.number.treble, .number.treble.cur_user {
 	color: #ff000d;
 }
 
@@ -224,6 +227,7 @@ h2#call_display {
 }
 
 .toggle_assign {
+  cursor: pointer;
   margin-left: 0.5em;
   margin-bottom: -0.5em;
   padding: 0.3em;
@@ -249,7 +253,6 @@ h2#call_display {
   margin-top: 0.5em;
 
   li {
-    cursor: pointer;
     margin-left: 0.5em;
     padding-left: 0.25em;
     padding-bottom:0.25em;
@@ -258,13 +261,33 @@ h2#call_display {
     opacity: 0.75;
     width: 3em;
     border-radius: 5pt; 
+
+    &.assignment_active{
+        cursor: pointer;
+
+        &.selected_user{
+    background: rgba(0, 0, 255, 0.3);
+        }
+    }
   }
 
 }
 
-.cur_user {
-    background: rgba(0, 0, 255, 0.3);
-
+.user_list .cur_user {
+    font-weight: bold;
 }
+
+
+
+.assigned_user{
+   width: 7em; 
+
+   &.cur_user{
+       color: blue;
+   }
+}
+
+
+
 
 
