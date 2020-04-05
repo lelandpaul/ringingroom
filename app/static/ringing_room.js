@@ -55,6 +55,12 @@ socketio.on('s_user_change', function(msg, cb){
 	}
 });
 
+// User was assigned to a bell
+socketio.on('s_assign_user', function(msg, cb){
+    console.log('Received user assignment: ' + msg.bell + ' ' + msg.user);
+    bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
+});
+
 // A call was made
 socketio.on('s_call',function(msg,cb){
 	console.log('Received call: ' + msg.call);
@@ -133,8 +139,22 @@ Vue.component("bell_rope", {
 			   circled_digits: ["①", "②", "③", "④", "⑤", "⑥", 
 								"⑦", "⑧", "⑨", "⑩", "⑪ ","⑫"],
 			   images: ["handstroke", "backstroke"],
+               assigned_user: '',
 	  };
 	},
+
+    computed: {
+
+        assignment_mode: function(){
+            return this.$root.$refs.users.assignment_mode;
+        },
+
+        cur_user: function(){
+            return this.$root.$refs.users.cur_user;
+
+        },
+
+    },
 
 	methods: {
 
@@ -159,8 +179,18 @@ Vue.component("bell_rope", {
 	  set_state_silently: function(new_state){
 		  console.log('Bell ' + this.number + ' set to ' + new_state)
 		  this.stroke = new_state
-	  }
-	},
+	  },
+
+      assign_user: function(){
+          const selected_user = this.$root.$refs.users.selected_user;
+          if (!this.assignment_mode){ return };
+          console.log('assigning user: ' +  selected_user + ' to ' + this.number);
+          socketio.emit('c_assign_user', { bell: this.number,
+                                           user: selected_user,
+                                           tower_id: cur_tower_id });
+      },
+
+    },
 
 	template:`
              <div class='rope'>
@@ -173,12 +203,19 @@ Vue.component("bell_rope", {
 
                  <div class='number' 
                       v-bind:class="[position > number_of_bells/2 ? 'left_number' : '', 
-                                     number == 1 ? 'treble' : '']"
+                                     number == 1 ? 'treble' : '',
+                                     assigned_user == cur_user ? 'cur_user' : '']"
                       >
 
                  [[ circled_digits[number-1] ]]
                  
-                 <p>ottffssentet [x]</p>
+                 <p class="assigned_user"
+                    v-bind:class="{cur_user: assigned_user == cur_user}"
+                    @click="assign_user"
+                    >
+                    [[ (assignment_mode) ? ((assigned_user) ? assigned_user : 'assign user')
+                                         : assigned_user ]]
+                 </p>
 
                  </div>
 
@@ -285,14 +322,43 @@ Vue.component('tower_controls', {
 // user_display holds functionality required for users
 Vue.component('user_display', {
 
-    props: ['user_name'],
+    props: ['cur_user'],
 
     // data in components should be a function, to maintain scope
 	data: function(){
 		return { user_names: [],
-                 assignment_mode: false
+                 assignment_mode: false,
+                 selected_user: '',
         } },
 
+    computed: {
+
+        sorted_user_names: function(){
+            const index = this.user_names.indexOf(this.cur_user);
+            var sorted_uns = this.user_names
+            if (index > -1) {
+                sorted_uns.splice(index,1); // remove current user
+            }
+            sorted_uns.unshift(this.cur_user); // add the cur_user back at the beginning
+            return sorted_uns;
+        },
+    },
+
+    methods: {
+
+        toggle_assignment: function(){
+            this.assignment_mode = !this.assignment_mode;
+            if (this.assignment_mode){
+                this.selected_user = this.cur_user;
+            }
+        },
+
+        select_user: function(user){
+            this.selected_user = user;
+        }
+
+
+    },
 
 	template: `
               <div class="user_display">
@@ -301,12 +367,15 @@ Vue.component('user_display', {
                   </h4>
                   <span class="toggle_assign"
                         :class="{active: assignment_mode}"
-                        @click="assignment_mode = !assignment_mode">
+                        @click="toggle_assignment">
                         [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
                   </span>
 			      <ul class="user_list"> 
-			        <li v-for="user in user_names"
-                        :class="{cur_user: user == user_name}"
+			        <li v-for="user in sorted_user_names"
+                        :class="{cur_user: user == cur_user,
+                                 assignment_active: assignment_mode,
+                                 selected_user: user == selected_user}"
+                        @click="select_user(user)"
                         >
                         [[ user ]]
                     </li> 
@@ -616,7 +685,7 @@ bell_circle = new Vue({
 			  </div>
               <div v-show="logged_in">
                   <tower_controls ref="controls"></tower_controls>
-                  <user_display ref="users" :user_name="user_name"></user_display>
+                  <user_display ref="users" :cur_user="user_name"></user_display>
                   <call_display v-bind:audio="audio" ref="display"></call_display>
                   <div id="bell_circle"
                        v-bind:class="[ 

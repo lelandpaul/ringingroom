@@ -25,6 +25,7 @@ class Tower:
         self._bell_state = [True] * n
         self._audio = True
         self._users = []
+        self._assignments = {i+1: '' for i in range(n)}
 
     def generate_random_change(self):
         # generate a random royal change, for use as uid
@@ -58,6 +59,13 @@ class Tower:
 
     def remove_user(self, user):
         self._users.remove(user)
+
+    @property
+    def assignments(self):
+        return(self._assignments)
+
+    def assign_bell(self, bell, user):
+        self.assignments[bell] = user
 
     @property
     def n_bells(self,):

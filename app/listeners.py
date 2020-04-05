@@ -46,6 +46,9 @@ def on_join(json):
     emit('s_name_change', {'new_name': tower.name})
     emit('s_audio_change', {'new_audio': tower.audio})
     emit('s_user_change', {'users': tower.users})
+    for (bell, user) in tower.assignments.items():
+        if not user: continue
+        emit('s_assign_user', {'bell': bell, 'user': user})
 
 # log in event occurs
 @socketio.on('c_user_change')
@@ -59,6 +62,14 @@ def on_log_in(json):
         tower.add_user(user)
     emit('s_user_change', {'users': tower.users},
          broadcast=True, include_self=True, room=json["tower_id"])
+
+@socketio.on('c_assign_user')
+def on_assign_user(json):
+    print('user was assigned')
+    tower = towers[json['tower_id']]
+    tower.assign_bell(json['bell'], json['user'])
+    emit('s_assign_user', json,
+         broadcast=True, include_self=True, room=json['tower_id'])
 
 
 # A rope was pulled; ring the bell
