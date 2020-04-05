@@ -54,41 +54,20 @@ socketio.on('s_set_users', function(msg, cb){
 // User entered the room
 socketio.on('s_user_entered', function(msg, cb){
     console.log(msg.user + ' entered')
-    bell_circle.$refs.users.user_names.push(msg.user);
+    bell_circle.$refs.users.add_user(msg.user);
 });
 
 // User left the room
 socketio.on('s_user_left', function(msg, cb){
     console.log(msg.user + ' left')
-    const index = bell_circle.$refs.users.user_names.indexOf(msg.user);
-    if (index > -1) {
-      bell_circle.$refs.users.user_names.splice(index, 1);
-    }
-
-    bell_circle.$refs.bells.forEach((bell,index) =>
-        {if (bell.assigned_user == msg.user){
-            bell.assigned_user == '';
-            socketio.emit('c_assign_user', {bell: index + 1,
-                                            user: '',
-                                            tower_id: cur_tower_id});
-        }});
+    bell_circle.$refs.users.remove_user(msg.user);
 });
 
 // User was assigned to a bell
 socketio.on('s_assign_user', function(msg, cb){
     console.log('Received user assignment: ' + msg.bell + ' ' + msg.user);
     bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
-    const cur_user = bell_circle.$refs.users.cur_user;
-    if (msg.user == cur_user){
-        var cur_user_bells = []
-        bell_circle.$refs.bells.forEach((bell,index) =>
-            {if (bell.assigned_user == cur_user){
-                cur_user_bells.push(index+1);
-            } 
-        });
-        const rotate_to = Math.min(...cur_user_bells);
-        bell_circle.rotate(rotate_to);
-    }
+    bell_circle.$refs.users.rotate_to_assignment();
 });
 
 // A call was made
@@ -191,6 +170,7 @@ Vue.component("bell_rope", {
       
       // emit a ringing event ot the server
 	  emit_ringing_event: function() {
+        if (this.assignment_mode){ return }; // disable while assigning
 		socketio.emit('c_bell_rung',
 				{bell: this.number, stroke: this.stroke, tower_id: cur_tower_id});
 		var report = "Bell " + this.number + " will ring a " + (this.stroke ? "handstroke":"backstroke");
@@ -229,11 +209,13 @@ Vue.component("bell_rope", {
     },
 
 	template:`
-             <div class='rope'>
+             <div class='rope'
+                  >
 
                  <img v-if="position <= number_of_bells/2"
                       @click='emit_ringing_event'
                       class="rope_img" 
+                      :class='{assignment_mode: assignment_mode}'
                       :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"
                       />
 
@@ -246,7 +228,8 @@ Vue.component("bell_rope", {
                  [[ circled_digits[number-1] ]]
                  
                  <p class="assigned_user"
-                    v-bind:class="{cur_user: assigned_user == cur_user}"
+                    :class="[!assigned_user ? 'unassigned' : '',
+                             assigned_user == cur_user ? 'cur_user' : '']"
                     >
                     <span class="unassign"
                           v-if="assignment_mode && 
@@ -256,7 +239,7 @@ Vue.component("bell_rope", {
                           > 🆇 </span>
                     <span class="assign"
                           @click="assign_user"
-                          >[[ (assignment_mode) ? ((assigned_user) ? assigned_user : '(assign user)')
+                          >[[ (assignment_mode) ? ((assigned_user) ? assigned_user : '(assign ringer)')
                                          : assigned_user ]]
                           </span>
                     <span class="unassign"
@@ -272,6 +255,7 @@ Vue.component("bell_rope", {
                  <img class="rope_img" 
                       v-if="position > number_of_bells/2"
                       @click='emit_ringing_event'
+                      :class='{assignment_mode: assignment_mode}'
                       :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"
                       />
 
@@ -401,13 +385,47 @@ Vue.component('user_display', {
             this.assignment_mode = !this.assignment_mode;
             if (this.assignment_mode){
                 this.selected_user = this.cur_user;
+            } else {
+                this.rotate_to_assignment();
             }
         },
 
+        rotate_to_assignment: function(){
+            if (this.assignment_mode){ return };
+            var cur_user_bells = []
+            this.$root.$refs.bells.forEach((bell,index) =>
+                {if (bell.assigned_user == this.cur_user){
+                    cur_user_bells.push(index+1);
+                } 
+            });
+            const rotate_to = Math.min(...cur_user_bells);
+            this.$root.rotate(rotate_to);
+        },
+
+
         select_user: function(user){
             this.selected_user = user;
-        }
+        },
 
+        add_user: function(user){
+            this.user_names.push(user);
+        },
+
+        remove_user: function(user){
+            const index = this.user_names.indexOf(user);
+            if (index > -1) {
+              this.user_names.splice(index, 1);
+            }
+            bell_circle.$refs.bells.forEach((bell,index) =>
+                {if (bell.assigned_user == user){
+                    bell.assigned_user == '';
+                    socketio.emit('c_assign_user', {bell: index + 1,
+                                                    user: '',
+                                                    tower_id: cur_tower_id});
+                }});
+
+
+        },
 
     },
 

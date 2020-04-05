@@ -65,7 +65,7 @@ def on_join(json):
 
 # User logged in
 @socketio.on('c_user_entered')
-def on_user_joined(json):
+def on_user_entered(json):
     print('user entered: ' + json['user_name'])
     tower = towers[json['tower_id']]
     user = json['user_name']
