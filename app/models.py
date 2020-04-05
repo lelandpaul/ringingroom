@@ -58,7 +58,9 @@ class Tower:
         self._users.append(user)
 
     def remove_user(self, user):
-        self._users.remove(user)
+        try:
+            self._users.remove(user)
+        except ValueError: pass
 
     @property
     def assignments(self):

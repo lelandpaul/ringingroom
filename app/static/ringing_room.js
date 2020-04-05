@@ -46,13 +46,32 @@ socketio.on('s_bell_rung', function(msg,cb){
 });
 
 // getting initial user state
-socketio.on('s_user_change', function(msg, cb){
+socketio.on('s_set_users', function(msg, cb){
 	console.log('Getting users: ' + msg.users);
-	if (msg.users && msg.users.length > 0) {
-		bell_circle.$refs.users.user_names = msg.users
-	} else {
-		bell_circle.$refs.users.user_names = []
-	}
+    bell_circle.$refs.users.user_names = msg.users
+});
+
+// User entered the room
+socketio.on('s_user_entered', function(msg, cb){
+    console.log(msg.user + ' entered')
+    bell_circle.$refs.users.user_names.push(msg.user);
+});
+
+// User left the room
+socketio.on('s_user_left', function(msg, cb){
+    console.log(msg.user + ' left')
+    const index = bell_circle.$refs.users.user_names.indexOf(msg.user);
+    if (index > -1) {
+      bell_circle.$refs.users.user_names.splice(index, 1);
+    }
+
+    bell_circle.$refs.bells.forEach((bell,index) =>
+        {if (bell.assigned_user == msg.user){
+            bell.assigned_user == '';
+            socketio.emit('c_assign_user', {bell: index + 1,
+                                            user: '',
+                                            tower_id: cur_tower_id});
+        }});
 });
 
 // User was assigned to a bell
@@ -334,6 +353,7 @@ Vue.component('user_display', {
     computed: {
 
         sorted_user_names: function(){
+            if (this.user_names.length <= 1) { return this.user_names};
             const index = this.user_names.indexOf(this.cur_user);
             var sorted_uns = this.user_names
             if (index > -1) {
@@ -554,7 +574,7 @@ bell_circle = new Vue({
 		this.bells = list;
 
 		window.addEventListener('beforeunload', e => {
-			socketio.emit('c_user_change', {user_name: this.user_name, tower_id: cur_tower_id});
+			socketio.emit('c_user_left', {user_name: this.user_name, tower_id: cur_tower_id});
 			e.preventDefault();
 			e.returnValue = ' ';
 		});
@@ -588,7 +608,7 @@ bell_circle = new Vue({
 		send_user_name: function(inf) {
 			console.log("it's a username!")
 			console.log(this.user_name)
-			socketio.emit('c_user_change', {user_name: this.user_name, tower_id: cur_tower_id});
+			socketio.emit('c_user_entered', {user_name: this.user_name, tower_id: cur_tower_id});
 			this.logged_in = true
 		},
       

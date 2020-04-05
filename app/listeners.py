@@ -45,24 +45,44 @@ def on_join(json):
     emit('s_size_change', {'size': tower.n_bells})
     emit('s_name_change', {'new_name': tower.name})
     emit('s_audio_change', {'new_audio': tower.audio})
-    emit('s_user_change', {'users': tower.users})
+    emit('s_set_users', {'users': tower.users})
     for (bell, user) in tower.assignments.items():
         if not user: continue
         emit('s_assign_user', {'bell': bell, 'user': user})
 
-# log in event occurs
-@socketio.on('c_user_change')
-def on_log_in(json):
-    print(json)
-    tower = towers[json["tower_id"]]
-    user = json["user_name"]
-    if user in tower.users:
-        tower.remove_user(user)
-    else:
-        tower.add_user(user)
-    emit('s_user_change', {'users': tower.users},
-         broadcast=True, include_self=True, room=json["tower_id"])
+# # log in event occurs
+# @socketio.on('c_user_change')
+# def on_log_in(json):
+#     print(json)
+#     tower = towers[json["tower_id"]]
+#     user = json["user_name"]
+#     if user in tower.users:
+#         tower.remove_user(user)
+#     else:
+#         tower.add_user(user)
+#     emit('s_user_change', {'users': tower.users},
+#          broadcast=True, include_self=True, room=json["tower_id"])
 
+# User logged in
+@socketio.on('c_user_entered')
+def on_user_joined(json):
+    print('user entered: ' + json['user_name'])
+    tower = towers[json['tower_id']]
+    user = json['user_name']
+    tower.add_user(user)
+    emit('s_user_entered', { 'user': user },
+         broadcast=True, include_self = True, room=json['tower_id'])
+
+# User left
+@socketio.on('c_user_left')
+def on_user_left(json):
+    tower = towers[json['tower_id']]
+    user = json['user_name']
+    tower.remove_user(user)
+    emit('s_user_left', { 'user': user },
+         broadcast=True, include_self = False, room=json['tower_id'])
+
+# User was assigned to rope
 @socketio.on('c_assign_user')
 def on_assign_user(json):
     print('user was assigned')
