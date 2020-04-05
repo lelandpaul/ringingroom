@@ -78,6 +78,17 @@ socketio.on('s_user_left', function(msg, cb){
 socketio.on('s_assign_user', function(msg, cb){
     console.log('Received user assignment: ' + msg.bell + ' ' + msg.user);
     bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
+    const cur_user = bell_circle.$refs.users.cur_user;
+    if (msg.user == cur_user){
+        var cur_user_bells = []
+        bell_circle.$refs.bells.forEach((bell,index) =>
+            {if (bell.assigned_user == cur_user){
+                cur_user_bells.push(index+1);
+            } 
+        });
+        const rotate_to = Math.min(...cur_user_bells);
+        bell_circle.rotate(rotate_to);
+    }
 });
 
 // A call was made
