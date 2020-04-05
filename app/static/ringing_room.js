@@ -220,6 +220,12 @@ Vue.component("bell_rope", {
                                            tower_id: cur_tower_id });
       },
 
+      unassign: function(){
+          socketio.emit('c_assign_user', { bell: this.number,
+                                           user: '',
+                                           tower_id: cur_tower_id });
+      },
+
     },
 
 	template:`
@@ -241,10 +247,24 @@ Vue.component("bell_rope", {
                  
                  <p class="assigned_user"
                     v-bind:class="{cur_user: assigned_user == cur_user}"
-                    @click="assign_user"
                     >
-                    [[ (assignment_mode) ? ((assigned_user) ? assigned_user : 'assign user')
+                    <span class="unassign"
+                          v-if="assignment_mode && 
+                                assigned_user &&
+                                position > number_of_bells/2"
+                          @click="unassign"
+                          > 🆇 </span>
+                    <span class="assign"
+                          @click="assign_user"
+                          >[[ (assignment_mode) ? ((assigned_user) ? assigned_user : '(assign user)')
                                          : assigned_user ]]
+                          </span>
+                    <span class="unassign"
+                          v-if="assignment_mode && 
+                                assigned_user &&
+                                position <= number_of_bells/2"
+                          @click="unassign"
+                          > 🆇 </span>
                  </p>
 
                  </div>
