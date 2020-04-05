@@ -105,9 +105,6 @@ socketio.on('s_audio_change',function(msg,cb){
   console.log('changing audio to: ' + msg.new_audio);
   bell_circle.$refs.controls.audio_type = msg.new_audio;
   bell_circle.audio = msg.new_audio == 'Tower' ? tower : hand;
-  if (msg.new_audio == 'Hand' && bell_circle.number_of_bells > 8){
-    socketio.emit('c_size_change',{new_size: 8, tower_id: cur_tower_id});
-  }
 });
 
 
