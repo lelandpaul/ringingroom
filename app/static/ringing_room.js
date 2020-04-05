@@ -170,6 +170,7 @@ Vue.component("bell_rope", {
       
       // emit a ringing event ot the server
 	  emit_ringing_event: function() {
+        if (this.assignment_mode){ return }; // disable while assigning
 		socketio.emit('c_bell_rung',
 				{bell: this.number, stroke: this.stroke, tower_id: cur_tower_id});
 		var report = "Bell " + this.number + " will ring a " + (this.stroke ? "handstroke":"backstroke");
@@ -208,11 +209,13 @@ Vue.component("bell_rope", {
     },
 
 	template:`
-             <div class='rope'>
+             <div class='rope'
+                  >
 
                  <img v-if="position <= number_of_bells/2"
                       @click='emit_ringing_event'
                       class="rope_img" 
+                      :class='{assignment_mode: assignment_mode}'
                       :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"
                       />
 
@@ -225,7 +228,8 @@ Vue.component("bell_rope", {
                  [[ circled_digits[number-1] ]]
                  
                  <p class="assigned_user"
-                    v-bind:class="{cur_user: assigned_user == cur_user}"
+                    :class="[!assigned_user ? 'unassigned' : '',
+                             assigned_user == cur_user ? 'cur_user' : '']"
                     >
                     <span class="unassign"
                           v-if="assignment_mode && 
@@ -235,7 +239,7 @@ Vue.component("bell_rope", {
                           > 🆇 </span>
                     <span class="assign"
                           @click="assign_user"
-                          >[[ (assignment_mode) ? ((assigned_user) ? assigned_user : '(assign user)')
+                          >[[ (assignment_mode) ? ((assigned_user) ? assigned_user : '(assign ringer)')
                                          : assigned_user ]]
                           </span>
                     <span class="unassign"
@@ -251,6 +255,7 @@ Vue.component("bell_rope", {
                  <img class="rope_img" 
                       v-if="position > number_of_bells/2"
                       @click='emit_ringing_event'
+                      :class='{assignment_mode: assignment_mode}'
                       :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"
                       />
 

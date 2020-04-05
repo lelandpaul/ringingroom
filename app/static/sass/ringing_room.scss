@@ -114,6 +114,9 @@ body {
 		vertical-align: bottom;
 		width: 5em;
 		height: 5em;
+        &.assignment_mode{
+            opacity: 0.4;
+        }
 	}
 	> .number {
 		margin-left: -1em;
@@ -129,6 +132,7 @@ body {
       margin-left: -4em;
       text-align: right;
 	}
+
 }
 
 // make the treble number red
@@ -285,8 +289,19 @@ h2#call_display {
    &.cur_user{
        color: blue;
    }
+
+
 }
 
+.unassign {
+   font-size: 15px; 
+
+   &:hover{
+       font-size: 17px;
+       color: red;
+
+   }
+}
 
 
 
