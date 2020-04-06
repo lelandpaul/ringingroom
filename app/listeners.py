@@ -130,3 +130,12 @@ def on_audio_change(json):
     towers[tower_id].audio = new_audio
     emit('s_audio_change', {'new_audio': new_audio},
          broadcast=True, include_self=True, room=tower_id)
+
+# Set all bells at hand
+@socketio.on('c_set_bells')
+def on_set_bells(json):
+    tower_id = json['tower_id']
+    tower = towers[tower_id]
+    tower.set_at_hand()
+    emit('s_global_state', {'global_bell_state': tower.bell_state},
+         broadcast = True, include_self=True, room=tower_id)

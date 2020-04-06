@@ -328,8 +328,13 @@ Vue.component('tower_controls', {
         // the user clicked the audio toggle
         swap_audio: function(){
           console.log('swapping audio');
-          socketio.emit('c_audio_change',{old_audio: this.audio_type, tower_id: cur_tower_id})
+          socketio.emit('c_audio_change',{old_audio: this.audio_type, tower_id: cur_tower_id});
 
+        },
+
+        set_bells_at_hand: function(){
+            console.log('setting all bells at hand')
+            socketio.emit('c_set_bells', {tower_id: cur_tower_id});
         },
 	},
 
@@ -340,6 +345,11 @@ Vue.component('tower_controls', {
                   </h2>
                   <span class="tower_id">ID: [[tower_id]]</span>
                   <help ref="help"></help>
+                  <span class="set_at_hand"
+                        @click="set_bells_at_hand"
+                        >
+                        Set bells at hand
+                        </span>
 			      <ul class = "tower_control_size"> 
 			        <li v-for="size in tower_sizes"
 				        v-bind:size="size"
