@@ -337,8 +337,9 @@ Vue.component('tower_controls', {
               <div class="tower_control">
                   <h2 class="tower_name">
                       [[ tower_name ]] 
-                      <span class="tower_id">ID: [[tower_id]]</span>
                   </h2>
+                  <span class="tower_id">ID: [[tower_id]]</span>
+                  <help ref="help"></help>
 			      <ul class = "tower_control_size"> 
 			        <li v-for="size in tower_sizes"
 				        v-bind:size="size"
@@ -482,7 +483,7 @@ Vue.component('help', {
 				class="help_toggle"
 				@click="show_help"
 				>
-                       [click for help]
+                       Help
                 </div>
                 <div v-else
                 class="help_showing"
@@ -780,7 +781,6 @@ bell_circle = new Vue({
                                  ></bell_rope>
 
                   </div>
-                  <help ref="help"></help>
               </div>
               </div>
               `
