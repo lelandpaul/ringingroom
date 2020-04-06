@@ -84,7 +84,7 @@ body {
 
 // Now, position the bell_circle
 #bell_circle {
-  $circ-size: 25em;
+  $circ-size: 28em;
   $img-size: 5em;
 
 
@@ -106,11 +106,12 @@ body {
 
 // Position rope images and their numbers
 .rope {
-	display: table-cell;
+	display: flex;
+    flex-wrap: wrap;
 	vertical-align: bottom;
     cursor: pointer;
 	> img {
-		display: inline-block;
+		display: block;
 		vertical-align: bottom;
 		width: 5em;
 		height: 5em;
@@ -118,22 +119,53 @@ body {
             opacity: 0.4;
         }
 	}
-	> .number {
-		margin-left: -1em;
-		display: inline-block;
-		vertical-align: top;
-		margin-bottom: -4px;
-        &.cur_user{
+    > .rope_metadata {
+            margin-left: -1em;
+            display: inline-block;
+            vertical-align: baseline;
+            margin-bottom: -4px;
+            width: 100px;
+
+        > .number.cur_user {
             color: blue;
         }
-	}
-	> .left_number {
+
+        > .left_name {
+            margin-left: auto;
+            margin-right: 0;
+            direction: rtl;
+        }
+
+        > .assigned_user {
+            height: 1em;
+            white-space: nowrap;
+            vertical-align: baseline;
+            .cur_user {
+               color: blue;
+           }
+       }
+   }
+
+    > .left_metadata {
+      float: right;
+      vertical-align: bottom;
       margin-right: -1em;
       margin-left: -4em;
       text-align: right;
-	}
-
+    }
 }
+
+.unassign {
+   font-size: 15px; 
+
+   &:hover{
+       font-size: 17px;
+       color: red;
+
+   }
+}
+
+
 
 // make the treble number red
 .number.treble, .number.treble.cur_user {
@@ -283,26 +315,6 @@ h2#call_display {
 }
 
 
-
-.assigned_user{
-   width: 7em; 
-
-   &.cur_user{
-       color: blue;
-   }
-
-
-}
-
-.unassign {
-   font-size: 15px; 
-
-   &:hover{
-       font-size: 17px;
-       color: red;
-
-   }
-}
 
 
 

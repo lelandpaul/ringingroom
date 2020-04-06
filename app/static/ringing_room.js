@@ -219,6 +219,8 @@ Vue.component("bell_rope", {
                       :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"
                       />
 
+                 <div class='rope_metadata'
+                      :class="{left_metadata: position > number_of_bells/2}">
                  <div class='number' 
                       v-bind:class="[position > number_of_bells/2 ? 'left_number' : '', 
                                      number == 1 ? 'treble' : '',
@@ -226,10 +228,13 @@ Vue.component("bell_rope", {
                       >
 
                  [[ circled_digits[number-1] ]]
+
+                 </div>
                  
-                 <p class="assigned_user"
+                 <div class="assigned_user"
                     :class="[!assigned_user ? 'unassigned' : '',
-                             assigned_user == cur_user ? 'cur_user' : '']"
+                             assigned_user == cur_user ? 'cur_user' : '',
+                             position > number_of_bells/2 ? 'left_name' : '']"
                     >
                     <span class="unassign"
                           v-if="assignment_mode && 
@@ -239,7 +244,7 @@ Vue.component("bell_rope", {
                           > 🆇 </span>
                     <span class="assign"
                           @click="assign_user"
-                          >[[ (assignment_mode) ? ((assigned_user) ? assigned_user : '(assign ringer)')
+                          > [[ (assignment_mode) ? ((assigned_user) ? assigned_user : '(assign ringer)')
                                          : assigned_user ]]
                           </span>
                     <span class="unassign"
@@ -248,7 +253,7 @@ Vue.component("bell_rope", {
                                 position <= number_of_bells/2"
                           @click="unassign"
                           > 🆇 </span>
-                 </p>
+                 </div>
 
                  </div>
 
@@ -447,7 +452,7 @@ Vue.component('user_display', {
                         @click="select_user(user)"
                         >
                         [[ user ]]
-                    </li><br/> 
+                    </li> 
 			      </ul>
 			   </div>
                `,
