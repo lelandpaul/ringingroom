@@ -105,9 +105,6 @@ socketio.on('s_audio_change',function(msg,cb){
   console.log('changing audio to: ' + msg.new_audio);
   bell_circle.$refs.controls.audio_type = msg.new_audio;
   bell_circle.audio = msg.new_audio == 'Tower' ? tower : hand;
-  if (msg.new_audio == 'Hand' && bell_circle.number_of_bells > 8){
-    socketio.emit('c_size_change',{new_size: 8, tower_id: cur_tower_id});
-  }
 });
 
 
@@ -180,7 +177,9 @@ Vue.component("bell_rope", {
       // Ringing event received; now ring the bell
 	  ring: function(){
 		this.stroke = !this.stroke;
-		this.audio.play(bell_mappings[this.number_of_bells][this.number - 1]);
+        const audio_type = this.$root.$refs.controls.audio_type;
+        console.log(audio_type + ' ' + this.number_of_bells);
+		this.audio.play(bell_mappings[audio_type][this.number_of_bells][this.number - 1]);
 		var report = "Bell " + this.number + " rang a " + (this.stroke ? "backstroke":"handstroke");
 		console.log(report);
 	  },
@@ -337,7 +336,6 @@ Vue.component('tower_controls', {
 			      <ul class = "tower_control_size"> 
 			        <li v-for="size in tower_sizes"
 				        v-bind:size="size"
-                        v-show="audio_type == 'Tower' || size <= 8"
 				        @click="set_tower_size(size)"
                         >
                         [[ buttons[size] ]]
@@ -609,6 +607,11 @@ bell_circle = new Vue({
 			if (['t'].includes(key)){
 				console.log('calling stand');
 				bell_circle.make_call("Stand next");
+			}
+
+			if (['l'].includes(key)){
+				console.log('calling look-to');
+				bell_circle.make_call("Look to");
 			}
 		});
 		}
