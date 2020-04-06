@@ -532,7 +532,8 @@ bell_circle = new Vue({
 		button_disabled: true,
 		user_message: "Please input a username. Must be unique and between 1 and 12 characters.",
 		def_user_message: "Please input a username. Must be unique and between 1 and 12 characters.",
-		logged_in: false
+		logged_in: false,
+        call_throttled: false,
 	},
 
 
@@ -702,7 +703,10 @@ bell_circle = new Vue({
 
       // emit a call
 	  make_call: function(call){
+        if (this.call_throttled){ return };
         socketio.emit('c_call',{call: call,tower_id: cur_tower_id});
+        this.call_throttled = true;
+        setTimeout(()=>{this.call_throttled = false}, 1000);
 	  },
 	
       // rotate the view of the circle
