@@ -20,7 +20,9 @@ A space where socially-distanced ringers can practice together.
     ├── routes.py                       => flask routes
     ├── static
     │   ├── audio
-    │   │   ├── (various).mp3           => raw audio assets
+    │   │   ├── calls/                  => raw files for calls
+    │   │   ├── hand/                   => raw files for handbell audio
+    │   │   ├── tower/                  => raw files for towerbell audio
     │   │   ├── hand.(various audio)    => audiosprite for handbells
     │   │   ├── hand.json               => offsets for handbell audiosprite
     │   │   ├── tower.(various audio)   => audiosprite for towerbells
@@ -29,7 +31,6 @@ A space where socially-distanced ringers can practice together.
     │   ├── sass
     │   │   ├── static.scss            => sass for for static pages
     │   │   └── ringing_room.scss       => sass for ringing_room itself
-    │   ├── howler.core.min.js          => javascript audio library
     │   ├── images
     │   │   ├── favicon/                => favicon assets
     │   │   ├── backstroke.png          => rope at backstroke
