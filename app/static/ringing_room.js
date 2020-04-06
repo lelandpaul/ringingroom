@@ -539,8 +539,10 @@ bell_circle = new Vue({
 		user_name: "",
 		user_name_taken: true,
 		button_disabled: true,
-		user_message: "Please input a username. Must be unique and between 1 and 12 characters.",
-		def_user_message: "Please input a username. Must be unique and between 1 and 12 characters.",
+		user_message: "Please input a username. Must be unique and between 1 and 12 characters. " +
+			"This username is NOT permanent; you will make a new (transient) username each time you join a room.",
+		def_user_message: "Please input a username. Must be unique and between 1 and 12 characters." +
+			"This username is NOT permanent; you will make a new (transient) username each time you join a room.",
 		logged_in: false,
         call_throttled: false,
 	},
