@@ -105,10 +105,7 @@ socketio.on('s_name_change',function(msg,cb){
 socketio.on('s_audio_change',function(msg,cb){
   console.log('changing audio to: ' + msg.new_audio);
   bell_circle.$refs.controls.audio_type = msg.new_audio;
-  bell_circle.audio = msg.new_audio === 'Tower' ? tower : hand;
-  if (msg.new_audio === 'Hand' && bell_circle.number_of_bells > 8){
-    socketio.emit('c_size_change',{new_size: 8, tower_id: cur_tower_id});
-  }
+  bell_circle.audio = msg.new_audio == 'Tower' ? tower : hand;
 });
 
 
@@ -181,7 +178,9 @@ Vue.component("bell_rope", {
       // Ringing event received; now ring the bell
 	  ring: function(){
 		this.stroke = !this.stroke;
-		this.audio.play(bell_mappings[this.number_of_bells][this.number - 1]);
+        const audio_type = this.$root.$refs.controls.audio_type;
+        console.log(audio_type + ' ' + this.number_of_bells);
+		this.audio.play(bell_mappings[audio_type][this.number_of_bells][this.number - 1]);
 		var report = "Bell " + this.number + " rang a " + (this.stroke ? "backstroke":"handstroke");
 		console.log(report);
 	  },
@@ -220,6 +219,8 @@ Vue.component("bell_rope", {
                       :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"
                       />
 
+                 <div class='rope_metadata'
+                      :class="{left_metadata: position > number_of_bells/2}">
                  <div class='number' 
                       v-bind:class="[position > number_of_bells/2 ? 'left_number' : '', 
                                      number == 1 ? 'treble' : '',
@@ -227,10 +228,13 @@ Vue.component("bell_rope", {
                       >
 
                  [[ circled_digits[number-1] ]]
+
+                 </div>
                  
-                 <p class="assigned_user"
+                 <div class="assigned_user"
                     :class="[!assigned_user ? 'unassigned' : '',
-                             assigned_user == cur_user ? 'cur_user' : '']"
+                             assigned_user == cur_user ? 'cur_user' : '',
+                             position > number_of_bells/2 ? 'left_name' : '']"
                     >
                     <span class="unassign"
                           v-if="assignment_mode && 
@@ -240,7 +244,7 @@ Vue.component("bell_rope", {
                           > 🆇 </span>
                     <span class="assign"
                           @click="assign_user"
-                          >[[ (assignment_mode) ? ((assigned_user) ? assigned_user : '(assign ringer)')
+                          > [[ (assignment_mode) ? ((assigned_user) ? assigned_user : '(assign ringer)')
                                          : assigned_user ]]
                           </span>
                     <span class="unassign"
@@ -249,7 +253,7 @@ Vue.component("bell_rope", {
                                 position <= number_of_bells/2"
                           @click="unassign"
                           > 🆇 </span>
-                 </p>
+                 </div>
 
                  </div>
 
@@ -333,12 +337,12 @@ Vue.component('tower_controls', {
               <div class="tower_control">
                   <h2 class="tower_name">
                       [[ tower_name ]] 
-                      <span class="tower_id">ID: [[tower_id]]</span>
                   </h2>
+                  <span class="tower_id">ID: [[tower_id]]</span>
+                  <help ref="help"></help>
 			      <ul class = "tower_control_size"> 
 			        <li v-for="size in tower_sizes"
 				        v-bind:size="size"
-                        v-show="audio_type == 'Tower' || size <= 8"
 				        @click="set_tower_size(size)"
                         >
                         [[ buttons[size] ]]
@@ -478,7 +482,7 @@ Vue.component('help', {
 				class="help_toggle"
 				@click="show_help"
 				>
-                       [click for help]
+                       Help
                 </div>
                 <div v-else
                 class="help_showing"
@@ -527,7 +531,8 @@ bell_circle = new Vue({
 		button_disabled: true,
 		user_message: "Please input a username. Must be unique and between 1 and 12 characters.",
 		def_user_message: "Please input a username. Must be unique and between 1 and 12 characters.",
-		logged_in: false
+		logged_in: false,
+        call_throttled: false,
 	},
 
 
@@ -610,6 +615,11 @@ bell_circle = new Vue({
 			if (['t'].includes(key)){
 				console.log('calling stand');
 				bell_circle.make_call("Stand next");
+			}
+
+			if (['l'].includes(key)){
+				console.log('calling look-to');
+				bell_circle.make_call("Look to");
 			}
 		});
 		}
@@ -697,7 +707,10 @@ bell_circle = new Vue({
 
       // emit a call
 	  make_call: function(call){
+        if (this.call_throttled){ return };
         socketio.emit('c_call',{call: call,tower_id: cur_tower_id});
+        this.call_throttled = true;
+        setTimeout(()=>{this.call_throttled = false}, 1000);
 	  },
 	
       // rotate the view of the circle
@@ -776,7 +789,6 @@ bell_circle = new Vue({
                                  ></bell_rope>
 
                   </div>
-                  <help ref="help"></help>
               </div>
               </div>
               `
