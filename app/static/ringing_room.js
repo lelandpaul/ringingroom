@@ -447,7 +447,7 @@ Vue.component('user_display', {
                         @click="select_user(user)"
                         >
                         [[ user ]]
-                    </li> 
+                    </li><br/> 
 			      </ul>
 			   </div>
                `,

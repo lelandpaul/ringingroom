@@ -249,6 +249,7 @@ h2#call_display {
 
 .user_list {
     
+  display: table;
   border-width: 2px;
   border-left-style: solid;
   padding-left: 0px;
@@ -257,13 +258,13 @@ h2#call_display {
   margin-top: 0.5em;
 
   li {
+    width: 100%;
     margin-left: 0.5em;
-    padding-left: 0.25em;
-    padding-bottom:0.25em;
+    padding: 0.25em;
     list-style-type: none;
     font-size: x-large;
     opacity: 0.75;
-    width: 3em;
+    display: table;
     border-radius: 5pt; 
 
     &.assignment_active{
