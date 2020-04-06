@@ -46,6 +46,15 @@ socketio.on('s_bell_rung', function(msg,cb){
 	bell_circle.ring_bell(msg.who_rang);
 });
 
+// The user cookie had a username saved
+socketio.on('s_set_username', function(msg, cb){
+    console.log('received un: ' + msg.user_name);
+    bell_circle.user_name = msg.user_name;
+    if (msg.name_available){
+        bell_circle.send_user_name();
+    }
+});
+
 // getting initial user state
 socketio.on('s_set_users', function(msg, cb){
 	console.log('Getting users: ' + msg.users);
@@ -687,7 +696,7 @@ bell_circle = new Vue({
 			}
 		},
 
-		send_user_name: function(inf) {
+		send_user_name: function() {
 			console.log("it's a username!")
 			console.log(this.user_name)
 			socketio.emit('c_user_entered', {user_name: this.user_name, tower_id: cur_tower_id});
