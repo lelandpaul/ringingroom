@@ -18,8 +18,8 @@ body {
   left: 50%;
   transform: translate(-50%, -50%); }
   #bell_circle.six {
-    width: 25em;
-    height: 25em;
+    width: 28em;
+    height: 28em;
     padding: 0;
     border-radius: 50%;
     list-style: none; }
@@ -28,32 +28,32 @@ body {
       top: 50%;
       left: 50%; }
       #bell_circle.six > *:nth-of-type(1) {
-        transform: rotate(-60deg) translate(12.5em) rotate(60deg); }
+        transform: rotate(-60deg) translate(14em) rotate(60deg); }
         #bell_circle.six > *:nth-of-type(1) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.six > *:nth-of-type(2) {
-        transform: rotate(0deg) translate(12.5em) rotate(0deg); }
+        transform: rotate(0deg) translate(14em) rotate(0deg); }
         #bell_circle.six > *:nth-of-type(2) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.six > *:nth-of-type(3) {
-        transform: rotate(60deg) translate(12.5em) rotate(-60deg); }
+        transform: rotate(60deg) translate(14em) rotate(-60deg); }
         #bell_circle.six > *:nth-of-type(3) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.six > *:nth-of-type(4) {
-        transform: rotate(120deg) translate(12.5em) rotate(-120deg); }
+        transform: rotate(120deg) translate(14em) rotate(-120deg); }
         #bell_circle.six > *:nth-of-type(4) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.six > *:nth-of-type(5) {
-        transform: rotate(180deg) translate(12.5em) rotate(-180deg); }
+        transform: rotate(180deg) translate(14em) rotate(-180deg); }
         #bell_circle.six > *:nth-of-type(5) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.six > *:nth-of-type(6) {
-        transform: rotate(240deg) translate(12.5em) rotate(-240deg); }
+        transform: rotate(240deg) translate(14em) rotate(-240deg); }
         #bell_circle.six > *:nth-of-type(6) > * {
           transform: translate(-2.5em, -2.5em); }
   #bell_circle.eight {
-    width: 25em;
-    height: 25em;
+    width: 28em;
+    height: 28em;
     padding: 0;
     border-radius: 50%;
     list-style: none; }
@@ -62,40 +62,40 @@ body {
       top: 50%;
       left: 50%; }
       #bell_circle.eight > *:nth-of-type(1) {
-        transform: rotate(-67.5deg) translate(12.5em) rotate(67.5deg); }
+        transform: rotate(-67.5deg) translate(14em) rotate(67.5deg); }
         #bell_circle.eight > *:nth-of-type(1) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.eight > *:nth-of-type(2) {
-        transform: rotate(-22.5deg) translate(12.5em) rotate(22.5deg); }
+        transform: rotate(-22.5deg) translate(14em) rotate(22.5deg); }
         #bell_circle.eight > *:nth-of-type(2) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.eight > *:nth-of-type(3) {
-        transform: rotate(22.5deg) translate(12.5em) rotate(-22.5deg); }
+        transform: rotate(22.5deg) translate(14em) rotate(-22.5deg); }
         #bell_circle.eight > *:nth-of-type(3) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.eight > *:nth-of-type(4) {
-        transform: rotate(67.5deg) translate(12.5em) rotate(-67.5deg); }
+        transform: rotate(67.5deg) translate(14em) rotate(-67.5deg); }
         #bell_circle.eight > *:nth-of-type(4) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.eight > *:nth-of-type(5) {
-        transform: rotate(112.5deg) translate(12.5em) rotate(-112.5deg); }
+        transform: rotate(112.5deg) translate(14em) rotate(-112.5deg); }
         #bell_circle.eight > *:nth-of-type(5) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.eight > *:nth-of-type(6) {
-        transform: rotate(157.5deg) translate(12.5em) rotate(-157.5deg); }
+        transform: rotate(157.5deg) translate(14em) rotate(-157.5deg); }
         #bell_circle.eight > *:nth-of-type(6) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.eight > *:nth-of-type(7) {
-        transform: rotate(202.5deg) translate(12.5em) rotate(-202.5deg); }
+        transform: rotate(202.5deg) translate(14em) rotate(-202.5deg); }
         #bell_circle.eight > *:nth-of-type(7) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.eight > *:nth-of-type(8) {
-        transform: rotate(247.5deg) translate(12.5em) rotate(-247.5deg); }
+        transform: rotate(247.5deg) translate(14em) rotate(-247.5deg); }
         #bell_circle.eight > *:nth-of-type(8) > * {
           transform: translate(-2.5em, -2.5em); }
   #bell_circle.ten {
-    width: 25em;
-    height: 25em;
+    width: 28em;
+    height: 28em;
     padding: 0;
     border-radius: 50%;
     list-style: none; }
@@ -104,48 +104,48 @@ body {
       top: 50%;
       left: 50%; }
       #bell_circle.ten > *:nth-of-type(1) {
-        transform: rotate(-72deg) translate(12.5em) rotate(72deg); }
+        transform: rotate(-72deg) translate(14em) rotate(72deg); }
         #bell_circle.ten > *:nth-of-type(1) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.ten > *:nth-of-type(2) {
-        transform: rotate(-36deg) translate(12.5em) rotate(36deg); }
+        transform: rotate(-36deg) translate(14em) rotate(36deg); }
         #bell_circle.ten > *:nth-of-type(2) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.ten > *:nth-of-type(3) {
-        transform: rotate(0deg) translate(12.5em) rotate(0deg); }
+        transform: rotate(0deg) translate(14em) rotate(0deg); }
         #bell_circle.ten > *:nth-of-type(3) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.ten > *:nth-of-type(4) {
-        transform: rotate(36deg) translate(12.5em) rotate(-36deg); }
+        transform: rotate(36deg) translate(14em) rotate(-36deg); }
         #bell_circle.ten > *:nth-of-type(4) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.ten > *:nth-of-type(5) {
-        transform: rotate(72deg) translate(12.5em) rotate(-72deg); }
+        transform: rotate(72deg) translate(14em) rotate(-72deg); }
         #bell_circle.ten > *:nth-of-type(5) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.ten > *:nth-of-type(6) {
-        transform: rotate(108deg) translate(12.5em) rotate(-108deg); }
+        transform: rotate(108deg) translate(14em) rotate(-108deg); }
         #bell_circle.ten > *:nth-of-type(6) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.ten > *:nth-of-type(7) {
-        transform: rotate(144deg) translate(12.5em) rotate(-144deg); }
+        transform: rotate(144deg) translate(14em) rotate(-144deg); }
         #bell_circle.ten > *:nth-of-type(7) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.ten > *:nth-of-type(8) {
-        transform: rotate(180deg) translate(12.5em) rotate(-180deg); }
+        transform: rotate(180deg) translate(14em) rotate(-180deg); }
         #bell_circle.ten > *:nth-of-type(8) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.ten > *:nth-of-type(9) {
-        transform: rotate(216deg) translate(12.5em) rotate(-216deg); }
+        transform: rotate(216deg) translate(14em) rotate(-216deg); }
         #bell_circle.ten > *:nth-of-type(9) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.ten > *:nth-of-type(10) {
-        transform: rotate(252deg) translate(12.5em) rotate(-252deg); }
+        transform: rotate(252deg) translate(14em) rotate(-252deg); }
         #bell_circle.ten > *:nth-of-type(10) > * {
           transform: translate(-2.5em, -2.5em); }
   #bell_circle.twelve {
-    width: 25em;
-    height: 25em;
+    width: 28em;
+    height: 28em;
     padding: 0;
     border-radius: 50%;
     list-style: none; }
@@ -154,74 +154,99 @@ body {
       top: 50%;
       left: 50%; }
       #bell_circle.twelve > *:nth-of-type(1) {
-        transform: rotate(-75deg) translate(12.5em) rotate(75deg); }
+        transform: rotate(-75deg) translate(14em) rotate(75deg); }
         #bell_circle.twelve > *:nth-of-type(1) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.twelve > *:nth-of-type(2) {
-        transform: rotate(-45deg) translate(12.5em) rotate(45deg); }
+        transform: rotate(-45deg) translate(14em) rotate(45deg); }
         #bell_circle.twelve > *:nth-of-type(2) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.twelve > *:nth-of-type(3) {
-        transform: rotate(-15deg) translate(12.5em) rotate(15deg); }
+        transform: rotate(-15deg) translate(14em) rotate(15deg); }
         #bell_circle.twelve > *:nth-of-type(3) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.twelve > *:nth-of-type(4) {
-        transform: rotate(15deg) translate(12.5em) rotate(-15deg); }
+        transform: rotate(15deg) translate(14em) rotate(-15deg); }
         #bell_circle.twelve > *:nth-of-type(4) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.twelve > *:nth-of-type(5) {
-        transform: rotate(45deg) translate(12.5em) rotate(-45deg); }
+        transform: rotate(45deg) translate(14em) rotate(-45deg); }
         #bell_circle.twelve > *:nth-of-type(5) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.twelve > *:nth-of-type(6) {
-        transform: rotate(75deg) translate(12.5em) rotate(-75deg); }
+        transform: rotate(75deg) translate(14em) rotate(-75deg); }
         #bell_circle.twelve > *:nth-of-type(6) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.twelve > *:nth-of-type(7) {
-        transform: rotate(105deg) translate(12.5em) rotate(-105deg); }
+        transform: rotate(105deg) translate(14em) rotate(-105deg); }
         #bell_circle.twelve > *:nth-of-type(7) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.twelve > *:nth-of-type(8) {
-        transform: rotate(135deg) translate(12.5em) rotate(-135deg); }
+        transform: rotate(135deg) translate(14em) rotate(-135deg); }
         #bell_circle.twelve > *:nth-of-type(8) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.twelve > *:nth-of-type(9) {
-        transform: rotate(165deg) translate(12.5em) rotate(-165deg); }
+        transform: rotate(165deg) translate(14em) rotate(-165deg); }
         #bell_circle.twelve > *:nth-of-type(9) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.twelve > *:nth-of-type(10) {
-        transform: rotate(195deg) translate(12.5em) rotate(-195deg); }
+        transform: rotate(195deg) translate(14em) rotate(-195deg); }
         #bell_circle.twelve > *:nth-of-type(10) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.twelve > *:nth-of-type(11) {
-        transform: rotate(225deg) translate(12.5em) rotate(-225deg); }
+        transform: rotate(225deg) translate(14em) rotate(-225deg); }
         #bell_circle.twelve > *:nth-of-type(11) > * {
           transform: translate(-2.5em, -2.5em); }
       #bell_circle.twelve > *:nth-of-type(12) {
-        transform: rotate(255deg) translate(12.5em) rotate(-255deg); }
+        transform: rotate(255deg) translate(14em) rotate(-255deg); }
         #bell_circle.twelve > *:nth-of-type(12) > * {
           transform: translate(-2.5em, -2.5em); }
 
 /* Other positioning */
 .rope {
-  display: table-cell;
+  display: flex;
+  flex-wrap: wrap;
   vertical-align: bottom;
   cursor: pointer; }
   .rope > img {
-    display: inline-block;
+    display: block;
     vertical-align: bottom;
     width: 5em;
     height: 5em; }
-  .rope > .number {
+    .rope > img.assignment_mode {
+      opacity: 0.4; }
+  .rope > .rope_metadata {
     margin-left: -1em;
     display: inline-block;
+    vertical-align: baseline;
+    margin-bottom: -4px;
+    width: 100px; }
+    .rope > .rope_metadata > .number.cur_user {
+      color: blue; }
+    .rope > .rope_metadata > .left_name {
+      margin-left: auto;
+      margin-right: 0;
+      direction: rtl; }
+    .rope > .rope_metadata > .assigned_user {
+      height: 1em;
+      white-space: nowrap;
+      vertical-align: baseline; }
+      .rope > .rope_metadata > .assigned_user .cur_user {
+        color: blue; }
+  .rope > .left_metadata {
+    float: right;
     vertical-align: bottom;
-    margin-bottom: -4px; }
-  .rope > .left_number {
     margin-right: -1em;
-    margin-left: 0em; }
+    margin-left: -4em;
+    text-align: right; }
 
-.treble {
+.unassign {
+  font-size: 15px; }
+  .unassign:hover {
+    font-size: 17px;
+    color: red; }
+
+.number.treble, .number.treble.cur_user {
   color: #ff000d; }
 
 /* Call display */
@@ -235,18 +260,21 @@ h2#call_display {
   transform: translate(-40%, -50%); }
 
 /* Tower controls */
-h2.tower_name {
+.tower_control {
+  padding-top: 5px;
+  padding-left: 15px; }
+
+.tower_name {
   padding-left: 0.5em;
-  margin-bottom: -0.5em;
+  margin-bottom: 0;
   opacity: 0.75; }
 
 .tower_id {
-  padding-left: 0.5em;
-  margin-bottom: -0.5em;
-  font-size: small;
-  opacity: 0.75; }
+  padding-left: 1.5em;
+  font-size: small; }
 
 .tower_control_size {
+  margin-top: 0.25em;
   padding-left: 0.5em; }
   .tower_control_size li {
     cursor: pointer;
@@ -258,9 +286,6 @@ h2.tower_name {
     font-size: x-large;
     opacity: 0.75; }
 
-.tower_control {
-  padding-left: 0.5em; }
-
 .audio_toggle {
   padding-left: 1em;
   font-size: smaller;
@@ -269,12 +294,72 @@ h2.tower_name {
   cursor: pointer; }
 
 /* help bar */
-#help {
+.help {
+  cursor: pointer;
+  opacity: 1;
+  font-size: small;
+  display: inline-block;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 5px;
+  padding: 0.25em; }
+
+.help_showing {
+  width: 50em;
+  font-size: large;
+  padding: 0.5em;
   position: absolute;
-  top: 5%;
-  left: 70%;
-  width: 25em;
-  opacity: 0.25;
-  font-size: large; }
+  z-index: 9999;
+  opacity: 1.0;
+  border: 1px solid black;
+  background-color: aliceblue; }
+
+/* User Display */
+.user_display {
+  padding: 15px; }
+
+.user_display_title {
+  padding-left: 0.75em;
+  opacity: 0.75;
+  display: inline; }
+
+.toggle_assign {
+  cursor: pointer;
+  margin-left: 0.5em;
+  margin-bottom: -0.5em;
+  padding: 0.3em;
+  border-style: solid;
+  border-width: 1pt;
+  border-color: black;
+  border-radius: 5pt;
+  font-size: small;
+  opacity: 0.75; }
+  .toggle_assign.active {
+    background: rgba(255, 0, 0, 0.3); }
+
+.user_list {
+  display: table;
+  border-width: 2px;
+  border-left-style: solid;
+  padding-left: 0px;
+  margin-top: 0px;
+  margin-left: 1em;
+  margin-top: 0.5em; }
+  .user_list li {
+    width: 100%;
+    margin-left: 0.5em;
+    padding: 0.25em;
+    list-style-type: none;
+    font-size: x-large;
+    opacity: 0.75;
+    display: table;
+    border-radius: 5pt; }
+    .user_list li.assignment_active {
+      cursor: pointer; }
+      .user_list li.assignment_active.selected_user {
+        background: rgba(0, 0, 255, 0.3); }
+
+.user_list .cur_user {
+  font-weight: bold; }
 
 /*# sourceMappingURL=ringing_room.scss.css.map */

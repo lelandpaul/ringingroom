@@ -80,7 +80,7 @@ body {
 
 // Now, position the bell_circle
 #bell_circle {
-  $circ-size: 25em;
+  $circ-size: 28em;
   $img-size: 5em;
 
 
@@ -101,29 +101,69 @@ body {
 
 // Position rope images and their numbers
 .rope {
-	display: table-cell;
+	display: flex;
+    flex-wrap: wrap;
 	vertical-align: bottom;
     cursor: pointer;
 	> img {
-		display: inline-block;
+		display: block;
 		vertical-align: bottom;
 		width: 5em;
 		height: 5em;
+        &.assignment_mode{
+            opacity: 0.4;
+        }
 	}
-	> .number {
-		margin-left: -1em;
-		display: inline-block;
-		vertical-align: bottom;
-		margin-bottom: -4px;
-	}
-	> .left_number {
-		margin-right: -1em;
-		margin-left: 0em;
-	}
+    > .rope_metadata {
+            margin-left: -1em;
+            display: inline-block;
+            vertical-align: baseline;
+            margin-bottom: -4px;
+            width: 100px;
+
+        > .number.cur_user {
+            color: blue;
+        }
+
+        > .left_name {
+            margin-left: auto;
+            margin-right: 0;
+            direction: rtl;
+        }
+
+        > .assigned_user {
+            height: 1em;
+            white-space: nowrap;
+            vertical-align: baseline;
+            .cur_user {
+               color: blue;
+           }
+       }
+   }
+
+    > .left_metadata {
+      float: right;
+      vertical-align: bottom;
+      margin-right: -1em;
+      margin-left: -4em;
+      text-align: right;
+    }
 }
 
+.unassign {
+   font-size: 15px; 
+
+   &:hover{
+       font-size: 17px;
+       color: red;
+
+   }
+}
+
+
+
 // make the treble number red
-.treble {
+.number.treble, .number.treble.cur_user {
 	color: #ff000d;
 
 }
@@ -145,20 +185,26 @@ h2#call_display {
 
 /* Tower controls */
 
-h2.tower_name {
+.tower_control{
+  padding-top:5px;
+  padding-left:15px;
+}
+
+.tower_name {
   padding-left: 0.5em;
-  margin-bottom: -0.5em;
+  margin-bottom: 0;
   opacity: 0.75;
 }
 
 .tower_id {
-  padding-left: 0.5em;
-  margin-bottom: -0.5em;
+  padding-left: 1.5em;
+  // margin-bottom: -0.5em;
   font-size: small;
-  opacity: 0.75;
+  // opacity: 0.75;
 }
 
 .tower_control_size {
+  margin-top: 0.25em;
   padding-left: 0.5em;
   li {
     cursor: pointer;
@@ -173,10 +219,6 @@ h2.tower_name {
 
 }
 
-.tower_control{
-  padding-left:0.5em;
-}
-
 .audio_toggle{
   padding-left:1em;
   font-size: smaller;
@@ -187,12 +229,98 @@ h2.tower_name {
 }
 
 /* help bar */
-
-#help {
-  position: absolute;
-  top: 5%;
-  left: 70%;
-  width: 25em;
-  opacity: 0.25;
-  font-size: large;
+.help {
+  cursor: pointer;
+  // top: 5%;
+  // left: 60%;
+  opacity: 1;
+  font-size: small;
+  display: inline-block;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 5px;
+  padding: 0.25em;
 }
+
+.help_showing {
+  width: 50em;
+  font-size: large;
+  padding: 0.5em;
+  position: absolute;
+  z-index: 9999;
+  opacity: 1.0;
+  border: 1px solid black;
+  background-color: aliceblue;
+}
+
+
+/* User Display */
+
+.user_display {
+
+    padding: 15px;
+}
+
+.user_display_title {
+  padding-left: 0.75em;
+  opacity: 0.75;
+  display: inline;
+}
+
+.toggle_assign {
+  cursor: pointer;
+  margin-left: 0.5em;
+  margin-bottom: -0.5em;
+  padding: 0.3em;
+  border-style: solid;
+  border-width: 1pt;
+  border-color: black;
+  border-radius: 5pt;
+  font-size: small;
+  opacity: 0.75;
+  &.active{
+      background: rgba(255,0,0,0.3);
+
+  }
+}
+
+.user_list {
+    
+  display: table;
+  border-width: 2px;
+  border-left-style: solid;
+  padding-left: 0px;
+  margin-top: 0px;
+  margin-left: 1em;
+  margin-top: 0.5em;
+
+  li {
+    width: 100%;
+    margin-left: 0.5em;
+    padding: 0.25em;
+    list-style-type: none;
+    font-size: x-large;
+    opacity: 0.75;
+    display: table;
+    border-radius: 5pt; 
+
+    &.assignment_active{
+        cursor: pointer;
+
+        &.selected_user{
+    background: rgba(0, 0, 255, 0.3);
+        }
+    }
+  }
+
+}
+
+.user_list .cur_user {
+    font-weight: bold;
+}
+
+
+
+
+
+

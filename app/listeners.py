@@ -46,11 +46,45 @@ def on_join(json):
     emit('s_size_change', {'size': tower.n_bells})
     emit('s_name_change', {'new_name': tower.name})
     emit('s_audio_change', {'new_audio': tower.audio})
+    emit('s_set_users', {'users': tower.users})
+    for (bell, user) in tower.assignments.items():
+        if not user: continue
+        emit('s_assign_user', {'bell': bell, 'user': user})
+
+
+# User logged in
+@socketio.on('c_user_entered')
+def on_user_entered(json):
+    print('user entered: ' + json['user_name'])
+    tower = towers[json['tower_id']]
+    user = json['user_name']
+    tower.add_user(user)
+    emit('s_user_entered', { 'user': user },
+         broadcast=True, include_self = True, room=json['tower_id'])
+
+# User left
+@socketio.on('c_user_left')
+def on_user_left(json):
+    tower = towers[json['tower_id']]
+    user = json['user_name']
+    tower.remove_user(user)
+    emit('s_user_left', { 'user': user },
+         broadcast=True, include_self = False, room=json['tower_id'])
+
+# User was assigned to rope
+@socketio.on('c_assign_user')
+def on_assign_user(json):
+    print('user was assigned')
+    tower = towers[json['tower_id']]
+    tower.assign_bell(json['bell'], json['user'])
+    emit('s_assign_user', json,
+         broadcast=True, include_self=True, room=json['tower_id'])
 
 
 # A rope was pulled; ring the bell
 @socketio.on('c_bell_rung')
 def on_bell_rung(event_dict):
+    disagreement = False
     cur_bell = event_dict["bell"]
     tower_id = event_dict["tower_id"]
     cur_tower = towers[tower_id]
@@ -59,7 +93,7 @@ def on_bell_rung(event_dict):
         bell_state[cur_bell - 1] = not bell_state[cur_bell - 1]
     else:
         print('Current stroke disagrees between server and client')
-    disagreement = True
+        disagreement = True
     emit('s_bell_rung',
          {"global_bell_state": bell_state,
           "who_rang": cur_bell,
