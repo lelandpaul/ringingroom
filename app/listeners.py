@@ -50,18 +50,6 @@ def on_join(json):
         if not user: continue
         emit('s_assign_user', {'bell': bell, 'user': user})
 
-# # log in event occurs
-# @socketio.on('c_user_change')
-# def on_log_in(json):
-#     print(json)
-#     tower = towers[json["tower_id"]]
-#     user = json["user_name"]
-#     if user in tower.users:
-#         tower.remove_user(user)
-#     else:
-#         tower.add_user(user)
-#     emit('s_user_change', {'users': tower.users},
-#          broadcast=True, include_self=True, room=json["tower_id"])
 
 # User logged in
 @socketio.on('c_user_entered')
@@ -95,6 +83,7 @@ def on_assign_user(json):
 # A rope was pulled; ring the bell
 @socketio.on('c_bell_rung')
 def on_bell_rung(event_dict):
+    disagreement = False
     cur_bell = event_dict["bell"]
     tower_id = event_dict["tower_id"]
     cur_tower = towers[tower_id]
@@ -103,7 +92,7 @@ def on_bell_rung(event_dict):
         bell_state[cur_bell - 1] = not bell_state[cur_bell - 1]
     else:
         print('Current stroke disagrees between server and client')
-    disagreement = True
+        disagreement = True
     emit('s_bell_rung',
          {"global_bell_state": bell_state,
           "who_rang": cur_bell,
