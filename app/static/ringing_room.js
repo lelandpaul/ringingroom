@@ -42,6 +42,7 @@ socketio.emit('c_join',{tower_id: cur_tower_id})
 // A bell was rung
 socketio.on('s_bell_rung', function(msg,cb){
 	console.log('Received event: ' + msg.global_bell_state + msg.who_rang);
+	// if(msg.disagree) {}
 	bell_circle.ring_bell(msg.who_rang);
 });
 
@@ -104,8 +105,8 @@ socketio.on('s_name_change',function(msg,cb){
 socketio.on('s_audio_change',function(msg,cb){
   console.log('changing audio to: ' + msg.new_audio);
   bell_circle.$refs.controls.audio_type = msg.new_audio;
-  bell_circle.audio = msg.new_audio == 'Tower' ? tower : hand;
-  if (msg.new_audio == 'Hand' && bell_circle.number_of_bells > 8){
+  bell_circle.audio = msg.new_audio === 'Tower' ? tower : hand;
+  if (msg.new_audio === 'Hand' && bell_circle.number_of_bells > 8){
     socketio.emit('c_size_change',{new_size: 8, tower_id: cur_tower_id});
   }
 });
@@ -394,7 +395,7 @@ Vue.component('user_display', {
             if (this.assignment_mode){ return };
             var cur_user_bells = []
             this.$root.$refs.bells.forEach((bell,index) =>
-                {if (bell.assigned_user == this.cur_user){
+                {if (bell.assigned_user === this.cur_user){
                     cur_user_bells.push(index+1);
                 } 
             });
@@ -417,8 +418,8 @@ Vue.component('user_display', {
               this.user_names.splice(index, 1);
             }
             bell_circle.$refs.bells.forEach((bell,index) =>
-                {if (bell.assigned_user == user){
-                    bell.assigned_user == '';
+                {if (bell.assigned_user === user){
+                    bell.assigned_user === '';
                     socketio.emit('c_assign_user', {bell: index + 1,
                                                     user: '',
                                                     tower_id: cur_tower_id});
