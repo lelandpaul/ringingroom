@@ -145,3 +145,6 @@ rrenv/
 
 # Don't track the db
 towers.db
+
+#don't track user cookies
+flask_session/
