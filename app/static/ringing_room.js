@@ -608,6 +608,11 @@ bell_circle = new Vue({
 				console.log('calling stand');
 				bell_circle.make_call("Stand next");
 			}
+
+			if (['l'].includes(key)){
+				console.log('calling look-to');
+				bell_circle.make_call("Look to");
+			}
 		});
 		}
 	},
