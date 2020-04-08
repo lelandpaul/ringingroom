@@ -148,3 +148,6 @@ towers.db
 
 # don't track cookies
 flask_session/
+
+#don't track webassets
+app/static/gen/
