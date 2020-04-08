@@ -100,6 +100,9 @@ class Tower:
         out = re.sub(r'\W', '', out)
         return out.lower()
 
+    def set_at_hand(self):
+        self._bell_state = [True] * self._n
+
 
 class TowerDict(dict):
     def __init__(self, table=TowerDB, db=db):

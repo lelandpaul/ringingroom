@@ -5,6 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_socketio import SocketIO
 from flask_assets import Environment, Bundle
+from flask_session import Session
+
 from config import Config
 import os
 
@@ -12,8 +14,9 @@ app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-socketio = SocketIO(app)
 assets = Environment(app)
+socketio = SocketIO(app, manage_session=False)
+Session(app)
 
 
 # asset bundles

@@ -46,6 +46,15 @@ socketio.on('s_bell_rung', function(msg,cb){
 	bell_circle.ring_bell(msg.who_rang);
 });
 
+// The user cookie had a username saved
+socketio.on('s_set_username', function(msg, cb){
+    console.log('received un: ' + msg.user_name);
+    bell_circle.user_name = msg.user_name;
+    if (msg.name_available){
+        bell_circle.send_user_name();
+    }
+});
+
 // getting initial user state
 socketio.on('s_set_users', function(msg, cb){
 	console.log('Getting users: ' + msg.users);
@@ -328,8 +337,13 @@ Vue.component('tower_controls', {
         // the user clicked the audio toggle
         swap_audio: function(){
           console.log('swapping audio');
-          socketio.emit('c_audio_change',{old_audio: this.audio_type, tower_id: cur_tower_id})
+          socketio.emit('c_audio_change',{old_audio: this.audio_type, tower_id: cur_tower_id});
 
+        },
+
+        set_bells_at_hand: function(){
+            console.log('setting all bells at hand')
+            socketio.emit('c_set_bells', {tower_id: cur_tower_id});
         },
 	},
 
@@ -340,6 +354,11 @@ Vue.component('tower_controls', {
                   </h2>
                   <span class="tower_id">ID: [[tower_id]]</span>
                   <help ref="help"></help>
+                  <span class="set_at_hand"
+                        @click="set_bells_at_hand"
+                        >
+                        Set bells at hand
+                        </span>
 			      <ul class = "tower_control_size"> 
 			        <li v-for="size in tower_sizes"
 				        v-bind:size="size"
@@ -677,7 +696,7 @@ bell_circle = new Vue({
 			}
 		},
 
-		send_user_name: function(inf) {
+		send_user_name: function() {
 			console.log("it's a username!")
 			console.log(this.user_name)
 			socketio.emit('c_user_entered', {user_name: this.user_name, tower_id: cur_tower_id});

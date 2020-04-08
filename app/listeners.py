@@ -1,4 +1,5 @@
 from flask_socketio import emit, join_room
+from flask import session
 from app import socketio, towers
 from app.models import Tower
 
@@ -42,6 +43,13 @@ def on_join(json):
     tower_id = json['tower_id']
     tower = towers[tower_id]
     join_room(tower_id)
+    if 'user_name' in session.keys():
+        print('found username: ' + session['user_name'])
+        cur_user = session['user_name']
+        name_available = cur_user not in tower.users
+        print('in_use: ' + str(name_available))
+        emit('s_set_username', {'user_name': cur_user,
+                                'name_available': name_available})
     emit('s_size_change', {'size': tower.n_bells})
     emit('s_name_change', {'new_name': tower.name})
     emit('s_audio_change', {'new_audio': tower.audio})
@@ -54,7 +62,8 @@ def on_join(json):
 # User logged in
 @socketio.on('c_user_entered')
 def on_user_entered(json):
-    print('user entered: ' + json['user_name'])
+    session['user_name'] = json['user_name']
+    print('set username to: ' + session['user_name'])
     tower = towers[json['tower_id']]
     user = json['user_name']
     tower.add_user(user)
@@ -130,3 +139,12 @@ def on_audio_change(json):
     towers[tower_id].audio = new_audio
     emit('s_audio_change', {'new_audio': new_audio},
          broadcast=True, include_self=True, room=tower_id)
+
+# Set all bells at hand
+@socketio.on('c_set_bells')
+def on_set_bells(json):
+    tower_id = json['tower_id']
+    tower = towers[tower_id]
+    tower.set_at_hand()
+    emit('s_global_state', {'global_bell_state': tower.bell_state},
+         broadcast = True, include_self=True, room=tower_id)

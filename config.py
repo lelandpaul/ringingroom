@@ -1,4 +1,5 @@
 import os
+import datetime
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -10,3 +11,7 @@ class Config(object):
         'sqlite:///' + os.path.join(basedir, 'towers.db')
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    SESSION_TYPE = 'filesystem'
+
+    PERMANENT_SESSION_LIFETIME = datetime.timedelta(days = 1)
