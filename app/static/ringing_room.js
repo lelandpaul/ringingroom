@@ -49,9 +49,9 @@ socketio.on('s_bell_rung', function(msg,cb){
 // The user cookie had a username saved
 socketio.on('s_set_username', function(msg, cb){
     console.log('received un: ' + msg.user_name);
-    bell_circle.user_name = msg.user_name;
+    bell_circle.$refs.un_input.input = msg.user_name;
     if (msg.name_available){
-        bell_circle.send_user_name();
+        bell_circle.$refs.un_input.send_user_name()
     }
 });
 
@@ -377,16 +377,83 @@ Vue.component('tower_controls', {
 }); // End tower_controls
 
 
+
+// help holds help toggle
+Vue.component('help', {
+
+    // data in components should be a function, to maintain scope
+	data: function(){
+		return {help_showing: false} },
+
+	methods: {
+
+        // the user clicked the audio toggle
+        show_help: function(){
+          console.log('showing or hiding help');
+          this.help_showing = !this.help_showing
+
+        },
+	},
+
+
+	template: `
+			<div class="help">
+				<div v-if="help_showing === false"
+				class="help_toggle"
+				@click="show_help"
+				>
+                       Help
+                </div>
+                <div v-else
+                class="help_showing"
+                @click="show_help">
+                  	[click to close]
+                  	<p>
+                  		On the top left, you may set the number of bells in the tower by clicking the desired number. 
+                  		To ring, you may either click on the ropes or use the following hot-keys:
+                  	</p>
+					<ul>
+						<li> <b>[1-9], [0], [-], [=]:</b> Rings bells 1 - 9, 10, 11, and 12</li>
+						<li><b>[SPACE]:</b> Rings the bell in the lower right corner.</li>
+						<li><b>[LEFT] and [RIGHT] arrow keys:</b> Rings the left and right bottom-most bells.</li>
+						<li><b>[f] and [j]:</b> same as [LEFT] and [RIGHT]</li>
+						<li><b>[SHIFT]+[0-9]\\[0]\\[-]\\[=]:</b> Rotate the "perspective" of the ringing room to put that bell in the lower right corner so it may be rung by [SPACE] or [j].</li>
+					</ul>
+					<p>
+						There are also hot-keys for various calls, but be aware that in some browsers using these 
+						results in the sound of the bells being interrupted.
+					</p>
+					
+					<p>Ringers may now <i>assign bells</i> by entering bell assignment mode (top left of the screen). While in
+					this mode, any ringer may be selected under the user list and then a second click by a bell will assign
+					that user to a bell. Clicking the "x" by the user's name will kick them off that bell. Bells may not be rung
+					in bell assignment mode. Simply click the button in the control towers to exist bell assignment mode.
+					For now, anyone may assign anyone (and kick off anyone).</p>
+			
+					<p>There are also hot-keys for various calls, but be aware that in some browsers using these results
+							in the sound of the bells being interrupted.</p>
+					<ul>
+						<li><b>[l]</b>ook to...</li>
+						<li><b>[g]</b>o next time</li>
+						<li><b>[b]</b>ob</li>
+						<li>si<b>[n]</b>gle</li>
+						<li>t<b>[h]</b>at's all</li>
+						<li>s<b>[t]</b>and next</li>
+					</ul>
+				</div>
+			</div>
+               `,
+}); // End help
+
 // user_display holds functionality required for users
 Vue.component('user_display', {
-
-    props: ['cur_user'],
 
     // data in components should be a function, to maintain scope
 	data: function(){
 		return { user_names: [],
                  assignment_mode: false,
                  selected_user: '',
+                 cur_user: '',
         } },
 
     computed: {
@@ -477,73 +544,85 @@ Vue.component('user_display', {
                `,
 }); // End user_display
 
-// help holds help toggle
-Vue.component('help', {
 
-    // data in components should be a function, to maintain scope
-	data: function(){
-		return {help_showing: false} },
-
-	methods: {
-
-        // the user clicked the audio toggle
-        show_help: function(){
-          console.log('showing or hiding help');
-          this.help_showing = !this.help_showing
-
-        },
-	},
+Vue.component("user_name_input", {
 
 
-	template: `
-			<div class="help">
-				<div v-if="help_showing === false"
-				class="help_toggle"
-				@click="show_help"
-				>
-                       Help
-                </div>
-                <div v-else
-                class="help_showing"
-                @click="show_help">
-                  	[click to close]
-                  	<p>
-                  		On the top left, you may set the number of bells in the tower by clicking the desired number. 
-                  		To ring, you may either click on the ropes or use the following hot-keys:
-                  	</p>
-					<ul>
-						<li> <b>[1-9], [0], [-], [=]:</b> Rings bells 1 - 9, 10, 11, and 12</li>
-						<li><b>[SPACE]:</b> Rings the bell in the lower right corner.</li>
-						<li><b>[LEFT] and [RIGHT] arrow keys:</b> Rings the left and right bottom-most bells.</li>
-						<li><b>[f] and [j]:</b> same as [LEFT] and [RIGHT]</li>
-						<li><b>[SHIFT]+[0-9]\\[0]\\[-]\\[=]:</b> Rotate the "perspective" of the ringing room to put that bell in the lower right corner so it may be rung by [SPACE] or [j].</li>
-					</ul>
-					<p>
-						There are also hot-keys for various calls, but be aware that in some browsers using these 
-						results in the sound of the bells being interrupted.
-					</p>
-					
-					<p>Ringers may now <i>assign bells</i> by entering bell assignment mode (top left of the screen). While in
-					this mode, any ringer may be selected under the user list and then a second click by a bell will assign
-					that user to a bell. Clicking the "x" by the user's name will kick them off that bell. Bells may not be rung
-					in bell assignment mode. Simply click the button in the control towers to exist bell assignment mode.
-					For now, anyone may assign anyone (and kick off anyone).</p>
-			
-					<p>There are also hot-keys for various calls, but be aware that in some browsers using these results
-							in the sound of the bells being interrupted.</p>
-					<ul>
-						<li><b>[l]</b>ook to...</li>
-						<li><b>[g]</b>o next time</li>
-						<li><b>[b]</b>ob</li>
-						<li>si<b>[n]</b>gle</li>
-						<li>t<b>[h]</b>at's all</li>
-						<li>s<b>[t]</b>and next</li>
-					</ul>
-				</div>
-			</div>
-               `,
-}); // End help
+    data: function(){ 
+            return { input: "",
+                     final_name: "",
+                     user_name_taken: true,
+                     button_disabled: true,
+                     logged_in: false,
+user_message: "Please input a username. Must be unique and between 1 and 12 characters. " +
+"This username is NOT permanent; you will make a new (transient) username each time you join a room.",
+def_user_message: "Please input a username. Must be unique and between 1 and 12 characters." +
+"This username is NOT permanent; you will make a new (transient) username each time you join a room.",
+        } },
 
+    methods: {
+
+		check_user_name: function(){
+            console.log("DOING THE THING")
+			console.log('checking username, length is: ' + this.input.length);
+
+			if (this.input.length > 0 && this.input.length < 13) {
+				console.log('checking for name');
+				if(this.$root.$refs.users.user_names.includes(this.input)) {
+					// not a valid user name
+					this.button_disabled = true;
+					this.user_name_taken = true;
+					this.user_message = "This user name is already taken.";
+				} else {
+					this.button_disabled = false;
+					this.user_name_taken = false;
+					this.user_message = this.def_user_message;
+				}
+			} else {
+                // not a valid user name
+				this.button_disabled = true;
+				this.user_name_taken = true;
+				this.user_message = this.def_user_message;
+			}
+		},
+
+		send_user_name: function() {
+			console.log("Sending username")
+            this.final_name = this.input;
+			console.log(this.final_name)
+            this.$root.$refs.users.cur_user = this.final_name;
+			socketio.emit('c_user_entered', {user_name: this.final_name, tower_id: cur_tower_id});
+			this.$root.logged_in = true;
+		},
+
+    },
+
+    template: `
+              <form class="pure-form"
+			  	    v-on:submit.prevent="send_user_name"
+                    >
+                  <fieldset>
+                      <input class="pure-input"
+                             type="text" 
+                             placeholder="username" 
+                             v-model="input" 
+                             v-on:input="check_user_name"
+                             required
+                             >
+                      <button type="submit"
+                      		  :disabled="button_disabled"
+                              class="pure-button pure-button-primary"
+                              >
+                          Join
+                      </button>
+                  </fieldset>
+                  <div id="username-message"> 
+                      [[ user_message ]]
+                  </div>
+			  </form>
+              `
+
+});
 
 
 // The master Vue application
@@ -555,15 +634,9 @@ bell_circle = new Vue({
 		number_of_bells: 8,
 		bells: [],
         audio: tower,
-		user_name: "",
-		user_name_taken: true,
-		button_disabled: true,
-		user_message: "Please input a username. Must be unique and between 1 and 12 characters. " +
-			"This username is NOT permanent; you will make a new (transient) username each time you join a room.",
-		def_user_message: "Please input a username. Must be unique and between 1 and 12 characters." +
-			"This username is NOT permanent; you will make a new (transient) username each time you join a room.",
-		logged_in: false,
         call_throttled: false,
+        logged_in: false,
+
 	},
 
 
@@ -665,43 +738,12 @@ bell_circle = new Vue({
 		this.bells = list;
 
 		window.addEventListener('beforeunload', e => {
-			socketio.emit('c_user_left', {user_name: this.user_name, tower_id: cur_tower_id});
-			e.preventDefault();
-			e.returnValue = ' ';
+            socketio.disconnect()
 		});
 	},
 
 	methods: {
 
-		check_user_name: function(){
-			console.log('checking username, length is: ' + this.user_name.length);
-
-			if (this.user_name.length > 0 && this.user_name.length < 13) {
-				console.log('checking for name');
-				if(this.$refs.users.user_names.includes(this.user_name)) {
-					// not a valid user name
-					this.button_disabled = true;
-					this.user_name_taken = true;
-					this.user_message = "This user name is already taken.";
-				} else {
-					this.button_disabled = false;
-					this.user_name_taken = false;
-					this.user_message = this.def_user_message;
-				}
-			} else {
-                // not a valid user name
-				this.button_disabled = true;
-				this.user_name_taken = true;
-				this.user_message = this.def_user_message;
-			}
-		},
-
-		send_user_name: function() {
-			console.log("it's a username!")
-			console.log(this.user_name)
-			socketio.emit('c_user_entered', {user_name: this.user_name, tower_id: cur_tower_id});
-			this.logged_in = true
-		},
       
       // the server rang a bell; find the correct one and ring it
 	  ring_bell: function(bell) {
@@ -773,33 +815,13 @@ bell_circle = new Vue({
 
 	template: `
 			<div>
-              <div v-show="!logged_in">
-              	<form class="pure-form"
-					 v-on:submit.prevent="send_user_name"
-                     >
-                    <fieldset>
-                        <input class="pure-input"
-                               type="text" 
-                               placeholder="username" 
-                               v-model="user_name" 
-                               v-on:input="check_user_name"
-                               required
-                               >
-                        <button type="submit"
-                        		:disabled="button_disabled"
-                                class="pure-button pure-button-primary"
-                                >
-                            Join
-                        </button>
-                    </fieldset>
-                    <div id="username-message"> 
-                        [[ user_message ]]
-                    </div>
-				</form>
-			  </div>
+
+              <user_name_input ref="un_input"
+                               v-show="!logged_in"></user_name_input>
+
               <div v-show="logged_in">
                   <tower_controls ref="controls"></tower_controls>
-                  <user_display ref="users" :cur_user="user_name"></user_display>
+                  <user_display ref="users"></user_display>
                   <call_display v-bind:audio="audio" ref="display"></call_display>
                   <div id="bell_circle"
                        v-bind:class="[ 

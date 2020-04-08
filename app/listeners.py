@@ -1,5 +1,5 @@
 from flask_socketio import emit, join_room
-from flask import session
+from flask import session, request
 from app import socketio, towers
 from app.models import Tower
 
@@ -38,8 +38,6 @@ def on_create_tower(data):
 # Join a room — happens on connection, but with more information passed
 @socketio.on('c_join')
 def on_join(json):
-    def emit_global_state():
-        emit('s_global_state', {'global_bell_state': tower.bell_state})
     tower_id = json['tower_id']
     tower = towers[tower_id]
     join_room(tower_id)
@@ -47,13 +45,13 @@ def on_join(json):
         print('found username: ' + session['user_name'])
         cur_user = session['user_name']
         name_available = cur_user not in tower.users
-        print('in_use: ' + str(name_available))
         emit('s_set_username', {'user_name': cur_user,
                                 'name_available': name_available})
     emit('s_size_change', {'size': tower.n_bells})
     emit('s_name_change', {'new_name': tower.name})
     emit('s_audio_change', {'new_audio': tower.audio})
     emit('s_set_users', {'users': tower.users})
+    emit('s_global_state', {'global_bell_state': tower.bell_state})
     for (bell, user) in tower.assignments.items():
         if not user: continue
         emit('s_assign_user', {'bell': bell, 'user': user})
@@ -63,6 +61,8 @@ def on_join(json):
 @socketio.on('c_user_entered')
 def on_user_entered(json):
     session['user_name'] = json['user_name']
+    session['tower_id'] = json['tower_id']
+    session.modified = True
     print('set username to: ' + session['user_name'])
     tower = towers[json['tower_id']]
     user = json['user_name']
@@ -70,14 +70,27 @@ def on_user_entered(json):
     emit('s_user_entered', { 'user': user },
          broadcast=True, include_self = True, room=json['tower_id'])
 
-# User left
-@socketio.on('c_user_left')
-def on_user_left(json):
-    tower = towers[json['tower_id']]
-    user = json['user_name']
-    tower.remove_user(user)
+@socketio.on('disconnect')
+def on_disconnect():
+    user = session['user_name']
+    tower_id = session['tower_id']
+    session['tower_id'] = ''
+    session.modified = True
+    print('disconnecting ' + user + ' from ' + str(tower_id));
+    towers[tower_id].remove_user(user)
+    print('users in ' + str(tower_id) + ': ' + str(towers[tower_id].users))
     emit('s_user_left', { 'user': user },
-         broadcast=True, include_self = False, room=json['tower_id'])
+         broadcast=True, include_self = False, room=tower_id)
+
+
+# # User left
+# @socketio.on('c_user_left')
+# def on_user_left(json):
+#     tower = towers[json['tower_id']]
+#     user = json['user_name']
+#     tower.remove_user(user)
+#     emit('s_user_left', { 'user': user },
+#          broadcast=True, include_self = False, room=json['tower_id'])
 
 # User was assigned to rope
 @socketio.on('c_assign_user')
