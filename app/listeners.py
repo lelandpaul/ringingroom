@@ -61,7 +61,6 @@ def on_join(json):
 @socketio.on('c_user_entered')
 def on_user_entered(json):
     session['user_name'] = json['user_name']
-    session['tower_id'] = json['tower_id']
     session.modified = True
     print('set username to: ' + session['user_name'])
     tower = towers[json['tower_id']]
@@ -70,27 +69,17 @@ def on_user_entered(json):
     emit('s_user_entered', { 'user': user },
          broadcast=True, include_self = True, room=json['tower_id'])
 
-@socketio.on('disconnect')
-def on_disconnect():
-    user = session['user_name']
-    tower_id = session['tower_id']
-    session['tower_id'] = ''
-    session.modified = True
-    print('disconnecting ' + user + ' from ' + str(tower_id));
+
+@socketio.on('c_user_left')
+def on_user_left(json):
+    user = json['user_name']
+    tower_id = json['tower_id']
     towers[tower_id].remove_user(user)
+    print('disconnecting ' + user + ' from ' + str(tower_id));
     print('users in ' + str(tower_id) + ': ' + str(towers[tower_id].users))
     emit('s_user_left', { 'user': user },
          broadcast=True, include_self = False, room=tower_id)
 
-
-# # User left
-# @socketio.on('c_user_left')
-# def on_user_left(json):
-#     tower = towers[json['tower_id']]
-#     user = json['user_name']
-#     tower.remove_user(user)
-#     emit('s_user_left', { 'user': user },
-#          broadcast=True, include_self = False, room=json['tower_id'])
 
 # User was assigned to rope
 @socketio.on('c_assign_user')
@@ -133,15 +122,12 @@ def on_call(call_dict):
 # Tower size was changed
 @socketio.on('c_size_change')
 def on_size_change(size):
-    def emit_global_state():
-        emit('s_global_state', {'global_bell_state': towers[tower_id].bell_state},
-             broadcast=True, include_self=True, room=tower_id)
-
     tower_id = size['tower_id']
     size = size['new_size']
     towers[tower_id].n_bells = size
+    towers[tower_id].set_at_hand()
     emit('s_size_change', {'size': size},
-         broadcast=True, include_self=True, room=tower_id, callback = emit_global_state)
+         broadcast=True, include_self=True, room=tower_id)
 
 
 # Audio type was changed

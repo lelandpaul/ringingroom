@@ -738,7 +738,10 @@ bell_circle = new Vue({
 		this.bells = list;
 
 		window.addEventListener('beforeunload', e => {
-            socketio.disconnect()
+            socketio.emit('c_user_left',{user_name: this.$refs.users.cur_user, tower_id: cur_tower_id})
+            e.preventDefault();
+              // Chrome requires returnValue to be set
+          e.returnValue = '';
 		});
 	},
 
