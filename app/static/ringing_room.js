@@ -456,20 +456,6 @@ Vue.component('user_display', {
                  cur_user: '',
         } },
 
-    computed: {
-
-        sorted_user_names: function(){
-            if (this.user_names.length <= 1) { return this.user_names};
-            const index = this.user_names.indexOf(this.cur_user);
-            var sorted_uns = this.user_names
-            if (index > -1) {
-                sorted_uns.splice(index,1); // remove current user
-            }
-            sorted_uns.unshift(this.cur_user); // add the cur_user back at the beginning
-            return sorted_uns;
-        },
-    },
-
     methods: {
 
         toggle_assignment: function(){
@@ -499,7 +485,11 @@ Vue.component('user_display', {
         },
 
         add_user: function(user){
-            this.user_names.push(user);
+            if (user === this.cur_user){
+                this.user_names.unshift(user);
+            } else {
+                this.user_names.push(user);
+            }
         },
 
         remove_user: function(user){
@@ -531,7 +521,7 @@ Vue.component('user_display', {
                         [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
                   </span>
 			      <ul class="user_list"> 
-			        <li v-for="user in sorted_user_names"
+			        <li v-for="user in user_names"
                         :class="{cur_user: user == cur_user,
                                  assignment_active: assignment_mode,
                                  selected_user: user == selected_user}"
