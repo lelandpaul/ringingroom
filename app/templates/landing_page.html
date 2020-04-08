@@ -18,8 +18,12 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
     <!-- internal resources -->
-	<script src="{{url_for('static', filename = 'landing.js') + '?nocache202003311353'}}"></script>
-	<link rel="stylesheet" href="{{url_for('static', filename = 'css/static.scss.css')+ '?nocache202003311353'}}">
+    {% assets "js_landing" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+    {% assets "css_static" %}
+    <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}"></script>
+    {% endassets %}
 	<!-- Favicon nonsense -->
 	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-196x196.png')}}" sizes="196x196" />
 	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-96x96.png')}}" sizes="96x96" />
