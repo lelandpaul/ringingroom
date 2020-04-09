@@ -559,9 +559,10 @@ Vue.component("user_name_input", {
                      button_disabled: true,
                      logged_in: false,
 user_message: "Please input a username. Must be unique and between 1 and 12 characters. " +
-"This username is NOT permanent; you will make a new (transient) username each time you join a room.",
+"This username is NOT permanent; you will make a new (transient) username periodically.",
+
 def_user_message: "Please input a username. Must be unique and between 1 and 12 characters. " +
-"This username is NOT permanent; you will make a new (transient) username each time you join a room.",
+"This username is NOT permanent; you will make a new (transient) username periodically.",
         } },
 
     methods: {
