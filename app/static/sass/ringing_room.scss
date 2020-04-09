@@ -209,6 +209,7 @@ h2#call_display {
 .tower_control_size {
   margin-top: 0.25em;
   padding-left: 0.5em;
+  margin-bottom:0;
   li {
     cursor: pointer;
     padding-left: 0em;
@@ -223,11 +224,16 @@ h2#call_display {
 }
 
 .audio_toggle{
-  padding-left:1em;
+  margin-left:1em;
+  margin-top: 0.75em;
   font-size: smaller;
   opacity: 0.75;
-  margin-top: -0.7em;
   cursor: pointer;
+  display: inline-block;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 5px;
+  padding: 0.25em;
 }
 
 /* help bar */
