@@ -26,8 +26,7 @@ var logger = function()
 // logger.disableLogger()
 
 // Set up socketio instance
-var socketio = io() // for development
-// var socketio = io.connect('ringingroom.com',{secure:true, transports:['websocket']}); // for server
+var socketio = io()
 
 // Get the current tower_id and let the server know where we are
 var cur_path = window.location.pathname.split('/')
