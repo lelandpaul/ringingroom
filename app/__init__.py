@@ -15,7 +15,10 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 assets = Environment(app)
-socketio = SocketIO(app, manage_session=False)
+socketio = SocketIO(app, 
+                    manage_session=False,
+                    ping_interval=2000,
+                    ping_timeout=6000)
 Session(app)
 
 

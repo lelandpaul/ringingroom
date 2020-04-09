@@ -46,12 +46,17 @@ socketio.on('s_bell_rung', function(msg,cb){
 	bell_circle.ring_bell(msg.who_rang);
 });
 
-// The user cookie had a username saved
-socketio.on('s_set_username', function(msg, cb){
+// We got a username from the server
+// (It might be empty)
+socketio.on('s_set_user_name', function(msg, cb){
     console.log('received un: ' + msg.user_name);
+    console.log('it is available: ' + msg.name_available)
     bell_circle.$refs.un_input.input = msg.user_name;
-    if (msg.name_available){
-        bell_circle.$refs.un_input.send_user_name()
+    if (!msg.name_available){
+        bell_circle.$refs.un_input.user_message = "This username is already taken.";
+    }
+    if (msg.name_available && msg.user_name){
+        bell_circle.$refs.un_input.send_user_name();
     }
 });
 
@@ -63,15 +68,16 @@ socketio.on('s_set_users', function(msg, cb){
 
 // User entered the room
 socketio.on('s_user_entered', function(msg, cb){
-    console.log(msg.user + ' entered')
-    bell_circle.$refs.users.add_user(msg.user);
+    console.log(msg.user_name + ' entered')
+    bell_circle.$refs.users.add_user(msg.user_name);
 });
 
 // User left the room
 socketio.on('s_user_left', function(msg, cb){
-    console.log(msg.user + ' left')
-    bell_circle.$refs.users.remove_user(msg.user);
+    console.log(msg.user_name + ' left')
+    bell_circle.$refs.users.remove_user(msg.user_name);
 });
+
 
 // User was assigned to a bell
 socketio.on('s_assign_user', function(msg, cb){
@@ -96,7 +102,6 @@ socketio.on('s_size_change', function(msg,cb){
 // The server sent us the global state; set all bells accordingly
 socketio.on('s_global_state',function(msg,cb){
 	var gstate = msg.global_bell_state;
-    bell_circle.number_of_bells = gstate.length
 	for (var i = 0; i < gstate.length; i++){
 		bell_circle.$refs.bells[i].set_state_silently(gstate[i]);
 	};
@@ -456,20 +461,6 @@ Vue.component('user_display', {
                  cur_user: '',
         } },
 
-    computed: {
-
-        sorted_user_names: function(){
-            if (this.user_names.length <= 1) { return this.user_names};
-            const index = this.user_names.indexOf(this.cur_user);
-            var sorted_uns = this.user_names
-            if (index > -1) {
-                sorted_uns.splice(index,1); // remove current user
-            }
-            sorted_uns.unshift(this.cur_user); // add the cur_user back at the beginning
-            return sorted_uns;
-        },
-    },
-
     methods: {
 
         toggle_assignment: function(){
@@ -499,23 +490,19 @@ Vue.component('user_display', {
         },
 
         add_user: function(user){
-            this.user_names.push(user);
+            if (user === this.cur_user){
+                this.user_names.unshift(user);
+            } else {
+                this.user_names.push(user);
+            }
         },
 
         remove_user: function(user){
+            console.log('removing user: ' + user);
             const index = this.user_names.indexOf(user);
             if (index > -1) {
               this.user_names.splice(index, 1);
             }
-            bell_circle.$refs.bells.forEach((bell,index) =>
-                {if (bell.assigned_user === user){
-                    bell.assigned_user === '';
-                    socketio.emit('c_assign_user', {bell: index + 1,
-                                                    user: '',
-                                                    tower_id: cur_tower_id});
-                }});
-
-
         },
 
     },
@@ -531,7 +518,7 @@ Vue.component('user_display', {
                         [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
                   </span>
 			      <ul class="user_list"> 
-			        <li v-for="user in sorted_user_names"
+			        <li v-for="user in user_names"
                         :class="{cur_user: user == cur_user,
                                  assignment_active: assignment_mode,
                                  selected_user: user == selected_user}"
@@ -556,7 +543,7 @@ Vue.component("user_name_input", {
                      logged_in: false,
 user_message: "Please input a username. Must be unique and between 1 and 12 characters. " +
 "This username is NOT permanent; you will make a new (transient) username each time you join a room.",
-def_user_message: "Please input a username. Must be unique and between 1 and 12 characters." +
+def_user_message: "Please input a username. Must be unique and between 1 and 12 characters. " +
 "This username is NOT permanent; you will make a new (transient) username each time you join a room.",
         } },
 
@@ -631,7 +618,7 @@ bell_circle = new Vue({
 	el: "#bell_circle",
 
 	data: {
-		number_of_bells: 8,
+		number_of_bells: 0,
 		bells: [],
         audio: tower,
         call_throttled: false,
@@ -649,6 +636,9 @@ bell_circle = new Vue({
 				list.push({number: i, position: i});
 			}
 			this.bells = list;
+            // Request the global state from the server
+            socketio.emit('c_request_global_state', {tower_id: cur_tower_id});
+            this.rotate(1);
 		},
 
 		logged_in: function(inf) {
@@ -739,9 +729,9 @@ bell_circle = new Vue({
 
 		window.addEventListener('beforeunload', e => {
             socketio.emit('c_user_left',{user_name: this.$refs.users.cur_user, tower_id: cur_tower_id})
-            e.preventDefault();
-              // Chrome requires returnValue to be set
-          e.returnValue = '';
+            // e.preventDefault();
+            //   // Chrome requires returnValue to be set
+          // e.returnValue = '';
 		});
 	},
 

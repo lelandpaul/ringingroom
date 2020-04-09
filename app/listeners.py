@@ -2,6 +2,8 @@ from flask_socketio import emit, join_room
 from flask import session, request
 from app import socketio, towers
 from app.models import Tower
+import random
+import string
 
 # SocketIO Handlers
 
@@ -35,56 +37,127 @@ def on_create_tower(data):
          str(new_tower.tower_id) + '/' + new_tower.url_safe_name)
 
 
-# Join a room — happens on connection, but with more information passed
+
+# Set up the room when a user first joins
 @socketio.on('c_join')
 def on_join(json):
+
+    # Helper function to generate a random string for use as a uid
+    def assign_user_id():
+        letters = string.ascii_lowercase
+        return ''.join(random.choice(letters) for i in range(8))
+
+    # First: check that the user has a unique ID in their cookie
+    # This will be used for keeping track of who's in the room
+    if 'user_id' not in session.keys():
+        session['user_id'] = assign_user_id()
+    user_id = session['user_id']
+
+    # The user may already have a username set in their cookies. if so, get it
+    user_name = session.get('user_name') or ''
+
+    # Next, get the tower_id & tower from the client, then join the room
     tower_id = json['tower_id']
     tower = towers[tower_id]
     join_room(tower_id)
-    if 'user_name' in session.keys():
-        print('found username: ' + session['user_name'])
-        cur_user = session['user_name']
-        name_available = cur_user not in tower.users
-        emit('s_set_username', {'user_name': cur_user,
-                                'name_available': name_available})
-    emit('s_size_change', {'size': tower.n_bells})
+
+    # Store the tower in case of accidental disconnect
+    session['tower_id'] = json['tower_id']
+
+    # It's possible we already have them listed in the tower's user list
+    # Check this via the user_id
+    user_already_present = user_id in tower.users.keys()
+
+    # Give the user the list of currently-present users
+    emit('s_set_users', {'users': list(tower.users.values())})
+
+    # If the user is in the room: Remove them (in preparation for adding them again)
+    if user_already_present:
+        tower.remove_user(user_id)
+        emit('s_user_left', {'user_name': user_name}, 
+                            broadcast = True,
+                            include_self = True,
+                            room = tower_id)
+
+    # Check whether their selected name is available
+    user_name_available = user_name not in tower.users.values()
+
+    # Send the user their name, along with whether it's currently available or not
+    emit('s_set_user_name', {'user_name': user_name,
+                             'name_available': user_name_available})
+    
+    # Set up tower metadata
     emit('s_name_change', {'new_name': tower.name})
     emit('s_audio_change', {'new_audio': tower.audio})
-    emit('s_set_users', {'users': tower.users})
-    emit('s_global_state', {'global_bell_state': tower.bell_state})
-    for (bell, user) in tower.assignments.items():
-        if not user: continue
-        emit('s_assign_user', {'bell': bell, 'user': user})
+
+    # Set the size (then wait for the client to ask for the global state)
+    emit('s_size_change', {'size': tower.n_bells})
 
 
-# User logged in
+# Helper for sending assignments
+def send_assignments(tower_id):
+    tower = towers[tower_id]
+    for (bell, user_name) in tower.assignments.items():
+        emit('s_assign_user', {'bell': bell, 'user': user_name},
+             broadcast=True, include_self=True, room=tower_id)
+
+
+# A user entered a room
 @socketio.on('c_user_entered')
 def on_user_entered(json):
+
+    # Store their username for the future
     session['user_name'] = json['user_name']
+    user_name = json['user_name']
     session.modified = True
-    print('set username to: ' + session['user_name'])
+
+    # Get their unique ID
+    user_id = session['user_id']
+
+    # Get the tower
     tower = towers[json['tower_id']]
-    user = json['user_name']
-    tower.add_user(user)
-    emit('s_user_entered', { 'user': user },
+    tower.add_user(user_id, user_name)
+
+    emit('s_user_entered', { 'user_name': user_name },
          broadcast=True, include_self = True, room=json['tower_id'])
 
 
+# A user left a room (and the event actually fired)
 @socketio.on('c_user_left')
 def on_user_left(json):
-    user = json['user_name']
+    user_id = session['user_id']
+    user_name = json['user_name']
     tower_id = json['tower_id']
-    towers[tower_id].remove_user(user)
-    print('disconnecting ' + user + ' from ' + str(tower_id));
-    print('users in ' + str(tower_id) + ': ' + str(towers[tower_id].users))
-    emit('s_user_left', { 'user': user },
+    tower = towers[tower_id]
+
+    try:
+        tower.remove_user(user_id)
+    except KeyError:
+        # The user key wasn't present in the tower, for some reason
+        # For now, just pass
+        pass
+
+    emit('s_user_left', { 'user_name': user_name },
          broadcast=True, include_self = False, room=tower_id)
 
+    send_assignments(tower_id)
+
+
+
+# A user disconnected (via timeout)
+@socketio.on('disconnect')
+def on_disconnect():
+    tower_id = session['tower_id']
+    user_id = session['user_id']
+    user_name = session['user_name']
+    tower = towers[tower_id]
+    tower.remove_user(user_id)
+    emit('s_user_left', { 'user_name': user_name },
+         broadcast=True, include_self = False, room=tower_id)
 
 # User was assigned to rope
 @socketio.on('c_assign_user')
 def on_assign_user(json):
-    print('user was assigned')
     tower = towers[json['tower_id']]
     tower.assign_bell(json['bell'], json['user'])
     emit('s_assign_user', json,
@@ -128,6 +201,19 @@ def on_size_change(size):
     towers[tower_id].set_at_hand()
     emit('s_size_change', {'size': size},
          broadcast=True, include_self=True, room=tower_id)
+
+# The client finished resizing and is now ready to get the global state
+@socketio.on('c_request_global_state')
+def on_request_global_State(json):
+    print('global state requested')
+    tower_id = json['tower_id']
+    tower = towers[tower_id]
+    state = tower.bell_state
+    emit('s_global_state', {'global_bell_state': state})
+
+    # Send assignments
+    # Broadcast these bc the relevant user might have been removed from their assignments
+    send_assignments(tower_id)
 
 
 # Audio type was changed
