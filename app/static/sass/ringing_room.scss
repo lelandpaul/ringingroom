@@ -341,5 +341,34 @@ h2#call_display {
 }
 
 
+/* Username Input Form */
+
+form.pure-form { 
+  position: absolute;
+  width: 19em;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.pure-input {
+  width: 14em;
+
+}
+
+.pure-form {
+  width: 40%;
+
+}
+
+fieldset {
+  white-space: nowrap;
+}
+
+#join-message {
+  width: 100%;
+  font-size: smaller;
+
+}
 
 

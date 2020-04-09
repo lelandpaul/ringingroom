@@ -601,6 +601,10 @@ def_user_message: "Please input a username. Must be unique and between 1 and 12 
 
     },
 
+    mounted: function() {
+        this.$refs.username_input.focus()
+    },
+
     template: `
               <form class="pure-form"
 			  	    v-on:submit.prevent="send_user_name"
@@ -611,6 +615,7 @@ def_user_message: "Please input a username. Must be unique and between 1 and 12 
                              placeholder="username" 
                              v-model="input" 
                              v-on:input="check_user_name"
+                             ref="username_input"
                              required
                              >
                       <button type="submit"
