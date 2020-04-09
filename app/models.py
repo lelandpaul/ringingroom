@@ -81,6 +81,7 @@ class Tower:
     def n_bells(self, new_size):
         self._n = new_size
         self._bell_state = [True] * new_size
+        self._assignments = {i+1: '' for i in range(new_size)}
 
     @property
     def bell_state(self):

@@ -175,6 +175,12 @@ Vue.component("bell_rope", {
 
         },
 
+        left_side: function(){
+            if (this.position == 1) { return false };
+            if (this.position <= (this.number_of_bells/2)+1) { return true };
+            return false;
+        },
+
     },
 
 	methods: {
@@ -226,7 +232,7 @@ Vue.component("bell_rope", {
              <div class='rope'
                   >
 
-                 <img v-if="position <= number_of_bells/2"
+                 <img v-if="!left_side"
                       @click='emit_ringing_event'
                       class="rope_img" 
                       :class='{assignment_mode: assignment_mode}'
@@ -234,9 +240,9 @@ Vue.component("bell_rope", {
                       />
 
                  <div class='rope_metadata'
-                      :class="{left_metadata: position > number_of_bells/2}">
+                      :class="{left_metadata: left_side}">
                  <div class='number' 
-                      v-bind:class="[position > number_of_bells/2 ? 'left_number' : '', 
+                      v-bind:class="[left_side ? 'left_number' : '', 
                                      number == 1 ? 'treble' : '',
                                      assigned_user == cur_user ? 'cur_user' : '']"
                       >
@@ -248,7 +254,7 @@ Vue.component("bell_rope", {
                  <div class="assigned_user"
                     :class="[!assigned_user ? 'unassigned' : '',
                              assigned_user == cur_user ? 'cur_user' : '',
-                             position > number_of_bells/2 ? 'left_name' : '']"
+                             !left_side ? 'left_name' : '']"
                     >
                     <span class="unassign"
                           v-if="assignment_mode && 
@@ -264,7 +270,7 @@ Vue.component("bell_rope", {
                     <span class="unassign"
                           v-if="assignment_mode && 
                                 assigned_user &&
-                                position <= number_of_bells/2"
+                                !left_side"
                           @click="unassign"
                           > 🆇 </span>
                  </div>
@@ -272,7 +278,7 @@ Vue.component("bell_rope", {
                  </div>
 
                  <img class="rope_img" 
-                      v-if="position > number_of_bells/2"
+                      v-if="left_side"
                       @click='emit_ringing_event'
                       :class='{assignment_mode: assignment_mode}'
                       :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"
@@ -473,13 +479,25 @@ Vue.component('user_display', {
         },
 
         rotate_to_assignment: function(){
+            console.log('rotating to assignment')
+            // Don't rotate while assigning bells
             if (this.assignment_mode){ return };
+
+            // Don't rotate if the user has no name yet
+            if (!this.cur_user){ return };
+
             var cur_user_bells = []
             this.$root.$refs.bells.forEach((bell,index) =>
                 {if (bell.assigned_user === this.cur_user){
                     cur_user_bells.push(index+1);
                 } 
             });
+            console.log(cur_user_bells);
+            // the user has no bells; don't screw with rotation
+            if (cur_user_bells === []){
+                console.log('skipping — no assigned bells');
+                return;
+            };
             const rotate_to = Math.min(...cur_user_bells);
             this.$root.rotate(rotate_to);
         },
@@ -550,7 +568,6 @@ def_user_message: "Please input a username. Must be unique and between 1 and 12 
     methods: {
 
 		check_user_name: function(){
-            console.log("DOING THE THING")
 			console.log('checking username, length is: ' + this.input.length);
 
 			if (this.input.length > 0 && this.input.length < 13) {
@@ -631,14 +648,16 @@ bell_circle = new Vue({
         // Change the list of bells to track the current number
 		number_of_bells: function(new_count){
             console.log('changing number of bells to ' + new_count)
-			var list = [];
+			const new_bells = [];
 			for (var i=1; i <= new_count; i++){
-				list.push({number: i, position: i});
+                console.log('pushing bell: ' + i);
+				new_bells.push({number: i, position: i});
+                console.log(new_bells);
 			}
-			this.bells = list;
+            console.log(new_bells);
+			this.bells = new_bells;
             // Request the global state from the server
             socketio.emit('c_request_global_state', {tower_id: cur_tower_id});
-            this.rotate(1);
 		},
 
 		logged_in: function(inf) {
@@ -719,14 +738,8 @@ bell_circle = new Vue({
 		}
 	},
 
-    // On creation: Create a list of bells
+    // On creation: set up disconnection at beforeunload
 	created: function() {
-		var list = [];
-		for (var i=1; i <= this.number_of_bells; i++){
-			list.push({number: i, position: i});
-		}
-		this.bells = list;
-
 		window.addEventListener('beforeunload', e => {
             socketio.emit('c_user_left',{user_name: this.$refs.users.cur_user, tower_id: cur_tower_id})
             // e.preventDefault();
@@ -794,7 +807,7 @@ bell_circle = new Vue({
 		  for (var bell in this.bells){
               // change the position of each bell
 			  var number = this.bells[bell]['number'];
-			  this.bells[bell]['position'] = (number + offset + (n_b/2)-1)%n_b + 1;
+			  this.bells[bell]['position'] = (number + offset)%n_b + 1;
 		  };
 
           // We need the Vue's list to be sorted by position

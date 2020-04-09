@@ -37,11 +37,11 @@ body {
     $angle: (360 / $item-count);
 	$rot: 0; // initialize for scope
 
-    @if $item-count == 4 { $rot: -1*$angle/2; }
-	@if $item-count == 6 { $rot: -1*$angle; }
-	@if $item-count == 8 { $rot: -3*$angle/2; }
-	@if $item-count == 10 { $rot: -2*$angle; }
-	@if $item-count == 12 { $rot: -5*$angle/2; }
+    @if $item-count == 4 { $rot: 1*$angle/2; }
+	@if $item-count == 6 { $rot: 1*$angle; }
+	@if $item-count == 8 { $rot: 3*$angle/2; }
+	@if $item-count == 10 { $rot: 2*$angle; }
+	@if $item-count == 12 { $rot: 5*$angle/2; }
 
 
 	@for $i from 1 through $item-count {
