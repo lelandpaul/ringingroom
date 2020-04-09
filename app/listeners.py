@@ -67,7 +67,6 @@ def on_join(json):
     # It's possible we already have them listed in the tower's user list
     # Check this via the user_id
     user_already_present = user_id in tower.users.keys()
-    print('already present: ' + str(user_already_present))
 
     # Give the user the list of currently-present users
     emit('s_set_users', {'users': list(tower.users.values())})
