@@ -137,9 +137,11 @@ body {
         }
 
         > .assigned_user {
-            height: 1em;
+            z-index: 9999;
+            height: 2em;
             white-space: nowrap;
             vertical-align: baseline;
+            direction: ltr;
             .cur_user {
                color: blue;
            }
@@ -152,10 +154,14 @@ body {
       margin-right: -1em;
       margin-left: -4em;
       text-align: right;
+      > .assigned_user{
+          direction: rtl;
+      }
     }
 }
 
 .unassign {
+    z-index: 9999;
    font-size: 15px; 
 
    &:hover{

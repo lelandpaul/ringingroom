@@ -258,7 +258,7 @@ Vue.component("bell_rope", {
                     <span class="unassign"
                           v-if="assignment_mode && 
                                 assigned_user &&
-                                position > number_of_bells/2"
+                                left_side"
                           @click="unassign"
                           > 🆇 </span>
                     <span class="assign"
