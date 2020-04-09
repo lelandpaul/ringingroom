@@ -31,7 +31,6 @@ var socketio = io() // for development
 // var socketio = io.connect('ringingroom.com',{secure:true, transports:['websocket']}); // for server
 
 
-
 ////////////////////////
 /* SOCKETIO LISTENERS */
 ////////////////////////

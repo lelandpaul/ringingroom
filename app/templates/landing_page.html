@@ -17,6 +17,8 @@
 	<script src="https://unpkg.com/vue@2.6.11/dist/vue.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
+    
     <!-- internal resources -->
     {% assets "js_landing" %}
     <script type="text/javascript" src="{{ ASSET_URL }}"></script>
@@ -70,6 +72,27 @@
 		</div>
 		<div id='tower_selector'></div>
 	</div>
+
+<style>
+span.cc-message {text-align:center;}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false"></script>
+<script>
+window.cookieconsent.initialise({
+  "content": {
+      message: "We use cookies to improve your experience."
+  },
+  "palette": {
+    "popup": {
+      "background": "#252e39"
+    },
+    "button": {
+      "background": "#0078e7",
+      "highlight":  "#0078e7"
+    }
+  }
+});
+</script>
 </body>
 
 </html>
