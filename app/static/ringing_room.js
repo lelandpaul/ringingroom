@@ -408,13 +408,13 @@ Vue.component('help', {
 
 	template: `
 			<div class="help">
-				<div v-if="help_showing === false"
+				<div
 				class="help_toggle"
 				@click="show_help"
 				>
                        Help
                 </div>
-                <div v-else
+                <div v-if="help_showing"
                 class="help_showing"
                 @click="show_help">
                   	[click to close]
