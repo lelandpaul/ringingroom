@@ -67,9 +67,7 @@ def on_join(json):
     # It's possible we already have them listed in the tower's user list
     # Check this via the user_id
     user_already_present = user_id in tower.users.keys()
-
-    # Also check whether their selected name is available
-    user_name_available = user_name not in tower.users.values()
+    print('already present: ' + str(user_already_present))
 
     # Give the user the list of currently-present users
     emit('s_set_users', {'users': list(tower.users.values())})
@@ -82,9 +80,12 @@ def on_join(json):
                             include_self = True,
                             room = tower_id)
 
+    # Check whether their selected name is available
+    user_name_available = user_name not in tower.users.values()
+
     # Send the user their name, along with whether it's currently available or not
     emit('s_set_user_name', {'user_name': user_name,
-                             'name_available': True})
+                             'name_available': user_name_available})
     
     # Set up tower metadata
     emit('s_name_change', {'new_name': tower.name})
@@ -134,7 +135,12 @@ def on_user_left(json):
     tower_id = json['tower_id']
     tower = towers[tower_id]
 
-    tower.remove_user(user_id)
+    try:
+        tower.remove_user(user_id)
+    except KeyError:
+        # The user key wasn't present in the tower, for some reason
+        # For now, just pass
+        pass
 
     emit('s_user_left', { 'user_name': user_name },
          broadcast=True, include_self = False, room=tower_id)

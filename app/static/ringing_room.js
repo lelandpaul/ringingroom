@@ -50,9 +50,11 @@ socketio.on('s_bell_rung', function(msg,cb){
 // (It might be empty)
 socketio.on('s_set_user_name', function(msg, cb){
     console.log('received un: ' + msg.user_name);
+    console.log('it is available: ' + msg.name_available)
     bell_circle.$refs.un_input.input = msg.user_name;
+    bell_circle.$refs.un_input.user_message = "This username is already taken.";
     if (msg.name_available && msg.user_name){
-        bell_circle.$refs.un_input.send_user_name()
+        bell_circle.$refs.un_input.send_user_name();
     }
 });
 
