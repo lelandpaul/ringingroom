@@ -52,7 +52,9 @@ socketio.on('s_set_user_name', function(msg, cb){
     console.log('received un: ' + msg.user_name);
     console.log('it is available: ' + msg.name_available)
     bell_circle.$refs.un_input.input = msg.user_name;
-    bell_circle.$refs.un_input.user_message = "This username is already taken.";
+    if (!msg.name_available){
+        bell_circle.$refs.un_input.user_message = "This username is already taken.";
+    }
     if (msg.name_available && msg.user_name){
         bell_circle.$refs.un_input.send_user_name();
     }
@@ -541,7 +543,7 @@ Vue.component("user_name_input", {
                      logged_in: false,
 user_message: "Please input a username. Must be unique and between 1 and 12 characters. " +
 "This username is NOT permanent; you will make a new (transient) username each time you join a room.",
-def_user_message: "Please input a username. Must be unique and between 1 and 12 characters." +
+def_user_message: "Please input a username. Must be unique and between 1 and 12 characters. " +
 "This username is NOT permanent; you will make a new (transient) username each time you join a room.",
         } },
 
@@ -616,7 +618,7 @@ bell_circle = new Vue({
 	el: "#bell_circle",
 
 	data: {
-		number_of_bells: 8,
+		number_of_bells: 0,
 		bells: [],
         audio: tower,
         call_throttled: false,
@@ -636,6 +638,7 @@ bell_circle = new Vue({
 			this.bells = list;
             // Request the global state from the server
             socketio.emit('c_request_global_state', {tower_id: cur_tower_id});
+            this.rotate(1);
 		},
 
 		logged_in: function(inf) {

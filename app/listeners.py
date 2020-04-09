@@ -93,10 +93,6 @@ def on_join(json):
     # Set the size (then wait for the client to ask for the global state)
     emit('s_size_change', {'size': tower.n_bells})
 
-    # Send assignments
-    # Broadcast these bc the relevant user might have been removed from their assignments
-    send_assignments(tower_id)
-
 
 # Helper for sending assignments
 def send_assignments(tower_id):
@@ -209,10 +205,15 @@ def on_size_change(size):
 # The client finished resizing and is now ready to get the global state
 @socketio.on('c_request_global_state')
 def on_request_global_State(json):
+    print('global state requested')
     tower_id = json['tower_id']
     tower = towers[tower_id]
     state = tower.bell_state
     emit('s_global_state', {'global_bell_state': state})
+
+    # Send assignments
+    # Broadcast these bc the relevant user might have been removed from their assignments
+    send_assignments(tower_id)
 
 
 # Audio type was changed
