@@ -106,15 +106,18 @@ body {
 
 // Position rope images and their numbers
 .rope {
+    z-index: 0;
 	display: flex;
     flex-wrap: wrap;
 	vertical-align: bottom;
     cursor: pointer;
+    visibility: hidden;
 	> img {
 		display: block;
 		vertical-align: bottom;
 		width: 5em;
 		height: 5em;
+        visibility: visible;
         &.assignment_mode{
             opacity: 0.4;
         }
@@ -125,15 +128,18 @@ body {
             vertical-align: baseline;
             margin-bottom: -4px;
             width: 100px;
+            visibility: visible;
 
         > .number.cur_user {
             color: blue;
+            visibility: visible;
         }
 
         > .left_name {
             margin-left: auto;
             margin-right: 0;
             direction: rtl;
+            visibility: visible;
         }
 
         > .assigned_user {
@@ -142,6 +148,7 @@ body {
             white-space: nowrap;
             vertical-align: baseline;
             direction: ltr;
+            visibility: visible;
             .cur_user {
                color: blue;
            }
@@ -149,11 +156,13 @@ body {
    }
 
     > .left_metadata {
+      z-index: 9999;
       float: right;
       vertical-align: bottom;
       margin-right: -1em;
       margin-left: -4em;
       text-align: right;
+      visibility: visible;
       > .assigned_user{
           direction: rtl;
       }
@@ -161,8 +170,9 @@ body {
 }
 
 .unassign {
-    z-index: 9999;
+   z-index: 9999;
    font-size: 15px; 
+   visibility: visible;
 
    &:hover{
        font-size: 17px;
