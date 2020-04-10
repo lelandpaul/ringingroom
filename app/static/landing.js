@@ -70,9 +70,9 @@ tower_selector = new Vue({
 
 	data: { input_field: '',
 			join_tower: false,
-			button_disabled: true,
-            default_message: "To create a new tower, enter a name for that tower (limit: 1 - 50 characters). To join a tower, enter the Tower ID number.",
-			message: "To create a new tower, enter a name for that tower  (limit: 1 - 50 characters). To join a tower, enter the Tower ID number."},
+			button_disabled: false,
+            default_message: "To create a new tower, enter a name for that tower. To join a tower, enter the Tower ID number.",
+			message: "To create a new tower, enter a name for that tower. To join a tower, enter the Tower ID number."},
 
 	methods: {
 
@@ -93,36 +93,32 @@ tower_selector = new Vue({
 		check_tower_id: function(){
 			console.log('checking, length is: ' + this.input_field.length);
 
-			if (this.input_field.length > 0 && this.input_field.length < 51) {
-				this.button_disabled = false;
-				// within bounds for valid name
-				if(this.input_field.length == 9) {
-					// do checking for tower name
-					console.log('checking for integer');
-					console.log(parseInt(this.input_field));
-					try {
-						// it's an int, so it's a plausible tower_id
-						tower_id = parseInt(this.input_field)
-					}
-					catch(error){
-						// it's  not a plausible tower_id
-						console.log('not a valid tower_id')
-						tower_id = null
-					}
+			if (this.input_field.length == 9) {
+                // It's a valid length
+				console.log('checking for integer');
+				console.log(parseInt(this.input_field));
+				try {
+                    // it's an int, so it's a plausible tower_id
+					tower_id = parseInt(this.input_field)
+				}
+				catch(error){
+                    // it's  not a plausible tower_id
+					console.log('not a valid tower_id')
+					tower_id = null
+				}
 
-					if (tower_id){
-						// we found a valid tower_id
-						this.join_tower = true; //flag: on submit, try to join (rather than create)
-						// Ask the server if it's a known tower_id
-						socketio.emit('c_check_tower_id',{tower_id: tower_id});
-					} else {
-						// not a valid tower_id
-						this.join_tower = false;//flag: on submit, try to create
-					}
+				if (tower_id){
+                    // we found a valid tower_id
+                    this.join_tower = true; //flag: on submit, try to join (rather than create)
+                    // Ask the server if it's a known tower_id
+					socketio.emit('c_check_tower_id',{tower_id: tower_id});
+				} else {
+                    // not a valid tower_id
+                    this.join_tower = false;//flag: on submit, try to create
 				}
 			} else {
-				// not a valid tower name
-				this.button_disabled = true;
+                // this doesn't look like a tower_id; make sure everything is back at default
+				this.button_disabled = false;
 				this.join_tower = false;
 				this.message = this.default_message;
 			}
