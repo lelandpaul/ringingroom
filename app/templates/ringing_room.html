@@ -17,9 +17,15 @@
 	<script src="https://www.unpkg.com/howler@2.1.3/dist/howler.core.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
+	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css" integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous">
+
     <!-- internal resources -->
-	<script type="module" src="{{url_for('static', filename = 'ringing_room.js') + '?nocache202003311353'}}"></script>
-	<link rel="stylesheet" href="{{url_for('static', filename = 'css/ringing_room.scss.css') + '?nocache202003311353'}}">
+    {% assets "js_rr" %}
+    <script type="module" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+    {% assets "css_rr" %}
+    <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}"></link>
+    {% endassets %}
 	<!-- Favicon nonsense -->
 	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-196x196.png')}}" sizes="196x196" />
 	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-96x96.png')}}" sizes="96x96" />

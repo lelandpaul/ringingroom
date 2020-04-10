@@ -26,8 +26,7 @@ var logger = function()
 // logger.disableLogger()
 
 // Set up socketio instance
-var socketio = io() // for development
-// var socketio = io.connect('ringingroom.com',{secure:true, transports:['websocket']}); // for server
+var socketio = io()
 
 // Get the current tower_id and let the server know where we are
 var cur_path = window.location.pathname.split('/')
@@ -46,6 +45,20 @@ socketio.on('s_bell_rung', function(msg,cb){
 	bell_circle.ring_bell(msg.who_rang);
 });
 
+// We got a username from the server
+// (It might be empty)
+socketio.on('s_set_user_name', function(msg, cb){
+    console.log('received un: ' + msg.user_name);
+    console.log('it is available: ' + msg.name_available)
+    bell_circle.$refs.un_input.input = msg.user_name;
+    if (!msg.name_available){
+        bell_circle.$refs.un_input.user_message = "This username is already taken.";
+    }
+    if (msg.name_available && msg.user_name){
+        bell_circle.$refs.un_input.send_user_name();
+    }
+});
+
 // getting initial user state
 socketio.on('s_set_users', function(msg, cb){
 	console.log('Getting users: ' + msg.users);
@@ -54,15 +67,16 @@ socketio.on('s_set_users', function(msg, cb){
 
 // User entered the room
 socketio.on('s_user_entered', function(msg, cb){
-    console.log(msg.user + ' entered')
-    bell_circle.$refs.users.add_user(msg.user);
+    console.log(msg.user_name + ' entered')
+    bell_circle.$refs.users.add_user(msg.user_name);
 });
 
 // User left the room
 socketio.on('s_user_left', function(msg, cb){
-    console.log(msg.user + ' left')
-    bell_circle.$refs.users.remove_user(msg.user);
+    console.log(msg.user_name + ' left')
+    bell_circle.$refs.users.remove_user(msg.user_name);
 });
+
 
 // User was assigned to a bell
 socketio.on('s_assign_user', function(msg, cb){
@@ -87,7 +101,6 @@ socketio.on('s_size_change', function(msg,cb){
 // The server sent us the global state; set all bells accordingly
 socketio.on('s_global_state',function(msg,cb){
 	var gstate = msg.global_bell_state;
-    bell_circle.number_of_bells = gstate.length
 	for (var i = 0; i < gstate.length; i++){
 		bell_circle.$refs.bells[i].set_state_silently(gstate[i]);
 	};
@@ -113,7 +126,7 @@ socketio.on('s_audio_change',function(msg,cb){
 /* AUDIO */
 ///////////
 
-import {tower, hand, bell_mappings} from './audio.js';
+// import {tower, hand, bell_mappings} from './audio.js';
 
 /////////
 /* VUE */
@@ -159,6 +172,12 @@ Vue.component("bell_rope", {
         cur_user: function(){
             return this.$root.$refs.users.cur_user;
 
+        },
+
+        left_side: function(){
+            if (this.position == 1) { return false };
+            if (this.position <= (this.number_of_bells/2)+1) { return true };
+            return false;
         },
 
     },
@@ -212,7 +231,7 @@ Vue.component("bell_rope", {
              <div class='rope'
                   >
 
-                 <img v-if="position <= number_of_bells/2"
+                 <img v-if="!left_side"
                       @click='emit_ringing_event'
                       class="rope_img" 
                       :class='{assignment_mode: assignment_mode}'
@@ -220,9 +239,9 @@ Vue.component("bell_rope", {
                       />
 
                  <div class='rope_metadata'
-                      :class="{left_metadata: position > number_of_bells/2}">
+                      :class="{left_metadata: left_side}">
                  <div class='number' 
-                      v-bind:class="[position > number_of_bells/2 ? 'left_number' : '', 
+                      v-bind:class="[left_side ? 'left_number' : '', 
                                      number == 1 ? 'treble' : '',
                                      assigned_user == cur_user ? 'cur_user' : '']"
                       >
@@ -234,12 +253,12 @@ Vue.component("bell_rope", {
                  <div class="assigned_user"
                     :class="[!assigned_user ? 'unassigned' : '',
                              assigned_user == cur_user ? 'cur_user' : '',
-                             position > number_of_bells/2 ? 'left_name' : '']"
+                             !left_side ? 'left_name' : '']"
                     >
                     <span class="unassign"
                           v-if="assignment_mode && 
                                 assigned_user &&
-                                position > number_of_bells/2"
+                                left_side"
                           @click="unassign"
                           > 🆇 </span>
                     <span class="assign"
@@ -250,7 +269,7 @@ Vue.component("bell_rope", {
                     <span class="unassign"
                           v-if="assignment_mode && 
                                 assigned_user &&
-                                position <= number_of_bells/2"
+                                !left_side"
                           @click="unassign"
                           > 🆇 </span>
                  </div>
@@ -258,7 +277,7 @@ Vue.component("bell_rope", {
                  </div>
 
                  <img class="rope_img" 
-                      v-if="position > number_of_bells/2"
+                      v-if="left_side"
                       @click='emit_ringing_event'
                       :class='{assignment_mode: assignment_mode}'
                       :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"
@@ -328,8 +347,13 @@ Vue.component('tower_controls', {
         // the user clicked the audio toggle
         swap_audio: function(){
           console.log('swapping audio');
-          socketio.emit('c_audio_change',{old_audio: this.audio_type, tower_id: cur_tower_id})
+          socketio.emit('c_audio_change',{old_audio: this.audio_type, tower_id: cur_tower_id});
 
+        },
+
+        set_bells_at_hand: function(){
+            console.log('setting all bells at hand')
+            socketio.emit('c_set_bells', {tower_id: cur_tower_id});
         },
 	},
 
@@ -340,6 +364,11 @@ Vue.component('tower_controls', {
                   </h2>
                   <span class="tower_id">ID: [[tower_id]]</span>
                   <help ref="help"></help>
+                  <span class="set_at_hand"
+                        @click="set_bells_at_hand"
+                        >
+                        Set bells at hand
+                        </span>
 			      <ul class = "tower_control_size"> 
 			        <li v-for="size in tower_sizes"
 				        v-bind:size="size"
@@ -358,105 +387,6 @@ Vue.component('tower_controls', {
 }); // End tower_controls
 
 
-// user_display holds functionality required for users
-Vue.component('user_display', {
-
-    props: ['cur_user'],
-
-    // data in components should be a function, to maintain scope
-	data: function(){
-		return { user_names: [],
-                 assignment_mode: false,
-                 selected_user: '',
-        } },
-
-    computed: {
-
-        sorted_user_names: function(){
-            if (this.user_names.length <= 1) { return this.user_names};
-            const index = this.user_names.indexOf(this.cur_user);
-            var sorted_uns = this.user_names
-            if (index > -1) {
-                sorted_uns.splice(index,1); // remove current user
-            }
-            sorted_uns.unshift(this.cur_user); // add the cur_user back at the beginning
-            return sorted_uns;
-        },
-    },
-
-    methods: {
-
-        toggle_assignment: function(){
-            this.assignment_mode = !this.assignment_mode;
-            if (this.assignment_mode){
-                this.selected_user = this.cur_user;
-            } else {
-                this.rotate_to_assignment();
-            }
-        },
-
-        rotate_to_assignment: function(){
-            if (this.assignment_mode){ return };
-            var cur_user_bells = []
-            this.$root.$refs.bells.forEach((bell,index) =>
-                {if (bell.assigned_user === this.cur_user){
-                    cur_user_bells.push(index+1);
-                } 
-            });
-            const rotate_to = Math.min(...cur_user_bells);
-            this.$root.rotate(rotate_to);
-        },
-
-
-        select_user: function(user){
-            this.selected_user = user;
-        },
-
-        add_user: function(user){
-            this.user_names.push(user);
-        },
-
-        remove_user: function(user){
-            const index = this.user_names.indexOf(user);
-            if (index > -1) {
-              this.user_names.splice(index, 1);
-            }
-            bell_circle.$refs.bells.forEach((bell,index) =>
-                {if (bell.assigned_user === user){
-                    bell.assigned_user === '';
-                    socketio.emit('c_assign_user', {bell: index + 1,
-                                                    user: '',
-                                                    tower_id: cur_tower_id});
-                }});
-
-
-        },
-
-    },
-
-	template: `
-              <div class="user_display">
-                  <h4 class="user_display_title">
-                      Users
-                  </h4>
-                  <span class="toggle_assign"
-                        :class="{active: assignment_mode}"
-                        @click="toggle_assignment">
-                        [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
-                  </span>
-			      <ul class="user_list"> 
-			        <li v-for="user in sorted_user_names"
-                        :class="{cur_user: user == cur_user,
-                                 assignment_active: assignment_mode,
-                                 selected_user: user == selected_user}"
-                        @click="select_user(user)"
-                        >
-                        [[ user ]]
-                    </li> 
-			      </ul>
-			   </div>
-               `,
-}); // End user_display
 
 // help holds help toggle
 Vue.component('help', {
@@ -478,13 +408,13 @@ Vue.component('help', {
 
 	template: `
 			<div class="help">
-				<div v-if="help_showing === false"
+				<div
 				class="help_toggle"
 				@click="show_help"
 				>
                        Help
                 </div>
-                <div v-else
+                <div v-if="help_showing"
                 class="help_showing"
                 @click="show_help">
                   	[click to close]
@@ -525,6 +455,183 @@ Vue.component('help', {
                `,
 }); // End help
 
+// user_display holds functionality required for users
+Vue.component('user_display', {
+
+    // data in components should be a function, to maintain scope
+	data: function(){
+		return { user_names: [],
+                 assignment_mode: false,
+                 selected_user: '',
+                 cur_user: '',
+        } },
+
+    methods: {
+
+        toggle_assignment: function(){
+            this.assignment_mode = !this.assignment_mode;
+            if (this.assignment_mode){
+                this.selected_user = this.cur_user;
+            } else {
+                this.rotate_to_assignment();
+            }
+        },
+
+        rotate_to_assignment: function(){
+            console.log('rotating to assignment')
+            // Don't rotate while assigning bells
+            if (this.assignment_mode){ return };
+
+            // Don't rotate if the user has no name yet
+            if (!this.cur_user){ return };
+
+            var cur_user_bells = []
+            this.$root.$refs.bells.forEach((bell,index) =>
+                {if (bell.assigned_user === this.cur_user){
+                    cur_user_bells.push(index+1);
+                } 
+            });
+            console.log(cur_user_bells);
+            // the user has no bells; don't screw with rotation
+            if (cur_user_bells === []){
+                console.log('skipping — no assigned bells');
+                return;
+            };
+            const rotate_to = Math.min(...cur_user_bells);
+            this.$root.rotate(rotate_to);
+        },
+
+
+        select_user: function(user){
+            this.selected_user = user;
+        },
+
+        add_user: function(user){
+            if (user === this.cur_user){
+                this.user_names.unshift(user);
+            } else {
+                this.user_names.push(user);
+            }
+        },
+
+        remove_user: function(user){
+            console.log('removing user: ' + user);
+            const index = this.user_names.indexOf(user);
+            if (index > -1) {
+              this.user_names.splice(index, 1);
+            }
+        },
+
+    },
+
+	template: `
+              <div class="user_display">
+                  <h4 class="user_display_title">
+                      Users
+                  </h4>
+                  <span class="toggle_assign"
+                        :class="{active: assignment_mode}"
+                        @click="toggle_assignment">
+                        [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
+                  </span>
+			      <ul class="user_list"> 
+			        <li v-for="user in user_names"
+                        :class="{cur_user: user == cur_user,
+                                 assignment_active: assignment_mode,
+                                 selected_user: user == selected_user}"
+                        @click="select_user(user)"
+                        >
+                        [[ user ]]
+                    </li> 
+			      </ul>
+			   </div>
+               `,
+}); // End user_display
+
+
+Vue.component("user_name_input", {
+
+
+    data: function(){ 
+            return { input: "",
+                     final_name: "",
+                     user_name_taken: true,
+                     button_disabled: true,
+                     logged_in: false,
+user_message: "Please input a username. Must be unique and between 1 and 12 characters. " +
+"This username is NOT permanent; you will make a new (transient) username periodically.",
+
+def_user_message: "Please input a username. Must be unique and between 1 and 12 characters. " +
+"This username is NOT permanent; you will make a new (transient) username periodically.",
+        } },
+
+    methods: {
+
+		check_user_name: function(){
+			console.log('checking username, length is: ' + this.input.length);
+
+			if (this.input.length > 0 && this.input.length < 13) {
+				console.log('checking for name');
+				if(this.$root.$refs.users.user_names.includes(this.input)) {
+					// not a valid user name
+					this.button_disabled = true;
+					this.user_name_taken = true;
+					this.user_message = "This user name is already taken.";
+				} else {
+					this.button_disabled = false;
+					this.user_name_taken = false;
+					this.user_message = this.def_user_message;
+				}
+			} else {
+                // not a valid user name
+				this.button_disabled = true;
+				this.user_name_taken = true;
+				this.user_message = this.def_user_message;
+			}
+		},
+
+		send_user_name: function() {
+			console.log("Sending username")
+            this.final_name = this.input;
+			console.log(this.final_name)
+            this.$root.$refs.users.cur_user = this.final_name;
+			socketio.emit('c_user_entered', {user_name: this.final_name, tower_id: cur_tower_id});
+			this.$root.logged_in = true;
+		},
+
+    },
+
+    mounted: function() {
+        this.$refs.username_input.focus()
+    },
+
+    template: `
+              <form class="pure-form"
+			  	    v-on:submit.prevent="send_user_name"
+                    >
+                  <fieldset>
+                      <input class="pure-input"
+                             type="text" 
+                             placeholder="username" 
+                             v-model="input" 
+                             v-on:input="check_user_name"
+                             ref="username_input"
+                             required
+                             >
+                      <button type="submit"
+                      		  :disabled="button_disabled"
+                              class="pure-button pure-button-primary"
+                              >
+                          Join
+                      </button>
+                  </fieldset>
+                  <div id="username-message"> 
+                      [[ user_message ]]
+                  </div>
+			  </form>
+              `
+
+});
 
 
 // The master Vue application
@@ -533,18 +640,12 @@ bell_circle = new Vue({
 	el: "#bell_circle",
 
 	data: {
-		number_of_bells: 8,
+		number_of_bells: 0,
 		bells: [],
         audio: tower,
-		user_name: "",
-		user_name_taken: true,
-		button_disabled: true,
-		user_message: "Please input a username. Must be unique and between 1 and 12 characters. " +
-			"This username is NOT permanent; you will make a new (transient) username each time you join a room.",
-		def_user_message: "Please input a username. Must be unique and between 1 and 12 characters." +
-			"This username is NOT permanent; you will make a new (transient) username each time you join a room.",
-		logged_in: false,
         call_throttled: false,
+        logged_in: false,
+
 	},
 
 
@@ -552,11 +653,16 @@ bell_circle = new Vue({
         // Change the list of bells to track the current number
 		number_of_bells: function(new_count){
             console.log('changing number of bells to ' + new_count)
-			var list = [];
+			const new_bells = [];
 			for (var i=1; i <= new_count; i++){
-				list.push({number: i, position: i});
+                console.log('pushing bell: ' + i);
+				new_bells.push({number: i, position: i});
+                console.log(new_bells);
 			}
-			this.bells = list;
+            console.log(new_bells);
+			this.bells = new_bells;
+            // Request the global state from the server
+            socketio.emit('c_request_global_state', {tower_id: cur_tower_id});
 		},
 
 		logged_in: function(inf) {
@@ -596,12 +702,12 @@ bell_circle = new Vue({
 			const n_b = bell_circle.number_of_bells;
 			// Space, j, and ArrowRight ring the bell in position n/2
 			if ([' ','j','ArrowRight'].includes(key)){
-				bell_circle.pull_rope_by_pos(n_b / 2);
+				bell_circle.pull_rope_by_pos(1);
 			}
 
 			// f and ArrowLeft ring the bell in position n/2 + 1
 			if (['f','ArrowLeft'].includes(key)){
-				bell_circle.pull_rope_by_pos((n_b / 2) + 1);
+				bell_circle.pull_rope_by_pos(2);
 			}
 
 			// Calls are: g = go; h = stop; b = bob; n = single.
@@ -637,52 +743,18 @@ bell_circle = new Vue({
 		}
 	},
 
-    // On creation: Create a list of bells
+    // On creation: set up disconnection at beforeunload
 	created: function() {
-		var list = [];
-		for (var i=1; i <= this.number_of_bells; i++){
-			list.push({number: i, position: i});
-		}
-		this.bells = list;
-
 		window.addEventListener('beforeunload', e => {
-			socketio.emit('c_user_left', {user_name: this.user_name, tower_id: cur_tower_id});
-			e.preventDefault();
-			e.returnValue = ' ';
+            socketio.emit('c_user_left',{user_name: this.$refs.users.cur_user, tower_id: cur_tower_id})
+            // e.preventDefault();
+            //   // Chrome requires returnValue to be set
+          // e.returnValue = '';
 		});
 	},
 
 	methods: {
 
-		check_user_name: function(){
-			console.log('checking username, length is: ' + this.user_name.length);
-
-			if (this.user_name.length > 0 && this.user_name.length < 13) {
-				console.log('checking for name');
-				if(this.$refs.users.user_names.includes(this.user_name)) {
-					// not a valid user name
-					this.button_disabled = true;
-					this.user_name_taken = true;
-					this.user_message = "This user name is already taken.";
-				} else {
-					this.button_disabled = false;
-					this.user_name_taken = false;
-					this.user_message = this.def_user_message;
-				}
-			} else {
-                // not a valid user name
-				this.button_disabled = true;
-				this.user_name_taken = true;
-				this.user_message = this.def_user_message;
-			}
-		},
-
-		send_user_name: function(inf) {
-			console.log("it's a username!")
-			console.log(this.user_name)
-			socketio.emit('c_user_entered', {user_name: this.user_name, tower_id: cur_tower_id});
-			this.logged_in = true
-		},
       
       // the server rang a bell; find the correct one and ring it
 	  ring_bell: function(bell) {
@@ -740,7 +812,7 @@ bell_circle = new Vue({
 		  for (var bell in this.bells){
               // change the position of each bell
 			  var number = this.bells[bell]['number'];
-			  this.bells[bell]['position'] = (number + offset + (n_b/2)-1)%n_b + 1;
+			  this.bells[bell]['position'] = (number + offset)%n_b + 1;
 		  };
 
           // We need the Vue's list to be sorted by position
@@ -754,33 +826,13 @@ bell_circle = new Vue({
 
 	template: `
 			<div>
-              <div v-show="!logged_in">
-              	<form class="pure-form"
-					 v-on:submit.prevent="send_user_name"
-                     >
-                    <fieldset>
-                        <input class="pure-input"
-                               type="text" 
-                               placeholder="username" 
-                               v-model="user_name" 
-                               v-on:input="check_user_name"
-                               required
-                               >
-                        <button type="submit"
-                        		:disabled="button_disabled"
-                                class="pure-button pure-button-primary"
-                                >
-                            Join
-                        </button>
-                    </fieldset>
-                    <div id="username-message"> 
-                        [[ user_message ]]
-                    </div>
-				</form>
-			  </div>
+
+              <user_name_input ref="un_input"
+                               v-show="!logged_in"></user_name_input>
+
               <div v-show="logged_in">
                   <tower_controls ref="controls"></tower_controls>
-                  <user_display ref="users" :cur_user="user_name"></user_display>
+                  <user_display ref="users"></user_display>
                   <call_display v-bind:audio="audio" ref="display"></call_display>
                   <div id="bell_circle"
                        v-bind:class="[ 

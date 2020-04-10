@@ -8,48 +8,48 @@ body {
 }
 
 .title {
-	position: absolute;
-	left: 50%;
-	top: 5%;
+  position: absolute;
+  left: 50%;
+  top: 5%;
 
-	transform: translate(-50%);
+  transform: translate(-50%);
 
-	font-size: xx-large;
-	font-weight: bold;
+  font-size: xx-large;
+  font-weight: bold;
 
-	text-align: center;
+  text-align: center;
 
 
 }
 
 .welcome, .tagline {
-	margin: 0.5em;
-	font-size: x-large;
-	font-weight: normal;
+  margin: 0.5em;
+  font-size: x-large;
+  font-weight: normal;
 }
 
 /* Nav menu */
 
 .pure-menu {
-	// position: absolute;
-	// top: 15%;
-	// left: 5%;
-	padding: 1em;
-	display: inline-block;
-	font-size: x-large;
+  // position: absolute;
+  // top: 15%;
+  // left: 5%;
+  padding: 1em;
+  display: inline-block;
+  font-size: x-large;
 }
 
 .pure-menu-link {
-	padding: 0.44em 0.5em;
+  padding: 0.44em 0.5em;
 }
 
 .home {
-	font-weight: bold;
-	border-bottom: 3px solid;
-	padding: 0px;
-	padding-bottom: 0.44em;
-	margin: 0.44em 0.5em;
-	margin-bottom: 0em;
+  font-weight: bold;
+  border-bottom: 3px solid;
+  padding: 0px;
+  padding-bottom: 0.44em;
+  margin: 0.44em 0.5em;
+  margin-bottom: 0em;
 }
 
 
@@ -80,34 +80,34 @@ form.pure-form {
 }
 
 .pure-input {
-	width: 14em;
+  width: 14em;
 
 }
 
 .pure-form {
-	width: 40%;
+  width: 40%;
 
 }
 
 fieldset {
-	white-space: nowrap;
+  white-space: nowrap;
 }
 
 #join-message {
-	width: 100%;
-	font-size: smaller;
+  width: 100%;
+  font-size: smaller;
 
 }
 
 
 .copy {
-	padding-top: 2em;
-	font-size: smaller;
+  padding-top: 2em;
+  font-size: smaller;
 
-	li {
+  li {
 
-		padding-top: 0.5em;
+    padding-top: 0.5em;
 
-	}
+  }
 }
 
