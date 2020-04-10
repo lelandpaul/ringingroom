@@ -702,12 +702,12 @@ bell_circle = new Vue({
 			const n_b = bell_circle.number_of_bells;
 			// Space, j, and ArrowRight ring the bell in position n/2
 			if ([' ','j','ArrowRight'].includes(key)){
-				bell_circle.pull_rope_by_pos(n_b / 2);
+				bell_circle.pull_rope_by_pos(1);
 			}
 
 			// f and ArrowLeft ring the bell in position n/2 + 1
 			if (['f','ArrowLeft'].includes(key)){
-				bell_circle.pull_rope_by_pos((n_b / 2) + 1);
+				bell_circle.pull_rope_by_pos(2);
 			}
 
 			// Calls are: g = go; h = stop; b = bob; n = single.
