@@ -18,7 +18,7 @@ assets = Environment(app)
 socketio = SocketIO(app, 
                     manage_session=False,
                     ping_interval=2000,
-                    ping_timeout=6000)
+                    ping_timeout=18000) # 5 hours (enough for a long peal and then some)
 Session(app)
 
 
