@@ -144,6 +144,18 @@ def on_user_left(json):
     send_assignments(tower_id)
 
 
+
+# A user disconnected (via timeout)
+@socketio.on('disconnect')
+def on_disconnect():
+    tower_id = session['tower_id']
+    user_id = session['user_id']
+    user_name = session['user_name']
+    tower = towers[tower_id]
+    tower.remove_user(user_id)
+    emit('s_user_left', { 'user_name': user_name },
+         broadcast=True, include_self = False, room=tower_id)
+
 # User was assigned to rope
 @socketio.on('c_assign_user')
 def on_assign_user(json):
