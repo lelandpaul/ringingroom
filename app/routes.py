@@ -5,7 +5,8 @@ from app import app, towers, log
 # redirect for static files on subdomains
 
 @app.route('/<int:tower_id>/static/<path:path>')
-def redirect_static(tower_id, path):
+@app.route('/<int:tower_id>/<decorator>/static/<path:path>')
+def redirect_static(tower_id, path, decorator = None):
     return send_from_directory(app.static_folder, path)
 
 
@@ -26,6 +27,19 @@ def tower(tower_id, decorator=None):
         log('Bad tower_id')
         abort(404)
     return render_template('ringing_room.html',
+                           tower_name=tower_name)
+
+
+# Create / find other towers/rooms
+@app.route('/<int:tower_id>/listen')
+@app.route('/<int:tower_id>/<decorator>/listen')
+def listener(tower_id, decorator=None):
+    try:
+        tower_name = towers[tower_id].name
+    except KeyError:
+        log('Bad tower_id')
+        abort(404)
+    return render_template('listen.html',
                            tower_name=tower_name)
 
 
