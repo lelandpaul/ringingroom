@@ -125,6 +125,7 @@ class TowerDict(dict):
         keys_to_delete = [k for k, (value, timestamp) in self.items() 
                           if timestamp < datetime.now() - self._dayoffset
                           and k != key ]
+        log('Garbage collection:', keys_to_delete)
 
         # run garbage collection
         for key in keys_to_delete: 
