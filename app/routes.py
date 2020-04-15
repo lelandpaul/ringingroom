@@ -1,4 +1,4 @@
-from flask import render_template, send_from_directory
+from flask import render_template, send_from_directory, abort
 from app import app, towers
 
 
@@ -20,8 +20,12 @@ def index():
 @app.route('/<int:tower_id>')
 @app.route('/<int:tower_id>/<decorator>')
 def tower(tower_id, decorator=None):
+    try:
+        tower_name = towers[tower_id].name
+    except KeyError:
+        abort(404)
     return render_template('ringing_room.html',
-                           tower_name=towers[tower_id].name)
+                           tower_name=tower_name)
 
 
 #  Serve the static pages
