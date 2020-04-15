@@ -1,6 +1,8 @@
 from app import db
 from random import sample
 import re
+from datetime import datetime, timedelta
+
 
 class TowerDB(db.Model):
     tower_id = db.Column(db.Integer, primary_key=True)
@@ -110,11 +112,24 @@ class Tower:
 
 
 class TowerDict(dict):
+
     def __init__(self, table=TowerDB, db=db):
         self._db = db
         self._table = table
+        self._dayoffset = timedelta(days=1)
 
     def check_db_for_key(self, key):
+
+        # prepare garbage collection
+        # don't collect the key we're currently looking up though
+        keys_to_delete = [k for k, (value, timestamp) in self.items() 
+                          if timestamp < datetime.now() - self._dayoffset
+                          and k != key ]
+
+        # run garbage collection
+        for key in keys_to_delete: 
+            dict.__delitem__(self, key)
+
         if key in self.keys():
             # It's already in memory, don't check the db
             return True
@@ -122,7 +137,7 @@ class TowerDict(dict):
         tower = self._table.query.get(key)
         if tower:
             # load the thing back into memory
-            dict.__setitem__(self, key, tower.to_Tower())
+            dict.__setitem__(self, key, (tower.to_Tower(), datetime.now()))
             return True
 
         return False
@@ -137,8 +152,10 @@ class TowerDict(dict):
         if key in self.keys():
             raise KeyError('Key already in use.')
 
+        timestamp =  datetime.now()
+
         # add it to both memory and database
-        dict.__setitem__(self, key, value)
+        dict.__setitem__(self, key, (value, timestamp))
         self._db.session.add(value.to_TowerDB())
         self._db.session.commit()
 
@@ -146,7 +163,12 @@ class TowerDict(dict):
         key = int(key)  # just to be sure
         self.check_db_for_key(key)
 
-        return dict.__getitem__(self, key)
+        value, timestamp = dict.__getitem__(self, key)
 
+        # Update the timestamp
+        timestamp = datetime.now()
+        dict.__setitem__(self, key, (value, timestamp))
+
+        return value
 
 
