@@ -1,5 +1,7 @@
 # coding: utf-8
 
+import logging
+from logging.handlers import RotatingFileHandler
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -18,6 +20,18 @@ assets = Environment(app)
 socketio = SocketIO(app, 
                     manage_session=False)
 Session(app)
+
+
+# Set up logging
+file_handler = RotatingFileHandler('logs/ringingroom.log','a', 1 * 1024 * 1024, 10)
+file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s'))
+app.logger.setLevel(logging.INFO)
+file_handler.setLevel(logging.INFO)
+app.logger.addHandler(file_handler)
+app.logger.info('Ringing Room startup')
+
+def log(message):
+    app.logger.info(message)
 
 
 # asset bundles
