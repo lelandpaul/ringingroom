@@ -113,17 +113,16 @@ class TowerDict(dict):
     def __init__(self, table=TowerDB, db=db):
         self._db = db
         self._table = table
-        self._dict = dict()
 
     def check_db_for_key(self, key):
-        if key in self._dict.keys():
+        if key in self.keys():
             # It's already in memory, don't check the db
             return True
 
         tower = self._table.query.get(key)
         if tower:
             # load the thing back into memory
-            self._dict[key] = tower.to_Tower()
+            dict.__setitem__(self, key, tower.to_Tower())
             return True
 
         return False
@@ -135,11 +134,11 @@ class TowerDict(dict):
         self.check_db_for_key(key)
 
         # It's already in use
-        if key in self._dict.keys():
+        if key in self.keys():
             raise KeyError('Key already in use.')
 
         # add it to both memory and database
-        self._dict[key] = value
+        dict.__setitem__(self, key, value)
         self._db.session.add(value.to_TowerDB())
         self._db.session.commit()
 
@@ -147,7 +146,7 @@ class TowerDict(dict):
         key = int(key)  # just to be sure
         self.check_db_for_key(key)
 
-        return self._dict[key]
+        return dict.__getitem__(self, key)
 
 
 
