@@ -1,4 +1,4 @@
-from app import db
+from app import db, log
 from random import sample
 import re
 
@@ -122,6 +122,7 @@ class TowerDict(dict):
 
         tower = self._table.query.get(key)
         if tower:
+            log('Loading tower from db:',key)
             # load the thing back into memory
             self._dict[key] = tower.to_Tower()
             return True
