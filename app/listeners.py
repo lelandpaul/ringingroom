@@ -24,6 +24,7 @@ def on_check_tower_id(json):
 # The user entered a valid tower code and joined it
 @socketio.on('c_join_tower_by_id')
 def on_join_tower_by_id(json):
+    log('c_join_tower_by_id', json)
     tower_id = json['tower_id']
     tower_name = towers[tower_id].url_safe_name
     emit('s_redirection', str(tower_id) + '/' + tower_name)
@@ -32,6 +33,7 @@ def on_join_tower_by_id(json):
 # Create a new room with the user's name
 @socketio.on('c_create_tower')
 def on_create_tower(data):
+    log('c_create_tower', data)
     tower_name = data['tower_name']
     new_tower = Tower(tower_name)
     towers[new_tower.tower_id] = new_tower
