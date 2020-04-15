@@ -52,8 +52,8 @@ file_handler.setLevel(logging.INFO)
 app.logger.addHandler(file_handler)
 app.logger.info('Ringing Room startup')
 
-def log(message):
-    app.logger.info(message)
+def log(*args):
+    app.logger.info(' '.join([str(l) for l in args]))
 
 
 # asset bundles
