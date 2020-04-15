@@ -2,7 +2,7 @@
 
 import logging
 from logging.handlers import RotatingFileHandler
-from flask import Flask
+from flask import Flask, has_request_context, request, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_socketio import SocketIO
@@ -24,8 +24,29 @@ Session(app)
 
 
 # Set up logging
+class RequestFormatter(logging.Formatter):
+    def format(self, record):
+        if has_request_context():
+            record.url = '/'.join(request.referrer.split('/')[-2:])
+            try:
+                record.user_id = session['user_id']
+            except:
+                record.user_id = None
+        else:
+            record.url = None
+            record.remote_addr = None
+            record.user_id = None
+
+        return super().format(record)
+
+formatter = RequestFormatter(
+    '[%(asctime)s] User %(user_id)s at %(url)s\n'
+    '\t%(message)s'
+)
+
+
 file_handler = RotatingFileHandler('logs/ringingroom.log','a', 1 * 1024 * 1024, 10)
-file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s'))
+file_handler.setFormatter(formatter)
 app.logger.setLevel(logging.INFO)
 file_handler.setLevel(logging.INFO)
 app.logger.addHandler(file_handler)
