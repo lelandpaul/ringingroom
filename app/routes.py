@@ -1,5 +1,5 @@
 from flask import render_template, send_from_directory, abort
-from app import app, towers
+from app import app, towers, log
 
 
 # redirect for static files on subdomains
@@ -23,6 +23,7 @@ def tower(tower_id, decorator=None):
     try:
         tower_name = towers[tower_id].name
     except KeyError:
+        log('Bad tower_id')
         abort(404)
     return render_template('ringing_room.html',
                            tower_name=tower_name)

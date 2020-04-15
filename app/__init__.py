@@ -27,7 +27,10 @@ Session(app)
 class RequestFormatter(logging.Formatter):
     def format(self, record):
         if has_request_context():
-            record.url = '/'.join(request.referrer.split('/')[-2:])
+            if request.referrer:
+                record.url = '/'.join(request.referrer.split('/')[-2:])
+            else:
+                record.url = request.url
             try:
                 record.user_id = session['user_id']
             except:
