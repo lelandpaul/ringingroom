@@ -18,7 +18,8 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 assets = Environment(app)
 socketio = SocketIO(app, 
-                    manage_session=False)
+                    manage_session=False,
+                    logging=True)
 Session(app)
 
 
