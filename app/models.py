@@ -1,4 +1,4 @@
-from app import db
+from app import db, log
 from random import sample
 import re
 from datetime import datetime, timedelta
@@ -136,6 +136,7 @@ class TowerDict(dict):
 
         tower = self._table.query.get(key)
         if tower:
+            log('Loading tower from db:',key)
             # load the thing back into memory
             dict.__setitem__(self, key, (tower.to_Tower(), datetime.now()))
             return True
