@@ -80,6 +80,10 @@ bundles = {
 
     'css_rr':   Bundle( 'css/ringing_room.css',
                             output='gen/rr.%(version)s.css'),
+
+    'css_rr_listen':Bundle( 'css/listener.css',
+                            output='gen/rr-listen.%(version)s.css'),
+
 }
 
 assets.register(bundles)

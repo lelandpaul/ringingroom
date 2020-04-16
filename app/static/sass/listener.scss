@@ -1,0 +1,246 @@
+
+/* Global style */
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
+  font-size: x-large;
+  font-family: serif;
+  background-color: #F0EAD6;
+}
+
+
+
+/* Putting the ropes in a circle */
+
+/* Mixins to arrange things in a circle easily
+/* We need multiple precomputed mixins for different tower sizes */
+@mixin on-circle($item-count, $circle-size, $img-size) {
+  width:  $circle-size;
+  height: $circle-size;
+  padding: 0;
+  border-radius: 50%;
+  list-style: none;
+
+  > * {
+    position: absolute;
+    top:  50%; 
+    left: 50%;
+    // width:  0;
+    // height: 0;
+	// border: 0;
+  
+    $angle: (360 / $item-count);
+	$rot: 0; // initialize for scope
+
+    @if $item-count == 4 { $rot: 1*$angle/2; }
+	@if $item-count == 6 { $rot: 1*$angle; }
+	@if $item-count == 8 { $rot: 3*$angle/2; }
+	@if $item-count == 10 { $rot: 2*$angle; }
+	@if $item-count == 12 { $rot: 5*$angle/2; }
+
+
+	@for $i from 1 through $item-count {
+      &:nth-of-type(#{$i}) {
+        transform: 
+          rotate($rot * 1deg) 
+          translate($circle-size / 2) 
+          rotate($rot * -1deg);
+
+		  > * {
+			  transform: translate(-$img-size/2,-$img-size/2);
+		  }
+      }
+
+      $rot: $rot + $angle;
+    }
+    }
+}
+
+@mixin on-circle-four($circle-size, $img-size){
+	@include on-circle(4, $circle-size, $img-size);
+}
+
+@mixin on-circle-six($circle-size, $img-size){
+	@include on-circle(6, $circle-size, $img-size);
+}
+
+@mixin on-circle-eight($circle-size, $img-size){
+	@include on-circle(8, $circle-size, $img-size);
+}
+
+@mixin on-circle-ten($circle-size, $img-size){
+	@include on-circle(10, $circle-size, $img-size);
+}
+
+@mixin on-circle-twelve($circle-size, $img-size){
+	@include on-circle(12, $circle-size, $img-size);
+}
+
+
+// Now, position the bell_circle
+#bell_circle {
+  $circ-size: 28em;
+  $img-size: 5em;
+
+
+  // margin: 5em auto 0;
+  // border: solid 5px tomato;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  &.four   { @include on-circle-four($circ-size,$img-size); }
+  &.six    { @include on-circle-six($circ-size,$img-size); }
+  &.eight  { @include on-circle-eight($circ-size,$img-size); }
+  &.ten    { @include on-circle-ten($circ-size,$img-size); }
+  &.twelve { @include on-circle-twelve($circ-size,$img-size); }
+}
+
+/* Other positioning */
+
+// Position rope images and their numbers
+.rope {
+    z-index: 0;
+	display: flex;
+    flex-wrap: wrap;
+	vertical-align: bottom;
+    visibility: hidden;
+	> img {
+		display: block;
+		vertical-align: bottom;
+		width: 5em;
+		height: 5em;
+        visibility: visible;
+        &.assignment_mode{
+            opacity: 0.4;
+        }
+	}
+    > .rope_metadata {
+            margin-left: -1em;
+            display: inline-block;
+            vertical-align: baseline;
+            margin-bottom: -4px;
+            width: 100px;
+            visibility: visible;
+
+        > .number.cur_user {
+            color: blue;
+            visibility: visible;
+        }
+
+        > .left_name {
+            margin-left: auto;
+            margin-right: 0;
+            direction: rtl;
+            visibility: visible;
+        }
+
+        > .assigned_user {
+            z-index: 9999;
+            height: 2em;
+            white-space: nowrap;
+            vertical-align: baseline;
+            direction: ltr;
+            visibility: visible;
+            .cur_user {
+               color: blue;
+           }
+       }
+   }
+
+    > .left_metadata {
+      z-index: 9999;
+      float: right;
+      vertical-align: bottom;
+      margin-right: -1em;
+      margin-left: -4em;
+      text-align: right;
+      visibility: visible;
+      > .assigned_user{
+          direction: rtl;
+      }
+    }
+}
+
+
+// make the treble number red
+.number.treble, .number.treble.cur_user {
+	color: #ff000d;
+}
+
+
+/* Call display */
+
+h2#call_display {
+	position: absolute;
+	text-align: center;
+	display: inline-block;
+	height:4em;
+	top: 50%;
+	left: 50%;
+	transform: translate(-40%, -50%);
+}
+
+
+/* Tower controls */
+
+.tower_control{
+  padding-top:5px;
+  padding-left:15px;
+}
+
+.tower_name {
+  padding-left: 0.5em;
+  margin-bottom: 0;
+  opacity: 0.75;
+}
+
+.tower_id {
+  padding-left: 1.5em;
+  // margin-bottom: -0.5em;
+  font-size: small;
+  // opacity: 0.75;
+}
+
+
+/* User Display */
+
+.user_display {
+
+    padding: 15px;
+}
+
+.user_display_title {
+  padding-left: 0.75em;
+  opacity: 0.75;
+  display: inline;
+}
+.user_list {
+    
+  display: table;
+  border-width: 2px;
+  border-left-style: solid;
+  padding-left: 0px;
+  margin-top: 0px;
+  margin-left: 1em;
+  margin-top: 0.5em;
+
+  li {
+    width: 100%;
+    margin-left: 0.5em;
+    padding: 0.25em;
+    list-style-type: none;
+    font-size: x-large;
+    opacity: 0.75;
+    display: table;
+    border-radius: 5pt; 
+
+    }
+
+}
