@@ -28,6 +28,7 @@ class Tower:
         self._audio = True
         self._users = {}
         self._assignments = {i+1: '' for i in range(n)}
+        self._listeners = set()
 
     def generate_random_change(self):
         # generate a random royal change, for use as uid
@@ -110,6 +111,15 @@ class Tower:
     def set_at_hand(self):
         self._bell_state = [True] * self._n
 
+    @property
+    def listeners(self):
+        return len(self._listeners)
+
+    def add_listener(self, new_listener):
+        self._listeners.add(new_listener)
+
+    def remove_listener(self, removed_listener):
+        self._listeners.remove(removed_listener)
 
 class TowerDict(dict):
 

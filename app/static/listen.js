@@ -31,8 +31,15 @@ var socketio = io()
 // Get the current tower_id and let the server know where we are
 var cur_path = window.location.pathname.split('/')
 var cur_tower_id = parseInt(cur_path[1])
-socketio.emit('c_join',{tower_id: cur_tower_id, listen: true})
+socketio.emit('c_join_listener',{tower_id: cur_tower_id})
 
+// set up disconnection at beforeunload
+window.addEventListener("beforeunload", function (e) {
+    socketio.emit('c_user_left',
+          {user_name: bell_circle.$refs.users.cur_user, 
+          tower_id: cur_tower_id,
+          listener: true});
+});
 
 ////////////////////////
 /* SOCKETIO LISTENERS */
@@ -63,6 +70,11 @@ socketio.on('s_user_left', function(msg, cb){
     bell_circle.$refs.users.remove_user(msg.user_name);
 });
 
+// Number of listeners changed
+socketio.on('s_set_listeners', function(msg, cb){
+    console.log('listeners: ' + msg.listeners);
+    bell_circle.$refs.users.listeners = msg.listeners;
+});
 
 // User was assigned to a bell
 socketio.on('s_assign_user', function(msg, cb){
@@ -319,6 +331,7 @@ Vue.component('user_display', {
     // data in components should be a function, to maintain scope
 	data: function(){
 		return { user_names: [],
+                 listeners: 0,
         } },
 
     methods: {
@@ -346,6 +359,10 @@ Vue.component('user_display', {
 			        <li v-for="user in user_names" >
                         [[ user ]]
                     </li> 
+                    <li class="listeners"
+                        v-show="listeners != 0">
+                        Listeners: [[ listeners]]
+                    </li>
 			      </ul>
 			   </div>
                `,
@@ -362,7 +379,6 @@ bell_circle = new Vue({
         audio: tower,
         call_throttled: false,
 	},
-
 
 	watch: {
         // Change the list of bells to track the current number
