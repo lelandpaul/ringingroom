@@ -335,6 +335,13 @@ h2#call_display {
     background: rgba(0, 0, 255, 0.3);
         }
     }
+
+    &.listeners{
+        font-style: italic;
+        font-size: smaller;
+        opacity: 0.75;
+
+    }
   }
 
 }
@@ -342,6 +349,7 @@ h2#call_display {
 .user_list .cur_user {
     font-weight: bold;
 }
+
 
 
 

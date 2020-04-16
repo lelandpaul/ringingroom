@@ -241,6 +241,12 @@ h2#call_display {
     display: table;
     border-radius: 5pt; 
 
+    &.listeners{
+        font-style: italic;
+        font-size: smaller;
+        opacity: 0.75;
+        }
+
     }
 
 }
