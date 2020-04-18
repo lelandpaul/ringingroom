@@ -27,9 +27,7 @@ logger.disableLogger()
 
 
 // Set up socketio instance
-var socketio = io() // for development
-// var socketio = io.connect('ringingroom.com',{secure:true, transports:['websocket']}); // for server
-
+var socketio = io()
 
 
 ////////////////////////
@@ -127,6 +125,10 @@ tower_selector = new Vue({
 		},
 	},
 
+    mounted: function() {
+        this.$refs.tower_input.focus()
+    },
+
 	template: `<form class="pure-form"
 					 v-on:submit.prevent="send_tower_name"
                      >
@@ -136,6 +138,7 @@ tower_selector = new Vue({
                                placeholder="Tower name or ID number" 
                                v-model="input_field" 
                                v-on:input="check_tower_id"
+                               ref="tower_input"
                                required
                                >
                         <button type="submit" 

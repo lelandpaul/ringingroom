@@ -24,7 +24,7 @@ class Tower:
         self._n = 8
         self._bell_state = [True] * n
         self._audio = True
-        self._users = []
+        self._users = {}
         self._assignments = {i+1: '' for i in range(n)}
 
     def generate_random_change(self):
@@ -54,12 +54,16 @@ class Tower:
     def users(self, users):
         self._users = users
 
-    def add_user(self, user):
-        self._users.append(user)
+    def add_user(self, user_id, user_name):
+        self._users[user_id] = user_name
 
-    def remove_user(self, user):
+    def remove_user(self, user_id):
         try:
-            self._users.remove(user)
+            user_name = self.users[user_id]
+            for (bell, assignment) in self._assignments.items():
+                if assignment == user_name:
+                    self._assignments[bell] = '' # unassign the user from all bells
+            del self._users[user_id]
         except ValueError: pass
 
     @property
@@ -77,6 +81,7 @@ class Tower:
     def n_bells(self, new_size):
         self._n = new_size
         self._bell_state = [True] * new_size
+        self._assignments = {i+1: '' for i in range(new_size)}
 
     @property
     def bell_state(self):
@@ -99,6 +104,9 @@ class Tower:
         out = re.sub(r'\s', '_', self.name)
         out = re.sub(r'\W', '', out)
         return out.lower()
+
+    def set_at_hand(self):
+        self._bell_state = [True] * self._n
 
 
 class TowerDict(dict):
