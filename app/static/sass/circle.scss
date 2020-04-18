@@ -1,0 +1,117 @@
+/* Putting the ropes in a circle */
+
+/* Mixins to arrange things in a circle easily
+/* We need multiple precomputed mixins for different tower sizes */
+@mixin on-circle($item-count, $circle-size) {
+  width:  $circle-size;
+  height: $circle-size;
+  border-radius: 50%;
+
+  > .bell {
+    position: absolute;
+    z-index: -1;
+    top:  50%; 
+    left: 50%;
+  
+    $angle: (360 / $item-count);
+	$rot: 0; // initialize for scope
+
+    @if $item-count == 4 { $rot: 1*$angle/2; }
+	@if $item-count == 6 { $rot: 1*$angle; }
+	@if $item-count == 8 { $rot: 3*$angle/2; }
+	@if $item-count == 10 { $rot: 2*$angle; }
+	@if $item-count == 12 { $rot: 5*$angle/2; }
+
+
+	@for $i from 1 through $item-count {
+      &:nth-of-type(#{$i}) {
+        &.left_side {
+            transform: translate(-50%,-50%)
+                       rotate($rot * 1deg) 
+                       translate($circle-size / 2) 
+                       rotate($rot * -1deg)
+                       translateX(-50%);
+        }
+        transform: 
+          translate(-50%, -50%)
+          rotate($rot * 1deg) 
+          translate($circle-size / 2) 
+          rotate($rot * -1deg);
+      }
+
+      $rot: $rot + $angle;
+    }
+    }
+}
+
+
+@mixin bell_circle($media-circ-size, $media-lr-offset, $media-tb-offset) {
+    .bell_circle {
+      $circ-size: $media-circ-size;
+
+      position: absolute;
+      top: $media-tb-offset;
+      left: $media-lr-offset;
+      transform: translate(-50%, -50%);
+
+      &.four   { @include on-circle(4, $circ-size); }
+      &.six    { @include on-circle(6, $circ-size); }
+      &.eight  { @include on-circle(8, $circ-size); }
+      &.ten    { @include on-circle(10, $circ-size); }
+      &.twelve { @include on-circle(12, $circ-size); }
+    }
+}
+
+/* Tiny screen */
+@media screen and (max-width: 600px) {
+    @include bell_circle(25rem, 50%, 55%);
+    .bell {
+        width: 4rem;
+        font-size: tiny;
+    }
+}
+
+/* Small screen */
+@media screen and (min-width: 600px) and (max-width: 900px) {
+    @include bell_circle(35rem, 50%, 55%);
+    .bell {
+        width: 6rem;
+        font-size: tiny;
+    }
+}
+
+/*  Medium screen */
+@media screen and (min-width: 900px) and (max-width: 64rem) {
+    @include bell_circle(35rem, 50%, 55%);
+    .bell {
+        width: 10rem;
+        font-size: medium;
+    }
+}
+
+/*  Medium screen */
+@media screen and (min-width: 64rem) and (max-width: 1400px) {
+    @include bell_circle(40rem, 65%, 50%);
+    .bell {
+        width: 10rem;
+        font-size: medium;
+    }
+}
+
+/*  Large screen */
+@media screen and (min-width: 1400px){
+    @include bell_circle(40rem, 60%, 50%);
+    .bell {
+        width: 10rem;
+        font-size: large;
+    }
+}
+
+/*  X-Large screen */
+@media screen and (min-width: 1600px){
+    @include bell_circle(45rem, 55%, 50%);
+    .bell {
+        width: 10rem;
+        font-size: large;
+    }
+}
