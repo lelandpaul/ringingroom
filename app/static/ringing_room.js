@@ -180,6 +180,18 @@ Vue.component("bell_rope", {
             return false;
         },
 
+        top_side: function(){
+            if (this.number_of_bells === 4 && this.position >=3) {return true};
+            if (this.number_of_bells === 6 && (this.position === 4 || this.position === 5)) 
+                {return true};
+            if (this.number_of_bells === 8 && this.position >= 4 && this.position !== 8) 
+                {return true};
+            if (this.number_of_bells === 10 && this.position >= 5 && this.position < 9) 
+                {return true};
+            if (this.number_of_bells === 12 && this.position >= 5 && this.position <= 10) 
+                {return true};
+        },
+
     },
 
 	methods: {
@@ -231,18 +243,22 @@ Vue.component("bell_rope", {
             <div class="bell"
                  :class="{left_side: left_side}">
                 <div class="col-xs-12">
-                <div class="row top-xs"
-                    :class="{reverse: left_side}">
-                    <div class="col-xs-12 col-sm-6">
+                <div class="row"
+                    :class="[left_side ? 'reverse' :  '',
+                             top_side ? 'top-xs' : 'bottom-xs']">
+                    <div class="col-xs-3">
                      <img @click='emit_ringing_event'
                            class="bell_img" 
                           :class='{assignment_mode: assignment_mode}'
                           :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"
                           />
                     </div>
-                    <div class="col-xs-12 col-sm-6 bell_metadata">
-                    <div class="row left-xs-12">
-                        <div class="col-xs">
+                    <div class="col-xs-9 bell_metadata">
+                    <div class="row left-xs-12"
+                         :class="{reverse: top_side}">
+
+                        <div class="col-xs-12"
+                             v-show="top_side">
                         <span class='number' 
                              :class="[number == 1 ? 'treble' : '',
                                       assigned_user == cur_user ? 'cur_user' : '']"
@@ -252,9 +268,9 @@ Vue.component("bell_rope", {
 
                         </span>
                         </div>
+
                         <div class="col-xs-12">
-                            <div class="row"
-                            >
+                            <div class="row">
                             <div class="col-xs assign"
                                   @click="assign_user"
                                   > 
@@ -269,6 +285,20 @@ Vue.component("bell_rope", {
                             </div>
                             </div>
                         </div>
+
+
+                        <div class="col-xs-12"
+                             v-show="!top_side">
+                        <span class='number' 
+                             :class="[number == 1 ? 'treble' : '',
+                                      assigned_user == cur_user ? 'cur_user' : '']"
+                              >
+
+                         [[ circled_digits[number-1] ]]
+
+                        </span>
+                        </div>
+
                     </div>
                     </div>
                 </div>
@@ -315,12 +345,15 @@ Vue.component('tower_controls', {
     // data in components should be a function, to maintain scope
 	data: function(){ 
 		return {tower_sizes: [4,6,8,10,12],
-				buttons: { 4: "④",
-			  			   6: "⑥",
-						   8: "⑧",
-						  10: "⑩",
-						  12: "⑫"},
                 audio_type: 'Tower'} },
+
+    computed: {
+        
+        number_of_bells: function() {
+            return this.$root.number_of_bells;
+        },
+
+    },
 
 	methods: {
 
@@ -348,29 +381,32 @@ Vue.component('tower_controls', {
         <div class="tower_controls_inner">
 
              <div class="row between-xs">
-                 <div class="col-xs"
+                 <div class="col-xs size_control center-xs"
                       v-for="size in tower_sizes"
                       :size="size"
                       @click="set_tower_size(size)"
                       >
-                     [[ buttons[size] ]]
+                     <button :class="{cur_size: size === number_of_bells}">
+                        [[ size ]]
+                     </button>
                  </div>
              </div>
 
-             <div class="row between-xs">
+             <div class="row">
                  <div class="col-xs">
-                     <span class="set_at_hand"
+                     <button class="set_at_hand"
                            @click="set_bells_at_hand"
                            >
-                         set at hand
-                     </span>
+                         Set at hand
+                     </button>
                 </div>
-                 <div class="col-xs">
-                      <span class="audio_toggle"
+
+                 <div class="col-xs end-xs">
+                      <button class="audio_toggle"
                            @click="swap_audio"
                            >
-                           Audio: [[ audio_type ]] bell
-                      </span>
+                           Audio: [[ audio_type ]]
+                      </button>
                  </div>
              </div>
 
@@ -408,12 +444,11 @@ Vue.component('help', {
 				class="help_toggle"
 				@click="show_help"
 				>
-                       Help
+                       <button> Help [[ help_showing ? '▾' : '▸' ]] </button>
                 </div>
                 <div v-if="help_showing"
                 class="help_showing"
                 @click="show_help">
-                  	[click to close]
                   	<p>
                   		On the top left, you may set the number of bells in the tower by clicking the desired number. 
                   		To ring, you may either click on the ropes or use the following hot-keys:
@@ -523,15 +558,15 @@ Vue.component('user_display', {
 	template: 
     `
          <div>
-         <div class="row middle-xs">
+         <div class="row middle-xs between-xs">
              <div class="col-xs"><h3>Users</h3></div>
-             <div class="col-xs">
-                <span class="toggle_assign"
+             <div class="col-xs end-xs">
+                <button class="toggle_assign"
                       :class="{active: assignment_mode}"
                       @click="toggle_assignment"
                 >
                     Assign Bells
-                </span>
+                </button>
              </div>
          </div>
          
@@ -847,7 +882,7 @@ bell_circle = new Vue({
         <div class="row"
              v-show="logged_in">
         
-        <div class="col-xs-12 col-lg-4 maxed_col"> <!-- sidebar col -->
+        <div class="col-xs-12 col-lg-4 maxed_col sidebar_col"> <!-- sidebar col -->
 
         <div class="tower_header">
         <div class="row">
@@ -858,13 +893,15 @@ bell_circle = new Vue({
 
          <div class="row">
              <div class="col-xs">
-                 <div class="row">
+                 <div class="row between-xs">
                      <div class="col-xs-4 col-md-6"><span class="tower_id">ID: [[tower_id]]</div>
-                     <div class="col-xs-4 col-md-6">
+                     <div class="col-xs-4 col-md-6 center-xs end-md">
                          <help ref="help"></help>
                      </div>
-                     <div class="col-xs-4 toggle_controls">
-                         <span class="toggle_controls" @click="toggle_controls">Controls</span>
+                     <div class="col-xs-4 toggle_controls end-xs">
+                         <button class="toggle_controls" @click="toggle_controls">
+                         Controls [[ hidden_sidebar ? '▸' : '▾' ]]
+                         </button>
                      </div>
                  </div>
             </div>

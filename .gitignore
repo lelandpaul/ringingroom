@@ -152,3 +152,6 @@ flask_session/
 
 #don't track webassets
 app/static/gen/
+
+# don't track logs
+logs/

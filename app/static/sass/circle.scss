@@ -30,13 +30,15 @@
                        rotate($rot * 1deg) 
                        translate($circle-size / 2) 
                        rotate($rot * -1deg)
-                       translateX(-50%);
+                       translateX(-35%);
         }
         transform: 
           translate(-50%, -50%)
           rotate($rot * 1deg) 
           translate($circle-size / 2) 
-          rotate($rot * -1deg);
+          rotate($rot * -1deg)
+          translateX(35%);
+
       }
 
       $rot: $rot + $angle;
@@ -64,37 +66,38 @@
 
 /* Tiny screen */
 @media screen and (max-width: 600px) {
-    @include bell_circle(25rem, 50%, 55%);
-    .bell {
-        width: 4rem;
-        font-size: tiny;
-    }
-}
-
-/* Small screen */
-@media screen and (min-width: 600px) and (max-width: 900px) {
-    @include bell_circle(35rem, 50%, 55%);
-    .bell {
-        width: 6rem;
-        font-size: tiny;
-    }
-}
-
-/*  Medium screen */
-@media screen and (min-width: 900px) and (max-width: 64rem) {
-    @include bell_circle(35rem, 50%, 55%);
+    @include bell_circle(20rem, 50%, 55%);
     .bell {
         width: 10rem;
-        font-size: medium;
+        font-size: x-small;
+    }
+}
+
+/* Smaller screen */
+@media screen and (min-width: 600px) and (max-width: 800px) {
+    @include bell_circle(30rem, 50%, 55%);
+    .bell {
+        width: 10rem;
+        font-size: large;
+    }
+}
+
+
+/*  Small screen */
+@media screen and (min-width: 800px) and (max-width: 64rem) {
+    @include bell_circle(35rem, 50%, 55%);
+    .bell {
+        width: 15rem;
+        font-size: large;
     }
 }
 
 /*  Medium screen */
 @media screen and (min-width: 64rem) and (max-width: 1400px) {
-    @include bell_circle(40rem, 65%, 50%);
+    @include bell_circle(40rem, 60%, 50%);
     .bell {
-        width: 10rem;
-        font-size: medium;
+        width: 15rem;
+        font-size: x-large;
     }
 }
 
@@ -102,16 +105,16 @@
 @media screen and (min-width: 1400px){
     @include bell_circle(40rem, 60%, 50%);
     .bell {
-        width: 10rem;
-        font-size: large;
+        width: 15rem;
+        font-size: x-large;
     }
 }
 
 /*  X-Large screen */
 @media screen and (min-width: 1600px){
-    @include bell_circle(45rem, 55%, 50%);
+    @include bell_circle(45rem, 50%, 50%);
     .bell {
-        width: 10rem;
-        font-size: large;
+        width: 15rem;
+        font-size: x-large;
     }
 }
