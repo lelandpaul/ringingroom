@@ -579,7 +579,7 @@ Vue.component('user_display', {
                       :class="{active: assignment_mode}"
                       @click="toggle_assignment"
                 >
-                    Assign Bells
+                    [[ assignment_mode ? 'Stop assigning' : 'Assign ringers' ]]
                 </button>
              </div>
          </div>
