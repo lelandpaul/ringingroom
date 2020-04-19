@@ -31,7 +31,18 @@ var socketio = io()
 // Get the current tower_id and let the server know where we are
 var cur_path = window.location.pathname.split('/')
 var cur_tower_id = parseInt(cur_path[1])
-socketio.emit('c_join',{tower_id: cur_tower_id, listen: false})
+socketio.emit('c_join',{tower_id: cur_tower_id})
+
+// set up disconnection at beforeunload
+
+window.onbeforeunload = function() {
+                            socketio.emit('c_user_left',
+                                  {user_name: bell_circle.$refs.users.cur_user, 
+                                  tower_id: cur_tower_id,
+                                  listener: false});
+                            alert('hi!');
+                        }
+
 
 
 ////////////////////////
@@ -75,6 +86,12 @@ socketio.on('s_user_entered', function(msg, cb){
 socketio.on('s_user_left', function(msg, cb){
     console.log(msg.user_name + ' left')
     bell_circle.$refs.users.remove_user(msg.user_name);
+});
+
+// Number of listeners changed
+socketio.on('s_set_listeners', function(msg, cb){
+    console.log('listeners: ' + msg.listeners);
+    bell_circle.$refs.users.listeners = msg.listeners;
 });
 
 
@@ -495,6 +512,7 @@ Vue.component('user_display', {
                  assignment_mode: false,
                  selected_user: '',
                  cur_user: '',
+                 listeners: 0,
         } },
 
     methods: {
@@ -580,6 +598,10 @@ Vue.component('user_display', {
                      >
                          [[ user ]]
                      </li>
+                    <li class="listeners"
+                        v-show="listeners != 0">
+                        Listeners: [[ listeners]]
+                    </li>
                  </ul>
         </div></div>
         </div>
@@ -784,16 +806,6 @@ bell_circle = new Vue({
 			}
 		});
 		}
-	},
-
-    // On creation: set up disconnection at beforeunload
-	created: function() {
-		window.addEventListener('beforeunload', e => {
-            socketio.emit('c_user_left',{user_name: this.$refs.users.cur_user, tower_id: cur_tower_id})
-            // e.preventDefault();
-            //   // Chrome requires returnValue to be set
-          // e.returnValue = '';
-		});
 	},
 
 	methods: {
