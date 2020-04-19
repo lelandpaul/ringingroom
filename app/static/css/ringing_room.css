@@ -123,6 +123,10 @@ font-size: large;
 border-radius: 4px;
 }
 
+.observers {
+    font-style: italic;
+}
+
 .user_list li.assignment_active{
         cursor: pointer;
     }

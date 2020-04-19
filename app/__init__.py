@@ -82,9 +82,6 @@ bundles = {
                         'css/circle.css',
                             output='gen/rr.%(version)s.css'),
 
-    'css_rr_observe':Bundle( 'css/observe.css',
-                            output='gen/rr-observe.%(version)s.css'),
-
 }
 
 assets.register(bundles)

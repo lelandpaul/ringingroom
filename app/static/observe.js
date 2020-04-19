@@ -31,7 +31,7 @@ var socketio = io()
 // Get the current tower_id and let the server know where we are
 var cur_path = window.location.pathname.split('/')
 var cur_tower_id = parseInt(cur_path[1])
-socketio.emit('c_join_listener',{tower_id: cur_tower_id})
+socketio.emit('c_join_observer',{tower_id: cur_tower_id})
 
 // set up disconnection at beforeunload
 window.addEventListener("beforeunload", function (e) {
@@ -52,6 +52,7 @@ socketio.on('s_bell_rung', function(msg,cb){
 	bell_circle.ring_bell(msg.who_rang);
 });
 
+
 // getting initial user state
 socketio.on('s_set_users', function(msg, cb){
 	console.log('Getting users: ' + msg.users);
@@ -70,11 +71,12 @@ socketio.on('s_user_left', function(msg, cb){
     bell_circle.$refs.users.remove_user(msg.user_name);
 });
 
-// Number of listeners changed
-socketio.on('s_set_listeners', function(msg, cb){
-    console.log('listeners: ' + msg.listeners);
-    bell_circle.$refs.users.listeners = msg.listeners;
+// Number of observers changed
+socketio.on('s_set_observers', function(msg, cb){
+    console.log('observers: ' + msg.observers);
+    bell_circle.$refs.users.observers = msg.observers;
 });
+
 
 // User was assigned to a bell
 socketio.on('s_assign_user', function(msg, cb){
@@ -106,15 +108,14 @@ socketio.on('s_global_state',function(msg,cb){
 // The server told us the name of the tower
 socketio.on('s_name_change',function(msg,cb){
 	console.log('Received name change: ' + msg.new_name);
-	bell_circle.$refs.controls.tower_name = msg.new_name;
-	bell_circle.$refs.controls.tower_id = parseInt(cur_tower_id);
+	bell_circle.tower_name = msg.new_name;
+	bell_circle.tower_id = parseInt(cur_tower_id);
 });
 
 
 // The server told us whether to use handbells or towerbells
 socketio.on('s_audio_change',function(msg,cb){
   console.log('changing audio to: ' + msg.new_audio);
-  bell_circle.$refs.controls.audio_type = msg.new_audio;
   bell_circle.audio = msg.new_audio == 'Tower' ? tower : hand;
 });
 
@@ -166,6 +167,10 @@ Vue.component("bell_rope", {
             return this.$root.$refs.users.assignment_mode;
         },
 
+        cur_user: function(){
+            return this.$root.$refs.users.cur_user;
+
+        },
 
         left_side: function(){
             if (this.position == 1) { return false };
@@ -173,10 +178,23 @@ Vue.component("bell_rope", {
             return false;
         },
 
+        top_side: function(){
+            if (this.number_of_bells === 4 && this.position >=3) {return true};
+            if (this.number_of_bells === 6 && (this.position === 4 || this.position === 5)) 
+                {return true};
+            if (this.number_of_bells === 8 && this.position >= 4 && this.position !== 8) 
+                {return true};
+            if (this.number_of_bells === 10 && this.position >= 5 && this.position < 9) 
+                {return true};
+            if (this.number_of_bells === 12 && this.position >= 5 && this.position <= 10) 
+                {return true};
+        },
+
     },
 
 	methods: {
 
+      
       // Ringing event received; now ring the bell
 	  ring: function(){
 		this.stroke = !this.stroke;
@@ -193,78 +211,72 @@ Vue.component("bell_rope", {
 		  this.stroke = new_state
 	  },
 
-      assign_user: function(){
-          const selected_user = this.$root.$refs.users.selected_user;
-          if (!this.assignment_mode){ return };
-          console.log('assigning user: ' +  selected_user + ' to ' + this.number);
-          socketio.emit('c_assign_user', { bell: this.number,
-                                           user: selected_user,
-                                           tower_id: cur_tower_id });
-      },
-
-      unassign: function(){
-          socketio.emit('c_assign_user', { bell: this.number,
-                                           user: '',
-                                           tower_id: cur_tower_id });
-      },
-
     },
 
 	template:`
-             <div class='rope'
-                  >
+            <div class="bell"
+                 :class="{left_side: left_side}">
+                <div class="col-xs-12">
+                <div class="row"
+                    :class="[left_side ? 'reverse' :  '',
+                             top_side ? 'top-xs' : 'bottom-xs']">
+                    <div class="col-xs-3">
+                     <img class="bell_img" 
+                          :class='{assignment_mode: assignment_mode}'
+                          :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"
+                          />
+                    </div>
+                    <div class="col-xs-9 bell_metadata">
+                    <div class="row left-xs-12"
+                         :class="{reverse: top_side}">
 
-                 <img v-if="!left_side"
-                      class="rope_img" 
-                      :class='{assignment_mode: assignment_mode}'
-                      :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"
-                      />
+                        <div class="col-xs-12"
+                             v-show="top_side">
+                        <span class='number' 
+                             :class="[number == 1 ? 'treble' : '',
+                                      assigned_user == cur_user ? 'cur_user' : '']"
+                              >
 
-                 <div class='rope_metadata'
-                      :class="{left_metadata: left_side}">
-                 <div class='number' 
-                      v-bind:class="[left_side ? 'left_number' : '', 
-                                     number == 1 ? 'treble' : '' ]"
-                      >
+                         [[ circled_digits[number-1] ]]
 
-                 [[ circled_digits[number-1] ]]
+                        </span>
+                        </div>
 
-                 </div>
-                 
-                 <div class="assigned_user"
-                    :class="[!assigned_user ? 'unassigned' : '',
-                             !left_side ? 'left_name' : '']"
-                    >
-                    <span class="unassign"
-                          v-if="assignment_mode && 
-                                assigned_user &&
-                                left_side"
-                          > 🆇 </span>
-                    <span class="assign"
-                          > [[ (assignment_mode) ? ((assigned_user) ? assigned_user : '(assign ringer)')
-                                         : assigned_user ]]
-                          </span>
-                    <span class="unassign"
-                          v-if="assignment_mode && 
-                                assigned_user &&
-                                !left_side"
-                          > 🆇 </span>
-                 </div>
+                        <div class="col-xs-12">
+                            <div class="row">
+                            <div class="col-xs assign"> 
+                        [[ (assignment_mode) ? ((assigned_user) ? assigned_user : '(assign ringer)')
+                                                 : assigned_user ]]
+                             </div>
+                             <div class="col-xs unassign"
+                                  v-if="assignment_mode && 
+                                         assigned_user"
+                                   > 🆇
+                            </div>
+                            </div>
+                        </div>
 
-                 </div>
 
-                 <img class="rope_img" 
-                      v-if="left_side"
-                      :class='{assignment_mode: assignment_mode}'
-                      :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"
-                      />
+                        <div class="col-xs-12"
+                             v-show="!top_side">
+                        <span class='number' 
+                             :class="[number == 1 ? 'treble' : '',
+                                      assigned_user == cur_user ? 'cur_user' : '']"
+                              >
 
-             </div>
+                         [[ circled_digits[number-1] ]]
+
+                        </span>
+                        </div>
+
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
 		     `
 
 }); // End bell_rope component
-
-
 
 // The call_display is where call messages are flashed
 Vue.component('call_display', {
@@ -297,33 +309,70 @@ Vue.component('call_display', {
 }); // end call_display component
 
 
-// tower_controls holds title, id, size buttons, audio toggle
-Vue.component('tower_controls', {
+// help holds help toggle
+Vue.component('help', {
 
     // data in components should be a function, to maintain scope
-	data: function(){ 
-		return {tower_sizes: [4,6,8,10,12],
-				buttons: { 4: "④",
-			  			   6: "⑥",
-						   8: "⑧",
-						  10: "⑩",
-						  12: "⑫"},
-				tower_name: '',
-				tower_id: 0,
-                audio_type: 'Tower'} },
+	data: function(){
+		return {help_showing: false} },
+
+	methods: {
+
+        // the user clicked the audio toggle
+        show_help: function(){
+          console.log('showing or hiding help');
+          this.help_showing = !this.help_showing
+
+        },
+	},
 
 
 	template: `
-              <div class="tower_control">
-                  <h2 class="tower_name">
-                      [[ tower_name ]] 
-                  </h2>
-                  <span class="tower_id">ID: [[tower_id]]</span>
-			   </div>
+			<div class="help">
+				<div
+				class="help_toggle"
+				>
+                       <button> Help [[ help_showing ? '▾' : '▸' ]] </button>
+                </div>
+                <div v-if="help_showing"
+                class="help_showing"
+                >
+                  	<p>
+                  		On the top left, you may set the number of bells in the tower by clicking the desired number. 
+                  		To ring, you may either click on the ropes or use the following hot-keys:
+                  	</p>
+					<ul>
+						<li> <b>[1-9], [0], [-], [=]:</b> Rings bells 1 - 9, 10, 11, and 12</li>
+						<li><b>[SPACE]:</b> Rings the bell in the lower right corner.</li>
+						<li><b>[LEFT] and [RIGHT] arrow keys:</b> Rings the left and right bottom-most bells.</li>
+						<li><b>[f] and [j]:</b> same as [LEFT] and [RIGHT]</li>
+						<li><b>[SHIFT]+[0-9]\\[0]\\[-]\\[=]:</b> Rotate the "perspective" of the ringing room to put that bell in the lower right corner so it may be rung by [SPACE] or [j].</li>
+					</ul>
+					<p>
+						There are also hot-keys for various calls, but be aware that in some browsers using these 
+						results in the sound of the bells being interrupted.
+					</p>
+					
+					<p>Ringers may now <i>assign bells</i> by entering bell assignment mode (top left of the screen). While in
+					this mode, any ringer may be selected under the user list and then a second click by a bell will assign
+					that user to a bell. Clicking the "x" by the user's name will kick them off that bell. Bells may not be rung
+					in bell assignment mode. Simply click the button in the control towers to exist bell assignment mode.
+					For now, anyone may assign anyone (and kick off anyone).</p>
+			
+					<p>There are also hot-keys for various calls, but be aware that in some browsers using these results
+							in the sound of the bells being interrupted.</p>
+					<ul>
+						<li><b>[l]</b>ook to...</li>
+						<li><b>[g]</b>o next time</li>
+						<li><b>[b]</b>ob</li>
+						<li>si<b>[n]</b>gle</li>
+						<li>t<b>[h]</b>at's all</li>
+						<li>s<b>[t]</b>and next</li>
+					</ul>
+				</div>
+			</div>
                `,
-}); // End tower_controls
-
-
+}); // End help
 
 // user_display holds functionality required for users
 Vue.component('user_display', {
@@ -331,13 +380,24 @@ Vue.component('user_display', {
     // data in components should be a function, to maintain scope
 	data: function(){
 		return { user_names: [],
-                 listeners: 0,
+                 assignment_mode: false,
+                 selected_user: '',
+                 cur_user: '',
+                 observers: 0,
         } },
 
     methods: {
 
+        select_user: function(user){
+            this.selected_user = user;
+        },
+
         add_user: function(user){
-            this.user_names.push(user);
+            if (user === this.cur_user){
+                this.user_names.unshift(user);
+            } else {
+                this.user_names.push(user);
+            }
         },
 
         remove_user: function(user){
@@ -350,23 +410,33 @@ Vue.component('user_display', {
 
     },
 
-	template: `
-              <div class="user_display">
-                  <h4 class="user_display_title">
-                      Users
-                  </h4>
-			      <ul class="user_list"> 
-			        <li v-for="user in user_names" >
-                        [[ user ]]
-                    </li> 
-                    <li class="listeners"
-                        v-show="listeners != 0">
-                        Listeners: [[ listeners]]
+	template: 
+    `
+         <div class="row">
+             <div class="col-xs-12">
+                 <h3>Users</h3></div>
+         
+         <div class="col-xs">
+                 <ul class="user_list">
+                     <li v-for="user in user_names"
+                         :class="{cur_user: user == cur_user,
+                                  assignment_active: assignment_mode,
+                                  selected_user: user == selected_user}"
+                     >
+                         [[ user ]]
+                     </li>
+                    <li class="observers"
+                        v-show="observers != 0">
+                        Listeners: [[ observers ]]
                     </li>
-			      </ul>
-			   </div>
-               `,
+                 </ul>
+        </div></div>
+        </div>
+    `,
 }); // End user_display
+
+
+
 
 // The master Vue application
 bell_circle = new Vue({
@@ -378,7 +448,12 @@ bell_circle = new Vue({
 		bells: [],
         audio: tower,
         call_throttled: false,
+        tower_name: '',
+        tower_id: 0,
+        hidden_sidebar: true,
+
 	},
+
 
 	watch: {
         // Change the list of bells to track the current number
@@ -395,7 +470,6 @@ bell_circle = new Vue({
             // Request the global state from the server
             socketio.emit('c_request_global_state', {tower_id: cur_tower_id});
 		},
-
 	},
 
 	methods: {
@@ -407,52 +481,82 @@ bell_circle = new Vue({
 		this.$refs.bells[bell-1].ring()
 	  },
 
-    
-	
-      // Like ring_bell, but calculated by the position in the circle (respecting rotation)
-	  ring_bell_by_pos: function(pos){
-			for (bell in this.bells){
-				if (this.bells[bell]['position'] == pos){
-					this.ring_bell(this.bells[bell]['number']);
-					return true;
-					}
-				}
-		},
-
+      toggle_controls: function() {
+          this.hidden_sidebar = !this.hidden_sidebar;
+      },
 	},
 
-	template: `
-			<div>
+	template: 
+    `
+        <div>
 
-                  <tower_controls ref="controls"></tower_controls>
-                  <user_display ref="users"></user_display>
-                  <call_display v-bind:audio="audio" ref="display"></call_display>
-                  <div id="bell_circle"
-                       v-bind:class="[ 
-                       				   number_of_bells == 4 ? 'four'    : '',
-                       				   number_of_bells == 6  ? 'six'    : '',
-                                       number_of_bells == 8  ? 'eight'  : '',
-                                       number_of_bells == 10 ? 'ten'    : '',
-                                       number_of_bells == 12 ? 'twelve' : '']">
+        <div class="row">
+        
+        <div class="col-xs-12 col-lg-4 maxed_col sidebar_col"> <!-- sidebar col -->
 
-                      <bell_rope v-for="bell in bells"
-                                 v-bind:key="bell.number"
-                                 v-bind:number="bell.number"
-                                 v-bind:position="bell.position"
-                                 v-bind:number_of_bells="number_of_bells"
-                                 v-bind:audio="audio"
-                                 v-bind:id="bell.number"
-                                 ref="bells"
-                                 ></bell_rope>
+        <div class="tower_header">
+        <div class="row">
+             <div class="col-xs">
+                 <h1 id="tower_name"> [[ tower_name ]] </h1>
+             </div>
+         </div>
 
-              </div>
-              `
+         <div class="row">
+             <div class="col-xs">
+                 <div class="row between-xs">
+                     <div class="col-xs-4 col-md-6"><span class="tower_id">ID: [[tower_id]]</div>
+                     <div class="col-xs-4 toggle_controls end-xs">
+                         <button class="toggle_controls" @click="toggle_controls">
+                         Show ringers [[ hidden_sidebar ? '▸' : '▾' ]]
+                         </button>
+                     </div>
+                 </div>
+            </div>
+        </div>
+        </div> <!-- tower header -->
+
+        <div class="tower_controls"
+             :class="{collapsed: hidden_sidebar}">
+
+        <div class="row"><div class="col-xs"><hr/></div></div>
+
+        <user_display ref="users"></user_display>
+
+        <div class="row final_hr"><div class="col-xs"><hr/></div></div>
+
+        </div> <!-- hidden sidebar -->
+
+        </div> <!-- sidebar col -->
+
+
+        <div class="col-xs-12 col-sm-8"> <!-- bell circle col -->
+
+        <call_display v-bind:audio="audio" ref="display"></call_display>
+
+        <div class="bell_circle"
+             v-bind:class="[number_of_bells == 4 ? 'four'    : '',
+                            number_of_bells == 6  ? 'six'    : '',
+                            number_of_bells == 8  ? 'eight'  : '',
+                            number_of_bells == 10 ? 'ten'    : '',
+                            number_of_bells == 12 ? 'twelve' : '']">
+              <bell_rope v-for="bell in bells"
+                         v-bind:key="bell.number"
+                         v-bind:number="bell.number"
+                         v-bind:position="bell.position"
+                         v-bind:number_of_bells="number_of_bells"
+                         v-bind:audio="audio"
+                         v-bind:id="bell.number"
+                         ref="bells"
+                         ></bell_rope>
+        </div> <!-- bell_circle -->
+        </div> <!-- row -->
+
+        </div>
+    `
 
 }); // end Vue bell_circle
 
 }); // end document.ready
-
-
 
 
 ////////////////////////

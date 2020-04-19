@@ -596,7 +596,7 @@ Vue.component('user_display', {
                      </li>
                     <li class="observers"
                         v-show="observers != 0">
-                        Listeners: [[ listeners]]
+                        Listeners: [[ observers ]]
                     </li>
                  </ul>
         </div></div>

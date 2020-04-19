@@ -148,7 +148,7 @@ def on_observer_joined(json):
 
     # Give the user the list of currently-present users
     emit('s_set_users', {'users': list(tower.users.values())})
-    log('SETUP s_set_users:', list(tower.users.values()))
+    log('SETUP Observer s_set_users:', list(tower.users.values()))
 
     # Set up tower metadata
     emit('s_name_change', {'new_name': tower.name})
