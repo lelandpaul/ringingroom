@@ -18,6 +18,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" >
     
     <!-- internal resources -->
     {% assets "js_landing" %}
@@ -35,9 +36,10 @@
 </head>
 
 <body>
-	<div class="pure-g">
-		<div class="pure-u-1-4 nav">
-			<div class="pure-menu">
+	<div class="row">
+		<div class="col-xs-4 col-lg-offset-1 col-md-3 col-lg-2">
+            <div class="row">
+            <div class="col-xs-12 pure-menu">
 				<ul class="pure-menu-list">
 					<li class="pure-menu-item"><a href="/" class="pure-menu-link home">Ringing Room</a>
 					</li>
@@ -51,7 +53,7 @@
 					</li>
 				</ul>
 			</div>
-			<div class="news">
+			<div class="col-xs-12 news">
 				<h3> News </h3>
 				The Ringing Room is currently under very active development; features may change or be added without warning! Works best on a laptop or desktop with Google Chrome. Microsoft Edge does NOT work for the time being; use other browser if possible.
 				<br/>
@@ -66,9 +68,15 @@
 				</ul>
 			</div>
 		</div>
-	</div>
+        </div>
 
+
+
+    <div class="col-xs-offset-1 col-xs-7 col-md-6 col-lg-5 copy">
         {% block content %}{% endblock %}
+    </div>
+
+	</div>
 
 <style>
 span.cc-message {text-align:center;}
