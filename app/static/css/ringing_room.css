@@ -224,7 +224,6 @@ fieldset {
     z-index: 1;
 }
 
-
 .bell .row{
     padding: 0;
 }
@@ -270,6 +269,11 @@ fieldset {
 
 .number.treble, .number.treble.cur_user {
 	color: #ff000d;
+}
+
+.left_side .bell_img {
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
 }
 
 
