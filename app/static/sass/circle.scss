@@ -48,6 +48,19 @@
 
 
 @mixin bell_circle($media-circ-size, $media-lr-offset, $media-tb-offset) {
+
+    /* Call display */
+
+    #call_display {
+        position: absolute;
+        text-align: center;
+        height: 4em;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+    }
+
+
     .bell_circle {
       $circ-size: $media-circ-size;
 

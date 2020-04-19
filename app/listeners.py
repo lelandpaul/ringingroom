@@ -231,7 +231,6 @@ def on_user_left(json):
 # A user disconnected (via timeout)
 @socketio.on('disconnect')
 def on_disconnect():
-    tower_id = session['tower_id']
     try:
         tower = towers[tower_id]
     except KeyError:

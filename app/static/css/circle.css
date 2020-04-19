@@ -3,6 +3,16 @@
 /* We need multiple precomputed mixins for different tower sizes */
 /* Tiny screen */
 @media screen and (max-width: 600px) {
+  /* Call display */
+  #call_display {
+    position: absolute;
+    text-align: center;
+    height: 4em;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
   .bell_circle {
     position: absolute;
     top: 55%;
@@ -312,6 +322,16 @@
 }
 /* Smaller screen */
 @media screen and (min-width: 600px) and (max-width: 800px) {
+  /* Call display */
+  #call_display {
+    position: absolute;
+    text-align: center;
+    height: 4em;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
   .bell_circle {
     position: absolute;
     top: 55%;
@@ -621,6 +641,16 @@
 }
 /*  Small screen */
 @media screen and (min-width: 800px) and (max-width: 64rem) {
+  /* Call display */
+  #call_display {
+    position: absolute;
+    text-align: center;
+    height: 4em;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
   .bell_circle {
     position: absolute;
     top: 55%;
@@ -930,6 +960,16 @@
 }
 /*  Medium screen */
 @media screen and (min-width: 64rem) and (max-width: 1400px) {
+  /* Call display */
+  #call_display {
+    position: absolute;
+    text-align: center;
+    height: 4em;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
   .bell_circle {
     position: absolute;
     top: 50%;
@@ -1239,6 +1279,16 @@
 }
 /*  Large screen */
 @media screen and (min-width: 1400px) {
+  /* Call display */
+  #call_display {
+    position: absolute;
+    text-align: center;
+    height: 4em;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
   .bell_circle {
     position: absolute;
     top: 50%;
@@ -1548,6 +1598,16 @@
 }
 /*  X-Large screen */
 @media screen and (min-width: 1600px) {
+  /* Call display */
+  #call_display {
+    position: absolute;
+    text-align: center;
+    height: 4em;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
   .bell_circle {
     position: absolute;
     top: 50%;

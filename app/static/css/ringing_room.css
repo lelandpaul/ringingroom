@@ -148,18 +148,6 @@ border-radius: 4px;
       background: rgba(255,0,0,0.3);
 }
 
-/* Call display */
-
-h2#call_display {
-	position: absolute;
-	text-align: center;
-	display: inline-block;
-	height:4em;
-	top: 50%;
-	left: 50%;
-	transform: translate(-40%, -50%);
-}
-
 
 /* Username Input Form */
 

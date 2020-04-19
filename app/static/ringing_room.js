@@ -936,14 +936,13 @@ bell_circle = new Vue({
 
         <div class="col-xs-12 col-sm-8"> <!-- bell circle col -->
 
-        <call_display v-bind:audio="audio" ref="display"></call_display>
-
         <div class="bell_circle"
              v-bind:class="[number_of_bells == 4 ? 'four'    : '',
                             number_of_bells == 6  ? 'six'    : '',
                             number_of_bells == 8  ? 'eight'  : '',
                             number_of_bells == 10 ? 'ten'    : '',
                             number_of_bells == 12 ? 'twelve' : '']">
+            <call_display v-bind:audio="audio" ref="display"></call_display>
               <bell_rope v-for="bell in bells"
                          v-bind:key="bell.number"
                          v-bind:number="bell.number"
