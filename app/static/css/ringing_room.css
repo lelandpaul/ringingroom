@@ -36,7 +36,7 @@ button:focus {
     padding-bottom: 0;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
-    z-index: 1;
+    z-index: 3;
     background-color: #F0EAD6;
 }
 
@@ -202,8 +202,6 @@ fieldset {
   width: 100%;
   font-size: large;
   padding: 1rem;
-  position: fixed;
-  z-index: 10;
   opacity: 1.0;
   border: 1px solid black;
   background-color: aliceblue;
@@ -213,6 +211,8 @@ fieldset {
   left: 50%;
   margin-left: -20rem;
   font-size: smaller;
+  position: fixed;
+  z-index: 10;
 
 }
 
