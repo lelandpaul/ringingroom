@@ -234,9 +234,9 @@ def on_disconnect():
     try:
         tower_id = session['tower_id']
         tower = towers[tower_id]
+        user_id = session['user_id']
     except KeyError:
-        pass
-    user_id = session['user_id']
+        return
 
     if session['observer']:
         tower.remove_observer(user_id)
