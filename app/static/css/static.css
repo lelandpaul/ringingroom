@@ -6,9 +6,9 @@ body {
 }
 
 .title {
-  position: absolute;
+  position: relative;
   left: 50%;
-  top: 5%;
+  margin-top: 5rem;
   transform: translate(-50%);
   font-size: xx-large;
   font-weight: bold;
@@ -41,13 +41,16 @@ body {
   margin-bottom: 0em;
 }
 
+/* content */
+.content {
+  width: 100%;
+}
+
 /* Hacky news block */
 .news {
   font-size: small;
-  margin-top: 10em;
-  padding-left: 3em;
-  width: 15em;
   text-align: justify;
+  padding: 2rem;
 }
 .news li {
   text-align: left;
@@ -55,11 +58,11 @@ body {
 
 /* Input form */
 form.pure-form {
-  position: absolute;
+  position: relative;
   width: 19em;
-  top: 30%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  margin-top: 8rem;
+  transform: translate(-50%, 0%);
 }
 
 .pure-input {
@@ -85,6 +88,25 @@ fieldset {
 }
 .copy li {
   padding-top: 0.5em;
+}
+
+@media screen and (max-width: 64rem) {
+  form.pure-form {
+    left: 50%;
+    width: 15rem;
+    transform: translate(-50%, 0%);
+  }
+
+  .pure-input {
+    width: 10rem;
+    font-size: medium;
+  }
+
+  .pure-button {
+    width: 4rem;
+    font-size: medium;
+    padding-left: 0.7rem;
+  }
 }
 
 /*# sourceMappingURL=static.css.map */

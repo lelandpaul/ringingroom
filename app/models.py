@@ -119,7 +119,11 @@ class Tower:
         self._observers.add(new_observer)
 
     def remove_observer(self, removed_observer):
-        self._observers.remove(removed_observer)
+        try:
+            self._observers.remove(removed_observer)
+        except KeyError:
+            log("Tried to remove an observer that didn't exist.")
+            pass
 
 class TowerDict(dict):
 

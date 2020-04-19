@@ -88,6 +88,8 @@ def on_join(json):
                             broadcast = True,
                             include_self = True,
                             room = tower_id)
+        # Change the user id, to prevent getting kicked out unexpectedly on refresh
+        session['user_id'] = assign_user_id()
 
     # Check whether their selected name is available
     user_name_available = user_name not in tower.users.values()
@@ -123,17 +125,21 @@ def on_observer_joined(json):
         letters = string.ascii_lowercase
         return ''.join(random.choice(letters) for i in range(8))
 
-    # First: check that the user has a unique ID in their cookie
-    # This will be used for keeping track of who's in the room
-    if 'user_id' not in session.keys():
-        session['user_id'] = assign_user_id()
-    user_id = session['user_id']
-
-    # Next, get the tower_id & tower from the client, then join the room
+    # First, get the tower_id & tower from the client, then join the room
     tower_id = json['tower_id']
     tower = towers[tower_id]
     join_room(tower_id)
     log('SETUP Observer joined tower:',tower_id)
+
+    # Next: check that the user has a unique ID in their cookie
+    # This will be used for keeping track of who's in the room
+    # If they already have one: Remove them from the room, then give them a new one,
+    # to prevent their getting kicked out unexpectedly on refresh
+    if 'user_id' in session.keys():
+        tower.remove_observer(session['user_id'])
+    session['user_id'] = assign_user_id()
+    user_id = session['user_id']
+
 
     # Store the tower in case of accidental disconnect
     # Also note that this was an observer
@@ -204,6 +210,7 @@ def on_user_left(json):
         tower.remove_observer(user_id)
         emit('s_set_observers', {'observers': tower.observers},
              broadcast = True, include_self = False, room=tower_id)
+        session['observer'] = False
         return
 
     user_name = json['user_name']
@@ -225,13 +232,17 @@ def on_user_left(json):
 @socketio.on('disconnect')
 def on_disconnect():
     tower_id = session['tower_id']
-    tower = towers[tower_id]
+    try:
+        tower = towers[tower_id]
+    except KeyError:
+        pass
     user_id = session['user_id']
 
-    if session['observers']:
-        tower.remove_observers(user_id)
+    if session['observer']:
+        tower.remove_observer(user_id)
         emit('s_set_observers', {'observers': tower.observers},
              broadcast = True, include_self = False, room=tower_id)
+        session['observer'] = False
         return
 
     user_name = session['user_name']
