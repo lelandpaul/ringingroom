@@ -1,58 +1,14 @@
-<!doctype html>
-<html>
+{% extends 'base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="Content-Language" content="en">
-	<title>Ringing Room</title>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-162521976-1"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+{% block title %}About — {% endblock %}
 
-      gtag('config', 'UA-162521976-1');
-    </script>
-    <!-- external resources -->
-	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css" integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous">
-    <!-- internal resources -->
-	<link rel="stylesheet" href="{{url_for('static', filename = 'css/static.scss.css')+ '?nocache202003311353'}}">
-	<!-- Favicon nonsense -->
-	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-196x196.png')}}" sizes="196x196" />
-	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-96x96.png')}}" sizes="96x96" />
-	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-32x32.png')}}" sizes="32x32" />
-	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-16x16.png')}}" sizes="16x16" />
-	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-128.png')}}" sizes="128x128" />
-</head>
 
-<body>
-	<div class="pure-g">
-		<div class="pure-u-1-4 nav">
-			<div class="pure-menu">
-				<ul class="pure-menu-list">
-					<li class="pure-menu-item"><a href="/" class="pure-menu-link
-            home">Ringing Room</a>
-					</li>
-					<li class="pure-menu-item"><a href="/about" class="pure-menu-link">About</a>
-					</li>
-					<li class="pure-menu-item"><a href="/help" class="pure-menu-link">Help</a>
-					</li>
-					<li class="pure-menu-item"><a href="/contact" class="pure-menu-link">Contact</a>
-					</li>
-					<li class="pure-menu-item"><a href="/donate" class="pure-menu-link">Donate</a>
-					</li>
-				</ul>
-			</div>
-		</div>
-		<div class="pure-u-2-5 copy">
+
+{% block content %}
 			<p>This site is co-run by Leland Paul Kusmer and Bryn Reinstadler. We're still actively developing new
                 features for the Ringing Room, so if you have suggestions please get in touch.</p>
 
             <p>To report a bug, please fill out this google form: <a href="https://forms.gle/kz6NC5VC9n9DerG19">https://forms.gle/kz6NC5VC9n9DerG19</a></p>
 
             <p></p>Otherwise, we can be reached at ringingroom (at) gmail (dot) com.</p>
-		</div>
-</body>
-
-</html>
+{% endblock %}
