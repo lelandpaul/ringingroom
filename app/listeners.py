@@ -234,16 +234,19 @@ def on_disconnect():
     try:
         tower_id = session['tower_id']
         tower = towers[tower_id]
+        user_id = session['user_id']
+    except KeyError:
+        return
+
+    try:
+        if session['observer']:
+            tower.remove_observer(user_id)
+            emit('s_set_observers', {'observers': tower.observers},
+                 broadcast = True, include_self = False, room=tower_id)
+            session['observer'] = False
+            return
     except KeyError:
         pass
-    user_id = session['user_id']
-
-    if session['observer']:
-        tower.remove_observer(user_id)
-        emit('s_set_observers', {'observers': tower.observers},
-             broadcast = True, include_self = False, room=tower_id)
-        session['observer'] = False
-        return
 
     user_name = session['user_name']
     log('disconnect', user_name)

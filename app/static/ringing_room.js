@@ -585,7 +585,7 @@ Vue.component('user_display', {
                       :class="{active: assignment_mode}"
                       @click="toggle_assignment"
                 >
-                    Assign Bells
+                    [[ assignment_mode ? 'Stop assigning' : 'Assign ringers' ]]
                 </button>
              </div>
          </div>
@@ -670,11 +670,11 @@ def_user_message: "Please input a username. Must be unique and between 1 and 12 
     },
 
     template: `
-              <form class="pure-form"
+              <form class="un_input_form"
 			  	    v-on:submit.prevent="send_user_name"
                     >
                   <fieldset>
-                      <input class="pure-input"
+                      <input class="un_input_box"
                              type="text" 
                              placeholder="username" 
                              v-model="input" 
@@ -684,7 +684,7 @@ def_user_message: "Please input a username. Must be unique and between 1 and 12 
                              >
                       <button type="submit"
                       		  :disabled="button_disabled"
-                              class="pure-button pure-button-primary"
+                              class="un_input_button"
                               >
                           Join
                       </button>
