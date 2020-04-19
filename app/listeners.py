@@ -232,6 +232,7 @@ def on_user_left(json):
 @socketio.on('disconnect')
 def on_disconnect():
     try:
+        tower_id = session['tower_id']
         tower = towers[tower_id]
     except KeyError:
         pass
