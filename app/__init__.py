@@ -71,9 +71,9 @@ bundles = {
                            # filters='jsmin',
                             output='gen/rr.%(version)s.js'),
 
-    'js_rr_listen': Bundle('listen.js',
+    'js_rr_observe': Bundle('observe.js',
                            'audio.js',
-                           output='gen/rr-listen.%(version)s.js'),
+                           output='gen/rr-observe.%(version)s.js'),
 
     'css_static':   Bundle( 'css/static.css',
                             output='gen/static.%(version)s.css'),
@@ -82,8 +82,8 @@ bundles = {
                         'css/circle.css',
                             output='gen/rr.%(version)s.css'),
 
-    'css_rr_listen':Bundle( 'css/listener.css',
-                            output='gen/rr-listen.%(version)s.css'),
+    'css_rr_observe':Bundle( 'css/observe.css',
+                            output='gen/rr-observe.%(version)s.css'),
 
 }
 

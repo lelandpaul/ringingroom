@@ -72,7 +72,7 @@ def on_join(json):
     # Store the tower in case of accidental disconnect
     session['tower_id'] = json['tower_id']
 
-    # It's possible we already have them listed in the tower's user or listener list
+    # It's possible we already have them listed in the tower's user
     # Check this via the user_id
     user_already_present = user_id in tower.users.keys()
 
@@ -97,10 +97,10 @@ def on_join(json):
                              'name_available': user_name_available})
     log('SETUP s_set_user_name:', {'user_name': user_name, 'name_available': user_name_available})
 
-    # emit the number of listeners
-    emit('s_set_listeners', {'listeners': tower.listeners},
+    # emit the number of observers
+    emit('s_set_observers', {'observers': tower.observers},
          broadcast=True, include_self=True, room=tower_id)
-    log('SETUP s_set_listeners', tower.listeners)
+    log('SETUP s_set_observers', tower.observers)
     
     # Set up tower metadata
     emit('s_name_change', {'new_name': tower.name})
@@ -113,10 +113,10 @@ def on_join(json):
     log('SETUP s_size_change',tower.n_bells)
 
 
-# Set up room when a listener first joins
-@socketio.on('c_join_listener')
-def on_listener_joined(json):
-    log('c_join_listener',json)
+# Set up room when a observer first joins
+@socketio.on('c_join_observer')
+def on_observer_joined(json):
+    log('c_join_observer',json)
 
     # Helper function to generate a random string for use as a uid
     def assign_user_id():
@@ -133,18 +133,18 @@ def on_listener_joined(json):
     tower_id = json['tower_id']
     tower = towers[tower_id]
     join_room(tower_id)
-    log('SETUP Listener joined tower:',tower_id)
+    log('SETUP Observer joined tower:',tower_id)
 
     # Store the tower in case of accidental disconnect
-    # Also note that this was a listener
+    # Also note that this was an observer
     session['tower_id'] = json['tower_id']
-    session['listener'] = True
+    session['observer'] = True
 
-    # Add the listener and emit the total number of listeners
-    tower.add_listener(user_id)
-    emit('s_set_listeners', {'listeners': tower.listeners},
+    # Add the observer and emit the total number of observer
+    tower.add_observer(user_id)
+    emit('s_set_observers', {'observers': tower.observers},
          broadcast=True, include_self=True, room=tower_id)
-    log('SETUP listener s_set_listeners', tower.listeners)
+    log('SETUP observer s_set_observers', tower.observers)
 
     # Give the user the list of currently-present users
     emit('s_set_users', {'users': list(tower.users.values())})
@@ -199,10 +199,10 @@ def on_user_left(json):
     tower = towers[tower_id]
     user_id = session['user_id']
 
-    if json['listener']:
+    if json['observer']:
 
-        tower.remove_listener(user_id)
-        emit('s_set_listeners', {'listeners': tower.listeners},
+        tower.remove_observer(user_id)
+        emit('s_set_observers', {'observers': tower.observers},
              broadcast = True, include_self = False, room=tower_id)
         return
 
@@ -228,9 +228,9 @@ def on_disconnect():
     tower = towers[tower_id]
     user_id = session['user_id']
 
-    if session['listener']:
-        tower.remove_listener(user_id)
-        emit('s_set_listeners', {'listeners': tower.listeners},
+    if session['observers']:
+        tower.remove_observers(user_id)
+        emit('s_set_observers', {'observers': tower.observers},
              broadcast = True, include_self = False, room=tower_id)
         return
 

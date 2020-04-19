@@ -38,7 +38,7 @@ window.addEventListener("beforeunload", function (e) {
     socketio.emit('c_user_left',
           {user_name: bell_circle.$refs.users.cur_user, 
           tower_id: cur_tower_id,
-          listener: false});
+          observer: false});
 });
 
 ////////////////////////
@@ -84,10 +84,10 @@ socketio.on('s_user_left', function(msg, cb){
     bell_circle.$refs.users.remove_user(msg.user_name);
 });
 
-// Number of listeners changed
-socketio.on('s_set_listeners', function(msg, cb){
-    console.log('listeners: ' + msg.listeners);
-    bell_circle.$refs.users.listeners = msg.listeners;
+// Number of observers changed
+socketio.on('s_set_observers', function(msg, cb){
+    console.log('observers: ' + msg.observers);
+    bell_circle.$refs.users.observers = msg.observers;
 });
 
 
@@ -508,7 +508,7 @@ Vue.component('user_display', {
                  assignment_mode: false,
                  selected_user: '',
                  cur_user: '',
-                 listeners: 0,
+                 observers: 0,
         } },
 
     methods: {
@@ -594,8 +594,8 @@ Vue.component('user_display', {
                      >
                          [[ user ]]
                      </li>
-                    <li class="listeners"
-                        v-show="listeners != 0">
+                    <li class="observers"
+                        v-show="observers != 0">
                         Listeners: [[ listeners]]
                     </li>
                  </ul>

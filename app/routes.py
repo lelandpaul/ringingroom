@@ -33,13 +33,13 @@ def tower(tower_id, decorator=None):
 # Create / find other towers/rooms
 @app.route('/<int:tower_id>/listen')
 @app.route('/<int:tower_id>/<decorator>/listen')
-def listener(tower_id, decorator=None):
+def observer(tower_id, decorator=None):
     try:
         tower_name = towers[tower_id].name
     except KeyError:
         log('Bad tower_id')
         abort(404)
-    return render_template('listen.html',
+    return render_template('observe.html',
                            tower_name=tower_name)
 
 

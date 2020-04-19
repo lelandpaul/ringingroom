@@ -38,7 +38,7 @@ window.addEventListener("beforeunload", function (e) {
     socketio.emit('c_user_left',
           {user_name: bell_circle.$refs.users.cur_user, 
           tower_id: cur_tower_id,
-          listener: true});
+          observer: true});
 });
 
 ////////////////////////
