@@ -53,58 +53,103 @@ def on_join(json):
         letters = string.ascii_lowercase
         return ''.join(random.choice(letters) for i in range(8))
 
-    listener = json['listen']
+    # First: check that the user has a unique ID in their cookie
+    # This will be used for keeping track of who's in the room
+    if 'user_id' not in session.keys():
+        session['user_id'] = assign_user_id()
+    user_id = session['user_id']
 
-    # There are a lot of things we don't need to do for a listener
-    if not listener:
-        # First: check that the user has a unique ID in their cookie
-        # This will be used for keeping track of who's in the room
-        if 'user_id' not in session.keys():
-            session['user_id'] = assign_user_id()
-        user_id = session['user_id']
-
-        # The user may already have a username set in their cookies. if so, get it
-        user_name = session.get('user_name') or ''
-
-        if user_name: log('SETUP Found username in cookie:',user_name)
+    # The user may already have a username set in their cookies. if so, get it
+    user_name = session.get('user_name') or ''
+    if user_name: log('SETUP Found username in cookie:',user_name)
 
     # Next, get the tower_id & tower from the client, then join the room
     tower_id = json['tower_id']
     tower = towers[tower_id]
     join_room(tower_id)
     log('SETUP Joined tower:',tower_id)
-        
 
-    if not listener:
-        # Store the tower in case of accidental disconnect
-        session['tower_id'] = json['tower_id']
+    # Store the tower in case of accidental disconnect
+    session['tower_id'] = json['tower_id']
 
-        # It's possible we already have them listed in the tower's user list
-        # Check this via the user_id
-        user_already_present = user_id in tower.users.keys()
+    # It's possible we already have them listed in the tower's user or listener list
+    # Check this via the user_id
+    user_already_present = user_id in tower.users.keys()
 
     # Give the user the list of currently-present users
     emit('s_set_users', {'users': list(tower.users.values())})
     log('SETUP s_set_users:', list(tower.users.values()))
 
-    if not listener:
-        # If the user is in the room: Remove them (in preparation for adding them again)
-        if user_already_present:
-            log('SETUP User already present')
-            tower.remove_user(user_id)
-            emit('s_user_left', {'user_name': user_name}, 
-                                broadcast = True,
-                                include_self = True,
-                                room = tower_id)
+    # If the user is in the room: Remove them (in preparation for adding them again)
+    if user_already_present:
+        log('SETUP User already present')
+        tower.remove_user(user_id)
+        emit('s_user_left', {'user_name': user_name}, 
+                            broadcast = True,
+                            include_self = True,
+                            room = tower_id)
 
-        # Check whether their selected name is available
-        user_name_available = user_name not in tower.users.values()
+    # Check whether their selected name is available
+    user_name_available = user_name not in tower.users.values()
 
-        # Send the user their name, along with whether it's currently available or not
-        emit('s_set_user_name', {'user_name': user_name,
-                                 'name_available': user_name_available})
-        log('SETUP s_set_user_name:', {'user_name': user_name, 'name_available': user_name_available})
+    # Send the user their name, along with whether it's currently available or not
+    emit('s_set_user_name', {'user_name': user_name,
+                             'name_available': user_name_available})
+    log('SETUP s_set_user_name:', {'user_name': user_name, 'name_available': user_name_available})
+
+    # emit the number of listeners
+    emit('s_set_listeners', {'listeners': tower.listeners},
+         broadcast=True, include_self=True, room=tower_id)
+    log('SETUP s_set_listeners', tower.listeners)
     
+    # Set up tower metadata
+    emit('s_name_change', {'new_name': tower.name})
+    emit('s_audio_change', {'new_audio': tower.audio})
+    log('SETUP s_name_change', tower.name)
+    log('SETUP s_audio_change', tower.audio)
+
+    # Set the size (then wait for the client to ask for the global state)
+    emit('s_size_change', {'size': tower.n_bells})
+    log('SETUP s_size_change',tower.n_bells)
+
+
+# Set up room when a listener first joins
+@socketio.on('c_join_listener')
+def on_listener_joined(json):
+    log('c_join_listener',json)
+
+    # Helper function to generate a random string for use as a uid
+    def assign_user_id():
+        letters = string.ascii_lowercase
+        return ''.join(random.choice(letters) for i in range(8))
+
+    # First: check that the user has a unique ID in their cookie
+    # This will be used for keeping track of who's in the room
+    if 'user_id' not in session.keys():
+        session['user_id'] = assign_user_id()
+    user_id = session['user_id']
+
+    # Next, get the tower_id & tower from the client, then join the room
+    tower_id = json['tower_id']
+    tower = towers[tower_id]
+    join_room(tower_id)
+    log('SETUP Listener joined tower:',tower_id)
+
+    # Store the tower in case of accidental disconnect
+    # Also note that this was a listener
+    session['tower_id'] = json['tower_id']
+    session['listener'] = True
+
+    # Add the listener and emit the total number of listeners
+    tower.add_listener(user_id)
+    emit('s_set_listeners', {'listeners': tower.listeners},
+         broadcast=True, include_self=True, room=tower_id)
+    log('SETUP listener s_set_listeners', tower.listeners)
+
+    # Give the user the list of currently-present users
+    emit('s_set_users', {'users': list(tower.users.values())})
+    log('SETUP s_set_users:', list(tower.users.values()))
+
     # Set up tower metadata
     emit('s_name_change', {'new_name': tower.name})
     emit('s_audio_change', {'new_audio': tower.audio})
@@ -149,11 +194,19 @@ def on_user_entered(json):
 # A user left a room (and the event actually fired)
 @socketio.on('c_user_left')
 def on_user_left(json):
-    user_id = session['user_id']
-    user_name = json['user_name']
+    log('c_user_left', json)
     tower_id = json['tower_id']
     tower = towers[tower_id]
-    log('c_user_left', user_name)
+    user_id = session['user_id']
+
+    if json['listener']:
+
+        tower.remove_listener(user_id)
+        emit('s_set_listeners', {'listeners': tower.listeners},
+             broadcast = True, include_self = False, room=tower_id)
+        return
+
+    user_name = json['user_name']
 
     try:
         tower.remove_user(user_id)
@@ -168,16 +221,25 @@ def on_user_left(json):
     send_assignments(tower_id)
 
 
-
 # A user disconnected (via timeout)
 @socketio.on('disconnect')
 def on_disconnect():
     tower_id = session['tower_id']
+    tower = towers[tower_id]
     user_id = session['user_id']
+
+    if session['listener']:
+        tower.remove_listener(user_id)
+        emit('s_set_listeners', {'listeners': tower.listeners},
+             broadcast = True, include_self = False, room=tower_id)
+        return
+
     user_name = session['user_name']
     log('disconnect', user_name)
-    tower = towers[tower_id]
-    tower.remove_user(user_id)
+    try:
+        tower.remove_user(user_id)
+    except KeyError:
+        log('User was already removed.')
     emit('s_user_left', { 'user_name': user_name },
          broadcast=True, include_self = False, room=tower_id)
 
