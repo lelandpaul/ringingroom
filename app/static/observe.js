@@ -117,6 +117,7 @@ socketio.on('s_name_change',function(msg,cb){
 socketio.on('s_audio_change',function(msg,cb){
   console.log('changing audio to: ' + msg.new_audio);
   bell_circle.audio = msg.new_audio == 'Tower' ? tower : hand;
+  bell_circle.$refs.controls.audio_type = msg.new_audio;
 });
 
 
@@ -162,6 +163,10 @@ Vue.component("bell_rope", {
 	},
 
     computed: {
+
+        image_prefix: function(){
+            return this.$root.$refs.controls.audio_type === 'Tower' ? 't-' : 'h-';
+        },
 
         assignment_mode: function(){
             return this.$root.$refs.users.assignment_mode;
@@ -220,13 +225,15 @@ Vue.component("bell_rope", {
                 <div class="row"
                     :class="[left_side ? 'reverse' :  '',
                              top_side ? 'top-xs' : 'bottom-xs']">
-                    <div class="col-xs-3">
+
+                    <div :class="[image_prefix == 'h-' ? 'col-xs-5' : 'col-xs-3']">
                      <img class="bell_img" 
-                          :class='{assignment_mode: assignment_mode}'
-                          :src="'static/images/' + (stroke ? images[0] : images[1]) + '.png'"
+                          :class="[assignment_mode ? 'assignment_mode' : '']"
+                          :src="'static/images/' + image_prefix + (stroke ? images[0] : images[1]) + '.png'"
                           />
                     </div>
-                    <div class="col-xs-9 bell_metadata">
+                    <div class="bell_metadata"
+                         :class="[image_prefix == 'h-' ? 'col-xs-7' : 'col-xs-9']">
                     <div class="row left-xs-12"
                          :class="{reverse: top_side}">
 
@@ -244,7 +251,8 @@ Vue.component("bell_rope", {
 
                         <div class="col-xs-12">
                             <div class="row">
-                            <div class="col-xs assign"> 
+                            <div class="col-xs assign"
+                                  > 
                         [[ (assignment_mode) ? ((assigned_user) ? assigned_user : '(assign ringer)')
                                                  : assigned_user ]]
                              </div>
@@ -277,6 +285,31 @@ Vue.component("bell_rope", {
 		     `
 
 }); // End bell_rope component
+
+// tower_controls holds title, id, size buttons, audio toggle
+Vue.component('tower_controls', {
+
+    // data in components should be a function, to maintain scope
+    data: function(){ 
+        return {tower_sizes: [4,6,8,10,12],
+                audio_type: 'Tower'} },
+
+    computed: {
+        
+        number_of_bells: function() {
+            return this.$root.number_of_bells;
+        },
+
+    },
+
+    template: 
+    `
+        <div class="tower_controls_inner">
+        </div> <!-- tower controls -->
+    `,
+}); // End tower_controls
+
+
 
 // The call_display is where call messages are flashed
 Vue.component('call_display', {
@@ -517,6 +550,8 @@ bell_circle = new Vue({
 
         <div class="tower_controls"
              :class="{collapsed: hidden_sidebar}">
+
+        <tower_controls ref="controls"></tower_controls>
 
         <div class="row"><div class="col-xs"><hr/></div></div>
 
