@@ -272,7 +272,7 @@ fieldset {
 	color: #ff000d;
 }
 
-.left_side .bell_img {
+.handbell.left_side .bell_img {
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
 }

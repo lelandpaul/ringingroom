@@ -220,7 +220,8 @@ Vue.component("bell_rope", {
 
 	template:`
             <div class="bell"
-                 :class="{left_side: left_side}">
+                 :class="[left_side ? 'left_side' : '',
+                          image_prefix === 'h-' ? 'handbell' : '']">
                 <div class="col-xs-12">
                 <div class="row"
                     :class="[left_side ? 'reverse' :  '',
