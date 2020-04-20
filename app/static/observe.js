@@ -23,7 +23,7 @@ var logger = function()
 
     return pub;
 }();
-// logger.disableLogger()
+logger.disableLogger()
 
 // Set up socketio instance
 var socketio = io()
