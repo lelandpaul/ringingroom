@@ -8,7 +8,7 @@ class TowerDB(db.Model):
     tower_id = db.Column(db.Integer, primary_key=True)
     tower_name = db.Column(db.String(32), index=True)
     last_access = db.Column(db.Date, 
-                              nullable=False, 
+                              nullable=False,
                               default=date.today,
                               onupdate=date.today)
 
