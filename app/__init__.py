@@ -78,9 +78,10 @@ bundles = {
     'css_static':   Bundle( 'css/static.css',
                             output='gen/static.%(version)s.css'),
 
-    'css_rr':   Bundle( 'css/ringing_room.css',
+    'css_rr':   Bundle( 'css/marx.min.css',
+                        'css/ringing_room.css',
                         'css/circle.css',
-                            output='gen/rr.%(version)s.css'),
+                         output='gen/rr.%(version)s.css'),
 
 }
 
