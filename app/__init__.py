@@ -8,6 +8,7 @@ from flask_migrate import Migrate
 from flask_socketio import SocketIO
 from flask_assets import Environment, Bundle
 from flask_session import Session
+from flask_login import LoginManager
 
 from config import Config
 import os
@@ -21,6 +22,7 @@ socketio = SocketIO(app,
                     manage_session=False,
                     logging=True)
 Session(app)
+login = LoginManager(app)
 
 
 # Set up logging
