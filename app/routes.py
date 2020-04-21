@@ -1,6 +1,9 @@
-from flask import render_template, send_from_directory, abort
+from flask import render_template, send_from_directory, abort, flash, redirect
 from app import app, towers, log
 from flask_login import login_user, logout_user, current_user, login_required
+from app.models import User
+from flask_login import current_user, login_user
+from app.forms import LoginForm
 
 
 # redirect for static files on subdomains
@@ -65,6 +68,20 @@ def contact():
 def donate():
     return render_template('donate.html')
 
+<<<<<<< HEAD
 @app.route('/blog')
 def blog():
     return render_template('blog.html')
+=======
+# Handle the login page
+
+@app.route('/login', methods=['GET','POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        flash('Login requested for user {}, remember_me={}'.format(
+            form.username.data, form.remember_me.data))
+        return redirect('/')
+    return render_template('login.html', form=form)
+    
+>>>>>>> basic login page with wtf
