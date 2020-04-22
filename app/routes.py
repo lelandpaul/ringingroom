@@ -4,7 +4,6 @@ from app import app, towers, log, db
 from app.models import User
 from flask_login import current_user, login_user, logout_user
 from app.forms import LoginForm, RegistrationForm
-from wtforms.validators import Email
 
 
 # redirect for static files on subdomains
@@ -86,12 +85,8 @@ def login():
     login_form = LoginForm()
     registration_form = RegistrationForm()
     if login_form.validate_on_submit():
-        if Email(login_form.username.data):
-            log('Authed by email')
-            user = User.query.filter_by(email=login_form.username.data).first()
-        else:
-            log('Authed by name')
-            user = User.query.filter_by(username=login_form.username.data).first()
+        user = User.query.filter_by(email=login_form.username.data).first() or \
+               User.query.filter_by(username=login_form.username.data).first()
         if user is None or not user.check_password(login_form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('authenticate'))
@@ -119,3 +114,7 @@ def register():
         flash('Welcome, ' + registration_form.username.data + '!')
         return redirect(url_for('index'))
     return redirect(url_for('authenticate'))
+
+@app.route('/profile')
+def profile():
+    pass

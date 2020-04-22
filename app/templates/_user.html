@@ -1,0 +1,12 @@
+{% if current_user.is_anonymous %}
+
+    <a class="pure-menu-link login_link" href='{{ url_for('authenticate') }}'>Log In / Register</a>
+
+{% else %}
+
+    <p>Hello, {{ current_user.username }}! </p>
+
+    <a class="pure-menu-link profile_link" href="{{ url_for('profile') }}">Edit Profile</a>
+    <a class="pure-menu-link logout_link" href="{{ url_for('logout') }}">Log Out</a>
+
+{% endif %}

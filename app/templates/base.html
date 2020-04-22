@@ -62,7 +62,15 @@
                                         href="{{ url_for('blog') }}">Blog</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li class="nav-item"><a class="nav-link" href="">Login</a></li>
+                    {% if current_user.is_anonymous %}
+                    <li class="nav-item">
+                        <a class="nav-link" href='{{ url_for('login') }}'>Log In</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Log Out</a>
+                    </li>
+                    {% endif %}
             </ul>
         </div>
     </div>
