@@ -79,7 +79,7 @@
 
 /* Tiny screen */
 @media screen and (max-width: 600px) and (max-height: 700px){
-    @include bell_circle(50vh, 50%, 65%);
+    @include bell_circle(35vh, 50%, 65%);
     .bell {
         width: 8rem;
         font-size: x-small;
@@ -87,7 +87,7 @@
 }
 
 @media screen and (max-width: 600px) and (min-height: 700px){
-    @include bell_circle(40vh, 50%, 55%);
+    @include bell_circle(35vh, 50%, 55%);
     .bell {
         width: 10rem;
         font-size: x-small;
