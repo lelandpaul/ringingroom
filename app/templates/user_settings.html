@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %} {{ current_user.username }} {% endblock %}
+
+{% block content %}
+
+<form action="" method="post" novalidate>
+    {{form.hidden_tag()}}
+
+<h1>User settings: {{ current_user.username }}</h1>
+
+<hr>
+
+<p> Your <b>display name</b> is the name that will appear in the Users list in a tower. It can be whatever you would like, but we recommend using the name you are most commonly known by. (If many people share your name, consider adding an initial.) </p>
+
+<p><b>Current display name:</b> {{ current_user.display_name or '(none set)' }}
+
+<p>
+    {{ form.display_name.label }}<br>
+    {{ form.display_name(size=32, class="profsettings_display") }}<br>
+</p>
+<p>
+    {{ form.submit() }}
+</p>
+
+<hr>
+
+<b>Change password:</b>
+
+<p> {{ form.password.label }}<br>
+    {{ form.password(size=32, class="profsettings_password") }}
+</p>
+
+<p> {{ form.new_password.label }}<br>
+    {{ form.new_password(size=32, class="profsettings_password") }}
+</p>
+
+<p> {{ form.new_password2.label }}<br>
+    {{ form.new_password2(size=32, class="profsettings_password") }}
+</p>
+
+<p>
+    {{ form.submit() }}
+</p>
+
+</form>
+
+{% endblock %}

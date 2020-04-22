@@ -2,8 +2,8 @@ from flask import render_template, send_from_directory, abort, flash, redirect
 from flask_login import login_user, logout_user, current_user, login_required
 from app import app, towers, log, db
 from app.models import User
-from flask_login import current_user, login_user, logout_user
-from app.forms import LoginForm, RegistrationForm
+from flask_login import current_user, login_user, logout_user, login_required
+from app.forms import LoginForm, RegistrationForm, UserSettingsForm
 
 
 # redirect for static files on subdomains
@@ -115,6 +115,15 @@ def register():
         return redirect(url_for('index'))
     return redirect(url_for('authenticate'))
 
-@app.route('/profile')
-def profile():
-    pass
+@app.route('/settings', methods=['GET','POST'])
+@login_required
+def user_settings():
+    form = UserSettingsForm()
+    if form.validate_on_submit():
+        current_user.display_name = form.display_name.data or current_user.display_name
+        if form.new_password.data and current_user.check_password(form.password.data):
+            current_user.set_password(form.new_password.data)
+            flash('Password updated.')
+        db.session.commit()
+    return render_template('user_settings.html', form=form)
+
