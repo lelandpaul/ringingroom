@@ -4,6 +4,7 @@ from app import app, towers, log, db
 from app.models import User
 from flask_login import current_user, login_user, logout_user
 from app.forms import LoginForm, RegistrationForm
+from wtforms.validators import Email
 
 
 # redirect for static files on subdomains
@@ -68,49 +69,53 @@ def contact():
 def donate():
     return render_template('donate.html')
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 @app.route('/blog')
 def blog():
     return render_template('blog.html')
-=======
-# Handle the login page
-=======
-# Logging in/out
->>>>>>> very basic log-in page
 
-@app.route('/login', methods=['GET','POST'])
+@app.route('/authenticate')
+def authenticate():
+    login_form = LoginForm()
+    registration_form = RegistrationForm()
+    return render_template('authenticate.html', 
+                           login_form=login_form,
+                           registration_form=registration_form)
+
+@app.route('/login', methods=['POST'])
 def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user is None or not user.check_password(form.password.data):
+    login_form = LoginForm()
+    registration_form = RegistrationForm()
+    if login_form.validate_on_submit():
+        if Email(login_form.username.data):
+            log('Authed by email')
+            user = User.query.filter_by(email=login_form.username.data).first()
+        else:
+            log('Authed by name')
+            user = User.query.filter_by(username=login_form.username.data).first()
+        if user is None or not user.check_password(login_form.password.data):
             flash('Invalid username or password')
-            return redirect(url_for('login'))
-        login_user(user, remember=form.remember_me.data)
+            return redirect(url_for('authenticate'))
+        login_user(user, remember=login_form.remember_me.data)
         return redirect(url_for('index'))
-    return render_template('login.html', form=form)
+    return redirect(url_for('authenticate'))
+
 
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('index'))
     
-<<<<<<< HEAD
->>>>>>> basic login page with wtf
-=======
-
-@app.route('/register', methods=['GET','POST'])
+@app.route('/register', methods=['POST'])
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
-        user.set_password(form.password.data)
+    login_form = LoginForm()
+    registration_form = RegistrationForm()
+    if registration_form.validate_on_submit():
+        user = User(username=registration_form.username.data, email=registration_form.email.data)
+        user.set_password(registration_form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Welcome, ' + form.username.data + '!')
-        return redirect(url_for('login'))
-    return render_template('register.html', title='Register', form=form)
->>>>>>> very basic log-in page
+        flash('Welcome, ' + registration_form.username.data + '!')
+        return redirect(url_for('index'))
+    return redirect(url_for('authenticate'))
