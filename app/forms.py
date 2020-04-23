@@ -50,5 +50,4 @@ class UserSettingsForm(FlaskForm):
     new_password = PasswordField('New Password', validators=[])
     new_password2 = PasswordField('Repeat New Password', validators=[EqualTo('new_password'),
                                                                      RequiredIf('new_password')])
-    display_name = StringField('Display Name', validators=[])
     submit = SubmitField('Save changes')

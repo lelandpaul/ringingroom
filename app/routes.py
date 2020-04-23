@@ -120,8 +120,7 @@ def register():
 def user_settings():
     form = UserSettingsForm()
     if form.validate_on_submit():
-        current_user.display_name = form.display_name.data or current_user.display_name
-        if form.new_password.data and current_user.check_password(form.password.data):
+        if current_user.check_password(form.password.data):
             current_user.set_password(form.new_password.data)
             flash('Password updated.')
         db.session.commit()
