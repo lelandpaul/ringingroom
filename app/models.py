@@ -100,10 +100,17 @@ class Tower:
                     self._assignments[bell] = '' # unassign the user from all bells
             del self._users[user_id]
         except ValueError: pass
+    
+    @property
+    def user_names(self):
+        return list(self._users.values())
 
     @property
     def assignments(self):
         return(self._assignments)
+
+    def assignments_as_list(self):
+        return(list(self._assignments.values()))
 
     def assign_bell(self, bell, user):
         self.assignments[bell] = user

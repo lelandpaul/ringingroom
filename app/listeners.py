@@ -1,5 +1,6 @@
 from flask_socketio import emit, join_room
 from flask import session, request
+from flask_login import current_user
 from app import socketio, towers, log
 from app.models import Tower
 import random
@@ -48,21 +49,6 @@ def on_create_tower(data):
 def on_join(json):
     log('c_join',json)
 
-    # Helper function to generate a random string for use as a uid
-    def assign_user_id():
-        letters = string.ascii_lowercase
-        return ''.join(random.choice(letters) for i in range(8))
-
-    # First: check that the user has a unique ID in their cookie
-    # This will be used for keeping track of who's in the room
-    if 'user_id' not in session.keys():
-        session['user_id'] = assign_user_id()
-    user_id = session['user_id']
-
-    # The user may already have a username set in their cookies. if so, get it
-    user_name = session.get('user_name') or ''
-    if user_name: log('SETUP Found username in cookie:',user_name)
-
     # Next, get the tower_id & tower from the client, then join the room
     tower_id = json['tower_id']
     tower = towers[tower_id]
@@ -70,50 +56,19 @@ def on_join(json):
     log('SETUP Joined tower:',tower_id)
 
     # Store the tower in case of accidental disconnect
-    session['tower_id'] = json['tower_id']
-
-    # It's possible we already have them listed in the tower's user
-    # Check this via the user_id
-    user_already_present = user_id in tower.users.keys()
-
-    # Give the user the list of currently-present users
-    emit('s_set_users', {'users': list(tower.users.values())})
-    log('SETUP s_set_users:', list(tower.users.values()))
+    # We need to do it under the SocketIO SID, otherwise a refresh might kick us out of the room
+    if not 'tower_ids' in session.keys():
+        session['tower_ids'] = {}
+    session['tower_ids'][request.sid] = json['tower_id']
 
     # If the user is in the room: Remove them (in preparation for adding them again)
-    if user_already_present:
+    if session['user_id'] in tower.users.keys():
         log('SETUP User already present')
         tower.remove_user(user_id)
         emit('s_user_left', {'user_name': user_name}, 
                             broadcast = True,
                             include_self = True,
                             room = tower_id)
-        # Change the user id, to prevent getting kicked out unexpectedly on refresh
-        session['user_id'] = assign_user_id()
-
-    # Check whether their selected name is available
-    user_name_available = user_name not in tower.users.values()
-
-    # Send the user their name, along with whether it's currently available or not
-    emit('s_set_user_name', {'user_name': user_name,
-                             'name_available': user_name_available})
-    log('SETUP s_set_user_name:', {'user_name': user_name, 'name_available': user_name_available})
-
-    # emit the number of observers
-    emit('s_set_observers', {'observers': tower.observers},
-         broadcast=True, include_self=True, room=tower_id)
-    log('SETUP s_set_observers', tower.observers)
-    
-    # Set up tower metadata
-    emit('s_name_change', {'new_name': tower.name})
-    emit('s_audio_change', {'new_audio': tower.audio})
-    log('SETUP s_name_change', tower.name)
-    log('SETUP s_audio_change', tower.audio)
-
-    # Set the size (then wait for the client to ask for the global state)
-    emit('s_size_change', {'size': tower.n_bells})
-    log('SETUP s_size_change',tower.n_bells)
-
 
 # Set up room when a observer first joins
 @socketio.on('c_join_observer')
@@ -181,13 +136,15 @@ def send_assignments(tower_id):
 def on_user_entered(json):
     log('c_user_entered',json)
 
-    # Store their username for the future
-    session['user_name'] = json['user_name']
-    user_name = json['user_name']
-    session.modified = True
-
-    # Get their unique ID
-    user_id = session['user_id']
+    # If they're anonymous: store their username for the future
+    if current_user.is_anonymous:
+        session['user_name'] = json['user_name']
+        session.modified = True
+        user_name = json['user_name']
+        user_id = session['user_id']
+    else: 
+        user_name = current_user.username
+        user_id = current_user.username
 
     # Get the tower
     tower = towers[json['tower_id']]
