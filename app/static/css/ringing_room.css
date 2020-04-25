@@ -38,7 +38,6 @@ button:disabled {
     position: relative;
     top: 0; /* Stay at the top */
     left: 0;
-    overflow-x: hidden; /* Disable horizontal scroll */
     width: 100%;
     padding-top: 2rem;
     padding-bottom: 0;
@@ -212,7 +211,6 @@ fieldset {
   position: fixed;
   z-index: 10;
   max-height: 70vh;
-
 }
 
 
