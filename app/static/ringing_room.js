@@ -930,7 +930,7 @@ bell_circle = new Vue({
 
          <div class="row">
              <div class="col-xs">
-                 <div class="row between-xs">
+                 <div class="row between-xs bottom-xs">
                      <div class="col-xs-4 col-md-6"><span class="tower_id">ID: [[tower_id]]</div>
                      <div class="col-xs-4 col-md-6 center-xs end-md">
                          <help ref="help"></help>
