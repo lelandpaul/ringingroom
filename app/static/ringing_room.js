@@ -26,7 +26,7 @@ var logger = function()
 // logger.disableLogger()
 
 // Set up socketio instance
-var socketio = io({transports: ['websocket']});
+var socketio = io();
 // Various Vue instances need this on creation
 var cur_tower_id = parseInt(window.tower_parameters.id);
 
