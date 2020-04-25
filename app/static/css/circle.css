@@ -3,25 +3,28 @@
 /* We need multiple precomputed mixins for different tower sizes */
 /* Tiny screen */
 @media screen and (max-width: 600px) and (max-height: 700px) {
-  /* Call display */
   #call_display {
     position: absolute;
     text-align: center;
     height: 4em;
-    top: 50%;
-    left: 50%;
+    margin-top: 50%;
+    margin-left: 50%;
     transform: translate(-50%, -50%);
+  }
+
+  .bell_circle_col {
+    position: relative;
   }
 
   .bell_circle {
     position: absolute;
-    top: 65%;
-    left: 50%;
+    margin-top: 40vh;
+    margin-left: 50vw;
     transform: translate(-50%, -50%);
   }
   .bell_circle.four {
-    width: 35vh;
-    height: 35vh;
+    width: 30vh;
+    height: 30vh;
     border-radius: 50%;
   }
   .bell_circle.four > .bell {
@@ -31,32 +34,32 @@
     left: 50%;
   }
   .bell_circle.four > .bell:nth-of-type(1) {
-    transform: translate(-50%, -50%) rotate(45deg) translate(17.5vh) rotate(-45deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(45deg) translate(15vh) rotate(-45deg) translateX(35%);
   }
   .bell_circle.four > .bell:nth-of-type(1).left_side {
-    transform: translate(-50%, -50%) rotate(45deg) translate(17.5vh) rotate(-45deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(45deg) translate(15vh) rotate(-45deg) translateX(-35%);
   }
   .bell_circle.four > .bell:nth-of-type(2) {
-    transform: translate(-50%, -50%) rotate(135deg) translate(17.5vh) rotate(-135deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(135deg) translate(15vh) rotate(-135deg) translateX(35%);
   }
   .bell_circle.four > .bell:nth-of-type(2).left_side {
-    transform: translate(-50%, -50%) rotate(135deg) translate(17.5vh) rotate(-135deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(135deg) translate(15vh) rotate(-135deg) translateX(-35%);
   }
   .bell_circle.four > .bell:nth-of-type(3) {
-    transform: translate(-50%, -50%) rotate(225deg) translate(17.5vh) rotate(-225deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(225deg) translate(15vh) rotate(-225deg) translateX(35%);
   }
   .bell_circle.four > .bell:nth-of-type(3).left_side {
-    transform: translate(-50%, -50%) rotate(225deg) translate(17.5vh) rotate(-225deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(225deg) translate(15vh) rotate(-225deg) translateX(-35%);
   }
   .bell_circle.four > .bell:nth-of-type(4) {
-    transform: translate(-50%, -50%) rotate(315deg) translate(17.5vh) rotate(-315deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(315deg) translate(15vh) rotate(-315deg) translateX(35%);
   }
   .bell_circle.four > .bell:nth-of-type(4).left_side {
-    transform: translate(-50%, -50%) rotate(315deg) translate(17.5vh) rotate(-315deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(315deg) translate(15vh) rotate(-315deg) translateX(-35%);
   }
   .bell_circle.six {
-    width: 35vh;
-    height: 35vh;
+    width: 30vh;
+    height: 30vh;
     border-radius: 50%;
   }
   .bell_circle.six > .bell {
@@ -66,44 +69,44 @@
     left: 50%;
   }
   .bell_circle.six > .bell:nth-of-type(1) {
-    transform: translate(-50%, -50%) rotate(60deg) translate(17.5vh) rotate(-60deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(60deg) translate(15vh) rotate(-60deg) translateX(35%);
   }
   .bell_circle.six > .bell:nth-of-type(1).left_side {
-    transform: translate(-50%, -50%) rotate(60deg) translate(17.5vh) rotate(-60deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(60deg) translate(15vh) rotate(-60deg) translateX(-35%);
   }
   .bell_circle.six > .bell:nth-of-type(2) {
-    transform: translate(-50%, -50%) rotate(120deg) translate(17.5vh) rotate(-120deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(120deg) translate(15vh) rotate(-120deg) translateX(35%);
   }
   .bell_circle.six > .bell:nth-of-type(2).left_side {
-    transform: translate(-50%, -50%) rotate(120deg) translate(17.5vh) rotate(-120deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(120deg) translate(15vh) rotate(-120deg) translateX(-35%);
   }
   .bell_circle.six > .bell:nth-of-type(3) {
-    transform: translate(-50%, -50%) rotate(180deg) translate(17.5vh) rotate(-180deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(180deg) translate(15vh) rotate(-180deg) translateX(35%);
   }
   .bell_circle.six > .bell:nth-of-type(3).left_side {
-    transform: translate(-50%, -50%) rotate(180deg) translate(17.5vh) rotate(-180deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(180deg) translate(15vh) rotate(-180deg) translateX(-35%);
   }
   .bell_circle.six > .bell:nth-of-type(4) {
-    transform: translate(-50%, -50%) rotate(240deg) translate(17.5vh) rotate(-240deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(240deg) translate(15vh) rotate(-240deg) translateX(35%);
   }
   .bell_circle.six > .bell:nth-of-type(4).left_side {
-    transform: translate(-50%, -50%) rotate(240deg) translate(17.5vh) rotate(-240deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(240deg) translate(15vh) rotate(-240deg) translateX(-35%);
   }
   .bell_circle.six > .bell:nth-of-type(5) {
-    transform: translate(-50%, -50%) rotate(300deg) translate(17.5vh) rotate(-300deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(300deg) translate(15vh) rotate(-300deg) translateX(35%);
   }
   .bell_circle.six > .bell:nth-of-type(5).left_side {
-    transform: translate(-50%, -50%) rotate(300deg) translate(17.5vh) rotate(-300deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(300deg) translate(15vh) rotate(-300deg) translateX(-35%);
   }
   .bell_circle.six > .bell:nth-of-type(6) {
-    transform: translate(-50%, -50%) rotate(360deg) translate(17.5vh) rotate(-360deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(360deg) translate(15vh) rotate(-360deg) translateX(35%);
   }
   .bell_circle.six > .bell:nth-of-type(6).left_side {
-    transform: translate(-50%, -50%) rotate(360deg) translate(17.5vh) rotate(-360deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(360deg) translate(15vh) rotate(-360deg) translateX(-35%);
   }
   .bell_circle.eight {
-    width: 35vh;
-    height: 35vh;
+    width: 30vh;
+    height: 30vh;
     border-radius: 50%;
   }
   .bell_circle.eight > .bell {
@@ -113,56 +116,56 @@
     left: 50%;
   }
   .bell_circle.eight > .bell:nth-of-type(1) {
-    transform: translate(-50%, -50%) rotate(67.5deg) translate(17.5vh) rotate(-67.5deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(67.5deg) translate(15vh) rotate(-67.5deg) translateX(35%);
   }
   .bell_circle.eight > .bell:nth-of-type(1).left_side {
-    transform: translate(-50%, -50%) rotate(67.5deg) translate(17.5vh) rotate(-67.5deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(67.5deg) translate(15vh) rotate(-67.5deg) translateX(-35%);
   }
   .bell_circle.eight > .bell:nth-of-type(2) {
-    transform: translate(-50%, -50%) rotate(112.5deg) translate(17.5vh) rotate(-112.5deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(112.5deg) translate(15vh) rotate(-112.5deg) translateX(35%);
   }
   .bell_circle.eight > .bell:nth-of-type(2).left_side {
-    transform: translate(-50%, -50%) rotate(112.5deg) translate(17.5vh) rotate(-112.5deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(112.5deg) translate(15vh) rotate(-112.5deg) translateX(-35%);
   }
   .bell_circle.eight > .bell:nth-of-type(3) {
-    transform: translate(-50%, -50%) rotate(157.5deg) translate(17.5vh) rotate(-157.5deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(157.5deg) translate(15vh) rotate(-157.5deg) translateX(35%);
   }
   .bell_circle.eight > .bell:nth-of-type(3).left_side {
-    transform: translate(-50%, -50%) rotate(157.5deg) translate(17.5vh) rotate(-157.5deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(157.5deg) translate(15vh) rotate(-157.5deg) translateX(-35%);
   }
   .bell_circle.eight > .bell:nth-of-type(4) {
-    transform: translate(-50%, -50%) rotate(202.5deg) translate(17.5vh) rotate(-202.5deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(202.5deg) translate(15vh) rotate(-202.5deg) translateX(35%);
   }
   .bell_circle.eight > .bell:nth-of-type(4).left_side {
-    transform: translate(-50%, -50%) rotate(202.5deg) translate(17.5vh) rotate(-202.5deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(202.5deg) translate(15vh) rotate(-202.5deg) translateX(-35%);
   }
   .bell_circle.eight > .bell:nth-of-type(5) {
-    transform: translate(-50%, -50%) rotate(247.5deg) translate(17.5vh) rotate(-247.5deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(247.5deg) translate(15vh) rotate(-247.5deg) translateX(35%);
   }
   .bell_circle.eight > .bell:nth-of-type(5).left_side {
-    transform: translate(-50%, -50%) rotate(247.5deg) translate(17.5vh) rotate(-247.5deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(247.5deg) translate(15vh) rotate(-247.5deg) translateX(-35%);
   }
   .bell_circle.eight > .bell:nth-of-type(6) {
-    transform: translate(-50%, -50%) rotate(292.5deg) translate(17.5vh) rotate(-292.5deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(292.5deg) translate(15vh) rotate(-292.5deg) translateX(35%);
   }
   .bell_circle.eight > .bell:nth-of-type(6).left_side {
-    transform: translate(-50%, -50%) rotate(292.5deg) translate(17.5vh) rotate(-292.5deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(292.5deg) translate(15vh) rotate(-292.5deg) translateX(-35%);
   }
   .bell_circle.eight > .bell:nth-of-type(7) {
-    transform: translate(-50%, -50%) rotate(337.5deg) translate(17.5vh) rotate(-337.5deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(337.5deg) translate(15vh) rotate(-337.5deg) translateX(35%);
   }
   .bell_circle.eight > .bell:nth-of-type(7).left_side {
-    transform: translate(-50%, -50%) rotate(337.5deg) translate(17.5vh) rotate(-337.5deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(337.5deg) translate(15vh) rotate(-337.5deg) translateX(-35%);
   }
   .bell_circle.eight > .bell:nth-of-type(8) {
-    transform: translate(-50%, -50%) rotate(382.5deg) translate(17.5vh) rotate(-382.5deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(382.5deg) translate(15vh) rotate(-382.5deg) translateX(35%);
   }
   .bell_circle.eight > .bell:nth-of-type(8).left_side {
-    transform: translate(-50%, -50%) rotate(382.5deg) translate(17.5vh) rotate(-382.5deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(382.5deg) translate(15vh) rotate(-382.5deg) translateX(-35%);
   }
   .bell_circle.ten {
-    width: 35vh;
-    height: 35vh;
+    width: 30vh;
+    height: 30vh;
     border-radius: 50%;
   }
   .bell_circle.ten > .bell {
@@ -172,68 +175,68 @@
     left: 50%;
   }
   .bell_circle.ten > .bell:nth-of-type(1) {
-    transform: translate(-50%, -50%) rotate(72deg) translate(17.5vh) rotate(-72deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(72deg) translate(15vh) rotate(-72deg) translateX(35%);
   }
   .bell_circle.ten > .bell:nth-of-type(1).left_side {
-    transform: translate(-50%, -50%) rotate(72deg) translate(17.5vh) rotate(-72deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(72deg) translate(15vh) rotate(-72deg) translateX(-35%);
   }
   .bell_circle.ten > .bell:nth-of-type(2) {
-    transform: translate(-50%, -50%) rotate(108deg) translate(17.5vh) rotate(-108deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(108deg) translate(15vh) rotate(-108deg) translateX(35%);
   }
   .bell_circle.ten > .bell:nth-of-type(2).left_side {
-    transform: translate(-50%, -50%) rotate(108deg) translate(17.5vh) rotate(-108deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(108deg) translate(15vh) rotate(-108deg) translateX(-35%);
   }
   .bell_circle.ten > .bell:nth-of-type(3) {
-    transform: translate(-50%, -50%) rotate(144deg) translate(17.5vh) rotate(-144deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(144deg) translate(15vh) rotate(-144deg) translateX(35%);
   }
   .bell_circle.ten > .bell:nth-of-type(3).left_side {
-    transform: translate(-50%, -50%) rotate(144deg) translate(17.5vh) rotate(-144deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(144deg) translate(15vh) rotate(-144deg) translateX(-35%);
   }
   .bell_circle.ten > .bell:nth-of-type(4) {
-    transform: translate(-50%, -50%) rotate(180deg) translate(17.5vh) rotate(-180deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(180deg) translate(15vh) rotate(-180deg) translateX(35%);
   }
   .bell_circle.ten > .bell:nth-of-type(4).left_side {
-    transform: translate(-50%, -50%) rotate(180deg) translate(17.5vh) rotate(-180deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(180deg) translate(15vh) rotate(-180deg) translateX(-35%);
   }
   .bell_circle.ten > .bell:nth-of-type(5) {
-    transform: translate(-50%, -50%) rotate(216deg) translate(17.5vh) rotate(-216deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(216deg) translate(15vh) rotate(-216deg) translateX(35%);
   }
   .bell_circle.ten > .bell:nth-of-type(5).left_side {
-    transform: translate(-50%, -50%) rotate(216deg) translate(17.5vh) rotate(-216deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(216deg) translate(15vh) rotate(-216deg) translateX(-35%);
   }
   .bell_circle.ten > .bell:nth-of-type(6) {
-    transform: translate(-50%, -50%) rotate(252deg) translate(17.5vh) rotate(-252deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(252deg) translate(15vh) rotate(-252deg) translateX(35%);
   }
   .bell_circle.ten > .bell:nth-of-type(6).left_side {
-    transform: translate(-50%, -50%) rotate(252deg) translate(17.5vh) rotate(-252deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(252deg) translate(15vh) rotate(-252deg) translateX(-35%);
   }
   .bell_circle.ten > .bell:nth-of-type(7) {
-    transform: translate(-50%, -50%) rotate(288deg) translate(17.5vh) rotate(-288deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(288deg) translate(15vh) rotate(-288deg) translateX(35%);
   }
   .bell_circle.ten > .bell:nth-of-type(7).left_side {
-    transform: translate(-50%, -50%) rotate(288deg) translate(17.5vh) rotate(-288deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(288deg) translate(15vh) rotate(-288deg) translateX(-35%);
   }
   .bell_circle.ten > .bell:nth-of-type(8) {
-    transform: translate(-50%, -50%) rotate(324deg) translate(17.5vh) rotate(-324deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(324deg) translate(15vh) rotate(-324deg) translateX(35%);
   }
   .bell_circle.ten > .bell:nth-of-type(8).left_side {
-    transform: translate(-50%, -50%) rotate(324deg) translate(17.5vh) rotate(-324deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(324deg) translate(15vh) rotate(-324deg) translateX(-35%);
   }
   .bell_circle.ten > .bell:nth-of-type(9) {
-    transform: translate(-50%, -50%) rotate(360deg) translate(17.5vh) rotate(-360deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(360deg) translate(15vh) rotate(-360deg) translateX(35%);
   }
   .bell_circle.ten > .bell:nth-of-type(9).left_side {
-    transform: translate(-50%, -50%) rotate(360deg) translate(17.5vh) rotate(-360deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(360deg) translate(15vh) rotate(-360deg) translateX(-35%);
   }
   .bell_circle.ten > .bell:nth-of-type(10) {
-    transform: translate(-50%, -50%) rotate(396deg) translate(17.5vh) rotate(-396deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(396deg) translate(15vh) rotate(-396deg) translateX(35%);
   }
   .bell_circle.ten > .bell:nth-of-type(10).left_side {
-    transform: translate(-50%, -50%) rotate(396deg) translate(17.5vh) rotate(-396deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(396deg) translate(15vh) rotate(-396deg) translateX(-35%);
   }
   .bell_circle.twelve {
-    width: 35vh;
-    height: 35vh;
+    width: 30vh;
+    height: 30vh;
     border-radius: 50%;
   }
   .bell_circle.twelve > .bell {
@@ -243,76 +246,76 @@
     left: 50%;
   }
   .bell_circle.twelve > .bell:nth-of-type(1) {
-    transform: translate(-50%, -50%) rotate(75deg) translate(17.5vh) rotate(-75deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(75deg) translate(15vh) rotate(-75deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(1).left_side {
-    transform: translate(-50%, -50%) rotate(75deg) translate(17.5vh) rotate(-75deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(75deg) translate(15vh) rotate(-75deg) translateX(-35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(2) {
-    transform: translate(-50%, -50%) rotate(105deg) translate(17.5vh) rotate(-105deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(105deg) translate(15vh) rotate(-105deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(2).left_side {
-    transform: translate(-50%, -50%) rotate(105deg) translate(17.5vh) rotate(-105deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(105deg) translate(15vh) rotate(-105deg) translateX(-35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(3) {
-    transform: translate(-50%, -50%) rotate(135deg) translate(17.5vh) rotate(-135deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(135deg) translate(15vh) rotate(-135deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(3).left_side {
-    transform: translate(-50%, -50%) rotate(135deg) translate(17.5vh) rotate(-135deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(135deg) translate(15vh) rotate(-135deg) translateX(-35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(4) {
-    transform: translate(-50%, -50%) rotate(165deg) translate(17.5vh) rotate(-165deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(165deg) translate(15vh) rotate(-165deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(4).left_side {
-    transform: translate(-50%, -50%) rotate(165deg) translate(17.5vh) rotate(-165deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(165deg) translate(15vh) rotate(-165deg) translateX(-35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(5) {
-    transform: translate(-50%, -50%) rotate(195deg) translate(17.5vh) rotate(-195deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(195deg) translate(15vh) rotate(-195deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(5).left_side {
-    transform: translate(-50%, -50%) rotate(195deg) translate(17.5vh) rotate(-195deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(195deg) translate(15vh) rotate(-195deg) translateX(-35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(6) {
-    transform: translate(-50%, -50%) rotate(225deg) translate(17.5vh) rotate(-225deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(225deg) translate(15vh) rotate(-225deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(6).left_side {
-    transform: translate(-50%, -50%) rotate(225deg) translate(17.5vh) rotate(-225deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(225deg) translate(15vh) rotate(-225deg) translateX(-35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(7) {
-    transform: translate(-50%, -50%) rotate(255deg) translate(17.5vh) rotate(-255deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(255deg) translate(15vh) rotate(-255deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(7).left_side {
-    transform: translate(-50%, -50%) rotate(255deg) translate(17.5vh) rotate(-255deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(255deg) translate(15vh) rotate(-255deg) translateX(-35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(8) {
-    transform: translate(-50%, -50%) rotate(285deg) translate(17.5vh) rotate(-285deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(285deg) translate(15vh) rotate(-285deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(8).left_side {
-    transform: translate(-50%, -50%) rotate(285deg) translate(17.5vh) rotate(-285deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(285deg) translate(15vh) rotate(-285deg) translateX(-35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(9) {
-    transform: translate(-50%, -50%) rotate(315deg) translate(17.5vh) rotate(-315deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(315deg) translate(15vh) rotate(-315deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(9).left_side {
-    transform: translate(-50%, -50%) rotate(315deg) translate(17.5vh) rotate(-315deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(315deg) translate(15vh) rotate(-315deg) translateX(-35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(10) {
-    transform: translate(-50%, -50%) rotate(345deg) translate(17.5vh) rotate(-345deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(345deg) translate(15vh) rotate(-345deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(10).left_side {
-    transform: translate(-50%, -50%) rotate(345deg) translate(17.5vh) rotate(-345deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(345deg) translate(15vh) rotate(-345deg) translateX(-35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(11) {
-    transform: translate(-50%, -50%) rotate(375deg) translate(17.5vh) rotate(-375deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(375deg) translate(15vh) rotate(-375deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(11).left_side {
-    transform: translate(-50%, -50%) rotate(375deg) translate(17.5vh) rotate(-375deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(375deg) translate(15vh) rotate(-375deg) translateX(-35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(12) {
-    transform: translate(-50%, -50%) rotate(405deg) translate(17.5vh) rotate(-405deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(405deg) translate(15vh) rotate(-405deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(12).left_side {
-    transform: translate(-50%, -50%) rotate(405deg) translate(17.5vh) rotate(-405deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(405deg) translate(15vh) rotate(-405deg) translateX(-35%);
   }
 
   .bell {
@@ -321,25 +324,28 @@
   }
 }
 @media screen and (max-width: 600px) and (min-height: 700px) {
-  /* Call display */
   #call_display {
     position: absolute;
     text-align: center;
     height: 4em;
-    top: 50%;
-    left: 50%;
+    margin-top: 50%;
+    margin-left: 50%;
     transform: translate(-50%, -50%);
+  }
+
+  .bell_circle_col {
+    position: relative;
   }
 
   .bell_circle {
     position: absolute;
-    top: 55%;
-    left: 50%;
+    margin-top: 40vh;
+    margin-left: 50vw;
     transform: translate(-50%, -50%);
   }
   .bell_circle.four {
-    width: 35vh;
-    height: 35vh;
+    width: 30vh;
+    height: 30vh;
     border-radius: 50%;
   }
   .bell_circle.four > .bell {
@@ -349,32 +355,32 @@
     left: 50%;
   }
   .bell_circle.four > .bell:nth-of-type(1) {
-    transform: translate(-50%, -50%) rotate(45deg) translate(17.5vh) rotate(-45deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(45deg) translate(15vh) rotate(-45deg) translateX(35%);
   }
   .bell_circle.four > .bell:nth-of-type(1).left_side {
-    transform: translate(-50%, -50%) rotate(45deg) translate(17.5vh) rotate(-45deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(45deg) translate(15vh) rotate(-45deg) translateX(-35%);
   }
   .bell_circle.four > .bell:nth-of-type(2) {
-    transform: translate(-50%, -50%) rotate(135deg) translate(17.5vh) rotate(-135deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(135deg) translate(15vh) rotate(-135deg) translateX(35%);
   }
   .bell_circle.four > .bell:nth-of-type(2).left_side {
-    transform: translate(-50%, -50%) rotate(135deg) translate(17.5vh) rotate(-135deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(135deg) translate(15vh) rotate(-135deg) translateX(-35%);
   }
   .bell_circle.four > .bell:nth-of-type(3) {
-    transform: translate(-50%, -50%) rotate(225deg) translate(17.5vh) rotate(-225deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(225deg) translate(15vh) rotate(-225deg) translateX(35%);
   }
   .bell_circle.four > .bell:nth-of-type(3).left_side {
-    transform: translate(-50%, -50%) rotate(225deg) translate(17.5vh) rotate(-225deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(225deg) translate(15vh) rotate(-225deg) translateX(-35%);
   }
   .bell_circle.four > .bell:nth-of-type(4) {
-    transform: translate(-50%, -50%) rotate(315deg) translate(17.5vh) rotate(-315deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(315deg) translate(15vh) rotate(-315deg) translateX(35%);
   }
   .bell_circle.four > .bell:nth-of-type(4).left_side {
-    transform: translate(-50%, -50%) rotate(315deg) translate(17.5vh) rotate(-315deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(315deg) translate(15vh) rotate(-315deg) translateX(-35%);
   }
   .bell_circle.six {
-    width: 35vh;
-    height: 35vh;
+    width: 30vh;
+    height: 30vh;
     border-radius: 50%;
   }
   .bell_circle.six > .bell {
@@ -384,44 +390,44 @@
     left: 50%;
   }
   .bell_circle.six > .bell:nth-of-type(1) {
-    transform: translate(-50%, -50%) rotate(60deg) translate(17.5vh) rotate(-60deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(60deg) translate(15vh) rotate(-60deg) translateX(35%);
   }
   .bell_circle.six > .bell:nth-of-type(1).left_side {
-    transform: translate(-50%, -50%) rotate(60deg) translate(17.5vh) rotate(-60deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(60deg) translate(15vh) rotate(-60deg) translateX(-35%);
   }
   .bell_circle.six > .bell:nth-of-type(2) {
-    transform: translate(-50%, -50%) rotate(120deg) translate(17.5vh) rotate(-120deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(120deg) translate(15vh) rotate(-120deg) translateX(35%);
   }
   .bell_circle.six > .bell:nth-of-type(2).left_side {
-    transform: translate(-50%, -50%) rotate(120deg) translate(17.5vh) rotate(-120deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(120deg) translate(15vh) rotate(-120deg) translateX(-35%);
   }
   .bell_circle.six > .bell:nth-of-type(3) {
-    transform: translate(-50%, -50%) rotate(180deg) translate(17.5vh) rotate(-180deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(180deg) translate(15vh) rotate(-180deg) translateX(35%);
   }
   .bell_circle.six > .bell:nth-of-type(3).left_side {
-    transform: translate(-50%, -50%) rotate(180deg) translate(17.5vh) rotate(-180deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(180deg) translate(15vh) rotate(-180deg) translateX(-35%);
   }
   .bell_circle.six > .bell:nth-of-type(4) {
-    transform: translate(-50%, -50%) rotate(240deg) translate(17.5vh) rotate(-240deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(240deg) translate(15vh) rotate(-240deg) translateX(35%);
   }
   .bell_circle.six > .bell:nth-of-type(4).left_side {
-    transform: translate(-50%, -50%) rotate(240deg) translate(17.5vh) rotate(-240deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(240deg) translate(15vh) rotate(-240deg) translateX(-35%);
   }
   .bell_circle.six > .bell:nth-of-type(5) {
-    transform: translate(-50%, -50%) rotate(300deg) translate(17.5vh) rotate(-300deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(300deg) translate(15vh) rotate(-300deg) translateX(35%);
   }
   .bell_circle.six > .bell:nth-of-type(5).left_side {
-    transform: translate(-50%, -50%) rotate(300deg) translate(17.5vh) rotate(-300deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(300deg) translate(15vh) rotate(-300deg) translateX(-35%);
   }
   .bell_circle.six > .bell:nth-of-type(6) {
-    transform: translate(-50%, -50%) rotate(360deg) translate(17.5vh) rotate(-360deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(360deg) translate(15vh) rotate(-360deg) translateX(35%);
   }
   .bell_circle.six > .bell:nth-of-type(6).left_side {
-    transform: translate(-50%, -50%) rotate(360deg) translate(17.5vh) rotate(-360deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(360deg) translate(15vh) rotate(-360deg) translateX(-35%);
   }
   .bell_circle.eight {
-    width: 35vh;
-    height: 35vh;
+    width: 30vh;
+    height: 30vh;
     border-radius: 50%;
   }
   .bell_circle.eight > .bell {
@@ -431,56 +437,56 @@
     left: 50%;
   }
   .bell_circle.eight > .bell:nth-of-type(1) {
-    transform: translate(-50%, -50%) rotate(67.5deg) translate(17.5vh) rotate(-67.5deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(67.5deg) translate(15vh) rotate(-67.5deg) translateX(35%);
   }
   .bell_circle.eight > .bell:nth-of-type(1).left_side {
-    transform: translate(-50%, -50%) rotate(67.5deg) translate(17.5vh) rotate(-67.5deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(67.5deg) translate(15vh) rotate(-67.5deg) translateX(-35%);
   }
   .bell_circle.eight > .bell:nth-of-type(2) {
-    transform: translate(-50%, -50%) rotate(112.5deg) translate(17.5vh) rotate(-112.5deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(112.5deg) translate(15vh) rotate(-112.5deg) translateX(35%);
   }
   .bell_circle.eight > .bell:nth-of-type(2).left_side {
-    transform: translate(-50%, -50%) rotate(112.5deg) translate(17.5vh) rotate(-112.5deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(112.5deg) translate(15vh) rotate(-112.5deg) translateX(-35%);
   }
   .bell_circle.eight > .bell:nth-of-type(3) {
-    transform: translate(-50%, -50%) rotate(157.5deg) translate(17.5vh) rotate(-157.5deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(157.5deg) translate(15vh) rotate(-157.5deg) translateX(35%);
   }
   .bell_circle.eight > .bell:nth-of-type(3).left_side {
-    transform: translate(-50%, -50%) rotate(157.5deg) translate(17.5vh) rotate(-157.5deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(157.5deg) translate(15vh) rotate(-157.5deg) translateX(-35%);
   }
   .bell_circle.eight > .bell:nth-of-type(4) {
-    transform: translate(-50%, -50%) rotate(202.5deg) translate(17.5vh) rotate(-202.5deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(202.5deg) translate(15vh) rotate(-202.5deg) translateX(35%);
   }
   .bell_circle.eight > .bell:nth-of-type(4).left_side {
-    transform: translate(-50%, -50%) rotate(202.5deg) translate(17.5vh) rotate(-202.5deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(202.5deg) translate(15vh) rotate(-202.5deg) translateX(-35%);
   }
   .bell_circle.eight > .bell:nth-of-type(5) {
-    transform: translate(-50%, -50%) rotate(247.5deg) translate(17.5vh) rotate(-247.5deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(247.5deg) translate(15vh) rotate(-247.5deg) translateX(35%);
   }
   .bell_circle.eight > .bell:nth-of-type(5).left_side {
-    transform: translate(-50%, -50%) rotate(247.5deg) translate(17.5vh) rotate(-247.5deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(247.5deg) translate(15vh) rotate(-247.5deg) translateX(-35%);
   }
   .bell_circle.eight > .bell:nth-of-type(6) {
-    transform: translate(-50%, -50%) rotate(292.5deg) translate(17.5vh) rotate(-292.5deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(292.5deg) translate(15vh) rotate(-292.5deg) translateX(35%);
   }
   .bell_circle.eight > .bell:nth-of-type(6).left_side {
-    transform: translate(-50%, -50%) rotate(292.5deg) translate(17.5vh) rotate(-292.5deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(292.5deg) translate(15vh) rotate(-292.5deg) translateX(-35%);
   }
   .bell_circle.eight > .bell:nth-of-type(7) {
-    transform: translate(-50%, -50%) rotate(337.5deg) translate(17.5vh) rotate(-337.5deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(337.5deg) translate(15vh) rotate(-337.5deg) translateX(35%);
   }
   .bell_circle.eight > .bell:nth-of-type(7).left_side {
-    transform: translate(-50%, -50%) rotate(337.5deg) translate(17.5vh) rotate(-337.5deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(337.5deg) translate(15vh) rotate(-337.5deg) translateX(-35%);
   }
   .bell_circle.eight > .bell:nth-of-type(8) {
-    transform: translate(-50%, -50%) rotate(382.5deg) translate(17.5vh) rotate(-382.5deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(382.5deg) translate(15vh) rotate(-382.5deg) translateX(35%);
   }
   .bell_circle.eight > .bell:nth-of-type(8).left_side {
-    transform: translate(-50%, -50%) rotate(382.5deg) translate(17.5vh) rotate(-382.5deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(382.5deg) translate(15vh) rotate(-382.5deg) translateX(-35%);
   }
   .bell_circle.ten {
-    width: 35vh;
-    height: 35vh;
+    width: 30vh;
+    height: 30vh;
     border-radius: 50%;
   }
   .bell_circle.ten > .bell {
@@ -490,68 +496,68 @@
     left: 50%;
   }
   .bell_circle.ten > .bell:nth-of-type(1) {
-    transform: translate(-50%, -50%) rotate(72deg) translate(17.5vh) rotate(-72deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(72deg) translate(15vh) rotate(-72deg) translateX(35%);
   }
   .bell_circle.ten > .bell:nth-of-type(1).left_side {
-    transform: translate(-50%, -50%) rotate(72deg) translate(17.5vh) rotate(-72deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(72deg) translate(15vh) rotate(-72deg) translateX(-35%);
   }
   .bell_circle.ten > .bell:nth-of-type(2) {
-    transform: translate(-50%, -50%) rotate(108deg) translate(17.5vh) rotate(-108deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(108deg) translate(15vh) rotate(-108deg) translateX(35%);
   }
   .bell_circle.ten > .bell:nth-of-type(2).left_side {
-    transform: translate(-50%, -50%) rotate(108deg) translate(17.5vh) rotate(-108deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(108deg) translate(15vh) rotate(-108deg) translateX(-35%);
   }
   .bell_circle.ten > .bell:nth-of-type(3) {
-    transform: translate(-50%, -50%) rotate(144deg) translate(17.5vh) rotate(-144deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(144deg) translate(15vh) rotate(-144deg) translateX(35%);
   }
   .bell_circle.ten > .bell:nth-of-type(3).left_side {
-    transform: translate(-50%, -50%) rotate(144deg) translate(17.5vh) rotate(-144deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(144deg) translate(15vh) rotate(-144deg) translateX(-35%);
   }
   .bell_circle.ten > .bell:nth-of-type(4) {
-    transform: translate(-50%, -50%) rotate(180deg) translate(17.5vh) rotate(-180deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(180deg) translate(15vh) rotate(-180deg) translateX(35%);
   }
   .bell_circle.ten > .bell:nth-of-type(4).left_side {
-    transform: translate(-50%, -50%) rotate(180deg) translate(17.5vh) rotate(-180deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(180deg) translate(15vh) rotate(-180deg) translateX(-35%);
   }
   .bell_circle.ten > .bell:nth-of-type(5) {
-    transform: translate(-50%, -50%) rotate(216deg) translate(17.5vh) rotate(-216deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(216deg) translate(15vh) rotate(-216deg) translateX(35%);
   }
   .bell_circle.ten > .bell:nth-of-type(5).left_side {
-    transform: translate(-50%, -50%) rotate(216deg) translate(17.5vh) rotate(-216deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(216deg) translate(15vh) rotate(-216deg) translateX(-35%);
   }
   .bell_circle.ten > .bell:nth-of-type(6) {
-    transform: translate(-50%, -50%) rotate(252deg) translate(17.5vh) rotate(-252deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(252deg) translate(15vh) rotate(-252deg) translateX(35%);
   }
   .bell_circle.ten > .bell:nth-of-type(6).left_side {
-    transform: translate(-50%, -50%) rotate(252deg) translate(17.5vh) rotate(-252deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(252deg) translate(15vh) rotate(-252deg) translateX(-35%);
   }
   .bell_circle.ten > .bell:nth-of-type(7) {
-    transform: translate(-50%, -50%) rotate(288deg) translate(17.5vh) rotate(-288deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(288deg) translate(15vh) rotate(-288deg) translateX(35%);
   }
   .bell_circle.ten > .bell:nth-of-type(7).left_side {
-    transform: translate(-50%, -50%) rotate(288deg) translate(17.5vh) rotate(-288deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(288deg) translate(15vh) rotate(-288deg) translateX(-35%);
   }
   .bell_circle.ten > .bell:nth-of-type(8) {
-    transform: translate(-50%, -50%) rotate(324deg) translate(17.5vh) rotate(-324deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(324deg) translate(15vh) rotate(-324deg) translateX(35%);
   }
   .bell_circle.ten > .bell:nth-of-type(8).left_side {
-    transform: translate(-50%, -50%) rotate(324deg) translate(17.5vh) rotate(-324deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(324deg) translate(15vh) rotate(-324deg) translateX(-35%);
   }
   .bell_circle.ten > .bell:nth-of-type(9) {
-    transform: translate(-50%, -50%) rotate(360deg) translate(17.5vh) rotate(-360deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(360deg) translate(15vh) rotate(-360deg) translateX(35%);
   }
   .bell_circle.ten > .bell:nth-of-type(9).left_side {
-    transform: translate(-50%, -50%) rotate(360deg) translate(17.5vh) rotate(-360deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(360deg) translate(15vh) rotate(-360deg) translateX(-35%);
   }
   .bell_circle.ten > .bell:nth-of-type(10) {
-    transform: translate(-50%, -50%) rotate(396deg) translate(17.5vh) rotate(-396deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(396deg) translate(15vh) rotate(-396deg) translateX(35%);
   }
   .bell_circle.ten > .bell:nth-of-type(10).left_side {
-    transform: translate(-50%, -50%) rotate(396deg) translate(17.5vh) rotate(-396deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(396deg) translate(15vh) rotate(-396deg) translateX(-35%);
   }
   .bell_circle.twelve {
-    width: 35vh;
-    height: 35vh;
+    width: 30vh;
+    height: 30vh;
     border-radius: 50%;
   }
   .bell_circle.twelve > .bell {
@@ -561,76 +567,76 @@
     left: 50%;
   }
   .bell_circle.twelve > .bell:nth-of-type(1) {
-    transform: translate(-50%, -50%) rotate(75deg) translate(17.5vh) rotate(-75deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(75deg) translate(15vh) rotate(-75deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(1).left_side {
-    transform: translate(-50%, -50%) rotate(75deg) translate(17.5vh) rotate(-75deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(75deg) translate(15vh) rotate(-75deg) translateX(-35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(2) {
-    transform: translate(-50%, -50%) rotate(105deg) translate(17.5vh) rotate(-105deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(105deg) translate(15vh) rotate(-105deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(2).left_side {
-    transform: translate(-50%, -50%) rotate(105deg) translate(17.5vh) rotate(-105deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(105deg) translate(15vh) rotate(-105deg) translateX(-35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(3) {
-    transform: translate(-50%, -50%) rotate(135deg) translate(17.5vh) rotate(-135deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(135deg) translate(15vh) rotate(-135deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(3).left_side {
-    transform: translate(-50%, -50%) rotate(135deg) translate(17.5vh) rotate(-135deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(135deg) translate(15vh) rotate(-135deg) translateX(-35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(4) {
-    transform: translate(-50%, -50%) rotate(165deg) translate(17.5vh) rotate(-165deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(165deg) translate(15vh) rotate(-165deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(4).left_side {
-    transform: translate(-50%, -50%) rotate(165deg) translate(17.5vh) rotate(-165deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(165deg) translate(15vh) rotate(-165deg) translateX(-35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(5) {
-    transform: translate(-50%, -50%) rotate(195deg) translate(17.5vh) rotate(-195deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(195deg) translate(15vh) rotate(-195deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(5).left_side {
-    transform: translate(-50%, -50%) rotate(195deg) translate(17.5vh) rotate(-195deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(195deg) translate(15vh) rotate(-195deg) translateX(-35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(6) {
-    transform: translate(-50%, -50%) rotate(225deg) translate(17.5vh) rotate(-225deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(225deg) translate(15vh) rotate(-225deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(6).left_side {
-    transform: translate(-50%, -50%) rotate(225deg) translate(17.5vh) rotate(-225deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(225deg) translate(15vh) rotate(-225deg) translateX(-35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(7) {
-    transform: translate(-50%, -50%) rotate(255deg) translate(17.5vh) rotate(-255deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(255deg) translate(15vh) rotate(-255deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(7).left_side {
-    transform: translate(-50%, -50%) rotate(255deg) translate(17.5vh) rotate(-255deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(255deg) translate(15vh) rotate(-255deg) translateX(-35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(8) {
-    transform: translate(-50%, -50%) rotate(285deg) translate(17.5vh) rotate(-285deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(285deg) translate(15vh) rotate(-285deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(8).left_side {
-    transform: translate(-50%, -50%) rotate(285deg) translate(17.5vh) rotate(-285deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(285deg) translate(15vh) rotate(-285deg) translateX(-35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(9) {
-    transform: translate(-50%, -50%) rotate(315deg) translate(17.5vh) rotate(-315deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(315deg) translate(15vh) rotate(-315deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(9).left_side {
-    transform: translate(-50%, -50%) rotate(315deg) translate(17.5vh) rotate(-315deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(315deg) translate(15vh) rotate(-315deg) translateX(-35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(10) {
-    transform: translate(-50%, -50%) rotate(345deg) translate(17.5vh) rotate(-345deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(345deg) translate(15vh) rotate(-345deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(10).left_side {
-    transform: translate(-50%, -50%) rotate(345deg) translate(17.5vh) rotate(-345deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(345deg) translate(15vh) rotate(-345deg) translateX(-35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(11) {
-    transform: translate(-50%, -50%) rotate(375deg) translate(17.5vh) rotate(-375deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(375deg) translate(15vh) rotate(-375deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(11).left_side {
-    transform: translate(-50%, -50%) rotate(375deg) translate(17.5vh) rotate(-375deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(375deg) translate(15vh) rotate(-375deg) translateX(-35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(12) {
-    transform: translate(-50%, -50%) rotate(405deg) translate(17.5vh) rotate(-405deg) translateX(35%);
+    transform: translate(-50%, -50%) rotate(405deg) translate(15vh) rotate(-405deg) translateX(35%);
   }
   .bell_circle.twelve > .bell:nth-of-type(12).left_side {
-    transform: translate(-50%, -50%) rotate(405deg) translate(17.5vh) rotate(-405deg) translateX(-35%);
+    transform: translate(-50%, -50%) rotate(405deg) translate(15vh) rotate(-405deg) translateX(-35%);
   }
 
   .bell {
@@ -640,20 +646,23 @@
 }
 /* Smaller screen */
 @media screen and (min-width: 600px) and (max-width: 800px) and (max-height: 700px) {
-  /* Call display */
   #call_display {
     position: absolute;
     text-align: center;
     height: 4em;
-    top: 50%;
-    left: 50%;
+    margin-top: 50%;
+    margin-left: 50%;
     transform: translate(-50%, -50%);
+  }
+
+  .bell_circle_col {
+    position: relative;
   }
 
   .bell_circle {
     position: absolute;
-    top: 65%;
-    left: 50%;
+    margin-top: 40vh;
+    margin-left: 50vw;
     transform: translate(-50%, -50%);
   }
   .bell_circle.four {
@@ -958,20 +967,23 @@
   }
 }
 @media screen and (min-width: 600px) and (max-width: 800px) and (min-height: 700px) {
-  /* Call display */
   #call_display {
     position: absolute;
     text-align: center;
     height: 4em;
-    top: 50%;
-    left: 50%;
+    margin-top: 50%;
+    margin-left: 50%;
     transform: translate(-50%, -50%);
+  }
+
+  .bell_circle_col {
+    position: relative;
   }
 
   .bell_circle {
     position: absolute;
-    top: 55%;
-    left: 50%;
+    margin-top: 40vh;
+    margin-left: 50vw;
     transform: translate(-50%, -50%);
   }
   .bell_circle.four {
@@ -1276,21 +1288,24 @@
   }
 }
 /*  Small screen */
-@media screen and (min-width: 800px) and (max-width: 1028px) and (max-height: 700px) {
-  /* Call display */
+@media screen and (min-width: 800px) and (max-width: 64rem) and (max-height: 700px) {
   #call_display {
     position: absolute;
     text-align: center;
     height: 4em;
-    top: 50%;
-    left: 50%;
+    margin-top: 50%;
+    margin-left: 50%;
     transform: translate(-50%, -50%);
+  }
+
+  .bell_circle_col {
+    position: relative;
   }
 
   .bell_circle {
     position: absolute;
-    top: 60%;
-    left: 50%;
+    margin-top: 40vh;
+    margin-left: 50vw;
     transform: translate(-50%, -50%);
   }
   .bell_circle.four {
@@ -1594,21 +1609,24 @@
     font-size: large;
   }
 }
-@media screen and (min-width: 800px) and (max-width: 1028px) and (min-height: 700px) {
-  /* Call display */
+@media screen and (min-width: 800px) and (max-width: 64rem) and (min-height: 700px) {
   #call_display {
     position: absolute;
     text-align: center;
     height: 4em;
-    top: 50%;
-    left: 50%;
+    margin-top: 50%;
+    margin-left: 50%;
     transform: translate(-50%, -50%);
+  }
+
+  .bell_circle_col {
+    position: relative;
   }
 
   .bell_circle {
     position: absolute;
-    top: 55%;
-    left: 50%;
+    margin-top: 40vh;
+    margin-left: 50vw;
     transform: translate(-50%, -50%);
   }
   .bell_circle.four {
@@ -1913,7 +1931,7 @@
   }
 }
 /*  Medium screen */
-@media screen and (min-width: 1028px) and (max-height: 700px) {
+@media screen and (min-width: 64rem) and (max-height: 700px) {
   /* Call display */
   #call_display {
     position: absolute;
@@ -2231,7 +2249,7 @@
     font-size: x-large;
   }
 }
-@media screen and (min-width: 1028px) and (min-height: 700px) {
+@media screen and (min-width: 64rem) and (min-height: 700px) {
   /* Call display */
   #call_display {
     position: absolute;

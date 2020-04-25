@@ -961,7 +961,7 @@ bell_circle = new Vue({
         </div> <!-- sidebar col -->
 
 
-        <div class="col-xs-12 col-sm-8"> <!-- bell circle col -->
+        <div class="col-xs-12 col-sm-8 bell_circle_col"> <!-- bell circle col -->
 
         <div class="bell_circle"
              v-bind:class="[number_of_bells == 4 ? 'four'    : '',
