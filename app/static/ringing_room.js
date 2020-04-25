@@ -419,21 +419,22 @@ Vue.component('tower_controls', {
              </div>
 
              <div class="row">
-                 <div class="col-xs">
-                     <button class="set_at_hand"
-                           @click="set_bells_at_hand"
-                           >
-                         Set at hand
-                     </button>
-                </div>
 
-                 <div class="col-xs end-xs">
+                 <div class="col-xs">
                       <button class="audio_toggle"
                            @click="swap_audio"
                            >
                            Audio: [[ audio_type ]]
                       </button>
                  </div>
+
+                 <div class="col-xs end-xs">
+                     <button class="set_at_hand"
+                           @click="set_bells_at_hand"
+                           >
+                         Set at hand
+                     </button>
+                </div>
              </div>
 
              <user
