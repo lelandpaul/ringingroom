@@ -284,7 +284,7 @@ fieldset {
 }
 
 
-@media screen and (max-width: 40rem){
+@media screen and (max-width: 650px){
     .help_showing{
         margin-left: 0;
         left: 0%;
@@ -293,7 +293,7 @@ fieldset {
 }
 
 /* On larger screens, permantly open the menu */
-@media screen and (min-width: 64rem){
+@media screen and (min-width: 1028px){
     .tower_controls { 
         height: 100%;
         transform: scaleY(1);
