@@ -228,34 +228,34 @@ def on_user_left(json):
     send_assignments(tower_id)
 
 
-# A user disconnected (via timeout)
-@socketio.on('disconnect')
-def on_disconnect():
-    try:
-        tower_id = session['tower_id']
-        tower = towers[tower_id]
-        user_id = session['user_id']
-    except KeyError:
-        return
+# # A user disconnected (via timeout)
+# @socketio.on('disconnect')
+# def on_disconnect():
+#     try:
+#         tower_id = session['tower_id']
+#         tower = towers[tower_id]
+#         user_id = session['user_id']
+#     except KeyError:
+#         return
 
-    try:
-        if session['observer']:
-            tower.remove_observer(user_id)
-            emit('s_set_observers', {'observers': tower.observers},
-                 broadcast = True, include_self = False, room=tower_id)
-            session['observer'] = False
-            return
-    except KeyError:
-        pass
+#     try:
+#         if session['observer']:
+#             tower.remove_observer(user_id)
+#             emit('s_set_observers', {'observers': tower.observers},
+#                  broadcast = True, include_self = False, room=tower_id)
+#             session['observer'] = False
+#             return
+#     except KeyError:
+#         pass
 
-    user_name = session['user_name']
-    log('disconnect', user_name)
-    try:
-        tower.remove_user(user_id)
-    except KeyError:
-        log('User was already removed.')
-    emit('s_user_left', { 'user_name': user_name },
-         broadcast=True, include_self = False, room=tower_id)
+#     user_name = session['user_name']
+#     log('disconnect', user_name)
+#     try:
+#         tower.remove_user(user_id)
+#     except KeyError:
+#         log('User was already removed.')
+#     emit('s_user_left', { 'user_name': user_name },
+#          broadcast=True, include_self = False, room=tower_id)
 
 # User was assigned to rope
 @socketio.on('c_assign_user')

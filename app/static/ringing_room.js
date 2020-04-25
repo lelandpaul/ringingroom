@@ -33,13 +33,19 @@ var cur_path = window.location.pathname.split('/')
 var cur_tower_id = parseInt(cur_path[1])
 socketio.emit('c_join',{tower_id: cur_tower_id})
 
-// set up disconnection at beforeunload
-window.addEventListener("beforeunload", function (e) {
+// Set up a handler for leaving, then register it *everywhere*
+
+var leave_room = function(){
     socketio.emit('c_user_left',
           {user_name: bell_circle.$refs.users.cur_user, 
           tower_id: cur_tower_id,
           observer: false});
-});
+}
+
+// set up disconnection at beforeunload
+window.addEventListener("beforeunload", leave_room, "useCapture");
+window.onbeforeunload = leave_room;
+
 
 ////////////////////////
 /* SOCKETIO LISTENERS */
