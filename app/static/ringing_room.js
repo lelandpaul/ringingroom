@@ -298,6 +298,7 @@ Vue.component("bell_rope", {
                         <div class="col-xs-12">
                             <div class="row">
                             <div class="col-xs assign"
+                                :class="{treble: number == 1}"
                                   @click="assign_user"
                                   > 
                         [[ (assignment_mode) ? ((assigned_user) ? assigned_user : '(assign ringer)')

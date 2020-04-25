@@ -267,7 +267,7 @@ fieldset {
     color: red;
 }
 
-.number.treble, .number.treble.cur_user {
+.treble, .number.treble, .number.treble.cur_user {
 	color: #ff000d;
 }
 
