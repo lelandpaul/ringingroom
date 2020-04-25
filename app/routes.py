@@ -1,11 +1,12 @@
-from flask import render_template, send_from_directory
-from app import app, towers
+from flask import render_template, send_from_directory, abort
+from app import app, towers, log
 
 
 # redirect for static files on subdomains
 
 @app.route('/<int:tower_id>/static/<path:path>')
-def redirect_static(tower_id, path):
+@app.route('/<int:tower_id>/<decorator>/static/<path:path>')
+def redirect_static(tower_id, path, decorator = None):
     return send_from_directory(app.static_folder, path)
 
 
@@ -20,8 +21,26 @@ def index():
 @app.route('/<int:tower_id>')
 @app.route('/<int:tower_id>/<decorator>')
 def tower(tower_id, decorator=None):
+    try:
+        tower_name = towers[tower_id].name
+    except KeyError:
+        log('Bad tower_id')
+        abort(404)
     return render_template('ringing_room.html',
-                           tower_name=towers[tower_id].name)
+                           tower_name=tower_name)
+
+
+# Create / find other towers/rooms
+@app.route('/<int:tower_id>/listen')
+@app.route('/<int:tower_id>/<decorator>/listen')
+def observer(tower_id, decorator=None):
+    try:
+        tower_name = towers[tower_id].name
+    except KeyError:
+        log('Bad tower_id')
+        abort(404)
+    return render_template('observe.html',
+                           tower_name=tower_name)
 
 
 #  Serve the static pages

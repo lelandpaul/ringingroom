@@ -1,6 +1,6 @@
 from flask_socketio import emit, join_room
 from flask import session, request
-from app import socketio, towers
+from app import socketio, towers, log
 from app.models import Tower
 import random
 import string
@@ -15,13 +15,16 @@ def on_check_tower_id(json):
     try:
         # Doing it this way (using towers[id]) tests the database for us
         emit('s_check_id_success', {'tower_name': towers[tower_id].name})
+        log('Found tower_id:', str(tower_id))
     except KeyError:
         emit('s_check_id_failure')
+        log("Didn't find tower_id:", str(tower_id))
 
 
 # The user entered a valid tower code and joined it
 @socketio.on('c_join_tower_by_id')
 def on_join_tower_by_id(json):
+    log('c_join_tower_by_id', json)
     tower_id = json['tower_id']
     tower_name = towers[tower_id].url_safe_name
     emit('s_redirection', str(tower_id) + '/' + tower_name)
@@ -30,6 +33,7 @@ def on_join_tower_by_id(json):
 # Create a new room with the user's name
 @socketio.on('c_create_tower')
 def on_create_tower(data):
+    log('c_create_tower', data)
     tower_name = data['tower_name']
     new_tower = Tower(tower_name)
     towers[new_tower.tower_id] = new_tower
@@ -42,6 +46,7 @@ def on_create_tower(data):
 # Set up the room when a user first joins
 @socketio.on('c_join')
 def on_join(json):
+    log('c_join',json)
 
     # Helper function to generate a random string for use as a uid
     def assign_user_id():
@@ -56,29 +61,35 @@ def on_join(json):
 
     # The user may already have a username set in their cookies. if so, get it
     user_name = session.get('user_name') or ''
+    if user_name: log('SETUP Found username in cookie:',user_name)
 
     # Next, get the tower_id & tower from the client, then join the room
     tower_id = json['tower_id']
     tower = towers[tower_id]
     join_room(tower_id)
+    log('SETUP Joined tower:',tower_id)
 
     # Store the tower in case of accidental disconnect
     session['tower_id'] = json['tower_id']
 
-    # It's possible we already have them listed in the tower's user list
+    # It's possible we already have them listed in the tower's user
     # Check this via the user_id
     user_already_present = user_id in tower.users.keys()
 
     # Give the user the list of currently-present users
     emit('s_set_users', {'users': list(tower.users.values())})
+    log('SETUP s_set_users:', list(tower.users.values()))
 
     # If the user is in the room: Remove them (in preparation for adding them again)
     if user_already_present:
+        log('SETUP User already present')
         tower.remove_user(user_id)
         emit('s_user_left', {'user_name': user_name}, 
                             broadcast = True,
                             include_self = True,
                             room = tower_id)
+        # Change the user id, to prevent getting kicked out unexpectedly on refresh
+        session['user_id'] = assign_user_id()
 
     # Check whether their selected name is available
     user_name_available = user_name not in tower.users.values()
@@ -86,19 +97,81 @@ def on_join(json):
     # Send the user their name, along with whether it's currently available or not
     emit('s_set_user_name', {'user_name': user_name,
                              'name_available': user_name_available})
+    log('SETUP s_set_user_name:', {'user_name': user_name, 'name_available': user_name_available})
+
+    # emit the number of observers
+    emit('s_set_observers', {'observers': tower.observers},
+         broadcast=True, include_self=True, room=tower_id)
+    log('SETUP s_set_observers', tower.observers)
     
     # Set up tower metadata
     emit('s_name_change', {'new_name': tower.name})
     emit('s_audio_change', {'new_audio': tower.audio})
+    log('SETUP s_name_change', tower.name)
+    log('SETUP s_audio_change', tower.audio)
 
     # Set the size (then wait for the client to ask for the global state)
     emit('s_size_change', {'size': tower.n_bells})
+    log('SETUP s_size_change',tower.n_bells)
+
+
+# Set up room when a observer first joins
+@socketio.on('c_join_observer')
+def on_observer_joined(json):
+    log('c_join_observer',json)
+
+    # Helper function to generate a random string for use as a uid
+    def assign_user_id():
+        letters = string.ascii_lowercase
+        return ''.join(random.choice(letters) for i in range(8))
+
+    # First, get the tower_id & tower from the client, then join the room
+    tower_id = json['tower_id']
+    tower = towers[tower_id]
+    join_room(tower_id)
+    log('SETUP Observer joined tower:',tower_id)
+
+    # Next: check that the user has a unique ID in their cookie
+    # This will be used for keeping track of who's in the room
+    # If they already have one: Remove them from the room, then give them a new one,
+    # to prevent their getting kicked out unexpectedly on refresh
+    if 'user_id' in session.keys():
+        tower.remove_observer(session['user_id'])
+    session['user_id'] = assign_user_id()
+    user_id = session['user_id']
+
+
+    # Store the tower in case of accidental disconnect
+    # Also note that this was an observer
+    session['tower_id'] = json['tower_id']
+    session['observer'] = True
+
+    # Add the observer and emit the total number of observer
+    tower.add_observer(user_id)
+    emit('s_set_observers', {'observers': tower.observers},
+         broadcast=True, include_self=True, room=tower_id)
+    log('SETUP observer s_set_observers', tower.observers)
+
+    # Give the user the list of currently-present users
+    emit('s_set_users', {'users': list(tower.users.values())})
+    log('SETUP Observer s_set_users:', list(tower.users.values()))
+
+    # Set up tower metadata
+    emit('s_name_change', {'new_name': tower.name})
+    emit('s_audio_change', {'new_audio': tower.audio})
+    log('SETUP s_name_change', tower.name)
+    log('SETUP s_audio_change', tower.audio)
+
+    # Set the size (then wait for the client to ask for the global state)
+    emit('s_size_change', {'size': tower.n_bells})
+    log('SETUP s_size_change',tower.n_bells)
 
 
 # Helper for sending assignments
 def send_assignments(tower_id):
     tower = towers[tower_id]
     for (bell, user_name) in tower.assignments.items():
+        log('s_assign_user', {'bell': bell, 'user': user_name})
         emit('s_assign_user', {'bell': bell, 'user': user_name},
              broadcast=True, include_self=True, room=tower_id)
 
@@ -106,6 +179,7 @@ def send_assignments(tower_id):
 # A user entered a room
 @socketio.on('c_user_entered')
 def on_user_entered(json):
+    log('c_user_entered',json)
 
     # Store their username for the future
     session['user_name'] = json['user_name']
@@ -126,10 +200,20 @@ def on_user_entered(json):
 # A user left a room (and the event actually fired)
 @socketio.on('c_user_left')
 def on_user_left(json):
-    user_id = session['user_id']
-    user_name = json['user_name']
+    log('c_user_left', json)
     tower_id = json['tower_id']
     tower = towers[tower_id]
+    user_id = session['user_id']
+
+    if json['observer']:
+
+        tower.remove_observer(user_id)
+        emit('s_set_observers', {'observers': tower.observers},
+             broadcast = True, include_self = False, room=tower_id)
+        session['observer'] = False
+        return
+
+    user_name = json['user_name']
 
     try:
         tower.remove_user(user_id)
@@ -144,21 +228,39 @@ def on_user_left(json):
     send_assignments(tower_id)
 
 
+# # A user disconnected (via timeout)
+# @socketio.on('disconnect')
+# def on_disconnect():
+#     try:
+#         tower_id = session['tower_id']
+#         tower = towers[tower_id]
+#         user_id = session['user_id']
+#     except KeyError:
+#         return
 
-# A user disconnected (via timeout)
-@socketio.on('disconnect')
-def on_disconnect():
-    tower_id = session['tower_id']
-    user_id = session['user_id']
-    user_name = session['user_name']
-    tower = towers[tower_id]
-    tower.remove_user(user_id)
-    emit('s_user_left', { 'user_name': user_name },
-         broadcast=True, include_self = False, room=tower_id)
+#     try:
+#         if session['observer']:
+#             tower.remove_observer(user_id)
+#             emit('s_set_observers', {'observers': tower.observers},
+#                  broadcast = True, include_self = False, room=tower_id)
+#             session['observer'] = False
+#             return
+#     except KeyError:
+#         pass
+
+#     user_name = session['user_name']
+#     log('disconnect', user_name)
+#     try:
+#         tower.remove_user(user_id)
+#     except KeyError:
+#         log('User was already removed.')
+#     emit('s_user_left', { 'user_name': user_name },
+#          broadcast=True, include_self = False, room=tower_id)
 
 # User was assigned to rope
 @socketio.on('c_assign_user')
 def on_assign_user(json):
+    log('c_assign_user',json)
     tower = towers[json['tower_id']]
     tower.assign_bell(json['bell'], json['user'])
     emit('s_assign_user', json,
@@ -168,6 +270,7 @@ def on_assign_user(json):
 # A rope was pulled; ring the bell
 @socketio.on('c_bell_rung')
 def on_bell_rung(event_dict):
+    log('c_bell_rung', event_dict)
     disagreement = False
     cur_bell = event_dict["bell"]
     tower_id = event_dict["tower_id"]
@@ -176,7 +279,7 @@ def on_bell_rung(event_dict):
     if bell_state[cur_bell - 1] is event_dict["stroke"]:
         bell_state[cur_bell - 1] = not bell_state[cur_bell - 1]
     else:
-        print('Current stroke disagrees between server and client')
+        log('Current stroke disagrees between server and client')
         disagreement = True
     emit('s_bell_rung',
          {"global_bell_state": bell_state,
@@ -188,6 +291,7 @@ def on_bell_rung(event_dict):
 # A call was made
 @socketio.on('c_call')
 def on_call(call_dict):
+    log('c_call', call_dict)
     tower_id = call_dict['tower_id']
     emit('s_call', call_dict, broadcast=True,
          include_self=True, room=tower_id)
@@ -196,6 +300,7 @@ def on_call(call_dict):
 # Tower size was changed
 @socketio.on('c_size_change')
 def on_size_change(size):
+    log('c_size_change', size)
     tower_id = size['tower_id']
     size = size['new_size']
     towers[tower_id].n_bells = size
@@ -205,7 +310,8 @@ def on_size_change(size):
 
 # The client finished resizing and is now ready to get the global state
 @socketio.on('c_request_global_state')
-def on_request_global_State(json):
+def on_request_global_state(json):
+    log('c_request_global_state', json)
     print('global state requested')
     tower_id = json['tower_id']
     tower = towers[tower_id]
@@ -220,6 +326,7 @@ def on_request_global_State(json):
 # Audio type was changed
 @socketio.on('c_audio_change')
 def on_audio_change(json):
+    log('c_audio_change', json)
     tower_id = json['tower_id']
     new_audio = 'Hand' if json['old_audio'] == 'Tower' else 'Tower'
     towers[tower_id].audio = new_audio
@@ -229,6 +336,7 @@ def on_audio_change(json):
 # Set all bells at hand
 @socketio.on('c_set_bells')
 def on_set_bells(json):
+    log('c_set_bells', json)
     tower_id = json['tower_id']
     tower = towers[tower_id]
     tower.set_at_hand()

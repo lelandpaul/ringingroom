@@ -1,51 +1,10 @@
-<!doctype html>
-<html>
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="Content-Language" content="en">
-	<title>Ringing Room</title>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-162521976-1"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+{% extends 'base.html' %}
 
-      gtag('config', 'UA-162521976-1');
-    </script>
-	<!-- external resources -->
-	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css" integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous">
-	<!-- internal resources -->
-	<link rel="stylesheet" href="{{url_for('static', filename = 'css/static.scss.css')+ '?nocache202003311353'}}">
-	<!-- Favicon nonsense -->
-	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-196x196.png')}}" sizes="196x196" />
-	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-96x96.png')}}" sizes="96x96" />
-	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-32x32.png')}}" sizes="32x32" />
-	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-16x16.png')}}" sizes="16x16" />
-	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-128.png')}}" sizes="128x128" />
-</head>
+{% block title %}About — {% endblock %}
 
-<body>
-	<div class="pure-g">
-		<div class="pure-u-1-4 nav">
-			<div class="pure-menu">
-				<ul class="pure-menu-list">
-					<li class="pure-menu-item"><a href="/" class="pure-menu-link
-            home">Ringing Room</a>
-					</li>
-					<li class="pure-menu-item"><a href="/about" class="pure-menu-link">About</a>
-					</li>
-					<li class="pure-menu-item"><a href="/help" class="pure-menu-link">Help</a>
-					</li>
-					<li class="pure-menu-item"><a href="/contact" class="pure-menu-link">Contact</a>
-					</li>
-					<li class="pure-menu-item"><a href="/donate" class="pure-menu-link">Donate</a>
-					</li>
-				</ul>
-			</div>
-		</div>
-		<div class="pure-u-2-5 copy">
+{% block content %}
+
 			<h3>The site</h3>
 			<p>Welcome to the Ringing Room! This is a site built for change ringers to continue ringing with one
                 another even when socially distanced. It is under development currently, and new features may
@@ -59,12 +18,9 @@
                 href="http://www.hibberts.co.uk/">Bill Hibbert</a>. The handbell recordings are of Leland's bells,
                 with editing and extension by JES.</p>
 
-<h3> Related Efforts </h3>
+	        <h3> Related Efforts </h3>
 
 		<p> Richard Johnston has done a great deal of work to make Ringing Room work with Handbell Manager and with Android phones as simulated handbells (!). Read more about it by clicking <a href="http://ringingtraining.pbworks.com/w/page/139440417/Handbell%20Manager%20for%20Ringingroom">here</a>. </p>
 
-		</div>
-	</div>
-</body>
 
-</html>
+{% endblock %}

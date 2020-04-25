@@ -2,8 +2,6 @@
 <html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="Content-Language" content="en">
 	<title>Ringing Room — {{ tower_name }}</title>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-162521976-1"></script>
@@ -22,7 +20,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" >
 
     <!-- internal resources -->
-    {% assets "js_rr" %}
+    {% assets "js_rr_observe" %}
     <script type="module" src="{{ ASSET_URL }}"></script>
     {% endassets %}
     {% assets "css_rr" %}
@@ -36,7 +34,7 @@
 	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-128.png')}}" sizes="128x128" />
 </head>
 
-<body onbeforeunload="leave_room">
+<body>
 	<div>
 		<div id="bell_circle">
 			<!-- app will go here -->

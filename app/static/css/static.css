@@ -1,6 +1,4 @@
-
 /* Global style */
-
 body {
   font-size: x-large;
   font-family: serif;
@@ -11,12 +9,9 @@ body {
   position: relative;
   left: 50%;
   margin-top: 5rem;
-
   transform: translate(-50%);
-
   font-size: xx-large;
   font-weight: bold;
-
   text-align: center;
 }
 
@@ -27,7 +22,6 @@ body {
 }
 
 /* Nav menu */
-
 .pure-menu {
   padding: 1em;
   display: inline-block;
@@ -48,29 +42,22 @@ body {
 }
 
 /* content */
-
 .content {
-    width: 100%;
-
+  width: 100%;
 }
 
-
 /* Hacky news block */
-
 .news {
-
   font-size: small;
   text-align: justify;
   padding: 2rem;
-  li{
-    text-align: left;
-  }
-
+}
+.news li {
+  text-align: left;
 }
 
 /* Input form */
-
-form.pure-form { 
+form.pure-form {
   position: relative;
   width: 19em;
   left: 50%;
@@ -84,7 +71,6 @@ form.pure-form {
 
 .pure-form {
   width: 40%;
-
 }
 
 fieldset {
@@ -94,37 +80,33 @@ fieldset {
 #join-message {
   width: 100%;
   font-size: smaller;
-
 }
-
 
 .copy {
   padding-top: 2em;
   font-size: smaller;
+}
+.copy li {
+  padding-top: 0.5em;
+}
 
-  li {
+@media screen and (max-width: 64rem) {
+  form.pure-form {
+    left: 50%;
+    width: 15rem;
+    transform: translate(-50%, 0%);
+  }
 
-    padding-top: 0.5em;
+  .pure-input {
+    width: 10rem;
+    font-size: medium;
+  }
 
+  .pure-button {
+    width: 4rem;
+    font-size: medium;
+    padding-left: 0.7rem;
   }
 }
 
-@media screen and (max-width: 64rem){
-
-    form.pure-form{
-        left:50%;
-        width: 15rem;
-        transform: translate(-50%, 0%);
-    }
-
-    .pure-input{
-        width:10rem;
-        font-size: medium;
-    }
-    .pure-button{
-        width:4rem;
-        font-size: medium;
-        padding-left: 0.7rem;
-    }
-}
-
+/*# sourceMappingURL=static.css.map */

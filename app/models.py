@@ -1,6 +1,8 @@
-from app import db
+from app import db, log
 from random import sample
 import re
+from datetime import datetime, timedelta
+
 
 class TowerDB(db.Model):
     tower_id = db.Column(db.Integer, primary_key=True)
@@ -26,6 +28,7 @@ class Tower:
         self._audio = True
         self._users = {}
         self._assignments = {i+1: '' for i in range(n)}
+        self._observers = set()
 
     def generate_random_change(self):
         # generate a random royal change, for use as uid
@@ -108,22 +111,49 @@ class Tower:
     def set_at_hand(self):
         self._bell_state = [True] * self._n
 
+    @property
+    def observers(self):
+        return len(self._observers)
+
+    def add_observer(self, new_observer):
+        self._observers.add(new_observer)
+
+    def remove_observer(self, removed_observer):
+        try:
+            self._observers.remove(removed_observer)
+        except KeyError:
+            log("Tried to remove an observer that didn't exist.")
+            pass
 
 class TowerDict(dict):
+
     def __init__(self, table=TowerDB, db=db):
         self._db = db
         self._table = table
-        self._dict = dict()
+        self._garbage_collection_interval = timedelta(hours=12)
 
     def check_db_for_key(self, key):
-        if key in self._dict.keys():
+
+        # prepare garbage collection
+        # don't collect the key we're currently looking up though
+        keys_to_delete = [k for k, (value, timestamp) in self.items() 
+                          if timestamp < datetime.now() - self._garbage_collection_interval
+                          and k != key ]
+        log('Garbage collection:', keys_to_delete)
+
+        # run garbage collection
+        for key in keys_to_delete: 
+            dict.__delitem__(self, key)
+
+        if key in self.keys():
             # It's already in memory, don't check the db
             return True
 
         tower = self._table.query.get(key)
         if tower:
+            log('Loading tower from db:',key)
             # load the thing back into memory
-            self._dict[key] = tower.to_Tower()
+            dict.__setitem__(self, key, (tower.to_Tower(), datetime.now()))
             return True
 
         return False
@@ -135,11 +165,13 @@ class TowerDict(dict):
         self.check_db_for_key(key)
 
         # It's already in use
-        if key in self._dict.keys():
+        if key in self.keys():
             raise KeyError('Key already in use.')
 
+        timestamp =  datetime.now()
+
         # add it to both memory and database
-        self._dict[key] = value
+        dict.__setitem__(self, key, (value, timestamp))
         self._db.session.add(value.to_TowerDB())
         self._db.session.commit()
 
@@ -147,7 +179,12 @@ class TowerDict(dict):
         key = int(key)  # just to be sure
         self.check_db_for_key(key)
 
-        return self._dict[key]
+        value, timestamp = dict.__getitem__(self, key)
 
+        # Update the timestamp
+        timestamp = datetime.now()
+        dict.__setitem__(self, key, (value, timestamp))
+
+        return value
 
 

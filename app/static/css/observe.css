@@ -1,0 +1,452 @@
+/* Global style */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
+  font-size: x-large;
+  font-family: serif;
+  background-color: #F0EAD6;
+}
+
+/* Putting the ropes in a circle */
+/* Mixins to arrange things in a circle easily
+/* We need multiple precomputed mixins for different tower sizes */
+#bell_circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+#bell_circle.four {
+  width: 28em;
+  height: 28em;
+  padding: 0;
+  border-radius: 50%;
+  list-style: none;
+}
+#bell_circle.four > * {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+#bell_circle.four > *:nth-of-type(1) {
+  transform: rotate(45deg) translate(14em) rotate(-45deg);
+}
+#bell_circle.four > *:nth-of-type(1) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.four > *:nth-of-type(2) {
+  transform: rotate(135deg) translate(14em) rotate(-135deg);
+}
+#bell_circle.four > *:nth-of-type(2) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.four > *:nth-of-type(3) {
+  transform: rotate(225deg) translate(14em) rotate(-225deg);
+}
+#bell_circle.four > *:nth-of-type(3) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.four > *:nth-of-type(4) {
+  transform: rotate(315deg) translate(14em) rotate(-315deg);
+}
+#bell_circle.four > *:nth-of-type(4) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.six {
+  width: 28em;
+  height: 28em;
+  padding: 0;
+  border-radius: 50%;
+  list-style: none;
+}
+#bell_circle.six > * {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+#bell_circle.six > *:nth-of-type(1) {
+  transform: rotate(60deg) translate(14em) rotate(-60deg);
+}
+#bell_circle.six > *:nth-of-type(1) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.six > *:nth-of-type(2) {
+  transform: rotate(120deg) translate(14em) rotate(-120deg);
+}
+#bell_circle.six > *:nth-of-type(2) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.six > *:nth-of-type(3) {
+  transform: rotate(180deg) translate(14em) rotate(-180deg);
+}
+#bell_circle.six > *:nth-of-type(3) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.six > *:nth-of-type(4) {
+  transform: rotate(240deg) translate(14em) rotate(-240deg);
+}
+#bell_circle.six > *:nth-of-type(4) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.six > *:nth-of-type(5) {
+  transform: rotate(300deg) translate(14em) rotate(-300deg);
+}
+#bell_circle.six > *:nth-of-type(5) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.six > *:nth-of-type(6) {
+  transform: rotate(360deg) translate(14em) rotate(-360deg);
+}
+#bell_circle.six > *:nth-of-type(6) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.eight {
+  width: 28em;
+  height: 28em;
+  padding: 0;
+  border-radius: 50%;
+  list-style: none;
+}
+#bell_circle.eight > * {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+#bell_circle.eight > *:nth-of-type(1) {
+  transform: rotate(67.5deg) translate(14em) rotate(-67.5deg);
+}
+#bell_circle.eight > *:nth-of-type(1) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.eight > *:nth-of-type(2) {
+  transform: rotate(112.5deg) translate(14em) rotate(-112.5deg);
+}
+#bell_circle.eight > *:nth-of-type(2) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.eight > *:nth-of-type(3) {
+  transform: rotate(157.5deg) translate(14em) rotate(-157.5deg);
+}
+#bell_circle.eight > *:nth-of-type(3) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.eight > *:nth-of-type(4) {
+  transform: rotate(202.5deg) translate(14em) rotate(-202.5deg);
+}
+#bell_circle.eight > *:nth-of-type(4) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.eight > *:nth-of-type(5) {
+  transform: rotate(247.5deg) translate(14em) rotate(-247.5deg);
+}
+#bell_circle.eight > *:nth-of-type(5) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.eight > *:nth-of-type(6) {
+  transform: rotate(292.5deg) translate(14em) rotate(-292.5deg);
+}
+#bell_circle.eight > *:nth-of-type(6) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.eight > *:nth-of-type(7) {
+  transform: rotate(337.5deg) translate(14em) rotate(-337.5deg);
+}
+#bell_circle.eight > *:nth-of-type(7) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.eight > *:nth-of-type(8) {
+  transform: rotate(382.5deg) translate(14em) rotate(-382.5deg);
+}
+#bell_circle.eight > *:nth-of-type(8) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.ten {
+  width: 28em;
+  height: 28em;
+  padding: 0;
+  border-radius: 50%;
+  list-style: none;
+}
+#bell_circle.ten > * {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+#bell_circle.ten > *:nth-of-type(1) {
+  transform: rotate(72deg) translate(14em) rotate(-72deg);
+}
+#bell_circle.ten > *:nth-of-type(1) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.ten > *:nth-of-type(2) {
+  transform: rotate(108deg) translate(14em) rotate(-108deg);
+}
+#bell_circle.ten > *:nth-of-type(2) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.ten > *:nth-of-type(3) {
+  transform: rotate(144deg) translate(14em) rotate(-144deg);
+}
+#bell_circle.ten > *:nth-of-type(3) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.ten > *:nth-of-type(4) {
+  transform: rotate(180deg) translate(14em) rotate(-180deg);
+}
+#bell_circle.ten > *:nth-of-type(4) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.ten > *:nth-of-type(5) {
+  transform: rotate(216deg) translate(14em) rotate(-216deg);
+}
+#bell_circle.ten > *:nth-of-type(5) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.ten > *:nth-of-type(6) {
+  transform: rotate(252deg) translate(14em) rotate(-252deg);
+}
+#bell_circle.ten > *:nth-of-type(6) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.ten > *:nth-of-type(7) {
+  transform: rotate(288deg) translate(14em) rotate(-288deg);
+}
+#bell_circle.ten > *:nth-of-type(7) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.ten > *:nth-of-type(8) {
+  transform: rotate(324deg) translate(14em) rotate(-324deg);
+}
+#bell_circle.ten > *:nth-of-type(8) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.ten > *:nth-of-type(9) {
+  transform: rotate(360deg) translate(14em) rotate(-360deg);
+}
+#bell_circle.ten > *:nth-of-type(9) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.ten > *:nth-of-type(10) {
+  transform: rotate(396deg) translate(14em) rotate(-396deg);
+}
+#bell_circle.ten > *:nth-of-type(10) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.twelve {
+  width: 28em;
+  height: 28em;
+  padding: 0;
+  border-radius: 50%;
+  list-style: none;
+}
+#bell_circle.twelve > * {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+#bell_circle.twelve > *:nth-of-type(1) {
+  transform: rotate(75deg) translate(14em) rotate(-75deg);
+}
+#bell_circle.twelve > *:nth-of-type(1) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.twelve > *:nth-of-type(2) {
+  transform: rotate(105deg) translate(14em) rotate(-105deg);
+}
+#bell_circle.twelve > *:nth-of-type(2) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.twelve > *:nth-of-type(3) {
+  transform: rotate(135deg) translate(14em) rotate(-135deg);
+}
+#bell_circle.twelve > *:nth-of-type(3) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.twelve > *:nth-of-type(4) {
+  transform: rotate(165deg) translate(14em) rotate(-165deg);
+}
+#bell_circle.twelve > *:nth-of-type(4) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.twelve > *:nth-of-type(5) {
+  transform: rotate(195deg) translate(14em) rotate(-195deg);
+}
+#bell_circle.twelve > *:nth-of-type(5) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.twelve > *:nth-of-type(6) {
+  transform: rotate(225deg) translate(14em) rotate(-225deg);
+}
+#bell_circle.twelve > *:nth-of-type(6) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.twelve > *:nth-of-type(7) {
+  transform: rotate(255deg) translate(14em) rotate(-255deg);
+}
+#bell_circle.twelve > *:nth-of-type(7) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.twelve > *:nth-of-type(8) {
+  transform: rotate(285deg) translate(14em) rotate(-285deg);
+}
+#bell_circle.twelve > *:nth-of-type(8) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.twelve > *:nth-of-type(9) {
+  transform: rotate(315deg) translate(14em) rotate(-315deg);
+}
+#bell_circle.twelve > *:nth-of-type(9) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.twelve > *:nth-of-type(10) {
+  transform: rotate(345deg) translate(14em) rotate(-345deg);
+}
+#bell_circle.twelve > *:nth-of-type(10) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.twelve > *:nth-of-type(11) {
+  transform: rotate(375deg) translate(14em) rotate(-375deg);
+}
+#bell_circle.twelve > *:nth-of-type(11) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+#bell_circle.twelve > *:nth-of-type(12) {
+  transform: rotate(405deg) translate(14em) rotate(-405deg);
+}
+#bell_circle.twelve > *:nth-of-type(12) > * {
+  transform: translate(-2.5em, -2.5em);
+}
+
+/* Other positioning */
+.rope {
+  z-index: 0;
+  display: flex;
+  flex-wrap: wrap;
+  vertical-align: bottom;
+  visibility: hidden;
+}
+.rope > img {
+  display: block;
+  vertical-align: bottom;
+  width: 5em;
+  height: 5em;
+  visibility: visible;
+}
+.rope > img.assignment_mode {
+  opacity: 0.4;
+}
+.rope > .rope_metadata {
+  margin-left: -1em;
+  display: inline-block;
+  vertical-align: baseline;
+  margin-bottom: -4px;
+  width: 100px;
+  visibility: visible;
+}
+.rope > .rope_metadata > .number.cur_user {
+  color: blue;
+  visibility: visible;
+}
+.rope > .rope_metadata > .left_name {
+  margin-left: auto;
+  margin-right: 0;
+  direction: rtl;
+  visibility: visible;
+}
+.rope > .rope_metadata > .assigned_user {
+  z-index: 9999;
+  height: 2em;
+  white-space: nowrap;
+  vertical-align: baseline;
+  direction: ltr;
+  visibility: visible;
+}
+.rope > .rope_metadata > .assigned_user .cur_user {
+  color: blue;
+}
+.rope > .left_metadata {
+  z-index: 9999;
+  float: right;
+  vertical-align: bottom;
+  margin-right: -1em;
+  margin-left: -4em;
+  text-align: right;
+  visibility: visible;
+}
+.rope > .left_metadata > .assigned_user {
+  direction: rtl;
+}
+
+.number.treble, .number.treble.cur_user {
+  color: #ff000d;
+}
+
+/* Call display */
+h2#call_display {
+  position: absolute;
+  text-align: center;
+  display: inline-block;
+  height: 4em;
+  top: 50%;
+  left: 50%;
+  transform: translate(-40%, -50%);
+}
+
+/* Tower controls */
+.tower_control {
+  padding-top: 5px;
+  padding-left: 15px;
+}
+
+.tower_name {
+  padding-left: 0.5em;
+  margin-bottom: 0;
+  opacity: 0.75;
+}
+
+.tower_id {
+  padding-left: 1.5em;
+  font-size: small;
+}
+
+/* User Display */
+.user_display {
+  padding: 15px;
+}
+
+.user_display_title {
+  padding-left: 0.75em;
+  opacity: 0.75;
+  display: inline;
+}
+
+.user_list {
+  display: table;
+  border-width: 2px;
+  border-left-style: solid;
+  padding-left: 0px;
+  margin-top: 0px;
+  margin-left: 1em;
+  margin-top: 0.5em;
+}
+.user_list li {
+  width: 100%;
+  margin-left: 0.5em;
+  padding: 0.25em;
+  list-style-type: none;
+  font-size: x-large;
+  opacity: 0.75;
+  display: table;
+  border-radius: 5pt;
+}
+.user_list li.listeners {
+  font-style: italic;
+  font-size: smaller;
+  opacity: 0.75;
+}
+
+/*# sourceMappingURL=observe.css.map */

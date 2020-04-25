@@ -1,51 +1,9 @@
-<!doctype html>
-<html>
+{% extends 'base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="Content-Language" content="en">
-	<title>Ringing Room</title>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-162521976-1"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+{% block title %}Help — {% endblock %}
 
-      gtag('config', 'UA-162521976-1');
-    </script>
-    <!-- external resources -->
-	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css" integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous">
-    <!-- internal resources -->
-	<link rel="stylesheet" href="{{url_for('static', filename = 'css/static.scss.css')+ '?nocache202003311353'}}">
-	<!-- Favicon nonsense -->
-	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-196x196.png')}}" sizes="196x196" />
-	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-96x96.png')}}" sizes="96x96" />
-	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-32x32.png')}}" sizes="32x32" />
-	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-16x16.png')}}" sizes="16x16" />
-	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-128.png')}}" sizes="128x128" />
-</head>
 
-<body>
-	<div class="pure-g">
-		<div class="pure-u-1-4 nav">
-			<div class="pure-menu">
-				<ul class="pure-menu-list">
-					<li class="pure-menu-item"><a href="/" class="pure-menu-link
-            home">Ringing Room</a>
-					</li>
-					<li class="pure-menu-item"><a href="/about" class="pure-menu-link">About</a>
-					</li>
-					<li class="pure-menu-item"><a href="/help" class="pure-menu-link">Help</a>
-					</li>
-					<li class="pure-menu-item"><a href="/contact" class="pure-menu-link">Contact</a>
-					</li>
-					<li class="pure-menu-item"><a href="/donate" class="pure-menu-link">Donate</a>
-					</li>
-				</ul>
-			</div>
-		</div>
-		<div class="pure-u-2-5 copy">
+{% block content %}
 			<p>Here's how to get started with the Ringing Room.</p>
 			<h3>Ideal set-up</h3>
 			<p>As far as we can tell, Ringing Rooms work best under the following set up:</p>
@@ -59,11 +17,16 @@
 			<h3>Starting a new room</h3>
 			<p>Starting a new room is simple: go to the home page by clicking "Ringing Room" at the top left of
                 this page. Then put any name you like in the text box and click "Create". This will create
-                a new "tower" with a sharable URL. You can send this URL to others you would like to ring with.</p>
+                a new "tower" with a shareable URL. You can send this URL to others you would like to ring with.</p>
 			<h3>Joining a room</h3>
 			<p>There are currently two ways to join a room that already exists. The easiest way is to go directly to
                 the link that the room's creator has sent you. Alternatively you may type in <i>just</i> the numerical
                 ID (a nine-digit number) into the textbox on the homepage.</p>
+            <h3>Listener links</h3>
+            <p>If you append "/listen" to the link of any tower, the resulting page will be a "listen-only" version of the 
+                tower appropriate for sending to anyone who wishes to observe the ringing without risking disturbing the band.
+                (For example, if you have the tower ID '1234' and name 'Example', then the link "ringingroom.com/1234/example/listen"
+                will go to the listen-only page.)
 			<h3>Setting up and ringing in a ringing room</h3>
 			<p>On the top left, you may set the number of bells in the tower by clicking the desired number. To ring,
                 you may either click on the ropes or use the following hot-keys:</p>
@@ -96,7 +59,7 @@
 
 <h3> Related Efforts </h3>
 
-		<p> Richard Johnston has done a great deal of work to make Ringing Room work with Handbell Manager and with Android phones as simulated handbells (!). Read more about it by clicking <a href="http://ringingtraining.pbworks.com/w/page/139440417/Handbell%20Manager%20for%20Ringingroom">here</a>. </p>
+<p> Richard Johnston has done a great deal of work to make Ringing Room work with Handbell Manager and with Android phones as simulated handbells (!). Read more about it by clicking <a href="http://ringingtraining.pbworks.com/w/page/139440417/Handbell%20Manager%20for%20Ringingroom">here</a>. </p>
 
 
 			<h3>Known bugs and currently available fixes</h3>
@@ -123,7 +86,4 @@
                     pretty hard to fix without building a dedicated app as far as we can tell. So probably
                     best to stick to a desktop or laptop for now.</li>
 			</ul>
-		</div>
-</body>
-
-</html>
+{% endblock %}

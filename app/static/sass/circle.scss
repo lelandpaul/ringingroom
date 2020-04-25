@@ -1,0 +1,190 @@
+/* Putting the ropes in a circle */
+
+/* Mixins to arrange things in a circle easily
+/* We need multiple precomputed mixins for different tower sizes */
+@mixin on-circle($item-count, $circle-size) {
+  width:  $circle-size;
+  height: $circle-size;
+  border-radius: 50%;
+
+  > .bell {
+    position: absolute;
+    z-index: -1;
+    top:  50%; 
+    left: 50%;
+  
+    $angle: (360 / $item-count);
+	$rot: 0; // initialize for scope
+
+    @if $item-count == 4 { $rot: 1*$angle/2; }
+	@if $item-count == 6 { $rot: 1*$angle; }
+	@if $item-count == 8 { $rot: 3*$angle/2; }
+	@if $item-count == 10 { $rot: 2*$angle; }
+	@if $item-count == 12 { $rot: 5*$angle/2; }
+
+
+	@for $i from 1 through $item-count {
+      &:nth-of-type(#{$i}) {
+        &.left_side {
+            transform: translate(-50%,-50%)
+                       rotate($rot * 1deg) 
+                       translate($circle-size / 2) 
+                       rotate($rot * -1deg)
+                       translateX(-35%);
+        }
+        transform: 
+          translate(-50%, -50%)
+          rotate($rot * 1deg) 
+          translate($circle-size / 2) 
+          rotate($rot * -1deg)
+          translateX(35%);
+
+      }
+
+      $rot: $rot + $angle;
+    }
+    }
+}
+
+
+@mixin bell_circle_margin($media-circ-size, $media-lr-offset, $media-tb-offset) {
+
+    #call_display {
+        position: absolute;
+        text-align: center;
+        height: 4em;
+        margin-top: 50%;
+        margin-left: 50%;
+        transform: translate(-50%,-50%);
+    }
+
+
+    .bell_circle_col {
+        position: relative;
+    }
+
+
+    .bell_circle {
+      $circ-size: $media-circ-size;
+
+      position: absolute;
+      margin-top: $media-tb-offset;
+      margin-left: $media-lr-offset;
+      transform: translate(-50%, -50%);
+
+      &.four   { @include on-circle(4, $circ-size); }
+      &.six    { @include on-circle(6, $circ-size); }
+      &.eight  { @include on-circle(8, $circ-size); }
+      &.ten    { @include on-circle(10, $circ-size); }
+      &.twelve { @include on-circle(12, $circ-size); }
+    }
+}
+
+@mixin bell_circle($media-circ-size, $media-lr-offset, $media-tb-offset) {
+
+    /* Call display */
+
+    #call_display {
+        position: absolute;
+        text-align: center;
+        height: 4em;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+    }
+
+
+    .bell_circle {
+      $circ-size: $media-circ-size;
+
+      position: absolute;
+      top: $media-tb-offset;
+      left: $media-lr-offset;
+      transform: translate(-50%, -50%);
+
+      &.four   { @include on-circle(4, $circ-size); }
+      &.six    { @include on-circle(6, $circ-size); }
+      &.eight  { @include on-circle(8, $circ-size); }
+      &.ten    { @include on-circle(10, $circ-size); }
+      &.twelve { @include on-circle(12, $circ-size); }
+    }
+}
+
+/* Tiny screen */
+@media screen and (max-width: 600px) and (max-height: 700px){
+    @include bell_circle_margin(30vh, 50vw, 40vh);
+    .bell {
+        width: 8rem;
+        font-size: x-small;
+    }
+}
+
+@media screen and (max-width: 600px) and (min-height: 700px){
+    @include bell_circle_margin(30vh, 50vw, 40vh);
+    .bell {
+        width: 10rem;
+        font-size: x-small;
+    }
+}
+
+/* Smaller screen */
+@media screen and (min-width: 600px) and (max-width: 800px) and (max-height: 700px){
+    @include bell_circle_margin(50vh, 50vw, 40vh);
+    .bell {
+        width: 8rem;
+        font-size: large;
+    }
+}
+
+@media screen and (min-width: 600px) and (max-width: 800px) and (min-height: 700px){
+    @include bell_circle_margin(50vh, 50vw, 40vh);
+    .bell {
+        width: 11rem;
+        font-size: large;
+    }
+}
+
+
+/*  Small screen */
+@media screen and (min-width: 800px) and (max-width: 64rem) and (max-height: 700px){
+    @include bell_circle_margin(55vh, 50vw, 40vh);
+    .bell {
+        width: 10rem;
+        font-size: large;
+    }
+}
+
+@media screen and (min-width: 800px) and (max-width: 64rem) and (min-height: 700px) {
+    @include bell_circle_margin(55vh, 50vw, 40vh);
+    .bell {
+        width: 12rem;
+        font-size: large;
+    }
+}
+
+/*  Medium screen */
+@media screen and (min-width: 64rem) and (max-height: 700px) {
+    @include bell_circle(60vh, 60%, 50%);
+    .bell {
+        width: 10rem;
+        font-size: x-large;
+    }
+}
+
+@media screen and (min-width: 64rem) and (min-height: 700px) {
+    @include bell_circle(60vh, 60%, 50%);
+    .bell {
+        width: 13rem;
+        font-size: x-large;
+    }
+}
+
+/*  Large screen */
+@media screen and (min-width: 1400px){
+    @include bell_circle(65vh, 60%, 50%);
+}
+
+/*  X-Large screen */
+@media screen and (min-width: 1600px){
+    @include bell_circle(75vh, 50%, 50%);
+}
