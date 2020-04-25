@@ -494,7 +494,7 @@ Vue.component('help', {
 					<p>Ringers may now <i>assign bells</i> by entering bell assignment mode (top left of the screen). While in
 					this mode, any ringer may be selected under the user list and then a second click by a bell will assign
 					that user to a bell. Clicking the "x" by the user's name will kick them off that bell. Bells may not be rung
-					in bell assignment mode. Simply click the button in the control towers to exist bell assignment mode.
+					in bell assignment mode. Simply click the button in the control towers to exit bell assignment mode.
 					For now, anyone may assign anyone (and kick off anyone).</p>
 			
 					<p>There are also hot-keys for various calls, but be aware that in some browsers using these results
