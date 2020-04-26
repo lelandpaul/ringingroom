@@ -1,14 +1,16 @@
 {% extends 'base.html' %}
 
-{% block title %}{% endblock %}
+{% block app_content %}
 
+<img class="grid_circle" src="{{url_for('static', filename='images/dncb.png')}}"/>
 
-{% block content %}
-<div class="pure-u-3-4">
-    <div class='title'>
-        <div class='welcome'>Welcome to the</div>Ringing Room
-        <div class='tagline'>A virtual belltower</div>
-    </div>
-    <div id='tower_selector'></div>
+<div class="container centered_block">
+<div class='title'>
+    Welcome to the
+    <h1>Ringing Room</h1>
+    A virtual belltower
 </div>
+<div id='tower_selector'></div>
+</div>
+
 {% endblock %}

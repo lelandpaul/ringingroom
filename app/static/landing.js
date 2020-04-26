@@ -129,11 +129,11 @@ tower_selector = new Vue({
         this.$refs.tower_input.focus()
     },
 
-	template: `<form class="pure-form"
-					 v-on:submit.prevent="send_tower_name"
-                     >
-                    <fieldset>
-                        <input class="pure-input"
+	template: `<form class="form-group" v-on:submit.prevent="send_tower_name">
+
+                    <div class="input-group">
+
+                        <input class="form-control"
                                type="text" 
                                placeholder="Tower name or ID number" 
                                v-model="input_field" 
@@ -141,16 +141,23 @@ tower_selector = new Vue({
                                ref="tower_input"
                                required
                                >
-                        <button type="submit" 
-                                :disabled="button_disabled"
-                                class="pure-button pure-button-primary"
-                                >
-                            [[ join_tower ? "Join" : "Create" ]]
-                        </button>
-                    </fieldset>
-                    <div id="join-message"> 
+
+                        <div class="input-group-append">
+
+                            <button type="submit" 
+                                    :disabled="button_disabled"
+                                    class="btn btn-outline-secondary"
+                                    >
+                                [[ join_tower ? "Join" : "Create" ]]
+                            </button>
+
+                        </div>
+                    </div>
+
+                    <div class="form-text text-muted text-justify" id="join-message"> 
                         [[ message ]]
                     </div>
+
 				</form>
 				`
 }); // end tower_selector

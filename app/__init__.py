@@ -75,11 +75,10 @@ bundles = {
                            'audio.js',
                            output='gen/rr-observe.%(version)s.js'),
 
-    'css_static':   Bundle( 'css/static.css',
+    'css_static':   Bundle( 'css/redesign.css',
                             output='gen/static.%(version)s.css'),
 
-    'css_rr':   Bundle( 'css/marx.min.css',
-                        'css/ringing_room.css',
+    'css_rr':   Bundle( 'css/ringing_room.css',
                         'css/circle.css',
                          output='gen/rr.%(version)s.css'),
 
