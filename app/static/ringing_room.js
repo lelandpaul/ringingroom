@@ -176,7 +176,7 @@ Vue.component("bell_rope", {
 	data: function() {
 	  return { stroke: true,
 			   circled_digits: ["①", "②", "③", "④", "⑤", "⑥", 
-								"⑦", "⑧", "⑨", "⑩", "⑪ ","⑫"],
+								"⑦", "⑧", "⑨", "⑩", "⑪","⑫"],
 			   images: ["handstroke", "backstroke"],
                assigned_user: '',
 	  };
