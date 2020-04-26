@@ -1,5 +1,4 @@
 @charset "UTF-8";
-/* Global style */
 @import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;1,400&family=Simonetta:wght@400;900&display=swap");
 /*!
  * Bootstrap v4.3.1 (https://getbootstrap.com/)
@@ -14569,8 +14568,11 @@ mark,
     transform: translate(-50%, -50%) rotate(405deg) translate(37.5vh) rotate(-405deg) translateX(-35%);
   }
 }
+html, body {
+  height: 100%;
+}
+
 body {
-  overflow: auto;
   font-family: "Lato", sans-serif;
 }
 
@@ -14586,15 +14588,6 @@ body {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
   z-index: 3;
-}
-
-#tower_name {
-  font-family: "Simonetta", cursive;
-  font-weight: bold;
-}
-
-#tower_id {
-  font-size: larger;
 }
 
 .tower_header .row:last-child {
@@ -14614,18 +14607,21 @@ body {
   transform: scaleY(1);
   transform-origin: top;
   z-index: 2;
-  margin-bottom: -5rem;
+  font-size: x-large;
 }
 
 .size_control button {
   width: 100%;
 }
 
+.cur_size {
+  background: #007bff;
+}
+
 .collapsed {
   transition: transform 0.2s ease-out;
   transform: scaleY(0);
   height: 0;
-  margin-bottom: 0;
 }
 
 .maxed-col {
@@ -14674,17 +14670,24 @@ hr {
 
 .user_list li {
   display: table;
+  width: 100%;
   margin-left: 1rem;
   padding: 0.25rem;
   list-style-type: none;
-}
-
-.btn {
-  cursor: pointer;
+  font-size: large;
+  border-radius: 4px;
 }
 
 .observers {
   font-style: italic;
+}
+
+.user_list li.assignment_active {
+  cursor: pointer;
+}
+
+.user_list li.assignment_active.selected_user {
+  background: rgba(0, 0, 255, 0.3);
 }
 
 .user_list .cur_user {
@@ -14693,6 +14696,10 @@ hr {
 
 .toggle_assign {
   cursor: pointer;
+}
+
+.toggle_assign.active {
+  background: rgba(255, 0, 0, 0.3);
 }
 
 /* Username Input Form */
@@ -14709,12 +14716,19 @@ input.un_input_box {
   display: inline;
 }
 
+button.un_input_button {
+  width: 20%;
+  padding: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+
 fieldset {
   white-space: nowrap;
 }
 
 #join-message {
   width: 100%;
+  font-size: smaller;
 }
 
 /* help bar */
@@ -14725,17 +14739,19 @@ fieldset {
 .help_showing {
   max-width: 40rem;
   width: 100%;
+  font-size: large;
   padding: 1rem;
   opacity: 1;
   border: 1px solid black;
+  background-color: aliceblue;
   overflow-y: auto;
   text-align: left;
   left: 50%;
   margin-left: -20rem;
+  font-size: smaller;
   position: fixed;
   z-index: 10;
   max-height: 70vh;
-  background: #fff;
 }
 
 /* Bells */
@@ -14743,11 +14759,8 @@ fieldset {
   padding: 0;
   white-space: nowrap;
   text-align: left;
+  font-size: small;
   z-index: 1;
-}
-
-.bell img {
-  width: 100%;
 }
 
 .bell .row {
@@ -14763,13 +14776,13 @@ fieldset {
   margin: 0;
 }
 
-.number {
-  font-size: larger;
-}
-
 .reverse .bell_metadata {
   text-align: right;
   direction: rtl;
+}
+
+.rope .rope_metadata .number.cur_user {
+  color: blue;
 }
 
 .bell_metadata [class^=col-] {
@@ -14780,17 +14793,21 @@ fieldset {
   opacity: 0.4;
 }
 
-.assign {
-  width: max-content;
-}
-
-.assigned_user {
-  cursor: pointer;
+.bell_metadata .assigned_user.cur_user {
+  color: blue;
 }
 
 .unassign {
   margin-left: 0.5rem;
   margin-right: 0.5rem;
+}
+
+.unassign:hover {
+  color: red;
+}
+
+.treble, .number.treble, .number.treble.cur_user {
+  color: #ff000d;
 }
 
 .handbell .bell_img {
@@ -14810,16 +14827,16 @@ fieldset {
   }
 }
 /* On larger screens, permantly open the menu */
-@media screen and (min-width: 64rem) {
+@media screen and (min-width: 1028px) {
   .tower_controls {
     height: 100%;
     transform: scaleY(1);
     z-index: 0;
-    margin-bottom: 0;
   }
 
   .maxed_col {
-    min-width: 25rem;
+    max-width: 20rem;
+    min-width: 20rem;
   }
 
   .toggle_controls {
@@ -14833,9 +14850,10 @@ fieldset {
 
   .help_showing {
     left: 13.5rem;
+    font-size: inherit;
     margin-left: 0;
     max-height: 75vh;
   }
 }
 
-/*# sourceMappingURL=ringing_room.css.map */
+/*# sourceMappingURL=ringingroom.css.map */

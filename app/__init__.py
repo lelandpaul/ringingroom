@@ -79,7 +79,6 @@ bundles = {
                             output='gen/static.%(version)s.css'),
 
     'css_rr':   Bundle( 'css/ringing_room.css',
-                        'css/circle.css',
                          output='gen/rr.%(version)s.css'),
 
 }

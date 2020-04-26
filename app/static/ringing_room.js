@@ -295,9 +295,10 @@ Vue.component("bell_rope", {
                         </span>
                         </div>
 
-                        <div class="col-xs-12">
-                            <div class="row">
-                            <div class="col-xs assign"
+                        <div class="col-xs-12"
+                             :class="{assigned_user: assignment_mode}">
+                            <div class="row assign">
+                            <div class="col-xs"
                                 :class="{treble: number == 1}"
                                   @click="assign_user"
                                   > 
@@ -413,7 +414,8 @@ Vue.component('tower_controls', {
                       :size="size"
                       @click="set_tower_size(size)"
                       >
-                     <button :class="{cur_size: size === number_of_bells}">
+                     <button class="size_button btn btn-outline-primary"
+                            :class="{cur_size: size === number_of_bells}">
                         [[ size ]]
                      </button>
                  </div>
@@ -422,7 +424,7 @@ Vue.component('tower_controls', {
              <div class="row">
 
                  <div class="col-xs">
-                      <button class="audio_toggle"
+                      <button class="audio_toggle btn btn-outline-primary"
                            @click="swap_audio"
                            >
                            Audio: [[ audio_type ]]
@@ -430,7 +432,7 @@ Vue.component('tower_controls', {
                  </div>
 
                  <div class="col-xs end-xs">
-                     <button class="set_at_hand"
+                     <button class="set_at_hand btn btn-outline-primary"
                            @click="set_bells_at_hand"
                            >
                          Set at hand
@@ -472,7 +474,7 @@ Vue.component('help', {
 				class="help_toggle"
 				@click="show_help"
 				>
-                       <button> Help [[ help_showing ? '▾' : '▸' ]] </button>
+                       <button class="btn btn-outline-primary"> Help [[ help_showing ? '▾' : '▸' ]] </button>
                 </div>
                 <div v-if="help_showing"
                 class="help_showing"
@@ -590,7 +592,7 @@ Vue.component('user_display', {
          <div class="row middle-xs between-xs">
              <div class="col-xs"><h3>Users</h3></div>
              <div class="col-xs end-xs">
-                <button class="toggle_assign"
+                <button class="toggle_assign btn btn-outline-primary"
                       :class="{active: assignment_mode}"
                       @click="toggle_assignment"
                 >
@@ -607,7 +609,14 @@ Vue.component('user_display', {
                                   selected_user: user == selected_user}"
                          @click="select_user(user)"
                      >
-                         [[ user ]]
+                         <span class="user_name"
+                                :class="[assignment_mode ? 'btn' : '',
+                                        assignment_mode ? 
+                                           (user == selected_user ? 'btn-primary' : 'btn-outline-primary') : '',
+                                        user == cur_user ? 'cur_user' : '']"
+                                >
+                                [[ user ]]
+                         </span>
                      </li>
                     <li class="observers"
                         v-show="observers != 0">
@@ -693,7 +702,7 @@ def_user_message: "Please input a username. Must be unique and between 1 and 12 
                              >
                       <button type="submit"
                       		  :disabled="button_disabled"
-                              class="un_input_button"
+                              class="un_input_button btn btn-outline-primary"
                               >
                           Join
                       </button>
@@ -919,7 +928,7 @@ bell_circle = new Vue({
         <div class="row"
              v-show="logged_in">
         
-        <div class="col-xs-12 col-lg-4 maxed_col sidebar_col"> <!-- sidebar col -->
+        <div class="col-xs-12 col-md-3 maxed_col sidebar_col"> <!-- sidebar col -->
 
         <div class="tower_header">
         <div class="row">
@@ -930,13 +939,14 @@ bell_circle = new Vue({
 
          <div class="row">
              <div class="col-xs">
-                 <div class="row between-xs bottom-xs">
+                 <div class="row between-xs middle-xs">
                      <div class="col-xs-4 col-md-6"><span class="tower_id">ID: [[tower_id]]</div>
                      <div class="col-xs-4 col-md-6 center-xs end-md">
                          <help ref="help"></help>
                      </div>
                      <div class="col-xs-4 toggle_controls end-xs">
-                         <button class="toggle_controls" @click="toggle_controls">
+                         <button class="toggle_controls btn btn-outline-primary" 
+                                @click="toggle_controls">
                          Controls [[ hidden_sidebar ? '▸' : '▾' ]]
                          </button>
                      </div>
@@ -963,7 +973,7 @@ bell_circle = new Vue({
         </div> <!-- sidebar col -->
 
 
-        <div class="col-xs-12 col-sm-8 bell_circle_col"> <!-- bell circle col -->
+        <div class="col-xs-12 col-lg-8 bell_circle_col"> <!-- bell circle col -->
 
         <div class="bell_circle"
              v-bind:class="[number_of_bells == 4 ? 'four'    : '',
