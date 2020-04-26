@@ -1,12 +1,16 @@
 from app import db, log
 from random import sample
 import re
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 
 class TowerDB(db.Model):
     tower_id = db.Column(db.Integer, primary_key=True)
     tower_name = db.Column(db.String(32), index=True)
+    last_access = db.Column(db.Date, 
+                              nullable=False,
+                              default=date.today,
+                              onupdate=date.today)
 
     def __repr__(self):
         return '<Tower {}: {}>'.format(self.tower_id, self.tower_name)
