@@ -1,6 +1,7 @@
+// Watch sass with: sass --watch app/static/sass/:app/static/css/
 /* Global style */
 
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;1,400&family=Simonetta:wght@400;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,700;1,300;1,700&family=Simonetta:wght@400;900&display=swap');
 
 @import "../bootstrap/scss/bootstrap";
 
@@ -37,9 +38,11 @@ body {
 #tower_name {
     font-family: 'Simonetta', cursive;
     font-weight: bold;
+    white-space: nowrap;
 }
 
 #tower_id {
+    font-weight: bold;
     font-size: larger;
 }
 
@@ -116,8 +119,12 @@ hr {
 .user_list li {
 display: table;
 margin-left: 1rem;
-padding: 0.25rem;
 list-style-type: none;
+font-size: larger;
+}
+
+.list-group-item.disabled {
+    color: black;
 }
 
 .btn {
@@ -131,7 +138,7 @@ list-style-type: none;
 }
 
 
-.user_list .cur_user {
+.cur_user {
     font-weight: bold;
 }
 
@@ -200,35 +207,39 @@ fieldset {
 .bell {
     padding: 0;
     white-space: nowrap;
-    text-align: left;
     z-index: 1;
+    overflow: visible;
+    width: 10rem;
 }
 
-.bell img {
+.treble {
+    color: red;
+}
+
+.user_cartouche{
+    max-width: 5.75rem;
+}
+
+.bell_metadata button.btn {
+    font-size: 0.75rem;
+    padding: 1% 5%;
+}
+
+.btn_number, .btn_unassign {
+    width: 1.75rem;
+}
+
+
+.btn_assigned_user {
+    text-overflow: ellipsis;
+    overflow: hidden;
     width: 100%;
 }
 
-.bell .row{
-    padding: 0;
-}
-
-.bell_metatdata{
-    margin-left: 0.5rem;
-    margin-right: 0.5rem;
-}
-
-.bell_metadata .row{
-    margin: 0;
-}
-
-.number {
-    font-size: larger;
-}
-
-
-.reverse .bell_metadata {
-    text-align: right;
-    direction: rtl;
+.assigned_user {
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .bell_metadata [class^="col-"] {
@@ -247,9 +258,8 @@ fieldset {
     cursor: pointer;
 }
 
-.unassign{
-    margin-left: 0.5rem;
-    margin-right: 0.5rem;
+.assignment_active {
+    cursor: pointer;
 }
 
 .handbell .bell_img {

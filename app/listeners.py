@@ -328,10 +328,9 @@ def on_request_global_state(json):
 def on_audio_change(json):
     log('c_audio_change', json)
     tower_id = json['tower_id']
-    new_audio = 'Hand' if json['old_audio'] == 'Tower' else 'Tower'
-    towers[tower_id].audio = new_audio
-    emit('s_audio_change', {'new_audio': new_audio},
-         broadcast=True, include_self=True, room=tower_id)
+    towers[tower_id].audio = json['new_audio']
+    emit('s_audio_change', {'new_audio': json['new_audio']},
+         broadcast=True, include_self=False, room=tower_id)
 
 # Set all bells at hand
 @socketio.on('c_set_bells')
