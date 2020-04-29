@@ -2,6 +2,8 @@
 
 /* Mixins to arrange things in a circle easily
 /* We need multiple precomputed mixins for different tower sizes */
+@import "global_design";
+
 @mixin on-circle($item-count, $circle-size) {
   width:  $circle-size;
   height: $circle-size;

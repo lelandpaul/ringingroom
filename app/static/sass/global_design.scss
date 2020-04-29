@@ -1,0 +1,50 @@
+/* Import fonts */
+
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,700;1,300;1,700&family=Simonetta:wght@400;900&display=swap');
+
+/* Change sass variables */
+
+// set default background color
+$body-bg: fbfbff;
+// set default font color
+$body-color: black;
+
+$primary: #b2276e;
+$secondary: purple;
+
+$light: #c8d0ff;
+$dark: #b2276e;
+
+/* Import bootstrap */
+@import "../bootstrap/scss/bootstrap";
+@import "../bootstrap/scss/functions";
+@import "../bootstrap/scss/variables";
+@import "../bootstrap/scss/mixins";
+@import "../bootstrap/scss/reboot";
+@import "../bootstrap/scss/type";
+@import "../bootstrap/scss/images";
+
+/* Global Styling */
+
+html {
+    height: 100%;
+}
+
+body {
+  overflow: auto;
+  font-family: "Lato", sans-serif;
+  height: 100%;
+}
+
+/* Font Styling */
+
+h1, h2, h3, h4 {
+    font-weight: bold;
+}
+
+// overall title styling
+.title {
+    margin-bottom: 2rem;
+    text-align: center;
+    font-style: italic;
+}

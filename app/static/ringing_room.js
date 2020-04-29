@@ -632,7 +632,7 @@ Vue.component('user_display', {
          <div class="col-xs">
          <ul class="list-group">
             <li class="list-group-item">
-                <h2 class="align-baseline" style="display: inline; font-family: 'Simonetta'; font-weight: bold;">Users</h2>
+                <h2 class="align-baseline" style="display: inline;">Users</h2>
                 <span class="float-right align-text-bottom">
                 <button class="btn btn-outline-primary"
                         :class="{active: assignment_mode}"
