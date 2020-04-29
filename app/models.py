@@ -35,7 +35,7 @@ class Tower:
         tmp_tower_id = int(''.join(map(str, sample([i+1 for i in range(9)], k=9))))
         overlapping_tower_ids = TowerDB.query.filter_by(tower_id=tmp_tower_id)
 
-        while not len(overlapping_tower_ids) == 0:
+        while not overlapping_tower_ids.count() == 0:
             tmp_tower_id = int(''.join(map(str, sample([i + 1 for i in range(9)], k=9))))
             overlapping_tower_ids = TowerDB.query.filter_by(tower_id=tmp_tower_id)
 
