@@ -1,9 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Help — {% endblock %}
-
-
-{% block content %}
+{% block app_content %}
 			<p>Here's how to get started with the Ringing Room.</p>
 			<h3>Ideal set-up</h3>
 			<p>As far as we can tell, Ringing Rooms work best under the following set up:</p>
@@ -17,11 +14,16 @@
 			<h3>Starting a new room</h3>
 			<p>Starting a new room is simple: go to the home page by clicking "Ringing Room" at the top left of
                 this page. Then put any name you like in the text box and click "Create". This will create
-                a new "tower" with a sharable URL. You can send this URL to others you would like to ring with.</p>
+                a new "tower" with a shareable URL. You can send this URL to others you would like to ring with.</p>
 			<h3>Joining a room</h3>
 			<p>There are currently two ways to join a room that already exists. The easiest way is to go directly to
                 the link that the room's creator has sent you. Alternatively you may type in <i>just</i> the numerical
                 ID (a nine-digit number) into the textbox on the homepage.</p>
+            <h3>Listener links</h3>
+            <p>If you append "/listen" to the link of any tower, the resulting page will be a "listen-only" version of the 
+                tower appropriate for sending to anyone who wishes to observe the ringing without risking disturbing the band.
+                (For example, if you have the tower ID '1234' and name 'Example', then the link "ringingroom.com/1234/example/listen"
+                will go to the listen-only page.)
 			<h3>Setting up and ringing in a ringing room</h3>
 			<p>On the top left, you may set the number of bells in the tower by clicking the desired number. To ring,
                 you may either click on the ropes or use the following hot-keys:</p>
@@ -55,6 +57,7 @@
 <h3> Related Efforts </h3>
 
 <p> Richard Johnston has done a great deal of work to make Ringing Room work with Handbell Manager and with Android phones as simulated handbells (!). Read more about it by clicking <a href="http://ringingtraining.pbworks.com/w/page/139440417/Handbell%20Manager%20for%20Ringingroom">here</a>. </p>
+
 
 			<h3>Known bugs and currently available fixes</h3>
 			<p>As Ringing Room has been gaining in popularity, we have had several bug reports (thank you!)

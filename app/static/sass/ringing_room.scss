@@ -1,0 +1,309 @@
+// Watch sass with: sass --watch app/static/sass/:app/static/css/
+/* Global style */
+
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,700;1,300;1,700&family=Simonetta:wght@400;900&display=swap');
+
+@import "../bootstrap/scss/bootstrap";
+
+@import "../bootstrap/scss/functions";
+@import "../bootstrap/scss/variables";
+@import "../bootstrap/scss/mixins";
+@import "../bootstrap/scss/reboot";
+@import "../bootstrap/scss/type";
+@import "../bootstrap/scss/images";
+
+@import  "circle";
+
+body {
+  overflow: auto;
+  font-family: "Lato", sans-serif;
+}
+
+
+/* Sidebar */
+
+
+.tower_header {
+    position: relative;
+    top: 0; /* Stay at the top */
+    left: 0;
+    width: 100%;
+    padding-top: 2rem;
+    padding-bottom: 0;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    z-index: 3;
+}
+
+#tower_name {
+    font-family: 'Simonetta', cursive;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+#tower_id {
+    font-weight: bold;
+    font-size: larger;
+}
+
+.tower_header .row:last-child {
+    padding-bottom: 0.5rem;
+
+}
+
+.toggle_controls { visibility: visible; }
+
+.tower_controls {
+    position: relative;
+    overflow: hidden; /* Disable horizontal scroll */
+    width: 100%;
+    transition: transform 0.2s ease-out;
+    transform: scaleY(1);
+    transform-origin: top;
+    z-index: 2;
+    margin-bottom:-5rem;
+}
+
+.size_control button {
+    width: 100%;
+}
+
+.collapsed {
+    transition: transform 0.2s ease-out;
+    transform: scaleY(0);
+    height: 0;
+    margin-bottom: 0;
+}
+
+.maxed-col {
+    max-width: 100%;
+    min-width: 0;
+}
+
+.row {
+    padding-bottom: 0.75rem; /* a bit more space between rows */
+}
+
+.row .tower_controls .row {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.row .row { /* don't add extra padding on embedded grids */
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.row h1 { margin: 0; }
+
+.row h3 { margin: 0; }
+
+hr {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+
+.user_list {
+    
+  display: table;
+  border-width: 3px;
+  border-left-style: solid;
+  padding-left: 0px;
+  margin-top: 0px;
+  margin-left: 1rem;
+  margin-top: 0.5rem;
+
+}
+
+.user_list li {
+display: table;
+margin-left: 1rem;
+list-style-type: none;
+font-size: larger;
+}
+
+.list-group-item.disabled {
+    color: black;
+}
+
+.btn {
+    cursor: pointer;
+}
+
+
+
+.observers {
+    font-style: italic;
+}
+
+
+.cur_user {
+    font-weight: bold;
+}
+
+.toggle_assign {
+  cursor: pointer;
+}
+
+
+
+/* Username Input Form */
+
+.un_input_form { 
+  position: absolute;
+  width: 19em;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+input.un_input_box {
+  width: 80%;
+  display: inline;
+
+}
+
+// button.un_input_button {
+//     width: 20%;
+//     padding: 0.5rem;
+//     margin-bottom: 0.3rem;
+// }
+
+fieldset {
+  white-space: nowrap;
+}
+
+#join-message {
+  width: 100%;
+
+}
+
+
+/* help bar */
+.help {
+  cursor: pointer;
+}
+
+.help_showing {
+  max-width: 40rem;
+  width: 100%;
+  padding: 1rem;
+  opacity: 1.0;
+  border: 1px solid black;
+  overflow-y: auto;
+  text-align: left;
+  left: 50%;
+  margin-left: -20rem;
+  position: fixed;
+  z-index: 10;
+  max-height: 70vh;
+  background: #fff;
+}
+
+
+/* Bells */ 
+
+.bell {
+    padding: 0;
+    white-space: nowrap;
+    z-index: 1;
+    overflow: visible;
+    width: 10rem;
+}
+
+.treble {
+    color: red;
+}
+
+.user_cartouche{
+    max-width: 5.75rem;
+}
+
+.bell_metadata button.btn {
+    font-size: 0.75rem;
+    padding: 1% 5%;
+}
+
+.btn_number, .btn_unassign {
+    width: 1.75rem;
+}
+
+
+.btn_assigned_user {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+}
+
+.assigned_user {
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.bell_metadata [class^="col-"] {
+    padding: 0;
+}
+
+.bell_img.assignment_mode{
+    opacity: 0.4;
+}
+
+.assign {
+    width: max-content;
+}
+
+.assigned_user {
+    cursor: pointer;
+}
+
+.assignment_active {
+    cursor: pointer;
+}
+
+.handbell .bell_img {
+  -webkit-transform: scale(1.5) translateY(-10%);
+  transform: scale(1.5) translateY(-10%);
+
+}
+
+.handbell.left_side .bell_img {
+  -webkit-transform: scale(1.5) scaleX(-1) translateY(-10%);
+  transform: scale(1.5) scaleX(-1) translateY(-10%);
+}
+
+
+@media screen and (max-width: 650px){
+    .help_showing{
+        margin-left: 0;
+        left: 0%;
+
+    }
+}
+
+/* On larger screens, permantly open the menu */
+@media screen and (min-width: 64rem){
+    .tower_controls { 
+        height: 100%;
+        transform: scaleY(1);
+        z-index: 0;
+        margin-bottom: 0;
+    }
+    .maxed_col{
+        min-width: 25rem;
+    }
+    .toggle_controls{
+        visibility: hidden;
+        height: 0;
+    }
+    .final_hr{
+        visibility: hidden;
+    }
+    .help_showing {
+        left: 13.5rem;
+        margin-left: 0;
+        max-height: 75vh;
+    }
+}
+

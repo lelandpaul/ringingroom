@@ -134,14 +134,14 @@ class TowerDict(dict):
     def __init__(self, table=TowerDB, db=db):
         self._db = db
         self._table = table
-        self._dayoffset = timedelta(days=1)
+        self._garbage_collection_interval = timedelta(hours=12)
 
     def check_db_for_key(self, key):
 
         # prepare garbage collection
         # don't collect the key we're currently looking up though
         keys_to_delete = [k for k, (value, timestamp) in self.items() 
-                          if timestamp < datetime.now() - self._dayoffset
+                          if timestamp < datetime.now() - self._garbage_collection_interval
                           and k != key ]
         log('Garbage collection:', keys_to_delete)
 

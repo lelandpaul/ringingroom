@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;1,400&family=Simonetta:wght@400;900&display=swap');
+
+@import "../bootstrap/scss/bootstrap";
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: 'Lato', sans-serif;
+}
+
+.navbar {
+    margin-bottom: 0;
+}
+.navbar .container {
+    max-width: 50rem;
+}
+
+.navbar-brand {
+    font-family: 'Simonetta', cursive;
+    font-weight: bold;
+}
+
+h1, h2, h3, h4 {
+    font-weight: bold;
+}
+
+.title h1 {
+    font-family: 'Simonetta', cursive;
+    font-weight: normal;
+    text-align: center;
+    margin-bottom: 0.4rem;
+    font-style: normal;
+}
+
+.title {
+    margin-bottom: 2rem;
+    text-align: center;
+    font-style: italic;
+}
+
+.centered_block {
+    width: 20rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%);
+}
+
+.grid_circle {
+    display: relative;
+    width: 80vh;
+    position:absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+}
+
+.content_container {
+    text-align: left;
+    max-width: 45rem;
+    padding-top: 20px;
+    height: 100vh;
+}

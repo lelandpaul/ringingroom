@@ -33,13 +33,19 @@ var cur_path = window.location.pathname.split('/')
 var cur_tower_id = parseInt(cur_path[1])
 socketio.emit('c_join',{tower_id: cur_tower_id})
 
-// set up disconnection at beforeunload
-window.addEventListener("beforeunload", function (e) {
+// Set up a handler for leaving, then register it *everywhere*
+
+var leave_room = function(){
     socketio.emit('c_user_left',
           {user_name: bell_circle.$refs.users.cur_user, 
           tower_id: cur_tower_id,
           observer: false});
-});
+}
+
+// set up disconnection at beforeunload
+window.addEventListener("beforeunload", leave_room, "useCapture");
+window.onbeforeunload = leave_room;
+
 
 ////////////////////////
 /* SOCKETIO LISTENERS */
@@ -170,7 +176,7 @@ Vue.component("bell_rope", {
 	data: function() {
 	  return { stroke: true,
 			   circled_digits: ["①", "②", "③", "④", "⑤", "⑥", 
-								"⑦", "⑧", "⑨", "⑩", "⑪ ","⑫"],
+								"⑦", "⑧", "⑨", "⑩", "⑪","⑫"],
 			   images: ["handstroke", "backstroke"],
                assigned_user: '',
 	  };
@@ -260,68 +266,81 @@ Vue.component("bell_rope", {
             <div class="bell"
                  :class="[left_side ? 'left_side' : '',
                           image_prefix === 'h-' ? 'handbell' : '']">
-                <div class="col-xs-12">
                 <div class="row"
                     :class="[left_side ? 'reverse' :  '',
                              top_side ? 'top-xs' : 'bottom-xs']">
 
-                    <div :class="[image_prefix == 'h-' ? 'col-xs-5' : 'col-xs-3']">
                      <img @click='emit_ringing_event'
                            class="bell_img" 
                           :class="[assignment_mode ? 'assignment_mode' : '']"
                           :src="'static/images/' + image_prefix + (stroke ? images[0] : images[1]) + '.png'"
                           />
-                    </div>
-                    <div class="bell_metadata"
-                         :class="[image_prefix == 'h-' ? 'col-xs-7' : 'col-xs-9']">
-                    <div class="row left-xs-12"
-                         :class="{reverse: top_side}">
 
-                        <div class="col-xs-12"
-                             v-show="top_side">
-                        <span class='number' 
-                             :class="[number == 1 ? 'treble' : '',
-                                      assigned_user == cur_user ? 'cur_user' : '']"
-                              >
 
-                         [[ circled_digits[number-1] ]]
+                    <div class="bell_metadata">
 
-                        </span>
-                        </div>
 
-                        <div class="col-xs-12">
-                            <div class="row">
-                            <div class="col-xs assign"
-                                  @click="assign_user"
+                    <template v-if="left_side">
+                        <div class="btn-group user_cartouche">
+                            <button class="btn btn-outline-primary btn-sm btn_unassign"
+                                v-if="assignment_mode && assigned_user"
+                                @click="unassign">
+                                <span class="unassign">X</span>
+                            </button>
+
+                            <button class="btn btn-outline-primary btn-small btn_assigned_user"
+                                   :class="{treble: number == 1}"
+                                   @click="assign_user"
+                                   v-if="assignment_mode || assigned_user"
                                   > 
-                        [[ (assignment_mode) ? ((assigned_user) ? assigned_user : '(assign ringer)')
-                                                 : assigned_user ]]
-                             </div>
-                             <div class="col-xs unassign"
-                                  v-if="assignment_mode && 
-                                         assigned_user"
-                                 @click="unassign"
-                                   > 🆇
-                            </div>
-                            </div>
+                                  <span class="assigned_user">
+                                    [[ (assignment_mode) ? 
+                                        ((assigned_user) ? assigned_user : '(none)')
+                                        : assigned_user ]]
+                                  </span>
+                             </button>
+
+                             <button class='btn btn-outline-primary btn-sm btn_number' 
+                                 :class="[number == 1 ? 'treble' : '',
+                                          assigned_user == cur_user ? 'cur_user' : '']"
+                                  style="cursor: inherit;"
+                                  >
+                                <span class="number"> [[number]] </number>
+                             </button>
                         </div>
+                    </template>
+                    <template v-else>
+                        <div class="btn-group user_cartouche">
+                             <button class='btn btn-outline-primary btn-sm btn_number' 
+                                 :class="[number == 1 ? 'treble' : '',
+                                          assigned_user == cur_user ? 'cur_user' : '']"
+                                  style="cursor: inherit;"
+                                  >
+                                <span class="number">[[number]]</span>
+                             </button>
 
+                             <button class="btn btn-outline-primary btn-small btn_assigned_user"
+                                  :class="{treble: number == 1}"
+                                  @click="assign_user"
+                                  v-if="assignment_mode || assigned_user"
+                                   > 
+                                  <span class="assigned_user_name">
+                                     [[ (assignment_mode) ? 
+                                         ((assigned_user) ? assigned_user : '(none)')
+                                         : assigned_user ]]
+                                  </span>
+                              </button>
 
-                        <div class="col-xs-12"
-                             v-show="!top_side">
-                        <span class='number' 
-                             :class="[number == 1 ? 'treble' : '',
-                                      assigned_user == cur_user ? 'cur_user' : '']"
-                              >
-
-                         [[ circled_digits[number-1] ]]
-
-                        </span>
+                             <button class="btn btn-outline-primary btn-sm btn_unassign"
+                                    v-if="assignment_mode && assigned_user"
+                                    @click="unassign">
+                                 <span class="unassign">X</span>
+                             </button>
                         </div>
+                    </template>
 
                     </div>
                     </div>
-                </div>
                 </div>
             </div>
 		     `
@@ -365,12 +384,21 @@ Vue.component('tower_controls', {
     // data in components should be a function, to maintain scope
 	data: function(){ 
 		return {tower_sizes: [4,6,8,10,12],
-                audio_type: 'Tower'} },
+                audio_type: ''} },
 
     computed: {
         
         number_of_bells: function() {
             return this.$root.number_of_bells;
+        },
+
+    },
+
+    watch: {
+
+        audio_type: function(){
+            console.log('swapped audio type');
+              socketio.emit('c_audio_change',{new_audio: this.audio_type, tower_id: cur_tower_id});
         },
 
     },
@@ -383,13 +411,6 @@ Vue.component('tower_controls', {
 			socketio.emit('c_size_change',{new_size: size, tower_id: cur_tower_id});
 		},
 
-        // the user clicked the audio toggle
-        swap_audio: function(){
-          console.log('swapping audio');
-          socketio.emit('c_audio_change',{old_audio: this.audio_type, tower_id: cur_tower_id});
-
-        },
-
         set_bells_at_hand: function(){
             console.log('setting all bells at hand')
             socketio.emit('c_set_bells', {tower_id: cur_tower_id});
@@ -401,33 +422,60 @@ Vue.component('tower_controls', {
         <div class="tower_controls_inner">
 
              <div class="row between-xs">
-                 <div class="col-xs size_control center-xs"
-                      v-for="size in tower_sizes"
-                      :size="size"
-                      @click="set_tower_size(size)"
-                      >
-                     <button :class="{cur_size: size === number_of_bells}">
-                        [[ size ]]
-                     </button>
-                 </div>
-             </div>
+             <div class="col-xs">
+                <div class="btn-group btn-block btn-group-toggle">
+                    <label v-for="size in tower_sizes"
+                           :size="size"
+                           class="btn btn-outline-primary"
+                           :class="{active: size === number_of_bells}"
+                           @click="set_tower_size(size)"
+                           >
+                           <input type="radio"
+                                  name="size"
+                                  :value="size"
+                                  />
+                                  [[ size ]]
+                      </label>
+                </div>
+            </div>
+            </div>
+
 
              <div class="row">
+
                  <div class="col-xs">
-                     <button class="set_at_hand"
+                      <div class="btn-group btn-block btn-group-toggle">
+                        <label class="btn btn-outline-primary"
+                               :class="{active: audio_type == 'Tower'}">
+                        <input type="radio" 
+                               name="audio"
+                               id="audio_tower"
+                               value="Tower"
+                               v-model="audio_type"
+                               />
+                               Tower
+                        </label>
+
+                        <label class="btn btn-outline-primary"
+                               :class="{active: audio_type == 'Hand'}">
+                        <input type="radio" 
+                               name="audio"
+                               id="audio_hand"
+                               value="Hand"
+                               v-model="audio_type"
+                               />
+                               Hand
+                        </label>
+                       </div>
+                 </div>
+
+                 <div class="col-xs end-xs">
+                     <button class="set_at_hand btn btn-outline-primary btn-block"
                            @click="set_bells_at_hand"
                            >
                          Set at hand
                      </button>
                 </div>
-
-                 <div class="col-xs end-xs">
-                      <button class="audio_toggle"
-                           @click="swap_audio"
-                           >
-                           Audio: [[ audio_type ]]
-                      </button>
-                 </div>
              </div>
 
              <user
@@ -464,7 +512,7 @@ Vue.component('help', {
 				class="help_toggle"
 				@click="show_help"
 				>
-                       <button> Help [[ help_showing ? '▾' : '▸' ]] </button>
+                       <button class="btn btn-outline-primary"> Help [[ help_showing ? '▾' : '▸' ]] </button>
                 </div>
                 <div v-if="help_showing"
                 class="help_showing"
@@ -488,7 +536,7 @@ Vue.component('help', {
 					<p>Ringers may now <i>assign bells</i> by entering bell assignment mode (top left of the screen). While in
 					this mode, any ringer may be selected under the user list and then a second click by a bell will assign
 					that user to a bell. Clicking the "x" by the user's name will kick them off that bell. Bells may not be rung
-					in bell assignment mode. Simply click the button in the control towers to exist bell assignment mode.
+					in bell assignment mode. Simply click the button in the control towers to exit bell assignment mode.
 					For now, anyone may assign anyone (and kick off anyone).</p>
 			
 					<p>There are also hot-keys for various calls, but be aware that in some browsers using these results
@@ -579,30 +627,33 @@ Vue.component('user_display', {
 	template: 
     `
          <div>
-         <div class="row middle-xs between-xs">
-             <div class="col-xs"><h3>Users</h3></div>
-             <div class="col-xs end-xs">
-                <button class="toggle_assign"
-                      :class="{active: assignment_mode}"
-                      @click="toggle_assignment"
-                >
-                    [[ assignment_mode ? 'Stop assigning' : 'Assign ringers' ]]
-                </button>
-             </div>
-         </div>
-         
-         <div class="row"><div class="col-xs">
-                 <ul class="user_list">
-                     <li v-for="user in user_names"
-                         :class="{cur_user: user == cur_user,
-                                  assignment_active: assignment_mode,
-                                  selected_user: user == selected_user}"
-                         @click="select_user(user)"
-                     >
-                         [[ user ]]
-                     </li>
+         <div class="row">
+
+         <div class="col-xs">
+         <ul class="list-group">
+            <li class="list-group-item">
+                <h2 class="align-baseline" style="display: inline; font-family: 'Simonetta'; font-weight: bold;">Users</h2>
+                <span class="float-right align-text-bottom">
+                <button class="btn btn-outline-primary"
+                        :class="{active: assignment_mode}"
+                        @click="toggle_assignment"
+                        >
+                   [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
+                 </button>
+                 </span>
+            </li>
+            <li v-for="user in user_names"
+                class="list-group-item list-group-item-action"
+                 :class="{cur_user: user == cur_user,
+                          disabled: !assignment_mode,
+                          assignment_active: assignment_mode,
+                          active: user == selected_user && assignment_mode}"
+                 @click="select_user(user)"
+             >
+                        [[ user ]]
+             </li>
                     <li class="observers"
-                        v-show="observers != 0">
+                        v-if="observers != 0">
                         Listeners: [[ observers ]]
                     </li>
                  </ul>
@@ -685,7 +736,7 @@ def_user_message: "Please input a username. Must be unique and between 1 and 12 
                              >
                       <button type="submit"
                       		  :disabled="button_disabled"
-                              class="un_input_button"
+                              class="un_input_button btn btn-outline-primary"
                               >
                           Join
                       </button>
@@ -742,6 +793,8 @@ bell_circle = new Vue({
                     e.preventDefault();
                 }
             });
+
+            $('[data-toggle="tooltip"]').tooltip();
 
 			window.addEventListener('keydown', (e) => {
 			e = e || window.event;
@@ -899,6 +952,17 @@ bell_circle = new Vue({
           this.hidden_sidebar = !this.hidden_sidebar;
       },
 
+      copy_id: function() {
+
+          setTimeout(() => {$('#id_clipboard_tooltip').tooltip('hide')},1000);
+              var dummy = document.createElement("textarea");
+              document.body.appendChild(dummy);
+              dummy.value = cur_tower_id;
+              dummy.select();
+              document.execCommand("copy");
+              document.body.removeChild(dummy);
+      }
+
 	},
 
 	template: 
@@ -911,7 +975,7 @@ bell_circle = new Vue({
         <div class="row"
              v-show="logged_in">
         
-        <div class="col-xs-12 col-lg-4 maxed_col sidebar_col"> <!-- sidebar col -->
+        <div class="col-xs-12 col-md-3 maxed_col sidebar_col"> <!-- sidebar col -->
 
         <div class="tower_header">
         <div class="row">
@@ -922,13 +986,33 @@ bell_circle = new Vue({
 
          <div class="row">
              <div class="col-xs">
-                 <div class="row between-xs">
-                     <div class="col-xs-4 col-md-6"><span class="tower_id">ID: [[tower_id]]</div>
-                     <div class="col-xs-4 col-md-6 center-xs end-md">
+                 <div class="row between-xs middle-xs">
+                     <div class="col-xs-5 col-md-6">
+
+                     <div class="tower_id input-group" style="flex-wrap:nowrap">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">[[tower_id]]</span>
+                        </div>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-primary"
+                               data-toggle="tooltip"
+                               data-placement="bottom"
+                               data-container="body"
+                               data-trigger="click"
+                               id="id_clipboard_tooltip"
+                               @click="copy_id"
+                               title="Copied to clipboard">
+                                   <i class="far fa-clipboard fa-fw"></i>
+                            </button>
+                        </div>
+                     </div>
+                     </div>
+                     <div class="col-xs-3 col-md-6 end-xs center-sm end-md">
                          <help ref="help"></help>
                      </div>
                      <div class="col-xs-4 toggle_controls end-xs">
-                         <button class="toggle_controls" @click="toggle_controls">
+                         <button class="toggle_controls btn btn-outline-primary" 
+                                @click="toggle_controls">
                          Controls [[ hidden_sidebar ? '▸' : '▾' ]]
                          </button>
                      </div>
@@ -940,22 +1024,19 @@ bell_circle = new Vue({
         <div class="tower_controls"
              :class="{collapsed: hidden_sidebar}">
 
-        <div class="row"><div class="col-xs"><hr/></div></div>
 
         <tower_controls ref="controls"></tower_controls>
 
-        <div class="row"><div class="col-xs"><hr/></div></div>
 
         <user_display ref="users"></user_display>
 
-        <div class="row final_hr"><div class="col-xs"><hr/></div></div>
 
         </div> <!-- hidden sidebar -->
 
         </div> <!-- sidebar col -->
 
 
-        <div class="col-xs-12 col-sm-8"> <!-- bell circle col -->
+        <div class="col-xs-12 col-lg-8 bell_circle_col"> <!-- bell circle col -->
 
         <div class="bell_circle"
              v-bind:class="[number_of_bells == 4 ? 'four'    : '',

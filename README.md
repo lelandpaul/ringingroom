@@ -16,7 +16,7 @@ A space where socially-distanced ringers can practice together.
 └── app                                 => all of the actual application
     ├── __init__.py                     => sets up flask app
     ├── listeners.py                    => socketio listeners
-    ├── models.py                       => database modles & Tower, TowerDict classes
+    ├── models.py                       => database models & Tower, TowerDict classes
     ├── routes.py                       => flask routes
     ├── static
     │   ├── audio
