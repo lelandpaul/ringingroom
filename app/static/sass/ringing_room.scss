@@ -1,28 +1,9 @@
-// Watch sass with: sass --watch app/static/sass/:app/static/css/
-/* Global style */
+@import "global_design";
+@import "circle";
 
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,700;1,300;1,700&family=Simonetta:wght@400;900&display=swap');
+/* Tower Controls */
 
-@import "../bootstrap/scss/bootstrap";
-
-@import "../bootstrap/scss/functions";
-@import "../bootstrap/scss/variables";
-@import "../bootstrap/scss/mixins";
-@import "../bootstrap/scss/reboot";
-@import "../bootstrap/scss/type";
-@import "../bootstrap/scss/images";
-
-@import  "circle";
-
-body {
-  overflow: auto;
-  font-family: "Lato", sans-serif;
-}
-
-
-/* Sidebar */
-
-
+// positioning of tower header
 .tower_header {
     position: relative;
     top: 0; /* Stay at the top */
@@ -35,24 +16,24 @@ body {
     z-index: 3;
 }
 
+// tower name positioning
 #tower_name {
     font-family: 'Simonetta', cursive;
-    font-weight: bold;
     white-space: nowrap;
 }
 
+// tower id positioning
 #tower_id {
-    font-weight: bold;
     font-size: larger;
 }
 
 .tower_header .row:last-child {
     padding-bottom: 0.5rem;
-
 }
 
 .toggle_controls { visibility: visible; }
 
+// positioning for tower controls
 .tower_controls {
     position: relative;
     overflow: hidden; /* Disable horizontal scroll */
@@ -105,7 +86,6 @@ hr {
 
 
 .user_list {
-    
   display: table;
   border-width: 3px;
   border-left-style: solid;
@@ -117,10 +97,10 @@ hr {
 }
 
 .user_list li {
-display: table;
-margin-left: 1rem;
-list-style-type: none;
-font-size: larger;
+  display: table;
+  margin-left: 1rem;
+  list-style-type: none;
+  font-size: larger;
 }
 
 .list-group-item.disabled {
@@ -131,12 +111,9 @@ font-size: larger;
     cursor: pointer;
 }
 
-
-
 .observers {
     font-style: italic;
 }
-
 
 .cur_user {
     font-weight: bold;
@@ -145,8 +122,6 @@ font-size: larger;
 .toggle_assign {
   cursor: pointer;
 }
-
-
 
 /* Username Input Form */
 
@@ -229,7 +204,6 @@ fieldset {
     width: 1.75rem;
 }
 
-
 .btn_assigned_user {
     text-overflow: ellipsis;
     overflow: hidden;
@@ -240,6 +214,7 @@ fieldset {
     width: 100%;
     text-overflow: ellipsis;
     overflow: hidden;
+      cursor: pointer;
 }
 
 .bell_metadata [class^="col-"] {
@@ -252,10 +227,6 @@ fieldset {
 
 .assign {
     width: max-content;
-}
-
-.assigned_user {
-    cursor: pointer;
 }
 
 .assignment_active {
@@ -273,6 +244,7 @@ fieldset {
   transform: scale(1.5) scaleX(-1) translateY(-10%);
 }
 
+/* Scary mixin land */
 
 @media screen and (max-width: 650px){
     .help_showing{
@@ -282,7 +254,7 @@ fieldset {
     }
 }
 
-/* On larger screens, permantly open the menu */
+/* On larger screens, permanently open the menu */
 @media screen and (min-width: 64rem){
     .tower_controls { 
         height: 100%;

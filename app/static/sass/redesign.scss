@@ -1,31 +1,41 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;1,400&family=Simonetta:wght@400;900&display=swap');
+@import "global_design";
 
-@import "../bootstrap/scss/bootstrap";
-
-html, body {
-    height: 100%;
-}
-
-body {
-    font-family: 'Lato', sans-serif;
-}
-
-.navbar {
-    margin-bottom: 0;
-}
-.navbar .container {
+// whole page width of static
+.container {
     max-width: 50rem;
 }
 
+// content container for e.g. text
+.content_container {
+    text-align: left;
+    max-width: 45rem;
+    padding-top: 20px;
+    height: 100vh;
+}
+
+// the whole navbar
+.navbar {
+    margin-bottom: 0;
+}
+
+/*
+// the navbar with text in
+.navbar-light .navbar-nav .nav-link {
+    color: orange;
+}
+
+.navbar-light .navbar-brand {
+    color: teal;
+}
+*/
+
+// the element that is the Ringing Room brand/logo
 .navbar-brand {
     font-family: 'Simonetta', cursive;
     font-weight: bold;
 }
 
-h1, h2, h3, h4 {
-    font-weight: bold;
-}
-
+// for the top page of Ringing Room
 .title h1 {
     font-family: 'Simonetta', cursive;
     font-weight: normal;
@@ -34,23 +44,10 @@ h1, h2, h3, h4 {
     font-style: normal;
 }
 
-.title {
-    margin-bottom: 2rem;
-    text-align: center;
-    font-style: italic;
-}
-
-.centered_block {
-    width: 20rem;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -60%);
-}
-
+// blueline/grid circle
 .grid_circle {
     display: relative;
-    width: 80vh;
+    width: 105vh;
     position:absolute;
     top: 50%;
     left: 50%;
@@ -58,9 +55,11 @@ h1, h2, h3, h4 {
     z-index: -1;
 }
 
-.content_container {
-    text-align: left;
-    max-width: 45rem;
-    padding-top: 20px;
-    height: 100vh;
+// centered block in the middle of the circle grid
+.centered_block {
+    width: 20rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%);
 }
