@@ -734,26 +734,32 @@ def_user_message: "Please input a username. Must be unique and between 1 and 12 
     },
 
     template: `
-              <form class="un_input_form"
+              <form class="un_input_form form-group"
 			  	    v-on:submit.prevent="send_user_name"
                     >
-                  <fieldset>
-                      <input class="un_input_box"
+                    <div class="input-group">
+
+                      <input class="form-control"
                              type="text" 
-                             placeholder="username" 
+                             placeholder="Username" 
                              v-model="input" 
                              v-on:input="check_user_name"
                              ref="username_input"
                              required
                              >
-                      <button type="submit"
-                      		  :disabled="button_disabled"
-                              class="un_input_button btn btn-outline-primary"
-                              >
-                          Join
-                      </button>
-                  </fieldset>
-                  <div id="username-message"> 
+
+                      <div class="input-group-append">
+                          <button type="submit"
+                                  :disabled="button_disabled"
+                                  class="btn btn-outline-primary"
+                                  >
+                              Join
+                          </button>
+                      </div>
+                  </div>
+
+                  <div class="form-text text-muted text-justify"
+                        id="username-message"> 
                       [[ user_message ]]
                   </div>
 			  </form>

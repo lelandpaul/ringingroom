@@ -111,32 +111,12 @@ hr {
 
 .un_input_form { 
   position: absolute;
-  width: 19em;
+  max-width: 25em;
   top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
 
-input.un_input_box {
-  width: 80%;
-  display: inline;
-
-}
-
-// button.un_input_button {
-//     width: 20%;
-//     padding: 0.5rem;
-//     margin-bottom: 0.3rem;
-// }
-
-fieldset {
-  white-space: nowrap;
-}
-
-#join-message {
-  width: 100%;
-
-}
 
 
 /* help bar */
