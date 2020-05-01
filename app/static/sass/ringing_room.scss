@@ -1,6 +1,11 @@
 @import "global_design";
 @import "circle";
 
+
+body:window-inactive {
+    opacity: 0.4; // blur when window inactive
+}
+
 /* Tower Controls */
 
 // positioning of tower header

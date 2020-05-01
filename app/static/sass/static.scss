@@ -1,130 +1,65 @@
+@import "global_design";
 
-/* Global style */
-
-body {
-  font-size: x-large;
-  font-family: serif;
-  background-color: #F0EAD6;
+// whole page width of static
+.container {
+    max-width: 50rem;
 }
 
-.title {
-  position: relative;
-  left: 50%;
-  margin-top: 5rem;
-
-  transform: translate(-50%);
-
-  font-size: xx-large;
-  font-weight: bold;
-
-  text-align: center;
-}
-
-.welcome, .tagline {
-  margin: 0.5em;
-  font-size: x-large;
-  font-weight: normal;
-}
-
-/* Nav menu */
-
-.pure-menu {
-  padding: 1em;
-  display: inline-block;
-  font-size: x-large;
-}
-
-.pure-menu-link {
-  padding: 0.44em 0.5em;
-}
-
-.home {
-  font-weight: bold;
-  border-bottom: 3px solid;
-  padding: 0px;
-  padding-bottom: 0.44em;
-  margin: 0.44em 0.5em;
-  margin-bottom: 0em;
-}
-
-/* content */
-
-.content {
-    width: 100%;
-
-}
-
-
-/* Hacky news block */
-
-.news {
-
-  font-size: small;
-  text-align: justify;
-  padding: 2rem;
-  li{
+// content container for e.g. text
+.content_container {
     text-align: left;
-  }
-
+    max-width: 45rem;
+    padding-top: 20px;
+    height: 100vh;
 }
 
-/* Input form */
-
-form.pure-form { 
-  position: relative;
-  width: 19em;
-  left: 50%;
-  margin-top: 8rem;
-  transform: translate(-50%, 0%);
+// the whole navbar
+.navbar {
+    margin-bottom: 0;
 }
 
-.pure-input {
-  width: 14em;
+/*
+// the navbar with text in
+.navbar-light .navbar-nav .nav-link {
+    color: orange;
 }
 
-.pure-form {
-  width: 40%;
+.navbar-light .navbar-brand {
+    color: teal;
+}
+*/
 
+// the element that is the Ringing Room brand/logo
+.navbar-brand {
+    font-family: 'Simonetta', cursive;
+    font-weight: bold;
 }
 
-fieldset {
-  white-space: nowrap;
+// for the top page of Ringing Room
+.title h1 {
+    font-family: 'Simonetta', cursive;
+    font-weight: normal;
+    text-align: center;
+    margin-bottom: 0.4rem;
+    font-style: normal;
 }
 
-#join-message {
-  width: 100%;
-  font-size: smaller;
-
+// blueline/grid circle
+.grid_circle {
+    display: relative;
+    width: 105vh;
+    position:absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
 }
 
-
-.copy {
-  padding-top: 2em;
-  font-size: smaller;
-
-  li {
-
-    padding-top: 0.5em;
-
-  }
+// centered block in the middle of the circle grid
+.centered_block {
+    width: 20rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%);
 }
-
-@media screen and (max-width: 64rem){
-
-    form.pure-form{
-        left:50%;
-        width: 15rem;
-        transform: translate(-50%, 0%);
-    }
-
-    .pure-input{
-        width:10rem;
-        font-size: medium;
-    }
-    .pure-button{
-        width:4rem;
-        font-size: medium;
-        padding-left: 0.7rem;
-    }
-}
-
