@@ -40,7 +40,10 @@
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand" href="{{ url_for('index') }}">Ringing Room</a>
+        <a class="navbar-brand" href="{{ url_for('index') }}">
+            <img src="{{url_for('static', filename = 'images/logo.png')}}" alt="Ringing Room Logo" height="40">
+            Ringing Room
+        </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedcontent">
             <span class="navbar-toggler-icon"></span>
         </button>
