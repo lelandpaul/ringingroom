@@ -31,7 +31,6 @@
     {% assets "css_rr" %}
     <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}"></link>
     {% endassets %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" >
 	<!-- Favicon nonsense -->
 	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-196x196.png')}}" sizes="196x196" />
 	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-96x96.png')}}" sizes="96x96" />
@@ -41,7 +40,7 @@
 </head>
 
 <body onbeforeunload="leave_room">
-	<div>
+	<div class="container-fluid">
 		<div id="bell_circle">
 			<!-- app will go here -->
 		</div>

@@ -38,27 +38,11 @@
     position: relative;
     overflow: hidden; /* Disable horizontal scroll */
     width: 100%;
-    transition: transform 0.2s ease-out;
-    transform: scaleY(1);
-    transform-origin: top;
     z-index: 2;
-    margin-bottom:-5rem;
 }
 
 .size_control button {
     width: 100%;
-}
-
-.collapsed {
-    transition: transform 0.2s ease-out;
-    transform: scaleY(0);
-    height: 0;
-    margin-bottom: 0;
-}
-
-.maxed-col {
-    max-width: 100%;
-    min-width: 0;
 }
 
 .row {
@@ -255,22 +239,13 @@ fieldset {
 }
 
 /* On larger screens, permanently open the menu */
-@media screen and (min-width: 64rem){
-    .tower_controls { 
-        height: 100%;
-        transform: scaleY(1);
-        z-index: 0;
-        margin-bottom: 0;
+@include media-breakpoint-up(lg){
+    .collapse, .collapse:not(.show) { 
+        display: block; 
     }
-    .maxed_col{
-        min-width: 25rem;
-    }
-    .toggle_controls{
-        visibility: hidden;
-        height: 0;
-    }
-    .final_hr{
-        visibility: hidden;
+    .sidebar_col {
+        min-width: max-content;
+        max-width: 25rem;
     }
     .help_showing {
         left: 13.5rem;
