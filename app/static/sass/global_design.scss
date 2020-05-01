@@ -9,11 +9,13 @@ $body-bg: #fbfbff;
 // set default font color
 $body-color: black;
 
-$primary: #b2276e;
-$secondary: green;
-
-$light: #c8d0ff;
 $dark: #b2276e;
+
+$primary: #b2276e;
+$secondary: #333399;
+
+$light: green; // #c8d0ff;
+
 
 /* Import bootstrap */
 @import "../bootstrap/scss/bootstrap";
