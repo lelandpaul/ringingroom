@@ -172,24 +172,28 @@ hr {
     background-color: inherit;
     border-color: $secondary;
 }
+
 .btn-outline-primary.btn_number:not(:disabled):not(.disabled).active{
     color: $primary;
     background-color: inherit;
     border-color: $primary;
 }
 
+.btn-primary.btn_number:not(:disabled):not(.disabled).active:focus,
 .btn-outline-secondary.btn_number:not(:disabled):not(.disabled).active:focus,
 .btn-outline-primary.btn_number:not(:disabled):not(.disabled).active:focus{
     box-shadow: none;
 }
 
+.btn-primary.btn_assigned_user.disabled,
 .btn-outline-secondary.btn_assigned_user.disabled,
 .btn-outline-primary.btn_assigned_user.disabled{
     opacity: 1;
     cursor: inherit;
 }
 
-.btn-outline-secondary.btn_assigned_user.disable:focus,
+.btn-primary.btn_assigned_user.disabled:focus,
+.btn-outline-secondary.btn_assigned_user.disabled:focus,
 .btn-outline-primary.btn_assigned_user.disabled:focus{
     box-shadow: none;
 }

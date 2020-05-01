@@ -238,12 +238,11 @@ Vue.component("bell_rope", {
 
                     <div class="bell_metadata">
 
-
                     <template v-if="left_side">
                         <div class="btn-group user_cartouche">
                             <button class="btn btn-sm btn_unassign"
                                    :class="[number == 1 ? 'treble' : '',
-                                            number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary']"
+                                            number == 1 ? 'btn-primary' : 'btn-outline-secondary']"
                                 v-if="assignment_mode && assigned_user"
                                 >
                                 <span class="unassign"><i class="fas fa-window-close"></i></span>
@@ -251,7 +250,7 @@ Vue.component("bell_rope", {
 
                             <button class="btn btn-small btn_assigned_user"
                                    :class="[number == 1 ? 'treble' : '',
-                                            number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary',
+                                            number == 1 ? 'btn-primary' : 'btn-outline-secondary',
                                             assigned_user==cur_user ? 'cur_user' :'',
                                             assignment_mode ? '' : 'disabled']"
                                    v-if="assignment_mode || assigned_user"
@@ -263,9 +262,9 @@ Vue.component("bell_rope", {
                                   </span>
                              </button>
 
-                             <button class='btn btn-sm btn_number active' 
-                                 :class="[number == 1 ? 'treble' : '',
-                                            number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary',
+                             <button class='btn btn-sm btn_number' 
+                                 :class="[number == 1 ? 'treble' : 'active',
+                                            number == 1 ? 'btn-primary' : 'btn-outline-secondary',
                                           assigned_user == cur_user ? 'cur_user' : '']"
                                   style="cursor: inherit;"
                                   >
@@ -275,9 +274,9 @@ Vue.component("bell_rope", {
                     </template>
                     <template v-else>
                         <div class="btn-group user_cartouche">
-                             <button class='btn btn-sm btn_number active' 
-                                 :class="[number == 1 ? 'treble' : '',
-                                            number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary',
+                             <button class='btn btn-sm btn_number' 
+                                 :class="[number == 1 ? 'treble' : 'active',
+                                            number == 1 ? 'btn-primary' : 'btn-outline-secondary',
                                           assigned_user == cur_user ? 'cur_user' : '']"
                                   style="cursor: inherit;"
                                   >
@@ -286,7 +285,7 @@ Vue.component("bell_rope", {
 
                              <button class="btn btn-small btn_assigned_user"
                                    :class="[number == 1 ? 'treble' : '',
-                                            number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary',
+                                            number == 1 ? 'btn-primary' : 'btn-outline-secondary',
                                             assigned_user==cur_user ? 'cur_user' :'',
                                             assignment_mode ? '' : 'disabled']"
                                   v-if="assignment_mode || assigned_user"
@@ -300,13 +299,14 @@ Vue.component("bell_rope", {
 
                              <button class="btn btn-sm btn_unassign"
                                    :class="[number == 1 ? 'treble' : '',
-                                            number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary']"
+                                            number == 1 ? 'btn-primary' : 'btn-outline-secondary']"
                                     v-if="assignment_mode && assigned_user"
                                     >
                                  <span class="unassign"><i class="fas fa-window-close"></i></span>
                              </button>
                         </div>
                     </template>
+
 
                     </div>
                     </div>
@@ -691,9 +691,6 @@ bell_circle = new Vue({
                             </button>
                         </div>
                      </div>
-                     </div>
-                     <div class="col-auto">
-                         <help ref="help"></help>
                      </div>
                      <div class="col-auto toggle_controls d-lg-none">
                          <button class="toggle_controls btn btn-outline-primary" 
