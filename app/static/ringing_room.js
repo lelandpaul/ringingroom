@@ -287,7 +287,7 @@ Vue.component("bell_rope", {
                                             number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary']"
                                 v-if="assignment_mode && assigned_user"
                                 @click="unassign">
-                                <span class="unassign">X</span>
+                                <span class="unassign"><i class="fas fa-window-close"></i></span>
                             </button>
 
                             <button class="btn btn-small btn_assigned_user"
@@ -346,7 +346,7 @@ Vue.component("bell_rope", {
                                             number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary']"
                                     v-if="assignment_mode && assigned_user"
                                     @click="unassign">
-                                 <span class="unassign">X</span>
+                                 <span class="unassign"><i class="fas fa-window-close"></i></span>
                              </button>
                         </div>
                     </template>
