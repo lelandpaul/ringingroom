@@ -267,8 +267,8 @@ Vue.component("bell_rope", {
                  :class="[left_side ? 'left_side' : '',
                           image_prefix === 'h-' ? 'handbell' : '']">
                 <div class="row"
-                    :class="[left_side ? 'reverse' :  '',
-                             top_side ? 'top-xs' : 'bottom-xs']">
+                    :class="[left_side ? 'flex-row-reverse' :  '',
+                             top_side ? 'align-items-start' : 'align-items-end']">
 
                      <img @click='emit_ringing_event'
                            class="bell_img" 
@@ -422,7 +422,7 @@ Vue.component('tower_controls', {
         <div class="tower_controls_inner">
 
              <div class="row between-xs">
-             <div class="col-xs">
+             <div class="col">
                 <div class="btn-group btn-block btn-group-toggle">
                     <label v-for="size in tower_sizes"
                            :size="size"
@@ -441,9 +441,9 @@ Vue.component('tower_controls', {
             </div>
 
 
-             <div class="row">
+             <div class="row justify-content-between">
 
-                 <div class="col-xs">
+                 <div class="col">
                       <div class="btn-group btn-block btn-group-toggle">
                         <label class="btn btn-outline-primary"
                                :class="{active: audio_type == 'Tower'}">
@@ -469,7 +469,7 @@ Vue.component('tower_controls', {
                        </div>
                  </div>
 
-                 <div class="col-xs end-xs">
+                 <div class="col">
                      <button class="set_at_hand btn btn-outline-primary btn-block"
                            @click="set_bells_at_hand"
                            >
@@ -629,7 +629,7 @@ Vue.component('user_display', {
          <div>
          <div class="row">
 
-         <div class="col-xs">
+         <div class="col">
          <ul class="list-group">
             <li class="list-group-item">
                 <h2 class="align-baseline" style="display: inline;">Users</h2>
@@ -972,22 +972,22 @@ bell_circle = new Vue({
         <user_name_input ref="un_input"
                          v-show="!logged_in"></user_name_input>
 
-        <div class="row"
+        <div class="row flex-lg-nowrap"
              v-show="logged_in">
         
-        <div class="col-xs-12 col-md-3 maxed_col sidebar_col"> <!-- sidebar col -->
+        <div class="col-12 col-lg-4 sidebar_col"> <!-- sidebar col -->
 
         <div class="tower_header">
         <div class="row">
-             <div class="col-xs">
+             <div class="col">
                  <h1 id="tower_name"> [[ tower_name ]] </h1>
              </div>
          </div>
 
          <div class="row">
-             <div class="col-xs">
-                 <div class="row between-xs middle-xs">
-                     <div class="col-xs-5 col-md-6">
+             <div class="col">
+                 <div class="row justify-content-between">
+                     <div class="col-auto">
 
                      <div class="tower_id input-group" style="flex-wrap:nowrap">
                         <div class="input-group-prepend">
@@ -1007,12 +1007,15 @@ bell_circle = new Vue({
                         </div>
                      </div>
                      </div>
-                     <div class="col-xs-3 col-md-6 end-xs center-sm end-md">
+                     <div class="col-auto">
                          <help ref="help"></help>
                      </div>
-                     <div class="col-xs-4 toggle_controls end-xs">
+                     <div class="col-auto toggle_controls d-lg-none">
                          <button class="toggle_controls btn btn-outline-primary" 
-                                @click="toggle_controls">
+                                 data-toggle="collapse"
+                                 data-target="#tower_controls"
+                                 @click="toggle_controls"
+                                >
                          Controls [[ hidden_sidebar ? '▸' : '▾' ]]
                          </button>
                      </div>
@@ -1021,8 +1024,9 @@ bell_circle = new Vue({
         </div>
         </div> <!-- tower header -->
 
-        <div class="tower_controls"
-             :class="{collapsed: hidden_sidebar}">
+        <div class="tower_controls collapse"
+             id="tower_controls"
+             >
 
 
         <tower_controls ref="controls"></tower_controls>
@@ -1036,7 +1040,7 @@ bell_circle = new Vue({
         </div> <!-- sidebar col -->
 
 
-        <div class="col-xs-12 col-lg-8 bell_circle_col"> <!-- bell circle col -->
+        <div class="col-12 col-lg-8 bell_circle_col"> <!-- bell circle col -->
 
         <div class="bell_circle"
              v-bind:class="[number_of_bells == 4 ? 'four'    : '',

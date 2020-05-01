@@ -32,14 +32,14 @@
                        rotate($rot * 1deg) 
                        translate($circle-size / 2) 
                        rotate($rot * -1deg)
-                       translateX(-45%);
+                       translateX(-50%);
         }
         transform: 
           translate(-50%, -50%)
           rotate($rot * 1deg) 
           translate($circle-size / 2) 
           rotate($rot * -1deg)
-          translateX(45%);
+          translateX(50%);
 
       }
 
@@ -48,39 +48,6 @@
     }
 }
 
-
-@mixin bell_circle_margin($media-circ-size, $media-lr-offset, $media-tb-offset) {
-
-    #call_display {
-        position: absolute;
-        text-align: center;
-        height: 4em;
-        margin-top: 50%;
-        margin-left: 50%;
-        transform: translate(-50%,-50%);
-    }
-
-
-    .bell_circle_col {
-        position: relative;
-    }
-
-
-    .bell_circle {
-      $circ-size: $media-circ-size;
-
-      position: absolute;
-      margin-top: $media-tb-offset;
-      margin-left: $media-lr-offset;
-      transform: translate(-50%, -50%);
-
-      &.four   { @include on-circle(4, $circ-size); }
-      &.six    { @include on-circle(6, $circ-size); }
-      &.eight  { @include on-circle(8, $circ-size); }
-      &.ten    { @include on-circle(10, $circ-size); }
-      &.twelve { @include on-circle(12, $circ-size); }
-    }
-}
 
 @mixin bell_circle($media-circ-size, $media-lr-offset, $media-tb-offset) {
 
@@ -113,7 +80,7 @@
 }
 
 @include media-breakpoint-up(xs) {
-    @include bell_circle_margin(28vh,50vw,30vh);
+    @include bell_circle(20rem,50vw,max(30vh,15rem));
     .bell_img {
         width: 1.5rem;
     }
@@ -123,5 +90,39 @@
     .handbell .bell_metadata {
         margin-left: 0.25rem;
         margin-right: 0.25rem;
+    }
+}
+
+@include media-breakpoint-up(sm) {
+    @include bell_circle(28rem,50vw, max(35vh, 15rem));
+    .bell_img {
+        width: 2rem;
+    }
+    .handbell .bell_img{
+        width: 2.5rem;
+    }
+}
+
+@include media-breakpoint-up(md) {
+    @include bell_circle(38rem,50vw, max(40vh, 15rem));
+    .bell_img {
+        width: 2.5rem;
+    }
+    .handbell .bell_img{
+        width: 4rem;
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    @include bell_circle(35rem,30vw, max(22rem,50vh));
+    .handbell .bell_img{
+        width: 3.5rem;
+    }
+}
+
+@include media-breakpoint-up(xl) {
+    @include bell_circle(40rem,30vw, max(24rem,50vh));
+    .handbell .bell_img{
+        width: 4rem;
     }
 }
