@@ -212,6 +212,17 @@ fieldset {
     box-shadow: none;
 }
 
+.btn-outline-secondary.btn_assigned_user.disabled,
+.btn-outline-primary.btn_assigned_user.disabled{
+    opacity: 1;
+    cursor: inherit;
+}
+
+.btn-outline-secondary.btn_assigned_user.disable:focus,
+.btn-outline-primary.btn_assigned_user.disabled:focus{
+    box-shadow: none;
+}
+
 .btn_assigned_user {
     text-overflow: ellipsis;
     overflow: hidden;

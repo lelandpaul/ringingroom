@@ -20665,6 +20665,14 @@ h1, h2, h3, h4 {
   .handbell .bell_img {
     width: 3.5rem;
   }
+
+  .bell .bell_metadata button.btn {
+    font-size: 1rem;
+  }
+
+  .bell .user_cartouche {
+    max-width: 7rem;
+  }
 }
 @media (min-width: 1200px) {
   /* Call display */
@@ -21183,6 +21191,17 @@ fieldset {
 
 .btn-outline-secondary.btn_number:not(:disabled):not(.disabled).active:focus,
 .btn-outline-primary.btn_number:not(:disabled):not(.disabled).active:focus {
+  box-shadow: none;
+}
+
+.btn-outline-secondary.btn_assigned_user.disabled,
+.btn-outline-primary.btn_assigned_user.disabled {
+  opacity: 1;
+  cursor: inherit;
+}
+
+.btn-outline-secondary.btn_assigned_user.disable:focus,
+.btn-outline-primary.btn_assigned_user.disabled:focus {
   box-shadow: none;
 }
 

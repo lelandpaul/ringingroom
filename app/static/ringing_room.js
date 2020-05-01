@@ -292,7 +292,9 @@ Vue.component("bell_rope", {
 
                             <button class="btn btn-small btn_assigned_user"
                                    :class="[number == 1 ? 'treble' : '',
-                                            number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary']"
+                                            number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary',
+                                            assigned_user==cur_user ? 'cur_user' :'',
+                                            assignment_mode ? '' : 'disabled']"
                                    @click="assign_user"
                                    v-if="assignment_mode || assigned_user"
                                   > 
@@ -326,7 +328,9 @@ Vue.component("bell_rope", {
 
                              <button class="btn btn-small btn_assigned_user"
                                    :class="[number == 1 ? 'treble' : '',
-                                            number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary']"
+                                            number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary',
+                                            assigned_user==cur_user ? 'cur_user' :'',
+                                            assignment_mode ? '' : 'disabled']"
                                   @click="assign_user"
                                   v-if="assignment_mode || assigned_user"
                                    > 

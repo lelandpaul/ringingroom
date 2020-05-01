@@ -10967,6 +10967,14 @@ h1, h2, h3, h4 {
   .handbell .bell_img {
     width: 3.5rem;
   }
+
+  .bell .bell_metadata button.btn {
+    font-size: 1rem;
+  }
+
+  .bell .user_cartouche {
+    max-width: 7rem;
+  }
 }
 @media (min-width: 1200px) {
   /* Call display */

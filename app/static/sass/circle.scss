@@ -118,6 +118,12 @@
     .handbell .bell_img{
         width: 3.5rem;
     }
+    .bell .bell_metadata button.btn {
+        font-size: 1rem;
+    }
+    .bell .user_cartouche {
+       max-width: 7rem; 
+    }
 }
 
 @include media-breakpoint-up(xl) {
