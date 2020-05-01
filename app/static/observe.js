@@ -31,7 +31,7 @@ var socketio = io()
 // Get the current tower_id and let the server know where we are
 var cur_path = window.location.pathname.split('/')
 var cur_tower_id = parseInt(cur_path[1])
-socketio.emit('c_join',{tower_id: cur_tower_id})
+socketio.emit('c_join_observer',{tower_id: cur_tower_id})
 
 // Set up a handler for leaving, then register it *everywhere*
 
@@ -474,7 +474,7 @@ Vue.component('user_display', {
              >
                         [[ user ]]
              </li>
-                    <li class="observers"
+                    <li class="list-group-item observers"
                         v-if="observers != 0">
                         Listeners: [[ observers ]]
                     </li>
