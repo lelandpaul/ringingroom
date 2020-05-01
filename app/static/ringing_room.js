@@ -282,14 +282,19 @@ Vue.component("bell_rope", {
 
                     <template v-if="left_side">
                         <div class="btn-group user_cartouche">
-                            <button class="btn btn-outline-primary btn-sm btn_unassign"
+                            <button class="btn btn-sm btn_unassign"
+                                   :class="[number == 1 ? 'treble' : '',
+                                            number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary']"
                                 v-if="assignment_mode && assigned_user"
                                 @click="unassign">
-                                <span class="unassign">X</span>
+                                <span class="unassign"><i class="fas fa-window-close"></i></span>
                             </button>
 
-                            <button class="btn btn-outline-primary btn-small btn_assigned_user"
-                                   :class="{treble: number == 1}"
+                            <button class="btn btn-small btn_assigned_user"
+                                   :class="[number == 1 ? 'treble' : '',
+                                            number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary',
+                                            assigned_user==cur_user ? 'cur_user' :'',
+                                            assignment_mode ? '' : 'disabled']"
                                    @click="assign_user"
                                    v-if="assignment_mode || assigned_user"
                                   > 
@@ -300,8 +305,9 @@ Vue.component("bell_rope", {
                                   </span>
                              </button>
 
-                             <button class='btn btn-outline-primary btn-sm btn_number' 
+                             <button class='btn btn-sm btn_number active' 
                                  :class="[number == 1 ? 'treble' : '',
+                                            number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary',
                                           assigned_user == cur_user ? 'cur_user' : '']"
                                   style="cursor: inherit;"
                                   >
@@ -311,16 +317,20 @@ Vue.component("bell_rope", {
                     </template>
                     <template v-else>
                         <div class="btn-group user_cartouche">
-                             <button class='btn btn-outline-primary btn-sm btn_number' 
+                             <button class='btn btn-sm btn_number active' 
                                  :class="[number == 1 ? 'treble' : '',
+                                            number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary',
                                           assigned_user == cur_user ? 'cur_user' : '']"
                                   style="cursor: inherit;"
                                   >
                                 <span class="number">[[number]]</span>
                              </button>
 
-                             <button class="btn btn-outline-primary btn-small btn_assigned_user"
-                                  :class="{treble: number == 1}"
+                             <button class="btn btn-small btn_assigned_user"
+                                   :class="[number == 1 ? 'treble' : '',
+                                            number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary',
+                                            assigned_user==cur_user ? 'cur_user' :'',
+                                            assignment_mode ? '' : 'disabled']"
                                   @click="assign_user"
                                   v-if="assignment_mode || assigned_user"
                                    > 
@@ -331,10 +341,12 @@ Vue.component("bell_rope", {
                                   </span>
                               </button>
 
-                             <button class="btn btn-outline-primary btn-sm btn_unassign"
+                             <button class="btn btn-sm btn_unassign"
+                                   :class="[number == 1 ? 'treble' : '',
+                                            number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary']"
                                     v-if="assignment_mode && assigned_user"
                                     @click="unassign">
-                                 <span class="unassign">X</span>
+                                 <span class="unassign"><i class="fas fa-window-close"></i></span>
                              </button>
                         </div>
                     </template>
@@ -722,26 +734,32 @@ def_user_message: "Please input a username. Must be unique and between 1 and 12 
     },
 
     template: `
-              <form class="un_input_form"
+              <form class="un_input_form form-group"
 			  	    v-on:submit.prevent="send_user_name"
                     >
-                  <fieldset>
-                      <input class="un_input_box"
+                    <div class="input-group">
+
+                      <input class="form-control"
                              type="text" 
-                             placeholder="username" 
+                             placeholder="Username" 
                              v-model="input" 
                              v-on:input="check_user_name"
                              ref="username_input"
                              required
                              >
-                      <button type="submit"
-                      		  :disabled="button_disabled"
-                              class="un_input_button btn btn-outline-primary"
-                              >
-                          Join
-                      </button>
-                  </fieldset>
-                  <div id="username-message"> 
+
+                      <div class="input-group-append">
+                          <button type="submit"
+                                  :disabled="button_disabled"
+                                  class="btn btn-outline-primary"
+                                  >
+                              Join
+                          </button>
+                      </div>
+                  </div>
+
+                  <div class="form-text text-muted text-justify"
+                        id="username-message"> 
                       [[ user_message ]]
                   </div>
 			  </form>

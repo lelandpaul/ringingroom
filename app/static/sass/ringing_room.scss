@@ -111,32 +111,12 @@ hr {
 
 .un_input_form { 
   position: absolute;
-  width: 19em;
+  max-width: 25em;
   top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
 
-input.un_input_box {
-  width: 80%;
-  display: inline;
-
-}
-
-// button.un_input_button {
-//     width: 20%;
-//     padding: 0.5rem;
-//     margin-bottom: 0.3rem;
-// }
-
-fieldset {
-  white-space: nowrap;
-}
-
-#join-message {
-  width: 100%;
-
-}
 
 
 /* help bar */
@@ -171,10 +151,6 @@ fieldset {
     width: 10rem;
 }
 
-.treble {
-    color: red;
-}
-
 .user_cartouche{
     max-width: 5.75rem;
 }
@@ -186,6 +162,45 @@ fieldset {
 
 .btn_number, .btn_unassign {
     width: 1.75rem;
+}
+
+.btn_number:hover {
+    color: $secondary;
+    background-color: inherit;
+    border-color: $secondary;
+}
+
+.treble.btn_number:hover {
+    color: $primary;
+    background-color: inherit;
+    border-color: $primary;
+}
+
+.btn-outline-secondary.btn_number:not(:disabled):not(.disabled).active{
+    color: $secondary;
+    background-color: inherit;
+    border-color: $secondary;
+}
+.btn-outline-primary.btn_number:not(:disabled):not(.disabled).active{
+    color: $primary;
+    background-color: inherit;
+    border-color: $primary;
+}
+
+.btn-outline-secondary.btn_number:not(:disabled):not(.disabled).active:focus,
+.btn-outline-primary.btn_number:not(:disabled):not(.disabled).active:focus{
+    box-shadow: none;
+}
+
+.btn-outline-secondary.btn_assigned_user.disabled,
+.btn-outline-primary.btn_assigned_user.disabled{
+    opacity: 1;
+    cursor: inherit;
+}
+
+.btn-outline-secondary.btn_assigned_user.disable:focus,
+.btn-outline-primary.btn_assigned_user.disabled:focus{
+    box-shadow: none;
 }
 
 .btn_assigned_user {
@@ -203,6 +218,10 @@ fieldset {
 
 .bell_metadata [class^="col-"] {
     padding: 0;
+}
+
+.bell_img {
+    cursor: pointer;
 }
 
 .bell_img.assignment_mode{
