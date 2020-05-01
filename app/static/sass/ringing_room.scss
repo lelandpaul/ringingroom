@@ -123,26 +123,12 @@ hr {
 }
 
 
+/* Help */
 
-/* help bar */
 .help {
-  cursor: pointer;
-}
-
-.help_showing {
-  max-width: 40rem;
-  width: 100%;
-  padding: 1rem;
-  opacity: 1.0;
-  border: 1px solid black;
-  overflow-y: auto;
-  text-align: left;
-  left: 50%;
-  margin-left: -20rem;
-  position: fixed;
-  z-index: 10;
-  max-height: 70vh;
-  background: #fff;
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+    width: 100%;
 }
 
 
@@ -254,27 +240,17 @@ hr {
 
 /* Scary mixin land */
 
-@media screen and (max-width: 650px){
-    .help_showing{
-        margin-left: 0;
-        left: 0%;
-
-    }
-}
-
 /* On larger screens, permanently open the menu */
 @include media-breakpoint-up(lg){
-    .collapse, .collapse:not(.show) { 
+    .collapse.tower_controls, .collaps.tower_controls:not(.show) { 
         display: block; 
     }
     .sidebar_col {
         min-width: max-content;
         max-width: 25rem;
     }
-    .help_showing {
-        left: 13.5rem;
-        margin-left: 0;
-        max-height: 75vh;
+    .help {
+        width: 40rem;
     }
 }
 

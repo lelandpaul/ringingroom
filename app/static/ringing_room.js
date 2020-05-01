@@ -519,16 +519,11 @@ Vue.component('help', {
 
 
 	template: `
-			<div class="help">
-				<div
-				class="help_toggle"
-				@click="show_help"
-				>
-                       <button class="btn btn-outline-primary"> Help [[ help_showing ? '▾' : '▸' ]] </button>
-                </div>
-                <div v-if="help_showing"
-                class="help_showing"
-                @click="show_help">
+            <div class="row">
+			<div class="col">
+            <div class="card text-justify">
+            <div class="card-body">
+                <h5 class="card-title">How to use Ringing Room</h5>
                   	<p>
                   		On the top left, you may set the number of bells in the tower by clicking the desired number. 
                   		To ring, you may either click on the ropes or use the following hot-keys:
@@ -563,6 +558,9 @@ Vue.component('help', {
 					</ul>
 				</div>
 			</div>
+            </div>
+            </div>
+            </div>
                `,
 }); // End help
 
@@ -782,6 +780,7 @@ bell_circle = new Vue({
         tower_name: '',
         tower_id: 0,
         hidden_sidebar: true,
+        hidden_help: true,
 
 	},
 
@@ -967,7 +966,15 @@ bell_circle = new Vue({
 	  },
 
       toggle_controls: function() {
+          $('#help').collapse('hide');
+          this.hidden_help = true;
           this.hidden_sidebar = !this.hidden_sidebar;
+      },
+
+      toggle_help: function() {
+          $('#tower_controls').collapse('hide');
+          this.hidden_sidebar = true;
+          this.hidden_help = !this.hidden_help;
       },
 
       copy_id: function() {
@@ -1026,7 +1033,13 @@ bell_circle = new Vue({
                      </div>
                      </div>
                      <div class="col-auto">
-                         <help ref="help"></help>
+                        <button class="toggle_help btn btn-outline-primary"
+                                data-toggle="collapse"
+                                data-target="#help"
+                                @click="toggle_help"
+                                >
+                                Help [[ hidden_help ? '▸' : '▾' ]]
+                            </button>
                      </div>
                      <div class="col-auto toggle_controls d-lg-none">
                          <button class="toggle_controls btn btn-outline-primary" 
@@ -1041,6 +1054,11 @@ bell_circle = new Vue({
             </div>
         </div>
         </div> <!-- tower header -->
+
+        <div class="help collapse" id="help">
+        
+             <help ref="help"></help>
+         </div>
 
         <div class="tower_controls collapse"
              id="tower_controls"
