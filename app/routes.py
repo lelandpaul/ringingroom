@@ -64,3 +64,7 @@ def contact():
 @app.route('/donate')
 def donate():
     return render_template('donate.html')
+
+@app.route('/blog')
+def blog():
+    return render_template('blog.html')
