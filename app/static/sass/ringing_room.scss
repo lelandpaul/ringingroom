@@ -196,6 +196,17 @@ fieldset {
     border-color: $primary;
 }
 
+.btn-outline-secondary.btn_number:not(:disabled):not(.disabled).active{
+    color: $secondary;
+    background-color: inherit;
+    border-color: $secondary;
+}
+.btn-outline-primary.btn_number:not(:disabled):not(.disabled).active{
+    color: $primary;
+    background-color: inherit;
+    border-color: $primary;
+}
+
 .btn-outline-secondary.btn_number:not(:disabled):not(.disabled).active:focus,
 .btn-outline-primary.btn_number:not(:disabled):not(.disabled).active:focus{
     box-shadow: none;

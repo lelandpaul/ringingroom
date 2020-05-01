@@ -21169,6 +21169,18 @@ fieldset {
   border-color: #b2276e;
 }
 
+.btn-outline-secondary.btn_number:not(:disabled):not(.disabled).active {
+  color: purple;
+  background-color: inherit;
+  border-color: purple;
+}
+
+.btn-outline-primary.btn_number:not(:disabled):not(.disabled).active {
+  color: #b2276e;
+  background-color: inherit;
+  border-color: #b2276e;
+}
+
 .btn-outline-secondary.btn_number:not(:disabled):not(.disabled).active:focus,
 .btn-outline-primary.btn_number:not(:disabled):not(.disabled).active:focus {
   box-shadow: none;
