@@ -282,14 +282,17 @@ Vue.component("bell_rope", {
 
                     <template v-if="left_side">
                         <div class="btn-group user_cartouche">
-                            <button class="btn btn-outline-primary btn-sm btn_unassign"
+                            <button class="btn btn-sm btn_unassign"
+                                   :class="[number == 1 ? 'treble' : '',
+                                            number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary']"
                                 v-if="assignment_mode && assigned_user"
                                 @click="unassign">
                                 <span class="unassign">X</span>
                             </button>
 
-                            <button class="btn btn-outline-primary btn-small btn_assigned_user"
-                                   :class="{treble: number == 1}"
+                            <button class="btn btn-small btn_assigned_user"
+                                   :class="[number == 1 ? 'treble' : '',
+                                            number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary']"
                                    @click="assign_user"
                                    v-if="assignment_mode || assigned_user"
                                   > 
@@ -300,8 +303,9 @@ Vue.component("bell_rope", {
                                   </span>
                              </button>
 
-                             <button class='btn btn-outline-primary btn-sm btn_number' 
+                             <button class='btn btn-sm btn_number active' 
                                  :class="[number == 1 ? 'treble' : '',
+                                            number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary',
                                           assigned_user == cur_user ? 'cur_user' : '']"
                                   style="cursor: inherit;"
                                   >
@@ -311,16 +315,18 @@ Vue.component("bell_rope", {
                     </template>
                     <template v-else>
                         <div class="btn-group user_cartouche">
-                             <button class='btn btn-outline-primary btn-sm btn_number' 
+                             <button class='btn btn-sm btn_number active' 
                                  :class="[number == 1 ? 'treble' : '',
+                                            number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary',
                                           assigned_user == cur_user ? 'cur_user' : '']"
                                   style="cursor: inherit;"
                                   >
                                 <span class="number">[[number]]</span>
                              </button>
 
-                             <button class="btn btn-outline-primary btn-small btn_assigned_user"
-                                  :class="{treble: number == 1}"
+                             <button class="btn btn-small btn_assigned_user"
+                                   :class="[number == 1 ? 'treble' : '',
+                                            number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary']"
                                   @click="assign_user"
                                   v-if="assignment_mode || assigned_user"
                                    > 
@@ -331,7 +337,9 @@ Vue.component("bell_rope", {
                                   </span>
                               </button>
 
-                             <button class="btn btn-outline-primary btn-sm btn_unassign"
+                             <button class="btn btn-sm btn_unassign"
+                                   :class="[number == 1 ? 'treble' : '',
+                                            number == 1 ? 'btn-outline-primary' : 'btn-outline-secondary']"
                                     v-if="assignment_mode && assigned_user"
                                     @click="unassign">
                                  <span class="unassign">X</span>

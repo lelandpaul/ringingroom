@@ -21144,10 +21144,6 @@ fieldset {
   width: 10rem;
 }
 
-.treble {
-  color: red;
-}
-
 .user_cartouche {
   max-width: 5.75rem;
 }
@@ -21159,6 +21155,23 @@ fieldset {
 
 .btn_number, .btn_unassign {
   width: 1.75rem;
+}
+
+.btn_number:hover {
+  color: purple;
+  background-color: inherit;
+  border-color: purple;
+}
+
+.treble.btn_number:hover {
+  color: #b2276e;
+  background-color: inherit;
+  border-color: #b2276e;
+}
+
+.btn-outline-secondary.btn_number:not(:disabled):not(.disabled).active:focus,
+.btn-outline-primary.btn_number:not(:disabled):not(.disabled).active:focus {
+  box-shadow: none;
 }
 
 .btn_assigned_user {
@@ -21176,6 +21189,10 @@ fieldset {
 
 .bell_metadata [class^=col-] {
   padding: 0;
+}
+
+.bell_img {
+  cursor: pointer;
 }
 
 .bell_img.assignment_mode {
