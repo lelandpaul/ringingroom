@@ -74,6 +74,16 @@ tower_selector = new Vue({
             default_message: "To create a new tower, enter a name for that tower. To join a tower, enter the Tower ID number.",
 			message: "To create a new tower, enter a name for that tower. To join a tower, enter the Tower ID number."},
 
+    mounted: function() {
+
+        // if there's already something in the input field, check what it is
+        // (fixes a problem where the back button could land a user in a UID-named room
+        if (this.input_field){
+            this.send_tower_name();
+        }
+
+    },
+
 	methods: {
 
         // Send the tower (or id) to the tower to create (or join) it
