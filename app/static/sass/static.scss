@@ -18,6 +18,13 @@
     margin-bottom: 0;
 }
 
+
+.centered_block {
+    width: 25rem;
+    margin-top:40%;
+
+}
+
 /*
 // the navbar with text in
 .navbar-light .navbar-nav .nav-link {
@@ -46,8 +53,9 @@
 
 // blueline/grid circle
 .grid_circle {
+    padding-top:1rem;
     display: relative;
-    width: 105vh;
+    width: 85vh;
     position:absolute;
     top: 50%;
     left: 50%;
