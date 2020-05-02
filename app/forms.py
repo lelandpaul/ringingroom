@@ -26,6 +26,13 @@ class LoginForm(FlaskForm):
     remember_me = BooleanField('Remember me')
     submit = SubmitField('Sign In')
 
+    def validate_username(self, username):
+        user = User.query.filter_by(email=username.data).first() or \
+               User.query.filter_by(username=username.data).first()
+        if user is None or not user.check_password(self.password.data):
+            raise ValidationError('Incorrect username or password.')
+
+
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -45,9 +52,24 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('There is already a username associated with that email addresss.')
 
 class UserSettingsForm(FlaskForm):
-    password = PasswordField('Password', validators=[RequiredIf('new_password'),
-                                                     RequiredIf('new_password2')])
+    password = PasswordField('Current Password', validators=[RequiredIf('new_password'),
+                                                     RequiredIf('new_password2'),
+                                                     RequiredIf('new_username'),
+                                                     RequiredIf('new_email')])
+    submit = SubmitField('Save changes')
+
+    new_username = StringField('Username', validators=[DataRequired()])
+    new_email = StringField('Email', validators=[DataRequired(), Email()])
     new_password = PasswordField('New Password', validators=[])
     new_password2 = PasswordField('Repeat New Password', validators=[EqualTo('new_password'),
                                                                      RequiredIf('new_password')])
-    submit = SubmitField('Save changes')
+
+    def validate_new_username(self, new_username):
+        users = User.query.filter_by(username=new_username.data).all()
+        if len(users) > 1:
+            raise ValidationError('That username is already taken.')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is not None:
+            raise ValidationError('There is already a username associated with that email addresss.')

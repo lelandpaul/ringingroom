@@ -160,11 +160,14 @@ hr {
     border-color: $secondary;
 }
 
-.treble.btn_number:hover {
-    color: $primary;
-    background-color: inherit;
+.btn_number.treble:hover, .btn_number.treble:active, .btn_number.treble:focus,
+.btn-primary.treble:not(:disabled):not(.disabled):active {
+    color: $body-bg;
+    background-color: $primary;
     border-color: $primary;
+    box-shadow: none;
 }
+
 
 .btn-outline-secondary.btn_number:not(:disabled):not(.disabled).active{
     color: $secondary;

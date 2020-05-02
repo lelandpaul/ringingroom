@@ -146,7 +146,7 @@ tower_selector = new Vue({
 
                             <button type="submit" 
                                     :disabled="button_disabled"
-                                    class="btn btn-outline-primary"
+                                    class="btn btn-primary"
                                     >
                                 [[ join_tower ? "Join" : "Create" ]]
                             </button>
