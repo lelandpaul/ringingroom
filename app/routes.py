@@ -166,6 +166,7 @@ def user_settings():
             current_user.email = form.new_email.data
         if form.new_username.data:
             current_user.username = form.new_username.data
+            flash('Username updated.')
         db.session.commit()
     return render_template('user_settings.html', form=form)
 

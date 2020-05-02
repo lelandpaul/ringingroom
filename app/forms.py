@@ -52,14 +52,24 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('There is already a username associated with that email addresss.')
 
 class UserSettingsForm(FlaskForm):
-    password = PasswordField('Password', validators=[RequiredIf('new_password'),
+    password = PasswordField('Current Password', validators=[RequiredIf('new_password'),
                                                      RequiredIf('new_password2'),
                                                      RequiredIf('new_username'),
                                                      RequiredIf('new_email')])
     submit = SubmitField('Save changes')
 
-    new_username = StringField('New Username', validators=[DataRequired()])
-    new_email = StringField('New Email', validators=[DataRequired(), Email()])
+    new_username = StringField('Username', validators=[DataRequired()])
+    new_email = StringField('Email', validators=[DataRequired(), Email()])
     new_password = PasswordField('New Password', validators=[])
     new_password2 = PasswordField('Repeat New Password', validators=[EqualTo('new_password'),
                                                                      RequiredIf('new_password')])
+
+    def validate_new_username(self, new_username):
+        users = User.query.filter_by(username=new_username.data).all()
+        if len(users) > 1:
+            raise ValidationError('That username is already taken.')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is not None:
+            raise ValidationError('There is already a username associated with that email addresss.')
