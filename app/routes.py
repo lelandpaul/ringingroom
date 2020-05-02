@@ -4,6 +4,7 @@ from app import app, towers, log, db
 from app.models import User
 from flask_login import current_user, login_user, logout_user, login_required
 from app.forms import LoginForm, RegistrationForm, UserSettingsForm
+from urllib.parse import urlparse
 import string
 import random
 
@@ -108,13 +109,22 @@ def login():
     login_form = LoginForm()
     registration_form = RegistrationForm()
     if login_form.validate_on_submit():
+
         next = request.args.get('next')
+        if urlparse(next).netloc != '':
+            # All our next redirections will be relative; if there's a netloc, that means
+            # someone has tampered with the next arg and we should throw it out
+            next = ''
+
+
         user = User.query.filter_by(email=login_form.username.data).first() or \
                User.query.filter_by(username=login_form.username.data).first()
         if user is None or not user.check_password(login_form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('authenticate'))
+
         login_user(user, remember=login_form.remember_me.data)
+
         return redirect(next or url_for('index'))
     return redirect(url_for('authenticate', next=next))
 
