@@ -1,4 +1,4 @@
-from flask import render_template, send_from_directory, abort, flash, redirect, url_for, session
+from flask import render_template, send_from_directory, abort, flash, redirect, url_for, session, request
 from flask_login import login_user, logout_user, current_user, login_required
 from app import app, towers, log, db
 from app.models import User
@@ -97,23 +97,26 @@ def blog():
 def authenticate():
     login_form = LoginForm()
     registration_form = RegistrationForm()
+    next = request.args.get('next')
     return render_template('authenticate.html', 
                            login_form=login_form,
-                           registration_form=registration_form)
+                           registration_form=registration_form,
+                           next=next)
 
 @app.route('/login', methods=['POST'])
 def login():
     login_form = LoginForm()
     registration_form = RegistrationForm()
     if login_form.validate_on_submit():
+        next = request.args.get('next')
         user = User.query.filter_by(email=login_form.username.data).first() or \
                User.query.filter_by(username=login_form.username.data).first()
         if user is None or not user.check_password(login_form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('authenticate'))
         login_user(user, remember=login_form.remember_me.data)
-        return redirect(url_for('index'))
-    return redirect(url_for('authenticate'))
+        return redirect(next or url_for('index'))
+    return redirect(url_for('authenticate', next=next))
 
 
 @app.route('/logout')

@@ -7,7 +7,7 @@
     <h1>Already have an account? </h1>
 
 
-    <form action="{{ url_for('login') }}" method="post" novalidate>
+    <form action="{{ url_for('login', next=next) }}" method="post" novalidate>
         {{ login_form.hidden_tag() }}
         <div class="form-group"
 
@@ -43,7 +43,7 @@
     <hr>
 
     <h1>Register</h1>
-    <form action="{{ url_for('register') }}" method="post" novalidate>
+    <form action="{{ url_for('register',next=next) }}" method="post" novalidate>
         {{ registration_form.hidden_tag() }}
 
         <div class="form-group"

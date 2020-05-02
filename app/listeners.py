@@ -87,7 +87,7 @@ def on_join(json):
             # Eventually, this will allow us to have display names different
             # from the username
             tower.add_user(current_user, current_user)
-        emit('s_user_entered', { 'user_name': user_name },
+        emit('s_user_entered', { 'user_name': current_user.username },
              broadcast=True, include_self = True, room=json['tower_id'])
 
 
@@ -114,17 +114,16 @@ def on_user_left(json):
     log('c_user_left', json)
     tower_id = json['tower_id']
     tower = towers[tower_id]
-    user_id = session['user_id']
 
-    if json['observer']:
+    user_id = current_user.username if not current_user.is_anonymous else session['user_id']
 
+    if current_user.is_anonymous:
         tower.remove_observer(user_id)
         emit('s_set_observers', {'observers': tower.observers},
              broadcast = True, include_self = False, room=tower_id)
         session['observer'] = False
         return
 
-    user_name = json['user_name']
 
     try:
         tower.remove_user(user_id)
@@ -133,7 +132,7 @@ def on_user_left(json):
         # For now, just pass
         pass
 
-    emit('s_user_left', { 'user_name': user_name },
+    emit('s_user_left', { 'user_name': user_id },
          broadcast=True, include_self = False, room=tower_id)
 
     send_assignments(tower_id)

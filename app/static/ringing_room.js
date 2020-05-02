@@ -39,9 +39,8 @@ var cur_user_name = window.tower_parameters.cur_user_name;
 var leave_room = function(){
     socketio.emit('c_user_left',
           {user_name: window.tower_parameters.cur_user_name, 
-          tower_id: cur_tower_id,
-          observer: false});
-}
+          tower_id: cur_tower_id});
+};
 
 // set up disconnection at beforeunload
 window.addEventListener("beforeunload", leave_room, "useCapture");
@@ -609,6 +608,12 @@ Vue.component('user_display', {
             }
         },
 
+        leave_tower: function(){
+            socketio.emit('c_user_left',
+                  {user_name: window.tower_parameters.cur_user_name, 
+                  tower_id: cur_tower_id });
+        },
+
     },
 
 	template: 
@@ -619,8 +624,8 @@ Vue.component('user_display', {
          <div class="col">
          <ul class="list-group">
             <li class="list-group-item">
-                <h2 class="align-baseline" style="display: inline;">Users</h2>
-                <span class="float-right align-text-bottom">
+                <h2 style="display: inline;">Users</h2>
+                <span class="float-right">
                 <button class="btn btn-outline-primary"
                         :class="{active: assignment_mode}"
                         @click="toggle_assignment"
@@ -629,13 +634,28 @@ Vue.component('user_display', {
                  </button>
                  </span>
             </li>
-            <li class="list-group-item list-group-item-action cur_user"
-                 :class="{disabled: !assignment_mode,
-                          assignment_active: assignment_mode,
+            <li class="list-group-item cur_user d-inline-flex align-items-center"
+                 :class="{assignment_active: assignment_mode,
                           active: cur_user == selected_user && assignment_mode}"
+                 v-if="window.tower_parameters.anonymous_user"
+                 >
+                 <span class="mr-auto">Not logged in</span>
+                 <span class="float-right">
+                 <a class="btn btn-outline-primary btn-sm" 
+                    :href="'/authenticate?next=' + window.location.pathname">Log In</a>
+                 </span>
+            </li>
+            <li class="list-group-item list-group-item-action cur_user d-inline-flex align-items-center"
+                 :class="{assignment_active: assignment_mode,
+                          active: cur_user == selected_user && assignment_mode}"
+                 v-if="!window.tower_parameters.anonymous_user"
                  @click="select_user(cur_user)"
                  >
-                 [[ cur_user ]]
+                 <span class="user_list_cur_user_name mr-auto">[[ cur_user ]]</span>
+                 <span class="float-right" v-show="!assignment_mode"
+                       @click="leave_tower">
+                    <a role="button" class="btn btn-outline-primary btn-sm" href='/'>Leave Tower</a>
+                 </span>
              </li>
             <li v-for="user in user_names"
                 class="list-group-item list-group-item-action"
