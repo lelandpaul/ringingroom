@@ -23,21 +23,18 @@ var logger = function()
 
     return pub;
 }();
-logger.disableLogger()
+// logger.disableLogger()
 
 // Set up socketio instance
-var socketio = io()
-
-// Get the current tower_id and let the server know where we are
-var cur_path = window.location.pathname.split('/')
-var cur_tower_id = parseInt(cur_path[1])
-socketio.emit('c_join',{tower_id: cur_tower_id})
+var socketio = io();
+// Various Vue instances need this on creation
+var cur_tower_id = parseInt(window.tower_parameters.id);
 
 // Set up a handler for leaving, then register it *everywhere*
 
 var leave_room = function(){
     socketio.emit('c_user_left',
-          {user_name: bell_circle.$refs.users.cur_user, 
+          {user_name: this.$refs.users.cur_user, 
           tower_id: cur_tower_id,
           observer: false});
 }
@@ -45,6 +42,7 @@ var leave_room = function(){
 // set up disconnection at beforeunload
 window.addEventListener("beforeunload", leave_room, "useCapture");
 window.onbeforeunload = leave_room;
+
 
 
 ////////////////////////
@@ -56,26 +54,6 @@ socketio.on('s_bell_rung', function(msg,cb){
 	console.log('Received event: ' + msg.global_bell_state + msg.who_rang);
 	// if(msg.disagree) {}
 	bell_circle.ring_bell(msg.who_rang);
-});
-
-// We got a username from the server
-// (It might be empty)
-socketio.on('s_set_user_name', function(msg, cb){
-    console.log('received un: ' + msg.user_name);
-    console.log('it is available: ' + msg.name_available)
-    bell_circle.$refs.un_input.input = msg.user_name;
-    if (!msg.name_available){
-        bell_circle.$refs.un_input.user_message = "This username is already taken.";
-    }
-    if (msg.name_available && msg.user_name){
-        bell_circle.$refs.un_input.send_user_name();
-    }
-});
-
-// getting initial user state
-socketio.on('s_set_users', function(msg, cb){
-	console.log('Getting users: ' + msg.users);
-    bell_circle.$refs.users.user_names = msg.users
 });
 
 // User entered the room
@@ -125,14 +103,6 @@ socketio.on('s_global_state',function(msg,cb){
 	};
 });
 
-// The server told us the name of the tower
-socketio.on('s_name_change',function(msg,cb){
-	console.log('Received name change: ' + msg.new_name);
-	bell_circle.tower_name = msg.new_name;
-	bell_circle.tower_id = parseInt(cur_tower_id);
-});
-
-
 // The server told us whether to use handbells or towerbells
 socketio.on('s_audio_change',function(msg,cb){
   console.log('changing audio to: ' + msg.new_audio);
@@ -141,11 +111,8 @@ socketio.on('s_audio_change',function(msg,cb){
 });
 
 
-///////////
-/* AUDIO */
-///////////
 
-// import {tower, hand, bell_mappings} from './audio.js';
+
 
 /////////
 /* VUE */
@@ -178,7 +145,7 @@ Vue.component("bell_rope", {
 			   circled_digits: ["①", "②", "③", "④", "⑤", "⑥", 
 								"⑦", "⑧", "⑨", "⑩", "⑪","⑫"],
 			   images: ["handstroke", "backstroke"],
-               assigned_user: '',
+               assigned_user: window.tower_parameters.assignments[this.number-1],
 	  };
 	},
 
@@ -396,7 +363,7 @@ Vue.component('tower_controls', {
     // data in components should be a function, to maintain scope
 	data: function(){ 
 		return {tower_sizes: [4,6,8,10,12],
-                audio_type: ''} },
+                audio_type: window.tower_parameters.audio} },
 
     computed: {
         
@@ -569,11 +536,11 @@ Vue.component('user_display', {
 
     // data in components should be a function, to maintain scope
 	data: function(){
-		return { user_names: [],
+		return { user_names: window.tower_parameters.users,
                  assignment_mode: false,
                  selected_user: '',
                  cur_user: '',
-                 observers: 0,
+                 observers: parseInt(window.tower_parameters.observers),
         } },
 
     methods: {
@@ -771,14 +738,42 @@ bell_circle = new Vue({
 
 	el: "#bell_circle",
 
+    mounted: function() {
+        
+        /////////////////
+        /* Tower setup */
+        /////////////////
+
+        // set this separately so that the watcher fires
+        this.number_of_bells = window.tower_parameters.size;
+
+        // Join the tower
+        socketio.emit('c_join',{tower_id: cur_tower_id})
+
+        // Set up username
+        this.$refs.un_input.input = window.tower_parameters.cur_user_name;
+        if (this.$refs.un_input.input){
+            if (!window.tower_parameters.name_available){
+                this.$refs.un_input.user_message = "This username is already taken.";
+            } else {
+                this.$refs.un_input.send_user_name();
+            }
+        }
+
+        this.$nextTick(function(){
+            this.$refs.users.rotate_to_assignment();
+        });
+
+    },
+
 	data: {
 		number_of_bells: 0,
 		bells: [],
-        audio: tower,
+        audio: window.tower_parameters.audio == 'Tower' ? tower : hand,
         call_throttled: false,
         logged_in: false,
-        tower_name: '',
-        tower_id: 0,
+        tower_name: window.tower_parameters.name,
+        tower_id: parseInt(window.tower_parameters.id),
         hidden_sidebar: true,
         hidden_help: true,
 

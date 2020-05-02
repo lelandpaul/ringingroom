@@ -62,7 +62,15 @@
                                         href="{{ url_for('blog') }}">Blog</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li class="nav-item"><a class="nav-link" href="">Login</a></li>
+                    {% if current_user.is_anonymous %}
+                    <li class="nav-item">
+                        <a class="nav-link" href='{{ url_for('authenticate') }}'>Log In</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Log Out</a>
+                    </li>
+                    {% endif %}
             </ul>
         </div>
     </div>
@@ -74,7 +82,6 @@
     {% block app_content %}{% endblock %}
 
 </div>
-
 
 <script src="https://unpkg.com/vue@2.6.11/dist/vue.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>

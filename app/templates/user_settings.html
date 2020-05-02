@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %} {{ current_user.username }} {% endblock %}
+
+{% block content %}
+
+<form action="" method="post" novalidate>
+    {{form.hidden_tag()}}
+
+<h1>User settings: {{ current_user.username }}</h1>
+
+<hr>
+
+<b>Change password:</b>
+
+<p> {{ form.password.label }}<br>
+    {{ form.password(size=32, class="profsettings_password") }}
+</p>
+
+<p> {{ form.new_password.label }}<br>
+    {{ form.new_password(size=32, class="profsettings_password") }}
+</p>
+
+<p> {{ form.new_password2.label }}<br>
+    {{ form.new_password2(size=32, class="profsettings_password") }}
+</p>
+
+<p>
+    {{ form.submit() }}
+</p>
+
+</form>
+
+{% endblock %}

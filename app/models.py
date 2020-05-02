@@ -1,7 +1,28 @@
-from app import db, log
+from app import db, log, login
 from random import sample
 import re
 from datetime import datetime, timedelta, date
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
+
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), index=True, unique=True)
+    email = db.Column(db.String(120), index=True, unique=True)
+    password_hash = db.Column(db.String(128))
+
+    def __repr__(self):
+        return '<User {}>'.format(self.username)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
 
 
 class TowerDB(db.Model):
@@ -79,10 +100,17 @@ class Tower:
                     self._assignments[bell] = '' # unassign the user from all bells
             del self._users[user_id]
         except ValueError: pass
+    
+    @property
+    def user_names(self):
+        return list(self._users.values())
 
     @property
     def assignments(self):
         return(self._assignments)
+
+    def assignments_as_list(self):
+        return(list(self._assignments.values()))
 
     def assign_bell(self, bell, user):
         self.assignments[bell] = user
