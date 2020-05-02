@@ -2,9 +2,10 @@
 @import "circle";
 
 
-body:window-inactive {
-    opacity: 0.4; // blur when window inactive
+body {
+  overflow-x: hidden;
 }
+
 
 /* Tower Controls */
 
