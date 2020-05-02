@@ -64,8 +64,8 @@ def on_join(json):
     # If the user is in the room: Remove them (in preparation for adding them again)
     if session['user_id'] in tower.users.keys():
         log('SETUP User already present')
-        tower.remove_user(user_id)
-        emit('s_user_left', {'user_name': user_name}, 
+        tower.remove_user(session['user_id'])
+        emit('s_user_left', {'user_name': session['user_name']}, 
                             broadcast = True,
                             include_self = True,
                             room = tower_id)
