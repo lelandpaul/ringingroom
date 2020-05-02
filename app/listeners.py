@@ -42,6 +42,10 @@ def on_create_tower(data):
     emit('s_redirection',
          str(new_tower.tower_id) + '/' + new_tower.url_safe_name)
 
+# Helper function to generate a random string for use as a uid
+def assign_user_id():
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(8))
 
 
 # Set up the room when a user first joins
@@ -49,77 +53,50 @@ def on_create_tower(data):
 def on_join(json):
     log('c_join',json)
 
-    # Next, get the tower_id & tower from the client, then join the room
+
+    # First, get the tower_id & tower from the client and find the tower
     tower_id = json['tower_id']
     tower = towers[tower_id]
+
+    # Next, join the tower
     join_room(tower_id)
     log('SETUP Joined tower:',tower_id)
+
+    # If the user is anonymous, mark them as an observer and set some cookies
+    if current_user.is_anonymous:
+        # Check they're not already in the room
+        if 'user_id' in session.keys():
+            tower.remove_observer(session['user_id'])
+        session['user_id'] = assign_user_id()
+        tower.add_observer(session['user_id'])
+        log('SETUP Observer joined tower:',tower_id)
+        emit('s_set_observers', {'observers': tower.observers},
+             broadcast=True, include_self=True, room=tower_id)
+        log('SETUP observer s_set_observers', tower.observers)
+    else:
+        # If the user is logged in, but is already in the room: Remove them (in
+        # preparation for adding them again)
+        if current_user.username in tower.users.keys():
+            log('SETUP User already present')
+            tower.remove_user(current_user.username)
+            emit('s_user_left', {'user_name': current_user.username}, 
+                                broadcast = True,
+                                include_self = True,
+                                room = tower_id)
+            # For now: Keeping the "id/username" split in the tower model
+            # Eventually, this will allow us to have display names different
+            # from the username
+            tower.add_user(current_user, current_user)
+        emit('s_user_entered', { 'user_name': user_name },
+             broadcast=True, include_self = True, room=json['tower_id'])
+
 
     # Store the tower in case of accidental disconnect
     # We need to do it under the SocketIO SID, otherwise a refresh might kick us out of the room
     if not 'tower_ids' in session.keys():
         session['tower_ids'] = {}
     session['tower_ids'][request.sid] = json['tower_id']
-
-    # If the user is in the room: Remove them (in preparation for adding them again)
-    if session['user_id'] in tower.users.keys():
-        log('SETUP User already present')
-        tower.remove_user(session['user_id'])
-        emit('s_user_left', {'user_name': session['user_name']}, 
-                            broadcast = True,
-                            include_self = True,
-                            room = tower_id)
-
-# Set up room when a observer first joins
-@socketio.on('c_join_observer')
-def on_observer_joined(json):
-    log('c_join_observer',json)
-
-    # Helper function to generate a random string for use as a uid
-    def assign_user_id():
-        letters = string.ascii_lowercase
-        return ''.join(random.choice(letters) for i in range(8))
-
-    # First, get the tower_id & tower from the client, then join the room
-    tower_id = json['tower_id']
-    tower = towers[tower_id]
-    join_room(tower_id)
-    log('SETUP Observer joined tower:',tower_id)
-
-    # Next: check that the user has a unique ID in their cookie
-    # This will be used for keeping track of who's in the room
-    # If they already have one: Remove them from the room, then give them a new one,
-    # to prevent their getting kicked out unexpectedly on refresh
-    if 'user_id' in session.keys():
-        tower.remove_observer(session['user_id'])
-    session['user_id'] = assign_user_id()
-    user_id = session['user_id']
-
-
-    # Store the tower in case of accidental disconnect
-    # Also note that this was an observer
-    session['tower_id'] = json['tower_id']
-    session['observer'] = True
-
-    # Add the observer and emit the total number of observer
-    tower.add_observer(user_id)
-    emit('s_set_observers', {'observers': tower.observers},
-         broadcast=True, include_self=True, room=tower_id)
-    log('SETUP observer s_set_observers', tower.observers)
-
-    # Give the user the list of currently-present users
-    emit('s_set_users', {'users': list(tower.users.values())})
-    log('SETUP Observer s_set_users:', list(tower.users.values()))
-
-    # Set up tower metadata
-    emit('s_name_change', {'new_name': tower.name})
-    emit('s_audio_change', {'new_audio': tower.audio})
-    log('SETUP s_name_change', tower.name)
-    log('SETUP s_audio_change', tower.audio)
-
-    # Set the size (then wait for the client to ask for the global state)
-    emit('s_size_change', {'size': tower.n_bells})
-    log('SETUP s_size_change',tower.n_bells)
+    session.modified= True
 
 
 # Helper for sending assignments
@@ -129,29 +106,6 @@ def send_assignments(tower_id):
         log('s_assign_user', {'bell': bell, 'user': user_name})
         emit('s_assign_user', {'bell': bell, 'user': user_name},
              broadcast=True, include_self=True, room=tower_id)
-
-
-# A user entered a room
-@socketio.on('c_user_entered')
-def on_user_entered(json):
-    log('c_user_entered',json)
-
-    # If they're anonymous: store their username for the future
-    if current_user.is_anonymous:
-        session['user_name'] = json['user_name']
-        session.modified = True
-        user_name = json['user_name']
-        user_id = session['user_id']
-    else: 
-        user_name = current_user.username
-        user_id = current_user.username
-
-    # Get the tower
-    tower = towers[json['tower_id']]
-    tower.add_user(user_id, user_name)
-
-    emit('s_user_entered', { 'user_name': user_name },
-         broadcast=True, include_self = True, room=json['tower_id'])
 
 
 # A user left a room (and the event actually fired)

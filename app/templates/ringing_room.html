@@ -36,6 +36,7 @@
             assignments: {{tower.assignments_as_list() | safe }},
             cur_user_name: "{{user_name}}",
             name_available: {{'true' if name_available else 'false'}},
+            anonymous_user: {{'true' if current_user.is_anonymous else 'false'}},
         };
     </script>
     <!-- internal resources -->
