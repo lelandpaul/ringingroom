@@ -494,7 +494,7 @@ Vue.component('help', {
 
 
 	template: `
-            <div class="row" v-if="!window.tower_parameters.anonymous_user">
+            <div class="row" v-if="!window.tower_parameters.observer">
 			<div class="col">
             <div class="card text-justify">
             <div class="card-body">
@@ -903,7 +903,7 @@ bell_circle = new Vue({
       },
 
       toggle_help: function() {
-          if (window.tower_parameters.anonymous_user){ return } // don't do anything if not logged in
+          if (window.tower_parameters.observer){ return } // don't do anything if in listener mode
           $('#tower_controls').collapse('hide');
           this.hidden_sidebar = true;
           this.hidden_help = !this.hidden_help;
@@ -964,7 +964,7 @@ bell_circle = new Vue({
                         <button class="toggle_help btn btn-outline-primary"
                                 data-toggle="collapse"
                                 data-target="#help"
-                                v-if="!window.tower_parameters.anonymous_user"
+                                v-if="!window.tower_parameters.observer"
                                 @click="toggle_help"
                                 >
                                 Help [[ hidden_help ? '▸' : '▾' ]]
