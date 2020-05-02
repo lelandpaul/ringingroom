@@ -29,12 +29,13 @@ def index():
 @app.route('/<int:tower_id>/<decorator>/listen')
 def observer(tower_id, decorator=None):
     try:
-        tower_name = towers[tower_id].name
+        tower = towers[tower_id]
     except KeyError:
         log('Bad tower_id')
         abort(404)
-    return render_template('observe.html',
-                           tower_name=tower_name)
+    return render_template('ringing_room.html',
+                           tower=tower,
+                           listen_link=True)
 
 # Helper function to generate a random string for use as a unique user_id
 def assign_user_id():
@@ -51,11 +52,9 @@ def tower(tower_id, decorator=None):
         log('Bad tower_id')
         abort(404)
     if current_user.is_anonymous:
-        # Not logged in. Generate or find a unique id
-        session['user_id'] = session.get('user_id') or assign_user_id()
-        # Either get the previous name or leave blank — the client will request a new one
-        session['user_name'] = session.get('display_name') or ''
-        name_available = session['user_name'] and session['user_name'] not in tower.users.values()
+        # Not logged in.
+        session['user_name'] = ''
+        name_available = True
     else:
         # User is logged in. Their globally-unique user_name works as both id and display
         session['user_id'] = current_user.username
@@ -66,7 +65,8 @@ def tower(tower_id, decorator=None):
     return render_template('ringing_room.html',
                             tower = tower,
                             user_name = session['user_name'],
-                            name_available = name_available)
+                            name_available = name_available,
+                            listen_link = False)
 
 
 #  Serve the static pages

@@ -637,7 +637,7 @@ Vue.component('user_display', {
             <li class="list-group-item cur_user d-inline-flex align-items-center"
                  :class="{assignment_active: assignment_mode,
                           active: cur_user == selected_user && assignment_mode}"
-                 v-if="window.tower_parameters.anonymous_user"
+                 v-if="window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link"
                  >
                  <span class="mr-auto">Not logged in</span>
                  <span class="float-right">
