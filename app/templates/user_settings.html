@@ -2,7 +2,7 @@
 
 {% block title %} {{ current_user.username }} {% endblock %}
 
-{% block content %}
+{% block app_content %}
 
 <form action="" method="post" novalidate>
     {{form.hidden_tag()}}
@@ -11,24 +11,36 @@
 
 <hr>
 
-<b>Change password:</b>
+<h3>Change password:</h3>
 
-<p> {{ form.password.label }}<br>
-    {{ form.password(size=32, class="profsettings_password") }}
-</p>
 
-<p> {{ form.new_password.label }}<br>
-    {{ form.new_password(size=32, class="profsettings_password") }}
-</p>
+<div class="form-group">
+    {{ form.password.label }}
+    {{ form.password(size=32, class="form-control") }}
+</div>
 
-<p> {{ form.new_password2.label }}<br>
-    {{ form.new_password2(size=32, class="profsettings_password") }}
-</p>
+<div class="form-group">
+    {{ form.new_password.label }}
+    {{ form.new_password(size=32, class="form-control") }}
+</div>
 
-<p>
-    {{ form.submit() }}
-</p>
+<div class="form-group">
+    {{ form.new_password2.label }}
+    {{ form.new_password2(size=32, class="form-control") }}
+</div>
+
+{{ form.submit(class="btn btn-primary") }}
 
 </form>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
 
 {% endblock %}
