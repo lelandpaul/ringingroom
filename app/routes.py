@@ -108,25 +108,26 @@ def authenticate():
 def login():
     login_form = LoginForm()
     registration_form = RegistrationForm()
+    next = request.args.get('next')
+    if urlparse(next).netloc != '':
+        # All our next redirections will be relative; if there's a netloc, that means
+        # someone has tampered with the next arg and we should throw it out
+        next = ''
     if login_form.validate_on_submit():
-
-        next = request.args.get('next')
-        if urlparse(next).netloc != '':
-            # All our next redirections will be relative; if there's a netloc, that means
-            # someone has tampered with the next arg and we should throw it out
-            next = ''
-
 
         user = User.query.filter_by(email=login_form.username.data).first() or \
                User.query.filter_by(username=login_form.username.data).first()
         if user is None or not user.check_password(login_form.password.data):
-            flash('Invalid username or password')
+            raise ValidationError('Incorrect username or password.')
             return redirect(url_for('authenticate'))
 
         login_user(user, remember=login_form.remember_me.data)
 
         return redirect(next or url_for('index'))
-    return redirect(url_for('authenticate', next=next))
+    return render_template('authenticate.html', 
+                           login_form=login_form,
+                           registration_form=registration_form,
+                           next=next)
 
 
 @app.route('/logout')
@@ -138,6 +139,7 @@ def logout():
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
+    next = request.args.get('next')
     login_form = LoginForm()
     registration_form = RegistrationForm()
     if registration_form.validate_on_submit():
@@ -145,18 +147,25 @@ def register():
         user.set_password(registration_form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Welcome, ' + registration_form.username.data + '!')
+
         return redirect(url_for('index'))
-    return redirect(url_for('authenticate'))
+    return render_template('authenticate.html', 
+                           login_form=login_form,
+                           registration_form=registration_form,
+                           next=next)
 
 @app.route('/settings', methods=['GET','POST'])
 @login_required
 def user_settings():
     form = UserSettingsForm()
-    if form.validate_on_submit():
-        if current_user.check_password(form.password.data):
+    if form.validate_on_submit() and current_user.check_password(form.password.data):
+        if form.new_password.data:
             current_user.set_password(form.new_password.data)
             flash('Password updated.')
+        if form.new_email.data:
+            current_user.email = form.new_email.data
+        if form.new_username.data:
+            current_user.username = form.new_username.data
         db.session.commit()
     return render_template('user_settings.html', form=form)
 

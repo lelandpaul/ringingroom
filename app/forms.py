@@ -26,6 +26,13 @@ class LoginForm(FlaskForm):
     remember_me = BooleanField('Remember me')
     submit = SubmitField('Sign In')
 
+    def validate_username(self, username):
+        user = User.query.filter_by(email=username.data).first() or \
+               User.query.filter_by(username=username.data).first()
+        if user is None or not user.check_password(self.password.data):
+            raise ValidationError('Incorrect username or password.')
+
+
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -46,8 +53,13 @@ class RegistrationForm(FlaskForm):
 
 class UserSettingsForm(FlaskForm):
     password = PasswordField('Password', validators=[RequiredIf('new_password'),
-                                                     RequiredIf('new_password2')])
+                                                     RequiredIf('new_password2'),
+                                                     RequiredIf('new_username'),
+                                                     RequiredIf('new_email')])
+    submit = SubmitField('Save changes')
+
+    new_username = StringField('New Username', validators=[DataRequired()])
+    new_email = StringField('New Email', validators=[DataRequired(), Email()])
     new_password = PasswordField('New Password', validators=[])
     new_password2 = PasswordField('Repeat New Password', validators=[EqualTo('new_password'),
                                                                      RequiredIf('new_password')])
-    submit = SubmitField('Save changes')
