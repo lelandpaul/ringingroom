@@ -1,0 +1,23 @@
+<div class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" 
+       href="#" 
+       id="userDropdown"
+       role="button"
+       data-toggle="dropdown"
+       data-offset="30,30"
+       >
+       {{ current_user.username }}
+    </a>
+        <div class="dropdown-menu">
+            <h6 class="dropdown-header">Recently visited towers</h6>
+            {% for tower in current_user.recent_towers(5) %}
+                <a class="dropdown-item" 
+                   href="/{{tower.tower_id}}/{{tower.tower_name}}">
+                   {{tower.tower_name}} <small>({{tower.tower_id}})</small>
+                </a>
+            {% endfor %}
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{{url_for('user_settings')}}">Settings</a>
+            <a class="dropdown-item" href="{{url_for('logout')}}">Log Out</a>
+        </div>
+</div>
