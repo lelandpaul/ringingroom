@@ -4,12 +4,14 @@ import re
 from datetime import datetime, timedelta, date
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from enum import Enum
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
-    email = db.Column(db.String(120), index=True)
+    email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
+    towers = db.relationship("UserTowerRelation", back_populates="user")
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -32,12 +34,22 @@ class TowerDB(db.Model):
                               nullable=False,
                               default=date.today,
                               onupdate=date.today)
+    users = db.relationship("UserTowerRelation", back_populates="tower")
 
     def __repr__(self):
         return '<Tower {}: {}>'.format(self.tower_id, self.tower_name)
 
     def to_Tower(self):
         return Tower(self.tower_name, tower_id=self.tower_id)
+
+
+class UserTowerRelation(db.Model):
+    user_id = db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key = True)
+    tower_id = db.Column('tower_id',db.Integer, db.ForeignKey('towerDB.tower_id'), primary_key = True)
+    relationship = db.Column(db.String(32))
+    user = db.relationship("User", back_populates="towers")
+    tower = db.relationship("TowerDB",back_populates="users")
+
 
 
 # Keep track of towers
