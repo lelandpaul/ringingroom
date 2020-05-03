@@ -1,0 +1,56 @@
+/* Import fonts */
+
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,700;1,300;1,700&family=Simonetta:wght@400;900&display=swap');
+
+/* Change sass variables */
+
+// set default background color
+$body-bg: #fbfbff;
+// set default font color
+$body-color: #0d0a0b;
+$text-color: #0d0a0b;
+
+$dark: #b2276e;
+
+$primary: #b2276e;
+$secondary: #0d0a0b;
+$list-group-color: #0d0a0b;
+$list-group-action-hover-color: #0d0a0b;
+$text-muted: #454955;
+$input-color: #454955;
+
+/* Import bootstrap */
+@import "../bootstrap/scss/bootstrap";
+
+.cookiealert{
+    position: fixed;
+    bottom: 0;
+    background-color: #454955;
+}
+
+.cookiealert a {
+    text-decoration: none;
+}
+
+/* Global Styling */
+
+html {
+    height: 100%;
+}
+
+body {
+  font-family: "Lato", sans-serif;
+}
+
+/* Font Styling */
+
+h1, h2, h3, h4 {
+    font-weight: bold;
+}
+
+// overall title styling
+.title {
+    margin-bottom: 2rem;
+    text-align: center;
+    font-size: 1.25rem;
+}

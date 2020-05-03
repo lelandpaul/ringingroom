@@ -1,8 +1,32 @@
-<!doctype html>
-<html>
+<html lang="en">
 
-<head>
-    <title>{% block title %}{% endblock %}Ringing Room</title>
+    <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <title>
+        {% if title %}{{ title }} — Ringing Room {% else %} Ringing Room{% endif %}
+        </title>
+
+	<!-- Favicon nonsense -->
+	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-196x196.png')}}" sizes="196x196" />
+	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-96x96.png')}}" sizes="96x96" />
+	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-32x32.png')}}" sizes="32x32" />
+	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-16x16.png')}}" sizes="16x16" />
+	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-128.png')}}" sizes="128x128" />
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Wruczek/Bootstrap-Cookie-Alert@gh-pages/cookiealert.css">
+    <script src="https://kit.fontawesome.com/b8eb96aee8.js" crossorigin="anonymous"></script>
+    {% assets "css_static" %}
+    <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}"></script>
+    {% endassets %}
+    <style>
+    span.cc-message {text-align:center;}
+    </style>
+    
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-162521976-1"></script>
     <script>
@@ -12,91 +36,80 @@
 
       gtag('config', 'UA-162521976-1');
     </script>
-    <!-- external resources -->
-	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css" integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous">
-	<script src="https://unpkg.com/vue@2.6.11/dist/vue.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" >
-    
-    <!-- internal resources -->
-    {% assets "js_landing" %}
-    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-    {% endassets %}
-    {% assets "css_static" %}
-    <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}"></script>
-    {% endassets %}
-	<!-- Favicon nonsense -->
-	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-196x196.png')}}" sizes="196x196" />
-	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-96x96.png')}}" sizes="96x96" />
-	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-32x32.png')}}" sizes="32x32" />
-	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-16x16.png')}}" sizes="16x16" />
-	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-128.png')}}" sizes="128x128" />
-</head>
+    </head>
 
 <body>
-	<div class="row">
-		<div class="col-xs-4 col-lg-offset-1 col-md-3 col-lg-2">
-            <div class="row">
-            <div class="col-xs-12 pure-menu">
-				<ul class="pure-menu-list">
-					<li class="pure-menu-item"><a href="/" class="pure-menu-link home">Ringing Room</a>
-					</li>
-					<li class="pure-menu-item"><a href="/about" class="pure-menu-link">About</a>
-					</li>
-					<li class="pure-menu-item"><a href="/help" class="pure-menu-link">Help</a>
-					</li>
-					<li class="pure-menu-item"><a href="/contact" class="pure-menu-link">Contact</a>
-					</li>
-					<li class="pure-menu-item"><a href="/donate" class="pure-menu-link">Donate</a>
-					</li>
-				</ul>
-			</div>
-			<div class="col-xs-12 news">
-				<h3> News </h3>
-				The Ringing Room is currently under very active development; features may change or be added without warning! Works best on a laptop or desktop with Google Chrome. Microsoft Edge does NOT work for the time being; use other browser if possible.
-				<br/>
-				<br/>Recent changes:
-				<ul>
-                    <li> <b>25 April 2020</b>Added handbell images; added listen-only links; 
-                        made page more responsive to screen size; continued iteration on username
-                        implementation.</li>
-                    <li> <b>11 April 2020</b>: Continued iteration on username implementation. </li>
-                    <li> <b>9 April 2020</b>: Fixed many bugs with usernames, and with strokes getting out of sync between users; updated handbell audio.</li>
-				</ul>
-			</div>
-		</div>
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_for('index') }}">
+            <img src="{{url_for('static', filename = 'images/logo.png')}}" alt="Ringing Room Logo" height="40">
+            Ringing Room
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedcontent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a class="nav-link" 
+                                        href="{{ url_for('about') }}">About</a></li>
+                <li class="nav-item"><a class="nav-link" 
+                                        href="{{ url_for('help') }}">Help</a></li>
+                <li class="nav-item"><a class="nav-link" 
+                                        href="{{ url_for('contact') }}">Contact</a></li>
+                <li class="nav-item"><a class="nav-link" 
+                                        href="{{ url_for('donate') }}">Donate</a></li>
+                <!-- <li class="nav-item"><a class="nav-link"
+                    href="{{ url_for('blog') }}">Blog</a></li> -->
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                    {% if current_user.is_anonymous %}
+                    <li class="nav-item">
+                        <a class="nav-link" href='{{ url_for('authenticate') }}'>
+                            <i class="fas fa-fw fa-user"></i>
+                            Log In / Register</a>
+                    </li>
+                    {% else %}
+                    {% include '_user_menu.html' %}
+                    {% endif %}
+            </ul>
         </div>
-
-
-
-    <div class="col-xs-offset-1 col-xs-7 col-md-6 col-lg-5 copy">
-        {% block content %}{% endblock %}
     </div>
+</nav>
 
-	</div>
 
-<style>
-span.cc-message {text-align:center;}
-</style>
-<script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false"></script>
-<script>
-window.cookieconsent.initialise({
-  "content": {
-      message: "We use cookies to improve your experience."
-  },
-  "palette": {
-    "popup": {
-      "background": "#252e39"
-    },
-    "button": {
-      "background": "#0078e7",
-      "highlight":  "#0078e7"
-    }
-  }
-});
-</script>
+<div class="content_container container">
+
+    {% block app_content %}{% endblock %}
+
+</div>
+
+<!-- START Bootstrap-Cookie-Alert -->
+<div class="alert text-center cookiealert" role="alert">
+    We use cookies to improve your experience on our website. <a href="https://cookiesandyou.com/" target="_blank">Learn more</a>
+
+    <button type="button" class="btn btn-primary btn-sm acceptcookies">
+        I agree
+    </button>
+</div>
+<!-- END Bootstrap-Cookie-Alert -->
+
+<script src="https://unpkg.com/vue@2.6.11/dist/vue.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+{% assets "js_landing" %}
+<script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
+
+
+<script src="https://cdn.jsdelivr.net/gh/Wruczek/Bootstrap-Cookie-Alert@gh-pages/cookiealert.js"></script>
+
+
+
 </body>
 
 </html>
