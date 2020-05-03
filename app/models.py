@@ -83,10 +83,13 @@ class TowerDB(db.Model):
 class UserTowerRelation(db.Model):
     user_id = db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key = True)
     tower_id = db.Column('tower_id',db.Integer, db.ForeignKey('towerDB.tower_id'), primary_key = True)
-    relationship = db.Column(db.String(32))
-    datetime = db.Column(db.DateTime, default=datetime.now,onupdate=datetime.now)
     user = db.relationship("User", back_populates="towers")
     tower = db.relationship("TowerDB",back_populates="users")
+
+    # Boolean columns for relationship types
+    recent = db.Column('recent',db.Boolean, default=False)
+    visited = db.Column(db.DateTime, default=datetime.now,onupdate=datetime.now)
+    creator = dbColumn('creator',db.Boolean,default=False)
 
     def __repr__(self):
         return '<Relationship: {} -- {} {}>'.format(self.relationship, self.user.username, self.tower.tower_id)
