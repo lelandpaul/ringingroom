@@ -36,11 +36,22 @@ class User(UserMixin, db.Model):
         tower_db = tower.to_TowerDB()
         if tower_db not in self._get_related_towers(relationship='RECENT'):
             self._add_related_tower(tower.to_TowerDB(), 'RECENT')
+        else:
+            # Update the timestamp
+            r = UserTowerRelation.query.filter(UserTowerRelation.user_id == self.id,
+                                               UserTowerRelation.tower_id == tower.tower_id,
+                                               UserTowerRelation.relationship == 'RECENT').first()
 
-    @property
-    def recent_towers(self):
+            r.datetime = datetime.now()
+            db.session.commit()
+
+    def recent_towers(self, n=0):
+        # Allows you to limit to n items; returns all by default
         # This returns a list of TowerDB objects!
-        return self._get_related_towers(relationship='RECENT')
+        n = n or len(self.towers)
+        return [rel.tower for rel \
+                in sorted(self.towers, key=lambda r: r.datetime, reverse=True)[:n]]
+
 
 @login.user_loader
 def load_user(id):
@@ -67,6 +78,7 @@ class UserTowerRelation(db.Model):
     user_id = db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key = True)
     tower_id = db.Column('tower_id',db.Integer, db.ForeignKey('towerDB.tower_id'), primary_key = True)
     relationship = db.Column(db.String(32))
+    datetime = db.Column(db.DateTime, default=datetime.now,onupdate=datetime.now)
     user = db.relationship("User", back_populates="towers")
     tower = db.relationship("TowerDB",back_populates="users")
 
