@@ -18,7 +18,7 @@
 	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/favicon/favicon-128.png')}}" sizes="128x128" />
 
 
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Wruczek/Bootstrap-Cookie-Alert@gh-pages/cookiealert.css">
     <script src="https://kit.fontawesome.com/b8eb96aee8.js" crossorigin="anonymous"></script>
     {% assets "css_static" %}
     <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}"></script>
@@ -83,6 +83,16 @@
 
 </div>
 
+<!-- START Bootstrap-Cookie-Alert -->
+<div class="alert text-center cookiealert" role="alert">
+    We use cookies to improve your experience on our website. <a href="https://cookiesandyou.com/" target="_blank">Learn more</a>
+
+    <button type="button" class="btn btn-primary btn-sm acceptcookies">
+        I agree
+    </button>
+</div>
+<!-- END Bootstrap-Cookie-Alert -->
+
 <script src="https://unpkg.com/vue@2.6.11/dist/vue.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -94,23 +104,9 @@
 {% endassets %}
 
 
-    <script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false"></script>
-    <script>
-    window.cookieconsent.initialise({
-      "content": {
-          message: "We use cookies to improve your experience."
-      },
-      "palette": {
-        "popup": {
-          "background": "#252e39"
-        },
-        "button": {
-          "background": "#0078e7",
-          "highlight":  "#0078e7"
-        }
-      }
-    });
-    </script>
+<script src="https://cdn.jsdelivr.net/gh/Wruczek/Bootstrap-Cookie-Alert@gh-pages/cookiealert.js"></script>
+
+
 
 </body>
 

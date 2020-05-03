@@ -19,10 +19,18 @@ $list-group-action-hover-color: #0d0a0b;
 $text-muted: #454955;
 $input-color: #454955;
 
-
-
 /* Import bootstrap */
 @import "../bootstrap/scss/bootstrap";
+
+.cookiealert{
+    position: fixed;
+    bottom: 0;
+    background-color: #454955;
+}
+
+.cookiealert a {
+    text-decoration: none;
+}
 
 /* Global Styling */
 
@@ -31,9 +39,7 @@ html {
 }
 
 body {
-  overflow: auto;
   font-family: "Lato", sans-serif;
-  height: 100%;
 }
 
 /* Font Styling */
