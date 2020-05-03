@@ -22,6 +22,12 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def  add_recent_tower(self, tower):
+        if isinstance(tower, Tower):
+            # cast to TowerDB
+            tower = tower.to_TowerDB()
+
+
     def _add_related_tower(self, tower, relationship):
         # Just instantiating this is enough — back population takes care of the rest
         UserTowerRelation(user=self, tower=tower, relationship=relationship)
@@ -86,10 +92,12 @@ class UserTowerRelation(db.Model):
     user = db.relationship("User", back_populates="towers")
     tower = db.relationship("TowerDB",back_populates="users")
 
-    # Boolean columns for relationship types
-    recent = db.Column('recent',db.Boolean, default=False)
+    # Most recent visit to tower
     visited = db.Column(db.DateTime, default=datetime.now,onupdate=datetime.now)
-    creator = dbColumn('creator',db.Boolean,default=False)
+
+    # Boolean columns for relationship types; also
+    recent = db.Column('recent',db.Boolean, default=False)
+    creator = db.Column('creator',db.Boolean,default=False)
 
     def __repr__(self):
         return '<Relationship: {} -- {} {}>'.format(self.relationship, self.user.username, self.tower.tower_id)
