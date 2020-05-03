@@ -148,6 +148,8 @@ def register():
         db.session.add(user)
         db.session.commit()
 
+        login_user(user)
+
         return redirect(url_for('index'))
     return render_template('authenticate.html', 
                            login_form=login_form,
