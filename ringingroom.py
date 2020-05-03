@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from app import app, socketio, db, towers
-from app.models import TowerDB, Tower, User
+from app.models import TowerDB, Tower, User, UserTowerRelation
 
 
 @app.shell_context_processor
@@ -10,7 +10,8 @@ def make_shell_context():
             'TowerDB': TowerDB, 
             'towers': towers,
             'Tower': Tower,
-            'User': User}
+            'User': User,
+            'UserTowerRelation': UserTowerRelation}
 
 
 if __name__ == '__main__':
