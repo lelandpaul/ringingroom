@@ -66,7 +66,9 @@
             <ul class="nav navbar-nav navbar-right">
                     {% if current_user.is_anonymous %}
                     <li class="nav-item">
-                        <a class="nav-link" href='{{ url_for('authenticate') }}'>Log In</a>
+                        <a class="nav-link" href='{{ url_for('authenticate') }}'>
+                            <i class="fas fa-fw fa-user"></i>
+                            Log In / Register</a>
                     </li>
                     {% else %}
                     {% include '_user_menu.html' %}
