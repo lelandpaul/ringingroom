@@ -238,7 +238,8 @@ Vue.component("bell_rope", {
             <div class="bell"
                  :class="[left_side ? 'left_side' : '',
                           image_prefix === 'h-' ? 'handbell' : '',
-                          top_side ? 'top_side' : '',]">
+                          top_side ? 'top_side' : '',
+                          window.tower_parameters.anonymous_user ? 'no_ring' : '']">
                 <div class="row"
                     :class="[left_side ? 'flex-row-reverse' :  '',
                              top_side ? 'align-items-start' : 'align-items-end']">
@@ -630,6 +631,7 @@ Vue.component('user_display', {
                 <button class="btn btn-outline-primary"
                         :class="{active: assignment_mode}"
                         @click="toggle_assignment"
+                        v-if="!window.tower_parameters.anonymous_user"
                         >
                    [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
                  </button>
@@ -640,7 +642,7 @@ Vue.component('user_display', {
                           active: cur_user == selected_user && assignment_mode}"
                  v-if="window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link"
                  >
-                 <span class="mr-auto">Not logged in</span>
+                 <span class="mr-auto">Log in to ring</span>
                  <span class="float-right">
                  <a class="btn btn-outline-primary btn-sm" 
                     :href="'/authenticate?next=' + window.location.pathname">Log In</a>
@@ -965,7 +967,7 @@ bell_circle = new Vue({
                         <button class="toggle_help btn btn-outline-primary"
                                 data-toggle="collapse"
                                 data-target="#help"
-                                v-if="!window.tower_parameters.observer"
+                                v-if="!window.tower_parameters.listen_link"
                                 @click="toggle_help"
                                 >
                                 Help [[ hidden_help ? '▸' : '▾' ]]
