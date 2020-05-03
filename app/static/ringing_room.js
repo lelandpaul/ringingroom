@@ -496,48 +496,44 @@ Vue.component('help', {
 
 
 	template: `
-            <div class="row" v-if="!window.tower_parameters.observer">
-			<div class="col">
-            <div class="card text-justify">
-            <div class="card-body">
-                <h5 class="card-title">How to use Ringing Room</h5>
-                  	<p>
-                  		On the top left, you may set the number of bells in the tower by clicking the desired number. 
-                  		To ring, you may either click on the ropes or use the following hot-keys:
-                  	</p>
-					<ul>
-						<li> <b>[1-9], [0], [-], [=]:</b> Rings bells 1 - 9, 10, 11, and 12</li>
-						<li><b>[SPACE]:</b> Rings the bell in the lower right corner.</li>
-						<li><b>[LEFT] and [RIGHT] arrow keys:</b> Rings the left and right bottom-most bells.</li>
-						<li><b>[f] and [j]:</b> same as [LEFT] and [RIGHT]</li>
-						<li><b>[SHIFT]+[0-9]\\[0]\\[-]\\[=]:</b> Rotate the "perspective" of the ringing room to put that bell in the lower right corner so it may be rung by [SPACE] or [j].</li>
-					</ul>
-					<p>
-						There are also hot-keys for various calls, but be aware that in some browsers using these 
-						results in the sound of the bells being interrupted.
-					</p>
-					
-					<p>Ringers may now <i>assign bells</i> by entering bell assignment mode (top left of the screen). While in
-					this mode, any ringer may be selected under the user list and then a second click by a bell will assign
-					that user to a bell. Clicking the "x" by the user's name will kick them off that bell. Bells may not be rung
-					in bell assignment mode. Simply click the button in the control towers to exit bell assignment mode.
-					For now, anyone may assign anyone (and kick off anyone).</p>
+<div class="row" v-if="!window.tower_parameters.observer">
+<div class="col">
+<div class="card text-justify">
+<div class="card-body">
+<h5 class="card-title">How to use Ringing Room</h5>
+
+<p>To ring, you may either click on the ropes or use the following hot-keys:</p>
+
+<ul>
+    <li> <b>[1-9], [0], [-], [=]:</b> Rings bells 1 - 9, 10, 11, and 12</li>
+    <li><b>[SPACE]:</b> Rings the bell in the lower right corner.</li>
+    <li><b>[LEFT] and [RIGHT] arrow keys:</b> Rings the left and right bottom-most bells.</li>
+    <li><b>[f] and [j]:</b> same as [LEFT] and [RIGHT]</li>
+    <li><b>[SHIFT]+[0-9]\\[0]\\[-]\\[=]:</b> Rotate the "perspective" of the ringing room to put that bell in the lower right corner so it may be rung by [SPACE] or [j].</li>
+</ul>
+
+<p> The tower controls allow you to set the number of bells, change whether you're using towerbell or handbell images and sounds, and set all the bells at hand.</p>
+
+<p>The user list allows you to <i>assign bells</i> to particular ringers. To assign ringers, press the "Assign Bells" button to enter bell assignment mode. While in this mode, you may select any ringer from the user list by clicking on them, and then click on the box next to the bell you want to assign them to. Clicking the "x" by a user's name will unassign them from that bell. While in assignment mode, you can't ring any bells; when you're done assigning bells, click the "Stop Assigning" button to return to normal mode.</p>
+
+<p>Assigning a user to a bell will have the effect of automatically rotating that ringer's "perspective" on the tower so that the bell is placed in the bottom right position. This will allow it to be rung using the [SPACE] or [j] hotkeys. If a user is assigned to multiple bells, the lowest-numbered one will be placed in position; this means that if the user is assigned to exactly 2 bells, those bells we be ringable with [f] and [j].</p>
+
 			
-					<p>There are also hot-keys for various calls, but be aware that in some browsers using these results
-							in the sound of the bells being interrupted.</p>
-					<ul>
-						<li><b>[l]</b>ook to...</li>
-						<li><b>[g]</b>o next time</li>
-						<li><b>[b]</b>ob</li>
-						<li>si<b>[n]</b>gle</li>
-						<li>t<b>[h]</b>at's all</li>
-						<li>s<b>[t]</b>and next</li>
-					</ul>
-				</div>
-			</div>
-            </div>
-            </div>
-            </div>
+<p>You can make calls by using the hotkeys below. However, be aware that in some browsers these result in the sound of the bells being interrupted.</p>
+
+<ul>
+    <li><b>[l]</b>ook to...</li>
+    <li><b>[g]</b>o next time</li>
+    <li><b>[b]</b>ob</li>
+    <li>si<b>[n]</b>gle</li>
+    <li>t<b>[h]</b>at's all</li>
+    <li>s<b>[t]</b>and next</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
                `,
 }); // End help
 
