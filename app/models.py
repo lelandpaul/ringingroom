@@ -90,7 +90,8 @@ class TowerDB(db.Model):
 
     @property
     def creator(self):
-        return UserTowerRelation.query.filter(tower==self, creator=True).first()
+        return UserTowerRelation.query.filter(UserTowerRelation.tower==self, 
+                                              UserTowerRelation.creator==True).first().user
 
 
 
@@ -256,6 +257,7 @@ class TowerDict(dict):
         self._db = db
         self._table = table
         self._garbage_collection_interval = timedelta(hours=12)
+
 
     def check_db_for_key(self, key):
 
