@@ -35,6 +35,12 @@ class User(UserMixin, db.Model):
         # Expects a Tower object
         tower_db = tower.to_TowerDB()
         if tower_db not in self._get_related_towers(relationship='RECENT'):
+            # if there are already 10 towers, expunge the oldest
+            # (at present, only the first 5 are displayed)
+            if len(self._get_related_towers(relationship='RECENT')) == 10:
+                oldest = sorted([rel for rel in self.towers if rel.relationship=='RECENT'],
+                                key=lambda x: x.datetime)[0]
+                db.session.delete(oldest)
             self._add_related_tower(tower.to_TowerDB(), 'RECENT')
         else:
             # Update the timestamp
