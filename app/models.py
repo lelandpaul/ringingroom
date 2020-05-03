@@ -22,47 +22,44 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def _clean_recent_towers(self,cutoff=10):
+        # delete all but the cuttoff most recent towers
+        old_rels = sorted([tower for tower in self.towers if tower.recent],
+                          key=lambda x: x.visited,
+                          reverse=True)[cutoff:]
+        for rel in old_rels:
+            db.session.delete(rel)
+
     def  add_recent_tower(self, tower):
+        print('**** adding tower')
         if isinstance(tower, Tower):
             # cast to TowerDB
             tower = tower.to_TowerDB()
-
-
-    def _add_related_tower(self, tower, relationship):
-        # Just instantiating this is enough — back population takes care of the rest
-        UserTowerRelation(user=self, tower=tower, relationship=relationship)
+        # See if a relation already exists
+        rel = UserTowerRelation.query.filter(UserTowerRelation.user == self, 
+                                             UserTowerRelation.tower == tower).first()
+        if not rel:
+            print('**** no existing rel')
+            # Just instantiating this is enough — back population takes care of the rest
+            # (If you add it, it winds up duplicated)
+            UserTowerRelation(user=self, tower=tower, recent=True)
+        else:
+            print('**** updating old rel')
+            # Update the timestamp (and recent, if necessary)
+            rel.recent = True
+            rel.visited = datetime.now()
+        self._clean_recent_towers()
         db.session.commit()
 
-    def _get_related_towers(self, relationship=''):
-        # Returns TowerDB objects, not Tower!
-        return [relation.tower for relation in self.towers if relationship in relation.relationship]
-
-    def add_recent_tower(self, tower):
-        # Expects a Tower object
-        tower_db = tower.to_TowerDB()
-        if tower_db not in self._get_related_towers(relationship='RECENT'):
-            # if there are already 10 towers, expunge the oldest
-            # (at present, only the first 5 are displayed)
-            if len(self._get_related_towers(relationship='RECENT')) == 10:
-                oldest = sorted([rel for rel in self.towers if rel.relationship=='RECENT'],
-                                key=lambda x: x.datetime)[0]
-                db.session.delete(oldest)
-            self._add_related_tower(tower.to_TowerDB(), 'RECENT')
-        else:
-            # Update the timestamp
-            r = UserTowerRelation.query.filter(UserTowerRelation.user_id == self.id,
-                                               UserTowerRelation.tower_id == tower.tower_id,
-                                               UserTowerRelation.relationship == 'RECENT').first()
-
-            r.datetime = datetime.now()
-            db.session.commit()
-
+    
     def recent_towers(self, n=0):
         # Allows you to limit to n items; returns all by default
-        # This returns a list of TowerDB objects!
+        # This returns a list of TowerDB objects — if we want to convert them to memory, that should
+        # happen by looking them up in the TowerDict instance
         n = n or len(self.towers)
         return [rel.tower for rel \
-                in sorted(self.towers, key=lambda r: r.datetime, reverse=True)[:n]]
+                in sorted(self.towers, key=lambda r: r.visited, reverse=True)
+                if rel.recent][:n]
 
 
 @login.user_loader
@@ -85,6 +82,18 @@ class TowerDB(db.Model):
     def to_Tower(self):
         return Tower(self.tower_name, tower_id=self.tower_id)
 
+    def created_by(self, user):
+        # Expects a User object
+        # Just instantiating this is enough
+        UserTowerRelation(user=user, tower=self, creator=True)
+        db.session.commit()
+
+    @property
+    def creator(self):
+        return UserTowerRelation.query.filter(tower==self, creator=True).first()
+
+
+
 
 class UserTowerRelation(db.Model):
     user_id = db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key = True)
@@ -100,7 +109,16 @@ class UserTowerRelation(db.Model):
     creator = db.Column('creator',db.Boolean,default=False)
 
     def __repr__(self):
-        return '<Relationship: {} -- {} {}>'.format(self.relationship, self.user.username, self.tower.tower_id)
+        return '<Relationship: {} --- {} {}>'.format(self.user.username,
+                                                     self.tower.tower_name,
+                                                     self.tower.tower_id)
+
+    def clean_up(self):
+        # Call this whenever you change a boolean column from True to False
+        # Checks if all relations are false, deletes if relevant
+        relationship_types = [self.recent, self.creator]
+        if not any(relationship_types):
+            self.delete()
 
 
 
