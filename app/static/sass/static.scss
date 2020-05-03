@@ -21,7 +21,7 @@
 
 .centered_block {
     width: 25rem;
-    margin-top:40%;
+    margin-top: max(12rem, 25vh);
 
 }
 
@@ -42,6 +42,10 @@
     font-weight: bold;
 }
 
+.title {
+    font-size: 1.25rem;
+}
+
 // for the top page of Ringing Room
 .title h1 {
     font-family: 'Simonetta', cursive;
@@ -49,15 +53,16 @@
     text-align: center;
     margin-bottom: 0.4rem;
     font-style: normal;
+    font-size: 3rem;
 }
 
 // blueline/grid circle
 .grid_circle {
     padding-top:1rem;
     display: relative;
-    width: 85vh;
+    width: max(45rem, 90vh);
     position:absolute;
-    top: 50%;
+    top: max(25rem, 50vh);
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: -1;

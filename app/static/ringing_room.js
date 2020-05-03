@@ -414,7 +414,7 @@ Vue.component('tower_controls', {
                 <div class="btn-group btn-block btn-group-toggle">
                     <label v-for="size in tower_sizes"
                            :size="size"
-                           class="btn btn-outline-secondary"
+                           class="btn btn-outline-primary"
                            :class="{active: size === number_of_bells}"
                            @click="set_tower_size(size)"
                            >
@@ -433,7 +433,7 @@ Vue.component('tower_controls', {
 
                  <div class="col">
                       <div class="btn-group btn-block btn-group-toggle">
-                        <label class="btn btn-outline-secondary"
+                        <label class="btn btn-outline-primary"
                                :class="{active: audio_type == 'Tower'}">
                         <input type="radio" 
                                name="audio"
@@ -444,7 +444,7 @@ Vue.component('tower_controls', {
                                Tower
                         </label>
 
-                        <label class="btn btn-outline-secondary"
+                        <label class="btn btn-outline-primary"
                                :class="{active: audio_type == 'Hand'}">
                         <input type="radio" 
                                name="audio"
@@ -458,7 +458,7 @@ Vue.component('tower_controls', {
                  </div>
 
                  <div class="col">
-                     <button class="set_at_hand btn btn-outline-secondary btn-block"
+                     <button class="set_at_hand btn btn-outline-primary btn-block"
                            @click="set_bells_at_hand"
                            >
                          Set at hand
@@ -948,7 +948,7 @@ bell_circle = new Vue({
                             <span class="input-group-text">[[tower_id]]</span>
                         </div>
                         <div class="input-group-append">
-                            <button class="btn btn-outline-secondary"
+                            <button class="btn btn-outline-primary"
                                data-toggle="tooltip"
                                data-placement="bottom"
                                data-container="body"
@@ -962,7 +962,7 @@ bell_circle = new Vue({
                      </div>
                      </div>
                      <div class="col-auto">
-                        <button class="toggle_help btn btn-outline-secondary"
+                        <button class="toggle_help btn btn-outline-primary"
                                 data-toggle="collapse"
                                 data-target="#help"
                                 v-if="!window.tower_parameters.observer"
@@ -972,7 +972,7 @@ bell_circle = new Vue({
                             </button>
                      </div>
                      <div class="col-auto toggle_controls d-lg-none">
-                         <button class="toggle_controls btn btn-outline-secondary" 
+                         <button class="toggle_controls btn btn-outline-primary" 
                                  data-toggle="collapse"
                                  data-target="#tower_controls"
                                  @click="toggle_controls"
