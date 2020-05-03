@@ -39,6 +39,9 @@ def on_create_tower(data):
     new_tower = Tower(tower_name)
     towers[new_tower.tower_id] = new_tower
 
+    if not current_user.is_anonymous:
+        new_tower.to_TowerDB().created_by(current_user)
+
     emit('s_redirection',
          str(new_tower.tower_id) + '/' + new_tower.url_safe_name)
 

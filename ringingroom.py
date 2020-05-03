@@ -11,7 +11,9 @@ def make_shell_context():
             'towers': towers,
             'Tower': Tower,
             'User': User,
-            'UserTowerRelation': UserTowerRelation}
+            'UserTowerRelation': UserTowerRelation,
+            'u': User.query.first(),
+            't': TowerDB.query.first()}
 
 
 if __name__ == '__main__':
