@@ -74,6 +74,8 @@ def on_join(json):
              broadcast=True, include_self=True, room=tower_id)
         log('SETUP observer s_set_observers', tower.observers)
     else:
+        # The user is logged in. Add this as a recent tower
+        current_user.add_recent_tower(tower)
         # If the user is logged in, but is already in the room: Remove them (in
         # preparation for adding them again)
         if current_user.username in tower.users.keys():

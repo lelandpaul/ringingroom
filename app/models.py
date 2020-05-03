@@ -25,15 +25,21 @@ class User(UserMixin, db.Model):
     def _add_related_tower(self, tower, relationship):
         # Just instantiating this is enough — back population takes care of the rest
         UserTowerRelation(user=self, tower=tower, relationship=relationship)
+        db.session.commit()
 
     def _get_related_towers(self, relationship=''):
+        # Returns TowerDB objects, not Tower!
         return [relation.tower for relation in self.towers if relationship in relation.relationship]
 
     def add_recent_tower(self, tower):
-        self._add_related_tower(tower, 'RECENT')
+        # Expects a Tower object
+        tower_db = tower.to_TowerDB()
+        if tower_db not in self._get_related_towers(relationship='RECENT'):
+            self._add_related_tower(tower.to_TowerDB(), 'RECENT')
 
     @property
     def recent_towers(self):
+        # This returns a list of TowerDB objects!
         return self._get_related_towers(relationship='RECENT')
 
 @login.user_loader
@@ -51,7 +57,7 @@ class TowerDB(db.Model):
     users = db.relationship("UserTowerRelation", back_populates="tower")
 
     def __repr__(self):
-        return '<Tower {}: {}>'.format(self.tower_id, self.tower_name)
+        return '<TowerDB {}: {}>'.format(self.tower_id, self.tower_name)
 
     def to_Tower(self):
         return Tower(self.tower_name, tower_id=self.tower_id)
@@ -97,7 +103,10 @@ class Tower:
         return tmp_tower_id
 
     def to_TowerDB(self):
-        return(TowerDB(tower_id=self.tower_id, tower_name=self.name))
+        # Check if it's already there — we need this for checking whether a tower is already in a
+        # users related towers
+        tower_db = TowerDB.query.filter(TowerDB.tower_id==self.tower_id).first()
+        return tower_db or TowerDB(tower_id=self.tower_id, tower_name=self.name)
 
     @property
     def tower_id(self):
