@@ -24,11 +24,12 @@ def index():
     return render_template('landing_page.html')
 
 
-# Create / find other towers/rooms
+# Create / find other towers/rooms as an observer
 @app.route('/<int:tower_id>/listen')
 @app.route('/<int:tower_id>/<decorator>/listen')
 def observer(tower_id, decorator=None):
     try:
+        towers.garbage_collection(tower_id)
         tower = towers[tower_id]
     except KeyError:
         log('Bad tower_id')
@@ -47,6 +48,7 @@ def assign_user_id():
 @app.route('/<int:tower_id>/<decorator>')
 def tower(tower_id, decorator=None):
     try:
+        towers.garbage_collection(tower_id)
         tower = towers[tower_id]
     except KeyError:
         log('Bad tower_id')
