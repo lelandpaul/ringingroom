@@ -100,7 +100,7 @@ class UserTowerRelation(db.Model):
     tower = db.relationship("TowerDB",back_populates="users")
 
     # Most recent visit to tower
-    visited = db.Column(db.DateTime, default=datetime.now,onupdate=datetime.now)
+    visited = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
     # Boolean columns for relationship types; also
     recent = db.Column('recent',db.Boolean, default=False)
@@ -253,7 +253,7 @@ class TowerDict(dict):
     def __init__(self, table=TowerDB, db=db):
         self._db = db
         self._table = table
-        self._garbage_collection_interval = timedelta(seconds=5)
+        self._garbage_collection_interval = timedelta(hours=12)
 
 
     def garbage_collection(self, key = None):
