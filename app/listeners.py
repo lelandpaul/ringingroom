@@ -79,6 +79,7 @@ def on_join(json):
     else:
         # The user is logged in. Add this as a recent tower
         current_user.add_recent_tower(tower)
+        tower.add_user(current_user, current_user.username)
         # If the user is logged in, but is already in the room: Remove them (in
         # preparation for adding them again)
         if current_user.username in tower.users.keys():
@@ -88,10 +89,9 @@ def on_join(json):
                                 broadcast = True,
                                 include_self = True,
                                 room = tower_id)
-            # For now: Keeping the "id/username" split in the tower model
-            # Eventually, this will allow us to have display names different
-            # from the username
-            tower.add_user(current_user, current_user)
+        # For now: Keeping the "id/username" split in the tower model
+        # Eventually, this will allow us to have display names different
+        # from the username
         emit('s_user_entered', { 'user_name': current_user.username },
              broadcast=True, include_self = True, room=json['tower_id'])
 
@@ -227,7 +227,6 @@ def on_size_change(size):
 @socketio.on('c_request_global_state')
 def on_request_global_state(json):
     log('c_request_global_state', json)
-    print('global state requested')
     tower_id = json['tower_id']
     tower = towers[tower_id]
     state = tower.bell_state
