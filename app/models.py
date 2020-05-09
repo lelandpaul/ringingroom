@@ -31,7 +31,6 @@ class User(UserMixin, db.Model):
             db.session.delete(rel)
 
     def  add_recent_tower(self, tower):
-        print('**** adding tower')
         if isinstance(tower, Tower):
             # cast to TowerDB
             tower = tower.to_TowerDB()
@@ -39,12 +38,10 @@ class User(UserMixin, db.Model):
         rel = UserTowerRelation.query.filter(UserTowerRelation.user == self, 
                                              UserTowerRelation.tower == tower).first()
         if not rel:
-            print('**** no existing rel')
             # Just instantiating this is enough — back population takes care of the rest
             # (If you add it, it winds up duplicated)
             UserTowerRelation(user=self, tower=tower, recent=True)
         else:
-            print('**** updating old rel')
             # Update the timestamp (and recent, if necessary)
             rel.recent = True
             rel.visited = datetime.now()
@@ -103,7 +100,7 @@ class UserTowerRelation(db.Model):
     tower = db.relationship("TowerDB",back_populates="users")
 
     # Most recent visit to tower
-    visited = db.Column(db.DateTime, default=datetime.now,onupdate=datetime.now)
+    visited = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
     # Boolean columns for relationship types; also
     recent = db.Column('recent',db.Boolean, default=False)
@@ -259,8 +256,7 @@ class TowerDict(dict):
         self._garbage_collection_interval = timedelta(hours=12)
 
 
-    def check_db_for_key(self, key):
-
+    def garbage_collection(self, key = None):
         # prepare garbage collection
         # don't collect the key we're currently looking up though
         keys_to_delete = [k for k, (value, timestamp) in self.items() 
@@ -269,8 +265,11 @@ class TowerDict(dict):
         log('Garbage collection:', keys_to_delete)
 
         # run garbage collection
-        for key in keys_to_delete: 
-            dict.__delitem__(self, key)
+        for deleted_key in keys_to_delete: 
+            dict.__delitem__(self, deleted_key)
+
+
+    def check_db_for_key(self, key):
 
         if key in self.keys():
             # It's already in memory, don't check the db

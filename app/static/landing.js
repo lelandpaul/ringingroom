@@ -164,7 +164,7 @@ tower_selector = new Vue({
                         </div>
                     </div>
 
-                    <div class="form-text text-muted text-justify" id="join-message"> 
+                    <div class="form-text text-justify" id="join-message"> 
                         [[ message ]]
                     </div>
 

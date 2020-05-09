@@ -2,13 +2,13 @@
 
 // whole page width of static
 .container {
-    max-width: 50rem;
+    max-width: 65rem;
 }
 
 // content container for e.g. text
 .content_container {
     text-align: left;
-    max-width: 45rem;
+    max-width: 57rem;
     padding-top: 20px;
     min-height: 100%;
 }
@@ -21,7 +21,7 @@
 
 .centered_block {
     width: 25rem;
-    margin-top: max(12rem, 25vh);
+    margin-top: max(8rem, 22vh);
 
 }
 
@@ -36,24 +36,45 @@
     font-weight: bold;
 }
 
+// make the navbar a bit higher contrast
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255,255,255,0.75);
+    font-weight: 400;
+}
+
+.navbar-dark .navbar-brand {
+    font-size: 1.75rem;
+}
+
+.navbar-brand-text {
+    vertical-align: -0.25;
+
+}
+
 // for the top page of Ringing Room
 .title h1 {
     font-family: 'Simonetta', cursive;
     font-weight: normal;
     text-align: center;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.6rem;
     font-style: normal;
-    font-size: 3rem;
+    font-size: 3.5rem;
 }
 
 // blueline/grid circle
 .grid_circle {
     padding-top:1rem;
     display: relative;
-    width: max(45rem, 90vh);
+    width: max(49rem, 90vh);
     position:absolute;
-    top: max(25rem, 50vh);
+    top: max(27rem, 50vh);
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: -1;
+}
+
+#join-message {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+
 }

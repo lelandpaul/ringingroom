@@ -717,9 +717,10 @@ bell_circle = new Vue({
 			// Shift+1 produces code "Digit1"; this gets the digit itself
 			const code = e.code[e.code.length - 1]
 
-            // Do a special thing to prevent space from focusing buttons
-            if (e.which == 32) {
+            // Do a special thing to prevent space and the arrow keys from hitting focused elements
+            if (e.which == 32 || e.which == 37 || e.which == 39) {
                 e.preventDefault();
+
             }
 
 			// The numberkeys 1-0 ring those bells, with -, = ringing E, T
@@ -751,41 +752,41 @@ bell_circle = new Vue({
 
 			const n_b = bell_circle.number_of_bells;
 			// Space, j, and ArrowRight ring the bell in position n/2
-			if ([' ','j','ArrowRight'].includes(key)){
+			if ([' ','j','J','ArrowRight'].includes(key)){
 				bell_circle.pull_rope_by_pos(1);
 			}
 
 			// f and ArrowLeft ring the bell in position n/2 + 1
-			if (['f','ArrowLeft'].includes(key)){
+			if (['f','F','ArrowLeft'].includes(key)){
 				bell_circle.pull_rope_by_pos(2);
 			}
 
 			// Calls are: g = go; h = stop; b = bob; n = single.
-			if (['b'].includes(key)){
+			if (['b','B'].includes(key)){
 				console.log('calling bob');
 				bell_circle.make_call('Bob');
 			}
-			if (['n'].includes(key)){
+			if (['n','N'].includes(key)){
 				console.log('calling single');
 				bell_circle.make_call('Single');
 			}
 
-			if(['g'].includes(key)){
+			if(['g','G'].includes(key)){
 				console.log('calling go');
 				bell_circle.make_call('Go');
 			}
 
-			if (['h'].includes(key)){
+			if (['h','H'].includes(key)){
 				console.log('calling stop');
 				bell_circle.make_call("That's all");
 			}
 
-			if (['t'].includes(key)){
+			if (['t','T'].includes(key)){
 				console.log('calling stand');
 				bell_circle.make_call("Stand next");
 			}
 
-			if (['l'].includes(key)){
+			if (['l','L'].includes(key)){
 				console.log('calling look-to');
 				bell_circle.make_call("Look to");
 			}
