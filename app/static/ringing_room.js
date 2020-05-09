@@ -683,6 +683,8 @@ bell_circle = new Vue({
 
 	el: "#bell_circle",
 
+    data: {key_down: false},
+
     mounted: function() {
         
         /////////////////
@@ -704,6 +706,7 @@ bell_circle = new Vue({
 
             // Do a special thing to prevent space from pressing focused buttons
             window.addEventListener('keyup', (e) => {
+                this.key_down = false;
                 if (e.which == 32) {
                     e.preventDefault();
                 }
@@ -838,6 +841,8 @@ bell_circle = new Vue({
     
       // Trigger a specific bell to emit a ringing event
 	  pull_rope: function(bell) {
+        if (this.key_down){ return};
+        this.key_down = true;
 		console.log("Pulling the " + bell)
 		this.$refs.bells[bell-1].emit_ringing_event()
 	  },
