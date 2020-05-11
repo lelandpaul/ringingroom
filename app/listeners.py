@@ -131,8 +131,9 @@ def on_user_left(json):
 
 
     tower.remove_user(user_id)
-    emit('s_user_left', { 'user_name': user_id },
-         broadcast=True, include_self = False, room=tower_id)
+    print('**** emiting s_user_left')
+    emit('s_user_left', { 'user_name': current_user.username },
+         broadcast=True, include_self = True, room=tower_id)
 
     send_assignments(tower_id)
 
