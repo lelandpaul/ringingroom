@@ -94,10 +94,7 @@
 }
 
 @include media-breakpoint-up(xs) {
-    @include bell_circle(20rem,50vw,30vh);
-    @supports (width: max(5px,5px)){
-        @include bell_circle(20rem,50vw,max(30vh,15rem));
-    }
+    @include bell_circle(20rem,50vw,max(30vh,15rem));
     .bell_metadata {
         margin-left: -0.5rem;
         margin-right: -0.5rem;
@@ -115,10 +112,7 @@
 }
 
 @include media-breakpoint-up(sm) {
-    @include bell_circle(25rem,50vw, 35vh);
-    @supports (width: max(5px,5px)){
-        @include bell_circle(25rem,50vw,max(35vh,20rem));
-    }
+    @include bell_circle(25rem,50vw, max(35vh, 20rem));
     .bell_img {
         width: 3rem;
     }
@@ -128,10 +122,7 @@
 }
 
 @include media-breakpoint-up(md) {
-    @include bell_circle(35rem,50vw, 40vh);
-    @supports (width: max(5px,5px)){
-        @include bell_circle(35rem,50vw,max(40vh,24rem));
-    }
+    @include bell_circle(35rem,50vw, max(40vh, 24rem));
     .bell_img {
         width: 3.5rem;
     }
@@ -141,10 +132,7 @@
 }
 
 @include media-breakpoint-up(lg) {
-    @include bell_circle(35rem,32vw,50vh);
-    @supports (width: max(5px,5px)){
-        @include bell_circle(35rem,32vw, max(24rem,50vh));
-    }
+    @include bell_circle(35rem,32vw, max(22rem,50vh));
     .bell_metadata {
         margin-left: -0.75rem;
         margin-right: -0.75rem;
@@ -165,10 +153,7 @@
 }
 
 @include media-breakpoint-up(xl) {
-    @include bell_circle(40rem,30vw,50vh);
-    @supports (width: max(5px,5px)){
-        @include bell_circle(40rem,30vw,max(27rem,50vh));
-    }
+    @include bell_circle(40rem,30vw, max(24rem,50vh));
     .bell_img {
         width: 4rem;
     }

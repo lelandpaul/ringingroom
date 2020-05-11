@@ -1,7 +1,7 @@
 from flask import render_template, send_from_directory, abort, flash, redirect, url_for, session, request
 from flask_login import login_user, logout_user, current_user, login_required
 from app import app, towers, log, db
-from app.models import User, UserTowerRelation
+from app.models import User
 from flask_login import current_user, login_user, logout_user, login_required
 from app.forms import LoginForm, RegistrationForm, UserSettingsForm
 from urllib.parse import urlparse
@@ -153,8 +153,6 @@ def register():
 def user_settings():
     form = UserSettingsForm()
     if form.validate_on_submit() and current_user.check_password(form.password.data):
-        if form.delete_account:
-            return redirect(url_for('delete'))
         if form.new_password.data:
             current_user.set_password(form.new_password.data)
             flash('Password updated.')
@@ -165,22 +163,4 @@ def user_settings():
             flash('Username updated.')
         db.session.commit()
     return render_template('user_settings.html', form=form)
-
-@app.route('/delete')
-@login_required
-def delete():
-    if current_user.is_anonymous:
-        return redirect(url_for('index'))
-    # delete relationships
-    rels = UserTowerRelation.query.filter(UserTowerRelation.user == current_user).all()
-    for rel in rels:
-        db.session.delete(rel)
-    # delete user
-    db.session.delete(current_user)
-    db.session.commit()
-    logout_user()
-    return redirect(url_for('index'))
-    
-    
-
 

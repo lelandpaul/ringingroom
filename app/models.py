@@ -174,6 +174,7 @@ class Tower:
         self._users = users
 
     def add_user(self, user_id, user_name):
+        if isinstance(user_id, AnonymousUserMixin):
         self._users[user_id] = user_name
 
     def remove_user(self, user_id):

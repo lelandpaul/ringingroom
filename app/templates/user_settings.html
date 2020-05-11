@@ -62,6 +62,7 @@
 
 </div>
 
+
 <hr/>
 
 <div class="form-row align-items-center">
@@ -69,7 +70,7 @@
     <div class="col-3 col-form-label">
             {{ form.password.label }}
     </div>
-    <div class="col-6">
+    <div class="col-9">
         <div class="input-group">
             {{ form.password(size=32, class="form-control") }}
             <div class="input-group-append">
@@ -78,32 +79,19 @@
         </div>
     </div>
 
-    <div class="col-2 offset-1">
-        {{form.delete_account(class="btn btn-primary", onclick="return confirm('Are you sure you wish to delete your account? This cannot be undone.');")}}
-    </div>
-
-    <div class="col-6 offset-3">
+    <div class="col-9 offset-3">
         <small class="form-text text-muted">
-            Enter your current password to make changes.<br>
+            Enter your current password to make changes.
             {% for error in form.password.errors %}
             <span style="color: red;">{{ error }}</span>
             {% endfor %}
         </small>
     </div>
 
-    <div class="col-2 offset-1">
-        <small class="form-text text-muted">
-            Permanent!
-        </small>
-        </div>
-
-
-</div>
-
-
 
 
     
+</div>
 
 
 </form>
