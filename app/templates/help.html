@@ -1,89 +1,110 @@
 {% extends 'base.html' %}
 
-{% block title %}Help — {% endblock %}
+{% block app_content %}
+
+<p>Here's how to get started with the Ringing Room.</p>
+
+<h3>Creating an account</h3>
+
+<p>To use the Ringing Room, you will need an account. You can create an account by clicking the "Log In / Register" button at the top right of your screen.</p>
+
+<p>Once you've created an account, you'll be able to ring in any tower. Additionally, when not in a tower, the menu at the top right will include shortcuts to your 5 most recently visited towers. You can also modify your username, email address, or password.</p>
+
+<p>Your email address and an encrypted version of your password are stored securely on our server. We will not share them with anyone for any reason.</p>
+
+            
+<h3>Creating a new tower</h3>
+
+<p>Starting a new room is simple: go to the home page by clicking "Ringing Room" at the left side of the bar at the top of this page. Then put any name you like in the text box and click "Create". This will create a new "tower" with a shareable URL and ID number. To share this tower with other ringers, you can either copy the URL from your browser's navigation bar or just send them the ID number.</p>
+
+<h3>Joining an existing tower</h3>
+
+<p>There are currently two ways to join a tower that already exists. The easiest way is to go directly to the link that the room's creator has sent you. Alternatively you may type in <i>just</i> the numerical ID (a nine-digit number) into the text box on the homepage and then click "Join".</p>
+
+<h3>Setting up and ringing in a tower</h3>
+
+<p>Once you're in a tower, you can click on the ropes or handbells to ring them. Alternatively, the following hot-keys are enabled:</p>
+
+<ul>
+    <li> <b>[1-9], [0], [-], [=]:</b> Rings bells 1 - 9, 10, 11, and 12</li>
+    <li><b>[SPACE]:</b> Rings the bell in the lower right corner.</li>
+    <li><b>[LEFT] and [RIGHT] arrow keys:</b> Rings the left and right bottom-most bells.</li>
+    <li><b>[f] and [j]:</b> same as [LEFT] and [RIGHT]</li>
+    <li><b>[SHIFT]+[0-9]\[0]\[-]\[=]:</b> Rotate the "perspective" of the ringing room to put that bell
+        in the lower right corner so it may be rung by [SPACE] or [j].</li>
+</ul>
+
+<p>The tower controls will either be in the left-hand sidebar (on larger screens), or accessible by pressing the "Controls" button in the top right (on smaller screens). The controls allow you to set the number of bells in the tower (four to twelve); control whether the images and sounds are of handbells or of tower bells and ropes; and set all of the bells at hand.</p>
+
+<p>The tower controls also include a list of users presently in the tower, which you can use to <i>assign bells</i> to particular ringers. To assign ringers, press the "Assign Bells" button to enter bell assignment mode. While in this mode, you may select any ringer from the user list by clicking on them, and then click on the box next to the bell you want to assign them to. Clicking the "x" by a user's name will unassign them from that bell. While in assignment mode, you can't ring any bells; when you're done assigning bells, click the "Stop Assigning" button to return to normal mode.</p>
+
+<p>Assigning a user to a bell will have the effect of automatically rotating that ringer's "perspective" on the tower so that the bell is placed in the bottom right position. This will allow it to be rung using the [SPACE] or [j] hotkeys. If a user is assigned to multiple bells, the lowest-numbered one will be placed in position; this means that if the user is assigned to exactly 2 bells, those bells we be ringable with [f] and [j].</p>
+
+<p>The user display will always list your own username first (or present you with the option to log in). By your username is a "Leave Tower" button that will remove you from the tower and send you back to the homepage. Finally, if there is anyone in the room who is not logged in (or who is there via the "listener link" — see below), the number of such users will be listed at the bottom of the user display.</p>
+
+<h3>Making calls</h3>
+
+<p>There are also hot-keys to trigger aural and visual notification for various calls, but be aware that in some browsers using these results in the sound of the bells being interrupted.</p>
+<ul>
+    <li><b>[l]</b>ook to...</li>
+    <li><b>[g]</b>o next time</li>
+    <li><b>[b]</b>ob</li>
+    <li>si<b>[n]</b>gle</li>
+    <li>t<b>[h]</b>at's all</li>
+    <li>s<b>[t]</b>and next</li>
+</ul>
 
 
-{% block content %}
-			<p>Here's how to get started with the Ringing Room.</p>
-			<h3>Ideal set-up</h3>
-			<p>As far as we can tell, Ringing Rooms work best under the following set up:</p>
-			<ul>
-				<li>Use Google Chrome on a desktop or laptop where possible (Mac > Windows > Linux >> mobile).
-                    Microsoft Edge users, beware: keyboard hot-keys won't work in that browser.</li>
-				<li>Use a separate voice chat like Zoom, discord, Google hangouts, or WhatsApp to coordinate ringing
-                    and put calls in.</li>
-			</ul>There is a facility for using hot-keys to put in calls (see below), but in some browsers this
-                results in the sound of the bells being interrupted.
-			<h3>Starting a new room</h3>
-			<p>Starting a new room is simple: go to the home page by clicking "Ringing Room" at the top left of
-                this page. Then put any name you like in the text box and click "Create". This will create
-                a new "tower" with a shareable URL. You can send this URL to others you would like to ring with.</p>
-			<h3>Joining a room</h3>
-			<p>There are currently two ways to join a room that already exists. The easiest way is to go directly to
-                the link that the room's creator has sent you. Alternatively you may type in <i>just</i> the numerical
-                ID (a nine-digit number) into the textbox on the homepage.</p>
-            <h3>Listener links</h3>
-            <p>If you append "/listen" to the link of any tower, the resulting page will be a "listen-only" version of the 
-                tower appropriate for sending to anyone who wishes to observe the ringing without risking disturbing the band.
-                (For example, if you have the tower ID '1234' and name 'Example', then the link "ringingroom.com/1234/example/listen"
-                will go to the listen-only page.)
-			<h3>Setting up and ringing in a ringing room</h3>
-			<p>On the top left, you may set the number of bells in the tower by clicking the desired number. To ring,
-                you may either click on the ropes or use the following hot-keys:</p>
-			<ul>
-                <li> <b>[1-9], [0], [-], [=]:</b> Rings bells 1 - 9, 10, 11, and 12</li>
-                <li><b>[SPACE]:</b> Rings the bell in the lower right corner.</li>
-                <li><b>[LEFT] and [RIGHT] arrow keys:</b> Rings the left and right bottom-most bells.</li>
-                <li><b>[f] and [j]:</b> same as [LEFT] and [RIGHT]</li>
-                <li><b>[SHIFT]+[0-9]\[0]\[-]\[=]:</b> Rotate the "perspective" of the ringing room to put that bell
-                    in the lower right corner so it may be rung by [SPACE] or [j].</li>
-		    </ul>
+<h3>Listener links</h3>
 
-            <p>Ringers may now <i>assign bells</i> by entering bell assignment mode (top left of the screen). While in
-            this mode, any ringer may be selected under the user list and then a second click by a bell will assign
-            that user to a bell. Clicking the "x" by the user's name will kick them off that bell. Bells may not be rung
-            in bell assignment mode. Simply click the button in the control towers to exit bell assignment mode.
-            For now, anyone may assign anyone (and kick off anyone).</p>
+<p>If you append "/listen" to the link of any tower, the resulting page will be a "listen-only" version of the tower appropriate for sending to anyone who wishes to observe the ringing without risking disturbing the band. (For example, if you have the tower ID '1234' and name 'Example', then the link "ringingroom.com/1234/example/listen" will go to the listen-only page.)
 
-			<p>There are also hot-keys for various calls, but be aware that in some browsers using these results
-                in the sound of the bells being interrupted.</p>
-			<ul>
-                <li><b>[l]</b>ook to...</li>
-				<li><b>[g]</b>o next time</li>
-				<li><b>[b]</b>ob</li>
-				<li>si<b>[n]</b>gle</li>
-				<li>t<b>[h]</b>at's all</li>
-				<li>s<b>[t]</b>and next</li>
-			</ul>
+<h3>Ideal set-up</h3>
+
+<p>We want the Ringing Room to be accessible on as many platforms as possible. However, the platform is very much a work in progress! So far, we believe that the best set up is as follows:
+
+<ul>
+    <li>We recommend using Google Chrome if possible. We have heard from users that the site also works well in the following browsers: Safari; Firefox (v75 or later); and the latest version of Microsoft Edge. (Edge users, beware: Keyboard hotkeys will not work in older versions.)</li>
+    <li>If possible, use a desktop or laptop computer instead of a phone or tablet; we cannot guarantee support for any mobile devices at this time.</li>
+    <li>We recommend using a separate voice chat (for example, Zoom, Discord, Google Hangouts, or WhatsApp) to coordinate ringing.</li>
+    <li>Especially while using voice chat, Ringing Room will work best if you can wear headphones. Wired headphones will work better than wireless ones.</li>
+    <li>While there is some facility for using hotkeys to make calls, in some browsers this results in the sound of the bells being interrupted; we've found it easier to make calls over voice chat.</li>
+</ul>
+
+<h3>Handbell Simulators</h3>
+
+<p>Graham John's <a href="https://handbellmanager.changeringing.co.uk/">Handbell Manager</a> has been adapted for use with Ringing Room, and supports using Android phones to as simulated handbells. Contributors to this project include Richard Johnston, Adrian Nash, and Mike Pidd. You can read more about this at Richard's site <a href="http://ringingtraining.pbworks.com/w/page/139440417/Handbell%20Manager%20for%20Ringingroom">here</a>.</p>
+
+<p>Tom Farthing has developed a Python script for those who have simulated handbells with a serial port input. This is definitely a "batteries not included" setup; if you're not comfortable with scripting in Python and working on the command-line, this probably isn't for you. But if you meet that description, you can download the necessary files <a href="static/downloads/serial-port-handbell-simulator.zip" download>here</a>.</p>
+
+<h3>Reporting performances on Ringing Room</h3>
+
+<p>We encourage reporting significant Ringing Room performances on BellBoard. The Ringing World has published a set of <a href="https://bb.ringingworld.co.uk/news-story.php?id=1584">guidelines</a> for how to report distributed performances, including Ringing Room ones. We highly encourage you to donate to the Ringing World with your performance submissions, if you are financially able to do so.</p>
+
+<p>Additionally, ringers should be aware that Ringing Room performances do not comply with all of performance norms given in the <a href="https://cccbr.github.io/method_ringing_framework/reporting.html">CCCBR Framework for Method Ringing</a>, and as such this should be clearly stated in the BellBoard submission. At minimum, you should report that the performance was rung using key presses (unless you were using handbell simulators as described above) and simulated bell sounds.</p>
 
 
-<h3> Related Efforts </h3>
-
-<p> Richard Johnston has done a great deal of work to make Ringing Room work with Handbell Manager and with Android phones as simulated handbells (!). Read more about it by clicking <a href="http://ringingtraining.pbworks.com/w/page/139440417/Handbell%20Manager%20for%20Ringingroom">here</a>. </p>
+<h3>Known bugs and currently available fixes</h3>
 
 
-			<h3>Known bugs and currently available fixes</h3>
-			<p>As Ringing Room has been gaining in popularity, we have had several bug reports (thank you!)
-                and have started a list of known bugs and any currently available fix. This list is not exhaustive.
-                Always try refreshing as a first start when dealing with a bug; it may be the solution!</p>
-			<ul>
-                <li><b>Issues with users not logging out, or being locked out after being inactive:</b> We are
-                actively working on this as of this week and hope to have a good solution soon. We're definitely
-                still figuring out some of the kinks over here; sorry for any issues.</li>
-				<li><b>Bells are sometimes laggy:</b> Sorry, no fix for this yet. It is a rather tricky problem!
-                    We'll keep you updated on the "News" sidebar of the front page.</li>
-				<li><b>Bells are double-sounding/echoing:</b> First, try headphones. If that doesn't fix it,
-                    you are encountering a known problem in some browsers. Re-starting your browser or doing
-                    a hard refresh (hard refreshing varies by OS and browser type) has been known to help in
-                    some cases. The cause of this bug is not yet identified.</li>
-				<li><b>Microsoft Edge users can't access hot-keys:</b> Old versions of Microsoft Edge do not conform
-                    to standards of key-press listening. Please update to the newest version if possible.</li>
-                <li><b>Ringing Room doesn't work under this non-Chrome browser/Linux OS...:</b> Please email us with
-                    the operating system and browser you're using, along with any steps taken to fix the issue
-                    (restarting browser, hard refreshing). We'll bear this in mind, but cross-platform testing is
-                    currently pretty slow as we both have Macs!</li>
-				<li><b>Ringing Room doesn't work on my phone/iPad/...:</b> A known problem, but one that's it's
-                    pretty hard to fix without building a dedicated app as far as we can tell. So probably
-                    best to stick to a desktop or laptop for now.</li>
-			</ul>
+<p>As Ringing Room has been gaining in popularity, we have had several bug reports (thank you!) and have started a list of known bugs and any currently available fix. This list is not exhaustive.
+Always try refreshing as a first start when dealing with a bug; it may be the solution!</p>
+
+<ul>
+
+    <li><b>Issues with user names continuing to appearing even when someone has left the tower:</b> For the moment, we recommend that everyone use the "Leave Tower" button to end a ringing session. This will prevent this issue from happening. In the event that a name does get "stuck", all towers are cleared out after 12 hours of inactivity, so probably by the time you come back the next day the name should be gone.</li>
+
+<li><b>Bells are double-sounding/echoing:</b> First, try wearing headphones. If that doesn't fix it, you are encountering a known problem in some browsers. Re-starting your browser or doing a hard refresh (hard refreshing varies by OS and browser type) has been known to help in some cases. The cause of this bug is not yet identified.</li>
+
+<li><b>Microsoft Edge users can't access hot-keys:</b> Old versions of Microsoft Edge handle keyboard signals differently than other browsers. Please update to the newest version if possible.</li>
+
+<li><b>Ringing Room doesn't work with my browser or operating system:</b> Please email us or use the <a href="https://forms.gle/kz6NC5VC9n9DerG19">bug report form</a> with the operating system and browser you're using, along with any steps taken to fix the issue (restarting browser, hard refreshing). We'll bear this in mind, but cross-platform testing is currently pretty slow as we both have Macs!</li>
+
+<li><b>Ringing Room doesn't work on my phone/iPad/...:</b> A known problem, but one that's it's
+    pretty hard to fix without building a dedicated app. At the moment, it's best to use a desktop or laptop.</li>
+
+<li><b>Bells are sometimes laggy:</b> This is, to an extent, an unavoidable problem with ringing over the internet. We have a number of possible improvements in mind, but the lagginess will always depend on the quality of your internet connection. If you're experiencing very bad lag, try restarting your wifi router. You might also consider using a wired network connection, if possible.</li>
+
+</ul>
+
 {% endblock %}

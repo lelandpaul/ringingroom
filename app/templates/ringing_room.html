@@ -1,10 +1,11 @@
 <!doctype html>
-<html>
+<html lang="en">
 
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta http-equiv="Content-Language" content="en">
-	<title>Ringing Room — {{ tower_name }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{{tower.name}} — Ringing Room</title>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-162521976-1"></script>
     <script>
@@ -19,8 +20,27 @@
 	<script src="https://www.unpkg.com/howler@2.1.3/dist/howler.core.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" >
+    <script src="https://kit.fontawesome.com/b8eb96aee8.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
+
+    <!-- bind tower data -->
+    <script>
+        window.tower_parameters = {
+            id: parseInt({{tower.tower_id}}),
+            name: "{{tower.name}}",
+            audio: "{{tower.audio}}",
+            size: parseInt({{tower.n_bells}}),
+            users: {{tower.user_names | safe }},
+            observers: parseInt({{tower.observers}}),
+            assignments: {{tower.assignments_as_list() | safe }},
+            cur_user_name: "{{user_name}}",
+            name_available: {{'true' if name_available else 'false'}},
+            anonymous_user: {{'true' if current_user.is_anonymous or listen_link else 'false'}},
+            listen_link: {{'true' if listen_link else 'false'}},
+        };
+    </script>
     <!-- internal resources -->
     {% assets "js_rr" %}
     <script type="module" src="{{ ASSET_URL }}"></script>
@@ -37,7 +57,7 @@
 </head>
 
 <body onbeforeunload="leave_room">
-	<div>
+	<div class="container-fluid">
 		<div id="bell_circle">
 			<!-- app will go here -->
 		</div>
