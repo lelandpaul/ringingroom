@@ -53,21 +53,11 @@ def tower(tower_id, decorator=None):
     except KeyError:
         log('Bad tower_id')
         abort(404)
-    if current_user.is_anonymous:
-        # Not logged in.
-        session['user_name'] = ''
-        name_available = True
-    else:
-        # User is logged in. Their globally-unique user_name works as both id and display
-        session['user_id'] = current_user.username
-        session['user_name'] = current_user.username
-        name_available = True # it's globally unique
                          
     # Pass in both the tower and the user_name
     return render_template('ringing_room.html',
                             tower = tower,
-                            user_name = session['user_name'],
-                            name_available = name_available,
+                            user_name = '' if current_user.is_anonymous else current_user.username,
                             listen_link = False)
 
 

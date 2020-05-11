@@ -2,7 +2,7 @@ from app import db, log, login
 from random import sample
 import re
 from datetime import datetime, timedelta, date
-from flask_login import UserMixin
+from flask_login import UserMixin, AnonymousUserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from enum import Enum
 
@@ -174,6 +174,7 @@ class Tower:
         self._users = users
 
     def add_user(self, user_id, user_name):
+        if isinstance(user_id, AnonymousUserMixin):
         self._users[user_id] = user_name
 
     def remove_user(self, user_id):
@@ -184,6 +185,7 @@ class Tower:
                     self._assignments[bell] = '' # unassign the user from all bells
             del self._users[user_id]
         except ValueError: pass
+        except KeyError: log("Tried to remove user that wasn't there")
     
     @property
     def user_names(self):
