@@ -61,6 +61,7 @@ def on_join(json):
     tower_id = json['tower_id']
     tower = towers[tower_id]
 
+
     # Next, join the tower
     join_room(tower_id)
     log('SETUP Joined tower:',tower_id)
@@ -79,12 +80,11 @@ def on_join(json):
     else:
         # The user is logged in. Add this as a recent tower
         current_user.add_recent_tower(tower)
-        tower.add_user(current_user, current_user.username)
         # If the user is logged in, but is already in the room: Remove them (in
         # preparation for adding them again)
         if current_user.username in tower.users.keys():
             log('SETUP User already present')
-            tower.remove_user(current_user.username)
+            tower.remove_user(current_user.id)
             emit('s_user_left', {'user_name': current_user.username}, 
                                 broadcast = True,
                                 include_self = True,
@@ -92,6 +92,7 @@ def on_join(json):
         # For now: Keeping the "id/username" split in the tower model
         # Eventually, this will allow us to have display names different
         # from the username
+        tower.add_user(current_user.id, current_user.username)
         emit('s_user_entered', { 'user_name': current_user.username },
              broadcast=True, include_self = True, room=json['tower_id'])
 
@@ -120,23 +121,16 @@ def on_user_left(json):
     tower_id = json['tower_id']
     tower = towers[tower_id]
 
-    user_id = current_user.username if not current_user.is_anonymous else session['user_id']
+    user_id = current_user.id if not current_user.is_anonymous else session['user_id']
 
     if current_user.is_anonymous:
         tower.remove_observer(user_id)
         emit('s_set_observers', {'observers': tower.observers},
              broadcast = True, include_self = False, room=tower_id)
-        session['observer'] = False
         return
 
 
-    try:
-        tower.remove_user(user_id)
-    except KeyError:
-        # The user key wasn't present in the tower, for some reason
-        # For now, just pass
-        pass
-
+    tower.remove_user(user_id)
     emit('s_user_left', { 'user_name': user_id },
          broadcast=True, include_self = False, room=tower_id)
 
