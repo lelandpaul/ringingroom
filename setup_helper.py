@@ -5,8 +5,8 @@ from datetime import datetime
 from re import sub
 
 # compile sass
-os.system("sass app/static/sass/ringing_room.scss static/css/ringing_room.scss.css")
-os.system("sass app/static/sass/static.scss static/css/static.scss.css")
+os.system("sass app/static/sass/ringing_room.scss app/static/css/ringing_room.css")
+os.system("sass app/static/sass/static.scss app/static/css/static.css")
 
 # prevent caching bad versions by updating requests
 
@@ -27,10 +27,6 @@ for file in templates:
             # new_line = sub(r'style\.scss\.css(\?\d*)?',r'style.scss.css\?'+time,new_line)
             new_line = sub(r'\?nocache\d{12}',r'?nocache'+time,line)
             f.write(new_line)
-
-
-
-
 
     
     # os.system("mv " + file + " " + file + "-BCKP")
