@@ -2,6 +2,16 @@
 
 A space where socially-distanced ringers can practice together.
 
+# Build instructions
+
+ - Install sass, e.g. by `brew instal sass/sass/sass`
+ - Install python dependencies `pip -r requirements.txt`
+ - Run `python3 setup_helper.py`. This will set up the sass css files.
+ 
+Now you are ready to run the server.
+ - Run it with `python3 ringingroom.py`
+ - You can now hit it at `http://localhost`
+
 # Filestructure
 
 ```
