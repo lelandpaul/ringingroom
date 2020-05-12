@@ -4,13 +4,25 @@ A space where socially-distanced ringers can practice together.
 
 # Build instructions
 
+Get the CSS set up with sass
  - Install sass, e.g. by `brew instal sass/sass/sass`
  - Install python dependencies `pip -r requirements.txt`
  - Run `python3 setup_helper.py`. This will set up the sass css files.
  
-Now you are ready to run the server.
- - Run it with `python3 ringingroom.py`
- - You can now hit it at `http://localhost`
+Get the DB set up with flask
+ - Open a python terminal in the project root
+ - run `from app import db`
+ - run `db.create_all()`
+ - check your tables are created using the sqlite shell (some tables should be listed):
+ ```
+ $ sqlite3 app.db
+ sqlite> .tables
+ ```
+ - if the tables don't get created, try running the server as below, then repeating these steps in the same terminal window.
+ 
+You are now ready to run the server
+ - In the project root, run `flask run`
+ - This will give you a local address where you can access the app 
 
 # Filestructure
 
