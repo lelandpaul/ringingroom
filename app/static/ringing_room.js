@@ -343,6 +343,15 @@ Vue.component('call_display', {
 		return { cur_call: '' };
 	},
 
+    computed: {
+
+        assignment_mode: function(){
+            return this.$root.$refs.users.assignment_mode;
+        },
+
+
+    },
+
 	methods: {
 
         // a call was received from the server; display it and play audio
@@ -358,7 +367,8 @@ Vue.component('call_display', {
 	},
 
 	template: `<h2 id='call_display' 
-                   ref='display'>[[ cur_call ]]
+                   ref='display'>
+                   [[ assignment_mode ? 'To resume ringing, press "Stop Assigning" on the control panel.' : cur_call ]]
                </h2>
               `
 }); // end call_display component
