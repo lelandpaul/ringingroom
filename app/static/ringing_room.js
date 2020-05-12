@@ -46,7 +46,10 @@ var leave_room = function(){
 window.addEventListener("beforeunload", leave_room, "useCapture");
 window.onbeforeunload = leave_room;
 
-
+// initial data state
+window.user_parameters = {
+    bell_volume: 0.2,
+};
 
 ////////////////////////
 /* SOCKETIO LISTENERS */
@@ -201,7 +204,8 @@ Vue.component("bell_rope", {
 
       // Ringing event received; now ring the bell
 	  ring: function(){
-		this.stroke = !this.stroke;
+        this.stroke = !this.stroke;
+        this.audio._volume = window.user_parameters.bell_volume;
         const audio_type = this.$root.$refs.controls.audio_type;
         console.log(audio_type + ' ' + this.number_of_bells);
 		this.audio.play(bell_mappings[audio_type][this.number_of_bells][this.number - 1]);
@@ -546,6 +550,32 @@ Vue.component('help', {
 </div>
                `,
 }); // End help
+
+Vue.component('volume_control', {
+    data: function() {
+        return {
+            selected: window.user_parameters.bell_volume,
+        }
+    },
+
+    watch: {
+        selected: function(new_value) {
+            window.user_parameters.bell_volume = new_value;
+        },
+    },
+
+    template: `
+    <div>
+        <span>Volume:</span>
+        <select v-model="selected">
+            <option disabled value="">Please select one</option>
+            <option value=0.1>Quiet</option>
+            <option value=0.2>Medium</option>
+            <option value=0.5>Loud</option>
+        </select>
+    </div>
+`
+})
 
 // user_display holds functionality required for users
 Vue.component('user_display', {
@@ -1010,6 +1040,8 @@ bell_circle = new Vue({
 
 
         <tower_controls ref="controls"></tower_controls>
+
+        <volume_control ref="volume"></volume_control>
 
 
         <user_display ref="users"></user_display>
