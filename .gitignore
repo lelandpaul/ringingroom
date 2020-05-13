@@ -154,3 +154,4 @@ app/static/gen/
 
 # don't track logs
 logs/
+sendgrid.env

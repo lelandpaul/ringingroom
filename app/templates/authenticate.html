@@ -31,13 +31,14 @@
                     <span style="color: red;">{{ error }}</span>
                     {% endfor %}
                 </div>
-                <div class="col-3 col-form-label">
-                    <div class="form-group form-check">
+                <div class="col-3">
+                    <div class="form-group form-check form-check-inline">
                     {{ login_form.remember_me(class="form-check-input") }} {{ login_form.remember_me.label(class="form-check-label") }}
                     </div>
                 </div>
             </div>
         </div>
+        <a href="{{url_for('request_reset_password')}}">Forgot password?</a>
 
     </form>
     {% with messages = get_flashed_messages() %}
