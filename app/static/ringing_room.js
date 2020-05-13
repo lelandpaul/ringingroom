@@ -565,10 +565,13 @@ Vue.component('volume_control', {
     },
 
     template: `
-    <div>
-        <span>Volume:</span>
-        <input type="range" v-model="value" min=0 max=10>
-        </input>
+    <div class="row justify-content-between">
+        <label class="col-auto" for="volumeSlider">Volume:</label>
+        <!-- slider bar overlaps its own padding, so put it in a div to make it line up with the edges-->
+        <div class="col-auto">
+            <input type="range" v-model="value" min=0 max=10 id="volumeSlider" class="volume_control_slider">
+            </input>
+        </div>
     </div>
 `
 })
