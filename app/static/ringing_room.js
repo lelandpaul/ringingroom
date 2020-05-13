@@ -48,7 +48,7 @@ window.onbeforeunload = leave_room;
 
 // initial data state
 window.user_parameters = {
-    bell_volume: 0.2,
+    bell_volume: 5,
 };
 
 ////////////////////////
@@ -205,7 +205,7 @@ Vue.component("bell_rope", {
       // Ringing event received; now ring the bell
 	  ring: function(){
         this.stroke = !this.stroke;
-        this.audio._volume = window.user_parameters.bell_volume;
+        this.audio._volume = window.user_parameters.bell_volume * 0.1;
         const audio_type = this.$root.$refs.controls.audio_type;
         console.log(audio_type + ' ' + this.number_of_bells);
 		this.audio.play(bell_mappings[audio_type][this.number_of_bells][this.number - 1]);
@@ -554,12 +554,12 @@ Vue.component('help', {
 Vue.component('volume_control', {
     data: function() {
         return {
-            selected: window.user_parameters.bell_volume,
+            value: window.user_parameters.bell_volume,
         }
     },
 
     watch: {
-        selected: function(new_value) {
+        value: function(new_value) {
             window.user_parameters.bell_volume = new_value;
         },
     },
@@ -567,12 +567,8 @@ Vue.component('volume_control', {
     template: `
     <div>
         <span>Volume:</span>
-        <select v-model="selected">
-            <option disabled value="">Please select one</option>
-            <option value=0.1>Quiet</option>
-            <option value=0.2>Medium</option>
-            <option value=0.5>Loud</option>
-        </select>
+        <input type="range" v-model="value" min=0 max=10>
+        </input>
     </div>
 `
 })
