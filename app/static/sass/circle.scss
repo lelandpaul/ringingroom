@@ -76,6 +76,18 @@
         transform: translate(-50%,-50%);
     }
 
+    #focus_display {
+        position: absolute;
+        text-align: center;
+        top: 70%;
+        left: 50%;
+        width: 80%;
+        padding: 10%;
+        transform: translate(-50%,0);
+        background-color: $text-color;
+        color: $body-bg;
+    }
+
 
     .bell_circle {
       $circ-size: $media-circ-size;
