@@ -8,7 +8,7 @@ class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY') or 's7WUt93.ir_bFya7'
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'app.db')
+        'mysql+pymysql://root:smoky-baobab-dun-durst-boggle@178.62.97.219:3306/test'
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
