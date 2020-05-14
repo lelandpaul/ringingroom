@@ -1,10 +1,13 @@
 from app import db, log, login
+from config import Config
 from random import sample
 import re
 from datetime import datetime, timedelta, date
+from time import time
 from flask_login import UserMixin, AnonymousUserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from enum import Enum
+import jwt
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -29,6 +32,22 @@ class User(UserMixin, db.Model):
                           reverse=True)[cutoff:]
         for rel in old_rels:
             db.session.delete(rel)
+
+    def get_reset_password_token(self, expires_in=600):
+        return jwt.encode(
+            {'reset_password': self.id, 'exp': time() + expires_in},
+            Config.SECRET_KEY, algorithm='HS256').decode('utf-8')
+
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            id = jwt.decode(token, Config.SECRET_KEY,
+                            algorithms=['HS256'])['reset_password']
+        except:
+            return
+        return User.query.get(id)
+
+
 
     def  add_recent_tower(self, tower):
         if isinstance(tower, Tower):
