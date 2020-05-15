@@ -11,6 +11,7 @@ import jwt
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    fk_id = db.Column(db.Integer, unique=True, default=id)
     username = db.Column(db.String(64), index=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
@@ -113,7 +114,7 @@ class TowerDB(db.Model):
 
 
 class UserTowerRelation(db.Model):
-    user_id = db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key = True)
+    user_id = db.Column('user_id', db.Integer, db.ForeignKey('user.fk_id'), primary_key = True)
     tower_id = db.Column('tower_id',db.Integer, db.ForeignKey('towerDB.tower_id'), primary_key = True)
     user = db.relationship("User", back_populates="towers")
     tower = db.relationship("TowerDB",back_populates="users")
