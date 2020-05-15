@@ -55,11 +55,8 @@ class UserSettingsForm(FlaskForm):
     password = PasswordField('Current Password', validators=[RequiredIf('new_password'),
                                                      RequiredIf('new_password2'),
                                                      RequiredIf('new_username'),
-                                                     RequiredIf('new_email'),
-                                                     RequiredIf('delete_account')],)
+                                                     RequiredIf('new_email')])
     submit = SubmitField('Save changes')
-
-    delete_account = SubmitField('Delete account')
 
     new_username = StringField('Username', validators=[DataRequired()])
     new_email = StringField('Email', validators=[DataRequired(), Email()])
