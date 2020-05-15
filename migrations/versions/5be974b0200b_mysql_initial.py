@@ -1,8 +1,8 @@
-"""initial mysql
+"""mysql initial
 
-Revision ID: 95b6484dea91
+Revision ID: 5be974b0200b
 Revises: 
-Create Date: 2020-05-15 17:39:00.310068
+Create Date: 2020-05-15 18:21:17.769587
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '95b6484dea91'
+revision = '5be974b0200b'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -26,13 +26,11 @@ def upgrade():
     )
     op.create_index(op.f('ix_towerDB_tower_name'), 'towerDB', ['tower_name'], unique=False)
     op.create_table('user',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('fk_id', sa.Integer(), nullable=True),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('username', sa.String(length=64), nullable=True),
     sa.Column('email', sa.String(length=120), nullable=True),
     sa.Column('password_hash', sa.String(length=128), nullable=True),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('fk_id')
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_user_email'), 'user', ['email'], unique=True)
     op.create_index(op.f('ix_user_username'), 'user', ['username'], unique=False)
@@ -43,7 +41,7 @@ def upgrade():
     sa.Column('recent', sa.Boolean(), nullable=True),
     sa.Column('creator', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['tower_id'], ['towerDB.tower_id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['user.fk_id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('user_id', 'tower_id')
     )
     # ### end Alembic commands ###
