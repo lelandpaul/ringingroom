@@ -21,7 +21,7 @@ class RequiredIf(DataRequired):
             super(RequiredIf, self).__call__(form, field)
 
 class LoginForm(FlaskForm):
-    username = StringField('Username or Email Address', validators=[DataRequired()])
+    username = StringField('Email Address', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember me')
     submit = SubmitField('Sign In')
@@ -30,12 +30,12 @@ class LoginForm(FlaskForm):
         user = User.query.filter_by(email=username.data).first() or \
                User.query.filter_by(username=username.data).first()
         if user is None or not user.check_password(self.password.data):
-            raise ValidationError('Incorrect username or password.')
+            raise ValidationError('Incorrect email address or password.')
 
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    email = StringField('Email', validators=[DataRequired(), Email(message='Please log in with your email address (not your username).')])
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField(
         'Repeat Password', validators = [DataRequired(), EqualTo('password')])
@@ -49,7 +49,7 @@ class RegistrationForm(FlaskForm):
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
-            raise ValidationError('There is already a username associated with that email addresss.')
+            raise ValidationError('There is already a username associated with that email address.')
 
 class UserSettingsForm(FlaskForm):
     password = PasswordField('Current Password', validators=[RequiredIf('new_password'),
@@ -72,7 +72,7 @@ class UserSettingsForm(FlaskForm):
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
-            raise ValidationError('There is already a username associated with that email addresss.')
+            raise ValidationError('There is already a username associated with that email address.')
 
 class ResetPasswordRequestForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(),Email()])
