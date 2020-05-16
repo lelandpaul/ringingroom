@@ -20,7 +20,8 @@ migrate = Migrate(app, db)
 assets = Environment(app)
 socketio = SocketIO(app, 
                     manage_session=False,
-                    logging=True)
+                    logging=True,
+                    cors_allowed_origins='*')
 Session(app)
 login = LoginManager(app)
 
