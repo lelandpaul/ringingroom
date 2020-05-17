@@ -1,7 +1,7 @@
 from flask_socketio import emit, join_room
 from flask import session, request
 from flask_login import current_user
-from app import socketio, towers, log
+from app import socketio, towers, log, app
 from app.models import Tower, load_user
 import random
 import string
@@ -77,7 +77,7 @@ def on_join(json):
             pass # leave user set to None
 
     # Whether the user is anonymous or not, send them the list of current users
-    emit('s_set_userlist',{'user_list': list(tower.users)})
+    emit('s_set_userlist',{'user_list': [u.username for u in tower.users]})
 
     # If the user is anonymous, mark them as an observer and set some cookies
     if not user:
