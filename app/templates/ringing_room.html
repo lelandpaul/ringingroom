@@ -32,7 +32,6 @@
             name: "{{tower.name}}",
             audio: "{{tower.audio}}",
             size: parseInt({{tower.n_bells}}),
-            users: {{tower.user_names | safe }},
             observers: parseInt({{tower.observers}}),
             assignments: {{tower.assignments_as_list() | safe }},
             cur_user_name: "{{user_name}}",

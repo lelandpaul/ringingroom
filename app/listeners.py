@@ -76,6 +76,9 @@ def on_join(json):
         except:
             pass # leave user set to None
 
+    # Whether the user is anonymous or not, send them the list of current users
+    emit('s_set_userlist',{'user_list': list(tower.users)})
+
     # If the user is anonymous, mark them as an observer and set some cookies
     if not user:
         # Check they're not already in the room
@@ -105,6 +108,7 @@ def on_join(json):
         tower.add_user(user.id, user.username)
         emit('s_user_entered', { 'user_name': user.username },
              broadcast=True, include_self = True, room=json['tower_id'])
+
 
 
     # Store the tower in case of accidental disconnect
