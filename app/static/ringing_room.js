@@ -60,6 +60,12 @@ socketio.on('s_bell_rung', function(msg,cb){
 	bell_circle.ring_bell(msg.who_rang);
 });
 
+// Userlist was set
+socketio.on('s_set_userlist', function(msg,cb){
+    console.log('s_set_userlist: ' + msg.user_list);
+    bell_circle.$refs.users = ms.user_list;
+}
+
 // User entered the room
 socketio.on('s_user_entered', function(msg, cb){
     console.log(msg.user_name + ' entered')
@@ -553,7 +559,7 @@ Vue.component('user_display', {
 
     // data in components should be a function, to maintain scope
 	data: function(){
-		return { user_names: window.tower_parameters.users,
+		return { user_names: [],
                  assignment_mode: false,
                  selected_user: '',
                  cur_user: window.tower_parameters.cur_user_name,
