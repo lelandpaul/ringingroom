@@ -44,6 +44,7 @@ var leave_room = function(){
     socketio.emit('c_user_left',
           {user_name: window.tower_parameters.cur_user_name, 
            user_token: window.tower_parameters.user_token,
+           anonymous_user: window.tower_parameters.anonymous_user,
           tower_id: cur_tower_id});
 };
 
