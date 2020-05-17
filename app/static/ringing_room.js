@@ -23,10 +23,14 @@ var logger = function()
 
     return pub;
 }();
-logger.disableLogger()
+// logger.disableLogger()
 
 // Set up socketio instance
-var socketio = io();
+
+var socketio = io(window.tower_parameters.server_ip);
+
+
+
 // Various Vue instances need this on creation
 var cur_tower_id = parseInt(window.tower_parameters.id);
 

@@ -15,3 +15,8 @@ class Config(object):
     SESSION_TYPE = 'filesystem'
 
     PERMANENT_SESSION_LIFETIME = datetime.timedelta(days = 1)
+
+    # We want this to be None if the environment variable isn't set
+    SOCKETIO_SERVER_ADDRESSES = os.environ.get('SOCKETIO_SERVER_ADDRESSES')
+    if SOCKETIO_SERVER_ADDRESSES:
+        SOCKETIO_SERVER_ADDRESSES = SOCKETIO_SERVER_ADDRESSES.split(',')

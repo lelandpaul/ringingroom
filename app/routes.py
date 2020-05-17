@@ -10,6 +10,15 @@ import string
 import random
 from app.email import send_password_reset_email
 
+# Helper function to get a server IP, with load balancing
+# If there is a list of IPs set in SOCKETIO_SERVER_ADDRESSES, this will automatically balance rooms
+# across those servers. Otherwise, it will just direct everything to the current server.
+def get_server_ip(tower_id):
+    servers = app.config['SOCKETIO_SERVER_ADDRESSES']
+    if not servers:
+        return request.url_root
+    else:
+        return 'http://' + servers[tower_id % len(servers)] + ':8080'
 
 # redirect for static files on subdomains
 
@@ -38,7 +47,8 @@ def observer(tower_id, decorator=None):
         abort(404)
     return render_template('ringing_room.html',
                            tower=tower,
-                           listen_link=True)
+                           listen_link=True,
+                           server_ip=get_server_ip(tower_id))
 
 # Helper function to generate a random string for use as a unique user_id
 def assign_user_id():
@@ -60,6 +70,7 @@ def tower(tower_id, decorator=None):
     return render_template('ringing_room.html',
                             tower = tower,
                             user_name = '' if current_user.is_anonymous else current_user.username,
+                            server_ip=get_server_ip(tower_id),
                             listen_link = False)
 
 
@@ -109,7 +120,8 @@ def login():
         next = ''
     if login_form.validate_on_submit():
 
-        user = User.query.filter_by(email=login_form.username.data).first()
+        user = User.query.filter_by(email=login_form.username.data.lower()).first() or \
+               User.query.filter_by(username=login_form.username.data).first()
         if user is None or not user.check_password(login_form.password.data):
             raise ValidationError('Incorrect username or password.')
             return redirect(url_for('authenticate'))
@@ -136,7 +148,8 @@ def register():
     login_form = LoginForm()
     registration_form = RegistrationForm()
     if registration_form.validate_on_submit():
-        user = User(username=registration_form.username.data, email=registration_form.email.data)
+        user = User(username=registration_form.username.data, 
+                    email=registration_form.email.data.lower())
         user.set_password(registration_form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -158,7 +171,7 @@ def user_settings():
             current_user.set_password(form.new_password.data)
             flash('Password updated.')
         if form.new_email.data:
-            current_user.email = form.new_email.data
+            current_user.email = form.new_email.data.lower()
         if form.new_username.data:
             current_user.username = form.new_username.data
             flash('Username updated.')
@@ -171,7 +184,7 @@ def request_reset_password():
         return redirect(url_for('index'))
     form = ResetPasswordRequestForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        user = User.query.filter_by(email=form.email.data.lower()).first()
         if user:
             send_password_reset_email(user)
         flash('Check your email for the instructions to reset your password.')
@@ -183,11 +196,9 @@ def request_reset_password():
 @app.route('/reset_password/<token>', methods=['GET','POST'])
 def reset_password(token):
     if current_user.is_authenticated:
-        print('***Redirect for authenticated')
         return redirect(url_for('index'))
     user = User.verify_reset_password_token(token)
     if not user:
-        print('***Redirect for not user')
         return redirect(url_for('index'))
     form = ResetPasswordForm()
     if form.validate_on_submit():
