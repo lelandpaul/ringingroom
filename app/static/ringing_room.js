@@ -43,6 +43,7 @@ var cur_user_name = window.tower_parameters.cur_user_name;
 var leave_room = function(){
     socketio.emit('c_user_left',
           {user_name: window.tower_parameters.cur_user_name, 
+           user_token: window.tower_parameters.user_token,
           tower_id: cur_tower_id});
 };
 
@@ -709,7 +710,9 @@ bell_circle = new Vue({
         this.number_of_bells = window.tower_parameters.size;
 
         // Join the tower
-        socketio.emit('c_join',{tower_id: cur_tower_id})
+        socketio.emit('c_join',{tower_id: cur_tower_id, 
+                                user_token: window.tower_parameters.user_token,
+                                anonymous_user: window.tower_parameters.anonymous_user})
 
         this.$nextTick(function(){
             this.$refs.users.rotate_to_assignment();
