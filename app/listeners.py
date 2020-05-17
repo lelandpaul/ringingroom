@@ -142,9 +142,8 @@ def on_user_left(json):
             user_id = jwt.decode(json['user_token'],app.config['SECRET_KEY'],algorithms=['HS256'])['id']
             user = load_user(user_id)
         except:
+            user_id = session['user_id']
             pass # leave user set to None
-
-    user_id = user.get_id() if not user else session['user_id']
 
     if not user:
         tower.remove_observer(user_id)
