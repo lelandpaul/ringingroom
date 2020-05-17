@@ -6,7 +6,6 @@ from datetime import datetime, timedelta, date
 from time import time
 from flask_login import UserMixin, AnonymousUserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from enum import Enum
 import jwt
 
 class User(UserMixin, db.Model):
