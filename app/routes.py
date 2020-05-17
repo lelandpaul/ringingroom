@@ -11,7 +11,6 @@ import random
 from app.email import send_password_reset_email
 import jwt
 
-<<<<<<< HEAD
 # Helper function to get a server IP, with load balancing
 # If there is a list of IPs set in SOCKETIO_SERVER_ADDRESSES, this will automatically balance rooms
 # across those servers. Otherwise, it will just direct everything to the current server.
@@ -21,8 +20,6 @@ def get_server_ip(tower_id):
         return request.url_root
     else:
         return 'http://' + servers[tower_id % len(servers)] + ':8080'
-=======
->>>>>>> 5373f7f91442dc0d45a1fa442d80491b471b6b74
 
 # redirect for static files on subdomains
 
