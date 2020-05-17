@@ -67,7 +67,7 @@ socketio.on('s_bell_rung', function(msg,cb){
 // Userlist was set
 socketio.on('s_set_userlist', function(msg,cb){
     console.log('s_set_userlist: ' + msg.user_list);
-    bell_circle.$refs.users = msg.user_list;
+    bell_circle.$refs.users.user_names = msg.user_list;
 });
 
 // User entered the room
