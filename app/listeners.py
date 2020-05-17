@@ -77,7 +77,7 @@ def on_join(json):
             pass # leave user set to None
 
     # Whether the user is anonymous or not, send them the list of current users
-    emit('s_set_userlist',{'user_list': [u.username for u in tower.users]})
+    emit('s_set_userlist',{'user_list': tower.user_names})
 
     # If the user is anonymous, mark them as an observer and set some cookies
     if not user:
