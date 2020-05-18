@@ -43,6 +43,8 @@ var cur_user_name = window.tower_parameters.cur_user_name;
 var leave_room = function(){
     socketio.emit('c_user_left',
           {user_name: window.tower_parameters.cur_user_name, 
+           user_token: window.tower_parameters.user_token,
+           anonymous_user: window.tower_parameters.anonymous_user,
           tower_id: cur_tower_id});
 };
 
@@ -61,6 +63,12 @@ socketio.on('s_bell_rung', function(msg,cb){
 	console.log('Received event: ' + msg.global_bell_state + msg.who_rang);
 	// if(msg.disagree) {}
 	bell_circle.ring_bell(msg.who_rang);
+});
+
+// Userlist was set
+socketio.on('s_set_userlist', function(msg,cb){
+    console.log('s_set_userlist: ' + msg.user_list);
+    bell_circle.$refs.users.user_names = msg.user_list;
 });
 
 // User entered the room
@@ -556,7 +564,7 @@ Vue.component('user_display', {
 
     // data in components should be a function, to maintain scope
 	data: function(){
-		return { user_names: window.tower_parameters.users,
+		return { user_names: [],
                  assignment_mode: false,
                  selected_user: '',
                  cur_user: window.tower_parameters.cur_user_name,
@@ -709,7 +717,9 @@ bell_circle = new Vue({
         this.number_of_bells = window.tower_parameters.size;
 
         // Join the tower
-        socketio.emit('c_join',{tower_id: cur_tower_id})
+        socketio.emit('c_join',{tower_id: cur_tower_id, 
+                                user_token: window.tower_parameters.user_token,
+                                anonymous_user: window.tower_parameters.anonymous_user})
 
         this.$nextTick(function(){
             this.$refs.users.rotate_to_assignment();
