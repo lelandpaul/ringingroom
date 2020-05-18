@@ -5,7 +5,6 @@ from app import socketio, towers, log, app
 from app.models import Tower, load_user
 import random
 import string
-import jwt
 
 # SocketIO Handlers
 

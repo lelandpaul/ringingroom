@@ -9,7 +9,6 @@ from urllib.parse import urlparse
 import string
 import random
 from app.email import send_password_reset_email
-import jwt
 
 # Helper function to get a server IP, with load balancing
 # If there is a list of IPs set in SOCKETIO_SERVER_ADDRESSES, this will automatically balance rooms
@@ -67,19 +66,11 @@ def tower(tower_id, decorator=None):
         log('Bad tower_id')
         abort(404)
 
-    # Generate a jwt token to pass user_id
-    # This allows us to pass user_id securely through the client html,
-    # which in turn allows backup servers to get the current user without cross-domain cookies
-    user_token = '' if current_user.is_anonymous \
-                    else jwt.encode({'id': current_user.get_id()}, app.config['SECRET_KEY'],
-                                    algorithm='HS256').decode('utf-8')
-                         
     # Pass in both the tower and the user_name
     return render_template('ringing_room.html',
                             tower = tower,
                             user_name = '' if current_user.is_anonymous else current_user.username,
                             server_ip=get_server_ip(tower_id),
-                            user_token = user_token,
                             listen_link = False)
 
 
