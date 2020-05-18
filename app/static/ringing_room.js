@@ -689,10 +689,6 @@ Vue.component('user_display', {
              >
                         [[ user ]]
              </li>
-                    <li class="list-group-item observers"
-                        v-if="observers != 0">
-                        Listeners: [[ observers ]]
-                    </li>
                  </ul>
         </div></div>
         </div>
