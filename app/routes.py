@@ -1,5 +1,6 @@
 from flask import render_template, send_from_directory, abort, flash, redirect, url_for, session, request
 from flask_login import login_user, logout_user, current_user, login_required
+from requests import get
 from app import app, towers, log, db
 from app.models import User
 from flask_login import current_user, login_user, logout_user, login_required
@@ -13,12 +14,12 @@ from app.email import send_password_reset_email
 # Helper function to get a server IP, with load balancing
 # If there is a list of IPs set in SOCKETIO_SERVER_ADDRESSES, this will automatically balance rooms
 # across those servers. Otherwise, it will just direct everything to the current server.
-def get_server_ip(tower_id):
+def get_server_address(tower_id):
     servers = app.config['SOCKETIO_SERVER_ADDRESSES']
     if not servers:
         return request.url_root
     else:
-        return 'https://' + servers[tower_id % 10 % len(servers)]
+        return 'http://' + servers[tower_id % 10 % len(servers)]
 
 # redirect for static files on subdomains
 
@@ -59,19 +60,32 @@ def assign_user_id():
 @app.route('/<int:tower_id>')
 @app.route('/<int:tower_id>/<decorator>')
 def tower(tower_id, decorator=None):
-    try:
-        towers.garbage_collection(tower_id)
-        tower = towers[tower_id]
-    except KeyError:
-        log('Bad tower_id')
-        abort(404)
 
-    # Pass in both the tower and the user_name
-    return render_template('ringing_room.html',
-                            tower = tower,
-                            user_name = '' if current_user.is_anonymous else current_user.username,
-                            server_ip=get_server_ip(tower_id),
-                            listen_link = False)
+    server_address = get_server_address(tower_id)
+    print('ROOT: ' + request.url_root)
+    print('ADDRESS: ' + server_address)
+
+    if server_address + '/' == request.url_root:
+        # Don't proxy; serve the content here
+        try:
+            towers.garbage_collection(tower_id)
+            tower = towers[tower_id]
+        except KeyError:
+            log('Bad tower_id')
+            abort(404)
+
+        # Pass in both the tower and the user_name
+        return render_template('ringing_room.html',
+                                tower = tower,
+                                user_name = '' if current_user.is_anonymous else current_user.username,
+                                server_address=server_address,
+                                listen_link = False)
+
+    # Proxy out to the secondary server
+    return get(f"{server_address}/{tower_id}{'/' if {decorator} else ''}{decorator}").content
+
+    
+
 
 
 #  Serve the static pages

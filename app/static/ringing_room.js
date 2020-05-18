@@ -27,7 +27,7 @@ logger.disableLogger()
 
 // Set up socketio instance
 
-var socketio = io(window.tower_parameters.server_ip);
+var socketio = io(window.tower_parameters.server_address);
 
 
 
