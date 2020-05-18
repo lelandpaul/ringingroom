@@ -67,20 +67,11 @@ def on_join(json):
     join_room(tower_id)
     log('SETUP Joined tower:',tower_id)
 
-    # We need to custom-load the user based on the jwt token passed up
-    user = None
-    if not json['anonymous_user']:
-        try:
-            user_id = jwt.decode(json['user_token'],app.config['SECRET_KEY'],algorithms=['HS256'])['id']
-            user = load_user(user_id)
-        except:
-            pass # leave user set to None
-
     # Whether the user is anonymous or not, send them the list of current users
     emit('s_set_userlist',{'user_list': tower.user_names})
 
     # If the user is anonymous, mark them as an observer and set some cookies
-    if not user:
+    if current_user.is_anonymous:
         # Check they're not already in the room
         if 'user_id' in session.keys():
             tower.remove_observer(session['user_id'])
@@ -92,21 +83,21 @@ def on_join(json):
         log('SETUP observer s_set_observers', tower.observers)
     else:
         # The user is logged in. Add this as a recent tower
-        user.add_recent_tower(tower)
+        current_user.add_recent_tower(tower)
         # If the user is logged in, but is already in the room: Remove them (in
         # preparation for adding them again)
-        if user.username in tower.users.keys():
+        if current_user.username in tower.users.keys():
             log('SETUP User already present')
-            tower.remove_user(user.id)
-            emit('s_user_left', {'user_name': user.username}, 
+            tower.remove_user(current_user.id)
+            emit('s_user_left', {'user_name': current_user.username}, 
                                 broadcast = True,
                                 include_self = True,
                                 room = tower_id)
         # For now: Keeping the "id/username" split in the tower model
         # Eventually, this will allow us to have display names different
         # from the username
-        tower.add_user(user.id, user.username)
-        emit('s_user_entered', { 'user_name': user.username },
+        tower.add_user(current_user.id, current_user.username)
+        emit('s_user_entered', { 'user_name': current_user.username },
              broadcast=True, include_self = True, room=json['tower_id'])
 
 
@@ -135,25 +126,15 @@ def on_user_left(json):
     tower_id = json['tower_id']
     tower = towers[tower_id]
 
-    # We need to custom-load the user based on the jwt token passed up
-    user = None
-    if not json['anonymous_user']:
-        try:
-            user_id = jwt.decode(json['user_token'],app.config['SECRET_KEY'],algorithms=['HS256'])['id']
-            user = load_user(user_id)
-        except:
-            user_id = session['user_id']
-            pass # leave user set to None
-
-    if not user:
-        tower.remove_observer(user_id)
+    if current_user.is_anonymous:
+        tower.remove_observer(session['user_id'])
         emit('s_set_observers', {'observers': tower.observers},
              broadcast = True, include_self = False, room=tower_id)
         return
 
 
-    tower.remove_user(user_id)
-    emit('s_user_left', { 'user_name': user.username },
+    tower.remove_user(current_user.id)
+    emit('s_user_left', { 'user_name': current_user.username },
          broadcast=True, include_self = True, room=tower_id)
 
     send_assignments(tower_id)
