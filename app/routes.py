@@ -19,7 +19,7 @@ def get_server_ip(tower_id):
     if not servers:
         return request.url_root
     else:
-        return 'http://' + servers[tower_id % len(servers)] + ':8080'
+        return 'https://' + servers[tower_id % len(servers)]
 
 # redirect for static files on subdomains
 
