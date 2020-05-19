@@ -15,8 +15,6 @@ class Config(object):
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    SESSION_TYPE = 'filesystem'
-
     PERMANENT_SESSION_LIFETIME = datetime.timedelta(days = 1)
 
     # We want this to be None if the environment variable isn't set
