@@ -1,6 +1,6 @@
 from flask import render_template, send_from_directory, abort, flash, redirect, url_for, session, request
 from flask_login import login_user, logout_user, current_user, login_required
-from requests import get
+from requests import get, post
 from app import app, towers, log, db
 from app.models import User
 from flask_login import current_user, login_user, logout_user, login_required
@@ -10,6 +10,8 @@ from urllib.parse import urlparse
 import string
 import random
 from app.email import send_password_reset_email
+import jwt
+from time import time
 
 # Helper function to get a server IP, with load balancing
 # If there is a list of IPs set in SOCKETIO_SERVER_ADDRESSES, this will automatically balance rooms
@@ -19,7 +21,7 @@ def get_server_address(tower_id):
     if not servers:
         return request.url_root
     else:
-        return 'http://' + servers[tower_id % 10 % len(servers)]
+        return 'https://' + servers[tower_id % 10 % len(servers)]
 
 # redirect for static files on subdomains
 
@@ -61,11 +63,27 @@ def assign_user_id():
 @app.route('/<int:tower_id>/<decorator>')
 def tower(tower_id, decorator=None):
 
+
     server_address = get_server_address(tower_id)
-    print('ROOT: ' + request.url_root)
-    print('ADDRESS: ' + server_address)
 
     if server_address + '/' == request.url_root:
+        # We may need to log the user in
+        try:
+            user_id = jwt.decode(request.args.get('user_token'),
+                                 app.config['SECRET_KEY'],
+                                 algorithms=['HS256'])['user_id']
+        except:
+            # The code was invalid
+            return abort(404)
+
+        if user_id:
+            # The user is logged in on the other side
+            user = User.query.get(user_id)
+            login_user(user)
+        else:
+            # The user is logged out on the other side
+            logout_user()
+
         # Don't proxy; serve the content here
         try:
             towers.garbage_collection(tower_id)
@@ -81,8 +99,14 @@ def tower(tower_id, decorator=None):
                                 server_address=server_address,
                                 listen_link = False)
 
+    # If the user is logged in, we want to send their user_id in a JWT to the secondary server
+    user_token = jwt.encode({'user_id': current_user.id if current_user.is_authenticated else None,
+                             'exp': time() + 60},
+                            app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8') \
+
     # Proxy out to the secondary server
-    return get(f"{server_address}/{tower_id}{'/' if {decorator} else ''}{decorator}").content
+    return get(f"{server_address}/{tower_id}",
+               params={'user_token': user_token}).content
 
     
 
@@ -141,13 +165,12 @@ def login():
             return redirect(url_for('authenticate'))
 
         login_user(user, remember=login_form.remember_me.data)
-
+            
         return redirect(next or url_for('index'))
     return render_template('authenticate.html', 
                            login_form=login_form,
                            registration_form=registration_form,
                            next=next)
-
 
 @app.route('/logout')
 def logout():
