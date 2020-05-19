@@ -21,7 +21,7 @@ def get_server_address(tower_id):
     if not servers:
         return request.url_root
     else:
-        return 'https://' + servers[tower_id % 10 % len(servers)]
+        return 'http://' + servers[tower_id % 10 % len(servers)]
 
 # redirect for static files on subdomains
 
@@ -66,24 +66,8 @@ def tower(tower_id, decorator=None):
 
     server_address = get_server_address(tower_id)
 
+
     if server_address + '/' == request.url_root:
-        # We may need to log the user in
-        try:
-            user_id = jwt.decode(request.args.get('user_token'),
-                                 app.config['SECRET_KEY'],
-                                 algorithms=['HS256'])['user_id']
-        except:
-            # The code was invalid
-            return abort(404)
-
-        if user_id:
-            # The user is logged in on the other side
-            user = User.query.get(user_id)
-            login_user(user)
-        else:
-            # The user is logged out on the other side
-            logout_user()
-
         # Don't proxy; serve the content here
         try:
             towers.garbage_collection(tower_id)
@@ -92,21 +76,25 @@ def tower(tower_id, decorator=None):
             log('Bad tower_id')
             abort(404)
 
+
         # Pass in both the tower and the user_name
         return render_template('ringing_room.html',
                                 tower = tower,
-                                user_name = '' if current_user.is_anonymous else current_user.username,
+                                user_name = request.args.get('user_name'),
+                                user_token = request.args.get('user_token'),
                                 server_address=server_address,
                                 listen_link = False)
 
-    # If the user is logged in, we want to send their user_id in a JWT to the secondary server
+    # We may need to log the user in on the other server, and on the socketio side
+    # Send a signed jwt acomplishing this
     user_token = jwt.encode({'user_id': current_user.id if current_user.is_authenticated else None,
                              'exp': time() + 60},
-                            app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8') \
+                            app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
 
     # Proxy out to the secondary server
     return get(f"{server_address}/{tower_id}",
-               params={'user_token': user_token}).content
+               params={"user_token": user_token,
+                       "user_name": current_user.username if current_user.is_authenticated else None}).content
 
     
 

@@ -32,13 +32,15 @@
             name: "{{tower.name}}",
             audio: "{{tower.audio}}",
             size: parseInt({{tower.n_bells}}),
+            cur_users: {{tower.user_names | safe }},
             observers: parseInt({{tower.observers}}),
             assignments: {{tower.assignments_as_list() | safe }},
             cur_user_name: "{{user_name}}",
-            anonymous_user: {{'true' if current_user.is_anonymous or listen_link else 'false'}},
+            user_token: "{{user_token}}",
+            anonymous_user: {{'true' if listen_link or not user_name else 'false'}},
             user_token: "{{user_token}}",
             listen_link: {{'true' if listen_link else 'false'}},
-            server_address: "{{server_address}}",
+            server_address: "{{server_address}}"
         };
     </script>
     <!-- internal resources -->

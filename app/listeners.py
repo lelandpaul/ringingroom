@@ -1,10 +1,11 @@
 from flask_socketio import emit, join_room
 from flask import session, request
-from flask_login import current_user
+from flask_login import current_user, login_user, logout_user
 from app import socketio, towers, log, app
-from app.models import Tower, load_user
+from app.models import Tower, load_user, User
 import random
 import string
+import jwt
 
 # SocketIO Handlers
 
@@ -56,18 +57,25 @@ def assign_user_id():
 def on_join(json):
     log('c_join',json)
 
+    # We may need to log the user in
+    user_id = jwt.decode(json.get('user_token'),
+                         app.config['SECRET_KEY'],
+                         algorithms=['HS256'])['user_id']
+    if user_id:
+        login_user(User.query.get(user_id))
+    else:
+        # The code was invalid, try logging out and
+        # just continue as anonymous
+        logout_user()
+
 
     # First, get the tower_id & tower from the client and find the tower
     tower_id = json['tower_id']
     tower = towers[tower_id]
 
-
     # Next, join the tower
     join_room(tower_id)
     log('SETUP Joined tower:',tower_id)
-
-    # Whether the user is anonymous or not, send them the list of current users
-    emit('s_set_userlist',{'user_list': tower.user_names})
 
     # If the user is anonymous, mark them as an observer and set some cookies
     if current_user.is_anonymous:
@@ -126,11 +134,13 @@ def on_user_left(json):
     tower = towers[tower_id]
 
     if current_user.is_anonymous:
-        tower.remove_observer(session['user_id'])
-        emit('s_set_observers', {'observers': tower.observers},
-             broadcast = True, include_self = False, room=tower_id)
-        return
-
+        try:
+            tower.remove_observer(session['user_id'])
+            emit('s_set_observers', {'observers': tower.observers},
+                 broadcast = True, include_self = False, room=tower_id)
+            return
+        except KeyError:
+            return
 
     tower.remove_user(current_user.id)
     emit('s_user_left', { 'user_name': current_user.username },
