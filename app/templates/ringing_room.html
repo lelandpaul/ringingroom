@@ -29,7 +29,7 @@
     <script>
         window.tower_parameters = {
             id: parseInt({{tower.tower_id}}),
-            name: "{{tower.name}}",
+            name: "{{tower.name | safe}}",
             audio: "{{tower.audio}}",
             size: parseInt({{tower.n_bells}}),
             observers: parseInt({{tower.observers}}),
