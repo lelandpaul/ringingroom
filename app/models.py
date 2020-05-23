@@ -197,12 +197,12 @@ class Tower:
 
     def remove_user(self, user_id):
         try:
-            user_name = self.users[user_id]
+            user_name = self.users[int(user_id)]
             for (bell, assignment) in self._assignments.items():
                 if assignment == user_name:
                     self._assignments[bell] = '' # unassign the user from all bells
-            del self._users[user_id]
-        except ValueError: pass
+            del self._users[int(user_id)]
+        except ValueError: log('Value error when removing user from tower.')
         except KeyError: log("Tried to remove user that wasn't there")
     
     @property
