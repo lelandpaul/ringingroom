@@ -106,6 +106,11 @@ def on_join(json):
         # Eventually, this will allow us to have display names different
         # from the username
         tower.add_user(user.id, user.username)
+
+        # Hack to fix a bug with the multiserver setup
+        emit('s_size_change',{'size': tower.n_bells})
+        emit('s_audio_change',{'new_audio':tower.audio})
+
         emit('s_user_entered', { 'user_name': user.username },
              broadcast=True, include_self = True, room=json['tower_id'])
 
