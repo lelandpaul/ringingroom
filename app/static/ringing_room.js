@@ -124,6 +124,14 @@ socketio.on('s_audio_change',function(msg,cb){
   bell_circle.audio = msg.new_audio == 'Tower' ? tower : hand;
 });
 
+// A chat message was received
+socketio.on('s_msg_sent', function(msg,cb){
+    bell_circle.$refs.chatbox.messages.push(msg);
+    bell_circle.$nextTick(function(){
+        $('#chat_messages').scrollTop($('#chat_messages')[0].scrollHeight);
+    });
+});
+
 
 
 
@@ -559,6 +567,67 @@ Vue.component('help', {
                `,
 }); // End help
 
+Vue.component('chatbox', {
+
+    data: function(){
+        return { name: window.tower_parameters.cur_user_name,
+                 cur_msg: '',
+                 messages: [],
+        }
+    },
+
+    methods: {
+
+        send_msg: function() {
+            console.log('send_msg');
+            socketio.emit('c_msg_sent', { user: this.name,
+                                          msg: this.cur_msg,
+                                          time: new Date(),
+                                          tower_id: window.tower_parameters.id});
+            this.cur_msg = '';
+        }
+    },
+
+    template: `
+        <div class="row" id="chat_row">
+        <div class="col">
+        <div class="card" id="chatbox">
+            <div class="card-header">
+                <h2>Chat</h2>
+            </div>
+            <div class="card-body" id="chat_messages">
+                <div class="message pb-1" v-for="msg in messages">
+                    <span class="msg_username">[[msg.user]]:</span>
+                    <span class="msg_msg">[[msg.msg]]</span>
+                </div>
+            </div>
+            <div class="row" id="chat_input">
+            <div class="col">
+            <form action="" @submit.prevent="send_msg">
+            <div class="input-group">
+                <input type="text" 
+                       id="chat_input_box"
+                       class="form-control" 
+                       placeholder=""
+                       v-model="cur_msg"></input>
+                <div class="input-group-append">
+                    <input class="btn btn-outline-primary" 
+                            type="submit"
+                            value="Send"></input>
+                </div>
+            </form>
+            </div>
+            </div>
+            </div>
+        </div>
+        </div>
+        </div>
+              `
+
+
+});
+
+
 // user_display holds functionality required for users
 Vue.component('user_display', {
 
@@ -725,8 +794,7 @@ bell_circle = new Vue({
             // Do a special thing to prevent space from pressing focused buttons
             window.addEventListener('keyup', (e) => {
                 this.keys_down.splice(this.keys_down.indexOf(e.key),1)
-                console.log('LIST IS: ' + this.keys_down);
-                if (e.which == 32) {
+                if (e.which == 32 && !$('#chat_input_box').is(':focus')) {
                     e.preventDefault();
                 }
             });
@@ -739,9 +807,15 @@ bell_circle = new Vue({
 			// Shift+1 produces code "Digit1"; this gets the digit itself
 			const code = e.code[e.code.length - 1];
 
+            if($("#chat_input_box").is(":focus")){
+                if (key == 'Escape') {
+                    $('#chat_input_box').blur();
+                } else return; // disable hotkeys when typing
+            }
+
+
             if (bell_circle.keys_down.includes(key)){ return };
             bell_circle.keys_down.push(key);
-            console.log('LIST IS: ' + bell_circle.keys_down);
 
 
             // Do a special thing to prevent space and the arrow keys from hitting focused elements
@@ -952,9 +1026,9 @@ bell_circle = new Vue({
 
 	template: 
     `
-        <div>
+        <div id="bell_circle_wrapper">
 
-        <div class="row flex-lg-nowrap">
+        <div class="row flex-lg-nowrap" id="sidebar_col_row">
         
         <div class="col-12 col-lg-4 sidebar_col"> <!-- sidebar col -->
 
@@ -1026,6 +1100,8 @@ bell_circle = new Vue({
 
 
         <user_display ref="users"></user_display>
+
+        <chatbox ref="chatbox"></chatbox>
 
 
         </div> <!-- hidden sidebar -->
