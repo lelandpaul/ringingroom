@@ -42,6 +42,9 @@ body {
 
 // positioning for tower controls
 .tower_controls {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
     position: relative;
     overflow: hidden; /* Disable horizontal scroll */
     width: 100%;
@@ -250,16 +253,59 @@ hr {
   transform: scale(1.5) scaleX(-1) translateY(-10%);
 }
 
+/* Chatbox */
+
+
+.msg_username {
+    font-weight: bold;
+}
+
+#chat_messages {
+    flex-grow: 1;
+    overflow: scroll;
+}
+
+.message {
+    max-width: fit-content;
+    white-space: normal;
+}
+
+#chat_row {
+    flex-grow: 1;
+}
+
+#chatbox {
+    flex-grow: 1;
+    height: 20rem;
+}
+
 /* Scary mixin land */
 
 /* On larger screens, permanently open the menu */
 @include media-breakpoint-up(lg){
+    html { min-height:100%; }
+    body, #global_wrapper, #bell_circle_wrapper, #sidebar_col_row{
+        height: 100%;
+    }
     .collapse.tower_controls, .collaps.tower_controls:not(.show) { 
-        display: block; 
+        display: flex; 
+        flex-grow: 1;
     }
     .sidebar_col {
         min-width: max-content;
         max-width: 25rem;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        min-height: 45rem;
+    }
+    #chatbox {
+        height: 95%;
+    }
+
+    .tower_controls{
+        display: flex;
+        flex-grow: 1;
     }
     .help {
         width: 40rem;
