@@ -45,6 +45,7 @@ body {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    flex-basis: 0%;
     position: relative;
     overflow: hidden; /* Disable horizontal scroll */
     width: 100%;
@@ -261,8 +262,9 @@ hr {
 }
 
 #chat_messages {
-    flex-grow: 1;
     overflow: scroll;
+    min-height: 20rem;
+    max-height: 20rem;
 }
 
 .message {
@@ -270,42 +272,31 @@ hr {
     white-space: normal;
 }
 
-#chat_row {
-    flex-grow: 1;
+#chatbox {
+    width: 100%;
 }
 
-#chatbox {
-    flex-grow: 1;
-    height: 20rem;
-}
 
 /* Scary mixin land */
 
 /* On larger screens, permanently open the menu */
 @include media-breakpoint-up(lg){
     html { min-height:100%; }
-    body, #global_wrapper, #bell_circle_wrapper, #sidebar_col_row{
-        height: 100%;
-    }
-    .collapse.tower_controls, .collaps.tower_controls:not(.show) { 
+    .collapse.tower_controls, .collapse.tower_controls:not(.show) { 
         display: flex; 
         flex-grow: 1;
     }
     .sidebar_col {
-        min-width: max-content;
+        width: 25rem;
         max-width: 25rem;
-        height: 100%;
+        flex-grow: 1;
         display: flex;
         flex-direction: column;
-        min-height: 45rem;
-    }
-    #chatbox {
-        height: 95%;
+        height: 100%;
     }
 
     .tower_controls{
-        display: flex;
-        flex-grow: 1;
+        height: 30rem;
     }
     .help {
         width: 40rem;

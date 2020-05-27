@@ -589,38 +589,44 @@ Vue.component('chatbox', {
     },
 
     template: `
-        <div class="row" id="chat_row">
-        <div class="col">
         <div class="card" id="chatbox">
-            <div class="card-header">
-                <h2>Chat</h2>
+            <div class="card-header"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#chat_body">
+                <h2>
+                    Chat
+                </h2>
             </div>
-            <div class="card-body" id="chat_messages">
-                <div class="message pb-1" v-for="msg in messages">
-                    <span class="msg_username">[[msg.user]]:</span>
-                    <span class="msg_msg">[[msg.msg]]</span>
+            <div class="card-body collapse show" 
+                 id="chat_body"
+                 data-parent="#sidebar_accordion">
+                <div class="row no-gutters p-0" id="chat_messages">
+                    <div class="col p-0">
+                        <div class="message pb-1" v-for="msg in messages">
+                            <span class="msg_username">[[msg.user]]:</span>
+                            <span class="msg_msg">[[msg.msg]]</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row no-gutters p-0" id="chat_input">
+                <div class="col p-o">
+                <form action="" @submit.prevent="send_msg">
+                <div class="input-group">
+                    <input type="text" 
+                           id="chat_input_box"
+                           class="form-control" 
+                           placeholder=""
+                           v-model="cur_msg"></input>
+                    <div class="input-group-append">
+                        <input class="btn btn-outline-primary" 
+                                type="submit"
+                                value="Send"></input>
+                    </div>
+                </form>
+                </div>
                 </div>
             </div>
-            <div class="row" id="chat_input">
-            <div class="col">
-            <form action="" @submit.prevent="send_msg">
-            <div class="input-group">
-                <input type="text" 
-                       id="chat_input_box"
-                       class="form-control" 
-                       placeholder=""
-                       v-model="cur_msg"></input>
-                <div class="input-group-append">
-                    <input class="btn btn-outline-primary" 
-                            type="submit"
-                            value="Send"></input>
-                </div>
-            </form>
-            </div>
-            </div>
-            </div>
-        </div>
-        </div>
         </div>
               `
 
@@ -649,6 +655,7 @@ Vue.component('user_display', {
                 this.selected_user = this.cur_user;
             } else {
                 this.rotate_to_assignment();
+                $('#chat_body').collapse('show');
             }
         },
 
@@ -707,13 +714,14 @@ Vue.component('user_display', {
 
 	template: 
     `
-         <div>
-         <div class="row">
-
-         <div class="col">
-         <ul class="list-group">
-            <li class="list-group-item">
-                <h2 style="display: inline;">Users</h2>
+         <div class="card">
+             <div class="card-header"
+                  type="button"
+                  data-toggle="collapse"
+                  data-target="#user_display_body">
+                <h2 style="display: inline;">
+                        Users
+                </h2>
                 <span class="float-right">
                 <button class="btn btn-outline-primary"
                         :class="{active: assignment_mode}"
@@ -723,45 +731,47 @@ Vue.component('user_display', {
                    [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
                  </button>
                  </span>
-            </li>
-            <li class="list-group-item cur_user d-inline-flex align-items-center"
-                 :class="{assignment_active: assignment_mode,
-                          active: cur_user == selected_user && assignment_mode}"
-                 v-if="window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link"
+             </div>
+             <ul class="list-group list-group-flush collapse"
+                 id="user_display_body"
+                 data-parent="#sidebar_accordion">
+                <li class="list-group-item cur_user d-inline-flex align-items-center"
+                     :class="{assignment_active: assignment_mode,
+                              active: cur_user == selected_user && assignment_mode}"
+                     v-if="window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link"
+                     >
+                     <span class="mr-auto">Log in to ring</span>
+                     <span class="float-right">
+                     <a class="btn btn-outline-primary btn-sm" 
+                        :href="'/authenticate?next=' + window.location.pathname">Log In</a>
+                     </span>
+                </li>
+                <li class="list-group-item list-group-item-action cur_user d-inline-flex align-items-center"
+                     :class="{assignment_active: assignment_mode,
+                              active: cur_user == selected_user && assignment_mode}"
+                     v-if="!window.tower_parameters.anonymous_user"
+                     @click="select_user(cur_user)"
+                     >
+                     <span class="user_list_cur_user_name mr-auto">[[ cur_user ]]</span>
+                     <span class="float-right" v-show="!assignment_mode"
+                           @click="leave_tower">
+                        <a role="button" class="btn btn-outline-primary btn-sm" href='/'>Leave Tower</a>
+                     </span>
+                 </li>
+                <li v-for="user in user_names"
+                    class="list-group-item list-group-item-action"
+                    v-if="user != cur_user"
+                     :class="{cur_user: user == cur_user,
+                              disabled: !assignment_mode,
+                              assignment_active: assignment_mode,
+                              active: user == selected_user && assignment_mode}"
+                     @click="select_user(user)"
                  >
-                 <span class="mr-auto">Log in to ring</span>
-                 <span class="float-right">
-                 <a class="btn btn-outline-primary btn-sm" 
-                    :href="'/authenticate?next=' + window.location.pathname">Log In</a>
-                 </span>
-            </li>
-            <li class="list-group-item list-group-item-action cur_user d-inline-flex align-items-center"
-                 :class="{assignment_active: assignment_mode,
-                          active: cur_user == selected_user && assignment_mode}"
-                 v-if="!window.tower_parameters.anonymous_user"
-                 @click="select_user(cur_user)"
-                 >
-                 <span class="user_list_cur_user_name mr-auto">[[ cur_user ]]</span>
-                 <span class="float-right" v-show="!assignment_mode"
-                       @click="leave_tower">
-                    <a role="button" class="btn btn-outline-primary btn-sm" href='/'>Leave Tower</a>
-                 </span>
-             </li>
-            <li v-for="user in user_names"
-                class="list-group-item list-group-item-action"
-                v-if="user != cur_user"
-                 :class="{cur_user: user == cur_user,
-                          disabled: !assignment_mode,
-                          assignment_active: assignment_mode,
-                          active: user == selected_user && assignment_mode}"
-                 @click="select_user(user)"
-             >
-                        [[ user ]]
-             </li>
+                            [[ user ]]
+                 </li>
                  </ul>
-        </div></div>
-        </div>
-    `,
+            </div>
+        `,
 }); // End user_display
 
 
@@ -1098,10 +1108,15 @@ bell_circle = new Vue({
 
         <tower_controls ref="controls"></tower_controls>
 
+        <div class="row pb-0 flex-grow-1">
+        <div class="col flex-grow-1">
+        <div class="accordion" id="sidebar_accordion">
+            <user_display ref="users"></user_display>
+            <chatbox ref="chatbox"></chatbox>
+        </div>
+        </div>
+        </div>
 
-        <user_display ref="users"></user_display>
-
-        <chatbox ref="chatbox"></chatbox>
 
 
         </div> <!-- hidden sidebar -->
