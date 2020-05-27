@@ -4,7 +4,7 @@ from app import app, towers, log, db
 from app.models import User
 from flask_login import current_user, login_user, logout_user, login_required
 from app.forms import LoginForm, RegistrationForm, UserSettingsForm, ResetPasswordRequestForm, \
-    ResetPasswordForm
+    ResetPasswordForm, UserDeleteForm
 from urllib.parse import urlparse
 import string
 import random
@@ -175,17 +175,32 @@ def register():
 @login_required
 def user_settings():
     form = UserSettingsForm()
-    if form.validate_on_submit() and current_user.check_password(form.password.data):
+    del_form = UserDeleteForm()
+    if form.validate_on_submit():
+        if not current_user.check_password(form.password.data):
+            flash('Incorrect password.')
+            return render_template('user_settings.html',form=form, del_form=del_form)
         if form.new_password.data:
             current_user.set_password(form.new_password.data)
             flash('Password updated.')
         if form.new_email.data:
             current_user.email = form.new_email.data.lower()
+            flash('Email updated.')
         if form.new_username.data:
             current_user.username = form.new_username.data
             flash('Username updated.')
         db.session.commit()
-    return render_template('user_settings.html', form=form)
+        return redirect(url_for('user_settings'))
+    if del_form.validate_on_submit() and current_user.check_password(del_form.delete_password.data):
+        if not current_user.check_password(form.password.data):
+            flash('Incorrect password.')
+            return render_template('user_settings.html',form=form, del_form=del_form)
+        current_user.clear_all_towers()
+        db.session.delete(current_user)
+        db.session.commit()
+        logout_user()
+        return redirect(url_for('index'))
+    return render_template('user_settings.html', form=form, del_form=del_form)
 
 @app.route('/reset_password', methods=['GET','POST'])
 def request_reset_password():
