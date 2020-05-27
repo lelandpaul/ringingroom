@@ -277,6 +277,7 @@ hr {
 
 #chatbox {
     width: 100%;
+    min-width: 20rem;
 }
 
 #user_display_header.collapsed::after,
@@ -303,8 +304,8 @@ hr {
         flex-grow: 1;
     }
     .sidebar_col {
-        width: 25rem;
-        max-width: 25rem;
+        min-width: max-content;
+        max-width: max-content;
         flex-grow: 1;
         display: flex;
         flex-direction: column;
