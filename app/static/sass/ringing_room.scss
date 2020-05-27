@@ -279,6 +279,19 @@ hr {
     width: 100%;
 }
 
+#user_display_header.collapsed::after,
+#chat_header.collapsed::after{
+    content: '▸';
+    font-size: 1.5rem;
+}
+
+#user_display_header::after,
+#chat_header::after{
+    content: '▾';
+    font-size: 1.5rem;
+}
+
+
 
 /* Scary mixin land */
 

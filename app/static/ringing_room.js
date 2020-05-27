@@ -604,6 +604,7 @@ Vue.component('chatbox', {
         <div class="card" id="chatbox">
             <div class="card-header">
                 <h2 style="display: inline; cursor: pointer;"
+                    id="chat_header"
                     @click="open_user_display"
                     data-toggle="collapse"
                     data-target="#chat_body"
@@ -662,6 +663,7 @@ Vue.component('user_display', {
                  cur_user: window.tower_parameters.cur_user_name,
                  observers: parseInt(window.tower_parameters.observers),
         } },
+
 
     methods: {
 
@@ -726,6 +728,7 @@ Vue.component('user_display', {
                 $('#chat_body').collapse('show');
             }
         },
+
     },
 
 	template: 
@@ -736,10 +739,12 @@ Vue.component('user_display', {
                   v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.lister_link"
                   >
                 <h2 style="display: inline;"
+                    class="collapsed"
+                    id="user_display_header"
                     type="button"
                     data-toggle="collapse"
                     data-target="#user_display_body">
-                        Users
+                        Users 
                 </h2>
                 <span class="float-right w-50">
                 <button class="btn btn-outline-primary w-100"
