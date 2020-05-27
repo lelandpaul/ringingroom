@@ -585,17 +585,34 @@ Vue.component('chatbox', {
                                           time: new Date(),
                                           tower_id: window.tower_parameters.id});
             this.cur_msg = '';
-        }
+        },
+
+        leave_tower: function(){
+            socketio.emit('c_user_left',
+                  {user_name: window.tower_parameters.cur_user_name, 
+                  tower_id: cur_tower_id });
+        },
+
+        open_user_display: function(){
+            if (!$('#user_display_body').hasClass('show')){
+                $('#user_display_body').collapse('show');
+            }
+        },
     },
 
     template: `
         <div class="card" id="chatbox">
-            <div class="card-header"
-                    type="button"
+            <div class="card-header">
+                <h2 style="display: inline; cursor: pointer;"
+                    @click="open_user_display"
                     data-toggle="collapse"
-                    data-target="#chat_body">
-                <h2>
+                    data-target="#chat_body"
+                    >
                     Chat
+                     <span class="float-right w-50"
+                           @click="leave_tower">
+                        <a role="button" class="btn btn-outline-primary w-100" href='/'>Leave Tower</a>
+                     </span>
                 </h2>
             </div>
             <div class="card-body collapse show" 
@@ -650,12 +667,12 @@ Vue.component('user_display', {
 
         toggle_assignment: function(){
             if (window.tower_parameters.anonymous_user){ return }; // don't do anything if not logged in
+            if (!$('#user_display_body').hasClass('show')) $('#user_display_body').collapse('show');
             this.assignment_mode = !this.assignment_mode;
             if (this.assignment_mode){
                 this.selected_user = this.cur_user;
             } else {
                 this.rotate_to_assignment();
-                $('#chat_body').collapse('show');
             }
         },
 
@@ -704,36 +721,45 @@ Vue.component('user_display', {
             }
         },
 
-        leave_tower: function(){
-            socketio.emit('c_user_left',
-                  {user_name: window.tower_parameters.cur_user_name, 
-                  tower_id: cur_tower_id });
+        open_chat: function(){
+            if (!$('#chat_body').hasClass('show')){
+                $('#chat_body').collapse('show');
+            }
         },
-
     },
 
 	template: 
     `
          <div class="card">
              <div class="card-header"
-                  type="button"
-                  data-toggle="collapse"
-                  data-target="#user_display_body">
-                <h2 style="display: inline;">
+                  @click="open_chat"
+                  v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.lister_link"
+                  >
+                <h2 style="display: inline;"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#user_display_body">
                         Users
                 </h2>
-                <span class="float-right">
-                <button class="btn btn-outline-primary"
+                <span class="float-right w-50">
+                <button class="btn btn-outline-primary w-100"
                         :class="{active: assignment_mode}"
                         @click="toggle_assignment"
-                        v-if="!window.tower_parameters.anonymous_user"
                         >
                    [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
                  </button>
                  </span>
              </div>
-             <ul class="list-group list-group-flush collapse"
+             <div class="card-header"
+                  v-else
+                  >
+                <h2 style="display: inline;">
+                        Users
+                </h2>
+             </div>
+             <ul class="list-group list-group-flush"
                  id="user_display_body"
+                 :class="{collapse: (!window.tower_parameters.anonymous_user && !window.tower_parameters.listener_link)}"
                  data-parent="#sidebar_accordion">
                 <li class="list-group-item cur_user d-inline-flex align-items-center"
                      :class="{assignment_active: assignment_mode,
@@ -753,10 +779,6 @@ Vue.component('user_display', {
                      @click="select_user(cur_user)"
                      >
                      <span class="user_list_cur_user_name mr-auto">[[ cur_user ]]</span>
-                     <span class="float-right" v-show="!assignment_mode"
-                           @click="leave_tower">
-                        <a role="button" class="btn btn-outline-primary btn-sm" href='/'>Leave Tower</a>
-                     </span>
                  </li>
                 <li v-for="user in user_names"
                     class="list-group-item list-group-item-action"
@@ -1108,14 +1130,23 @@ bell_circle = new Vue({
 
         <tower_controls ref="controls"></tower_controls>
 
-        <div class="row pb-0 flex-grow-1">
-        <div class="col flex-grow-1">
-        <div class="accordion" id="sidebar_accordion">
+        <template v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.listern_link">
+            <div class="row pb-0 flex-grow-1">
+            <div class="col flex-grow-1">
+            <div class="accordion" id="sidebar_accordion">
+                <user_display ref="users"></user_display>
+                <chatbox ref="chatbox"></chatbox>
+            </div>
+            </div>
+            </div>
+        </template>
+        <template v-else>
+            <div class="row pb-0 flex-grow-1">
+            <div class="col flex-grow-1">
             <user_display ref="users"></user_display>
-            <chatbox ref="chatbox"></chatbox>
-        </div>
-        </div>
-        </div>
+            </div>
+            </div>
+        </template>
 
 
 
