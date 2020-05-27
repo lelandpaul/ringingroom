@@ -259,12 +259,15 @@ hr {
 
 .msg_username {
     font-weight: bold;
+    font-size: 1.25rem;
+    padding-right: 0.25rem;
 }
 
 #chat_messages {
     overflow: scroll;
     min-height: 20rem;
     max-height: 20rem;
+    font-size: 1.25rem;
 }
 
 .message {

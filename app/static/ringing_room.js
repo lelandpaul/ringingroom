@@ -620,7 +620,7 @@ Vue.component('chatbox', {
                  data-parent="#sidebar_accordion">
                 <div class="row no-gutters p-0" id="chat_messages">
                     <div class="col p-0">
-                        <div class="message pb-1" v-for="msg in messages">
+                        <div class="message" v-for="msg in messages">
                             <span class="msg_username">[[msg.user]]:</span>
                             <span class="msg_msg">[[msg.msg]]</span>
                         </div>
