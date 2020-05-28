@@ -48,12 +48,8 @@ class RegistrationForm(FlaskForm):
     password2 = PasswordField(
         'Repeat Password', validators = [DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
-    accept_privacy = BooleanField('I have read and accept the Privacy Policy', validators=[DataRequired(message='Please accept our Privacy Policy to continue.')])
-
-    def validate_username(self, username):
-        user = User.query.filter_by(username=username.data).first()
-        if user is not None:
-            raise ValidationError('Please choose a different username.')
+    accept_privacy = BooleanField('I have read and accept the Privacy Policy', \
+                  validators=[DataRequired(message='Please accept our Privacy Policy to continue.')])
 
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
@@ -75,13 +71,8 @@ class UserSettingsForm(FlaskForm):
     new_password2 = PasswordField('Repeat New Password', validators=[EqualTo('new_password'),
                                                                      RequiredIf('new_password')])
 
-    def validate_new_username(self, new_username):
-        users = User.query.filter_by(username=new_username.data).all()
-        if len(users) > 1:
-            raise ValidationError('That username is already taken.')
-
-    def validate_email(self, email):
-        user = User.query.filter_by(email=email.data).first()
+    def validate_new_email(self, new_email):
+        user = User.query.filter_by(email=new_email.data).first()
         if user is not None:
             raise ValidationError('There is already a username associated with that email address.')
 

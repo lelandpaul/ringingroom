@@ -129,8 +129,7 @@ def login():
         next = ''
     if login_form.validate_on_submit():
 
-        user = User.query.filter_by(email=login_form.username.data.lower()).first() or \
-               User.query.filter_by(username=login_form.username.data).first()
+        user = User.query.filter_by(email=login_form.username.data.lower()).first()
         if user is None or not user.check_password(login_form.password.data):
             raise ValidationError('Incorrect username or password.')
             return redirect(url_for('authenticate'))
@@ -157,7 +156,7 @@ def register():
     login_form = LoginForm()
     registration_form = RegistrationForm()
     if registration_form.validate_on_submit():
-        user = User(username=registration_form.username.data, 
+        user = User(username=registration_form.username.data.strip(), 
                     email=registration_form.email.data.lower())
         user.set_password(registration_form.password.data)
         db.session.add(user)
@@ -187,7 +186,7 @@ def user_settings():
             current_user.email = form.new_email.data.lower()
             flash('Email updated.')
         if form.new_username.data:
-            current_user.username = form.new_username.data
+            current_user.username = form.new_username.data.strip()
             flash('Username updated.')
         db.session.commit()
         return redirect(url_for('user_settings'))
