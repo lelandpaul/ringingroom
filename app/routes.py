@@ -1,5 +1,6 @@
 from flask import render_template, send_from_directory, abort, flash, redirect, url_for, session, request
 from flask_login import login_user, logout_user, current_user, login_required
+from wtforms import ValidationError
 from app import app, towers, log, db
 from app.models import User
 from flask_login import current_user, login_user, logout_user, login_required
