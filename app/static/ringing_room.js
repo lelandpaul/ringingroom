@@ -809,7 +809,6 @@ Vue.component('user_display', {
                 <h2 style="display: inline;"
                     class="collapsed"
                     id="user_display_header"
-                    type="button"
                     data-toggle="collapse"
                     data-target="#user_display_body">
                         Users 
