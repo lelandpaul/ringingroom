@@ -1205,8 +1205,6 @@ bell_circle = new Vue({
 
         <tower_controls ref="controls"></tower_controls>
         
-        <volume_control ref="volume"></volume_control>
-
         <template v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.listern_link">
             <div class="row pb-0 flex-grow-1">
             <div class="col flex-grow-1">
