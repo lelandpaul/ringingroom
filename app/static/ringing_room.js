@@ -698,16 +698,11 @@ Vue.component('volume_control', {
     watch: {
         value: function(new_value) {
             window.user_parameters.bell_volume = new_value;
-<<<<<<< HEAD
-    <div class="row justify-content-between">
-        <label class="col-auto" for="volumeSlider">Volume:</label>
-=======
         },
     },
 
     template: `
     <div class="row justify-content-between mt-n2">
->>>>>>> restyled volume
         <!-- slider bar overlaps its own padding, so put it in a div to make it line up with the edges-->
         <div class="col-2 pl-4">
         <i class="fas fa-volume-down volume_icon align-middle"></i>
