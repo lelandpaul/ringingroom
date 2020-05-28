@@ -52,7 +52,10 @@ var leave_room = function(){
 window.addEventListener("beforeunload", leave_room, "useCapture");
 window.onbeforeunload = leave_room;
 
-
+// initial data state
+window.user_parameters = {
+    bell_volume: 5,
+};
 
 ////////////////////////
 /* SOCKETIO LISTENERS */
@@ -213,7 +216,8 @@ Vue.component("bell_rope", {
 
       // Ringing event received; now ring the bell
 	  ring: function(){
-		this.stroke = !this.stroke;
+        this.stroke = !this.stroke;
+        this.audio._volume = window.user_parameters.bell_volume * 0.1;
         const audio_type = this.$root.$refs.controls.audio_type;
         console.log(audio_type + ' ' + this.number_of_bells);
 		this.audio.play(bell_mappings[audio_type][this.number_of_bells][this.number - 1]);
@@ -558,6 +562,31 @@ Vue.component('help', {
 </div>
                `,
 }); // End help
+
+Vue.component('volume_control', {
+    data: function() {
+        return {
+            value: window.user_parameters.bell_volume,
+        }
+    },
+
+    watch: {
+        value: function(new_value) {
+            window.user_parameters.bell_volume = new_value;
+        },
+    },
+
+    template: `
+    <div class="row justify-content-between">
+        <label class="col-auto" for="volumeSlider">Volume:</label>
+        <!-- slider bar overlaps its own padding, so put it in a div to make it line up with the edges-->
+        <div class="col-auto">
+            <input type="range" v-model="value" min=0 max=10 id="volumeSlider" class="volume_control_slider">
+            </input>
+        </div>
+    </div>
+`
+})
 
 // user_display holds functionality required for users
 Vue.component('user_display', {
@@ -1023,6 +1052,8 @@ bell_circle = new Vue({
 
 
         <tower_controls ref="controls"></tower_controls>
+
+        <volume_control ref="volume"></volume_control>
 
 
         <user_display ref="users"></user_display>
