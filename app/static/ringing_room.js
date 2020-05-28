@@ -390,6 +390,39 @@ Vue.component('call_display', {
 }); // end call_display component
 
 
+// The focus_display indicated when the window has lost focus
+Vue.component('focus_display', {
+
+    // data in components should be a function, to maintain scope
+	data: function(){
+		return { visible: true };
+	},
+
+    mounted: function() {
+        this.$nextTick(function() {
+            window.addEventListener('focus', this.hide)
+            window.addEventListener('blur', this.show)
+
+            document.hasFocus() ? this.hide() : this.show()
+        })
+    },
+
+    methods: {
+        show() {
+            this.visible = true;
+        },
+        hide() {
+            this.visible = false;
+        }
+    },
+
+	template: `<h2 v-show="visible" id='focus_display'>
+                   Click anywhere in Ringing Room to resume ringing.
+               </h2>
+              `
+}); // end focus_display component
+
+
 // tower_controls holds title, id, size buttons, audio toggle
 Vue.component('tower_controls', {
 
@@ -1073,6 +1106,7 @@ bell_circle = new Vue({
                             number_of_bells == 10 ? 'ten'    : '',
                             number_of_bells == 12 ? 'twelve' : '']">
             <call_display v-bind:audio="audio" ref="display"></call_display>
+            <focus_display ref="focus"></focus_display>
               <bell_rope v-for="bell in bells"
                          v-bind:key="bell.number"
                          v-bind:number="bell.number"
@@ -1167,5 +1201,4 @@ bell_circle = new Vue({
 // 	console.log(msg)
 // 	message_display.messages.push('<b>' + msg.user_name + '</b>: ' + msg.message)
 // });
-
 
