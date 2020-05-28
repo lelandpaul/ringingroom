@@ -375,7 +375,7 @@ Vue.component('call_display', {
 
 
 // The focus_display indicated when the window has lost focus
-Vue.component('call_display', {
+Vue.component('focus_display', {
 
     // data in components should be a function, to maintain scope
 	data: function(){
@@ -1157,5 +1157,4 @@ bell_circle = new Vue({
 // 	console.log(msg)
 // 	message_display.messages.push('<b>' + msg.user_name + '</b>: ' + msg.message)
 // });
-
 
