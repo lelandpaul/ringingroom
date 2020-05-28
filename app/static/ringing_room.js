@@ -52,7 +52,10 @@ var leave_room = function(){
 window.addEventListener("beforeunload", leave_room, "useCapture");
 window.onbeforeunload = leave_room;
 
-
+// initial data state
+window.user_parameters = {
+    bell_volume: 5,
+};
 
 ////////////////////////
 /* SOCKETIO LISTENERS */
@@ -221,7 +224,8 @@ Vue.component("bell_rope", {
 
       // Ringing event received; now ring the bell
 	  ring: function(){
-		this.stroke = !this.stroke;
+        this.stroke = !this.stroke;
+        this.audio._volume = window.user_parameters.bell_volume * 0.1;
         const audio_type = this.$root.$refs.controls.audio_type;
         console.log(audio_type + ' ' + this.number_of_bells);
 		this.audio.play(bell_mappings[audio_type][this.number_of_bells][this.number - 1]);
@@ -392,6 +396,39 @@ Vue.component('call_display', {
                </h2>
               `
 }); // end call_display component
+
+
+// The focus_display indicated when the window has lost focus
+Vue.component('focus_display', {
+
+    // data in components should be a function, to maintain scope
+	data: function(){
+		return { visible: true };
+	},
+
+    mounted: function() {
+        this.$nextTick(function() {
+            window.addEventListener('focus', this.hide)
+            window.addEventListener('blur', this.show)
+
+            document.hasFocus() ? this.hide() : this.show()
+        })
+    },
+
+    methods: {
+        show() {
+            this.visible = true;
+        },
+        hide() {
+            this.visible = false;
+        }
+    },
+
+	template: `<h2 v-show="visible" id='focus_display'>
+                   Click anywhere in Ringing Room to resume ringing.
+               </h2>
+              `
+}); // end focus_display component
 
 
 // tower_controls holds title, id, size buttons, audio toggle
@@ -649,6 +686,27 @@ Vue.component('chatbox', {
               `
 
 
+});
+
+Vue.component('volume_control', {
+    data: function() {
+        return {
+            value: window.user_parameters.bell_volume,
+        }
+    },
+
+    watch: {
+        value: function(new_value) {
+            window.user_parameters.bell_volume = new_value;
+    <div class="row justify-content-between">
+        <label class="col-auto" for="volumeSlider">Volume:</label>
+        <!-- slider bar overlaps its own padding, so put it in a div to make it line up with the edges-->
+        <div class="col-auto">
+            <input type="range" v-model="value" min=0 max=10 id="volumeSlider" class="volume_control_slider">
+            </input>
+        </div>
+    </div>
+`
 });
 
 
@@ -1133,7 +1191,10 @@ bell_circle = new Vue({
              >
 
 
+
         <tower_controls ref="controls"></tower_controls>
+        
+        <volume_control ref="volume"></volume_control>
 
         <template v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.listern_link">
             <div class="row pb-0 flex-grow-1">
@@ -1155,6 +1216,7 @@ bell_circle = new Vue({
 
 
 
+
         </div> <!-- hidden sidebar -->
 
         </div> <!-- sidebar col -->
@@ -1169,6 +1231,7 @@ bell_circle = new Vue({
                             number_of_bells == 10 ? 'ten'    : '',
                             number_of_bells == 12 ? 'twelve' : '']">
             <call_display v-bind:audio="audio" ref="display"></call_display>
+            <focus_display ref="focus"></focus_display>
               <bell_rope v-for="bell in bells"
                          v-bind:key="bell.number"
                          v-bind:number="bell.number"
@@ -1263,5 +1326,4 @@ bell_circle = new Vue({
 // 	console.log(msg)
 // 	message_display.messages.push('<b>' + msg.user_name + '</b>: ' + msg.message)
 // });
-
 
