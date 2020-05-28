@@ -698,12 +698,27 @@ Vue.component('volume_control', {
     watch: {
         value: function(new_value) {
             window.user_parameters.bell_volume = new_value;
+<<<<<<< HEAD
     <div class="row justify-content-between">
         <label class="col-auto" for="volumeSlider">Volume:</label>
+=======
+        },
+    },
+
+    template: `
+    <div class="row justify-content-between mt-n2">
+>>>>>>> restyled volume
         <!-- slider bar overlaps its own padding, so put it in a div to make it line up with the edges-->
-        <div class="col-auto">
-            <input type="range" v-model="value" min=0 max=10 id="volumeSlider" class="volume_control_slider">
+        <div class="col-2 pl-4">
+        <i class="fas fa-volume-down volume_icon align-middle"></i>
+        </div>
+        <div class="col-8 px-0">
+            <input type="range" v-model="value" min=0 max=10 id="volumeSlider" class="volume_control_slider custom-range align-middle">
             </input>
+        </div>
+        <div class="col-2">
+        <i class="fas fa-volume-up volume_icon align-middle"></i>
+        </div>
         </div>
     </div>
 `
@@ -1190,6 +1205,7 @@ bell_circle = new Vue({
              id="tower_controls"
              >
 
+        <volume_control ref="volume"></volume_control>
 
 
         <tower_controls ref="controls"></tower_controls>
