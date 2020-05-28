@@ -48,6 +48,7 @@ class RegistrationForm(FlaskForm):
     password2 = PasswordField(
         'Repeat Password', validators = [DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
+    accept_privacy = BooleanField('I have read and accept the Privacy Policy', validators=[DataRequired(message='Please accept our Privacy Policy to continue.')])
 
     def validate_username(self, username):
         user = User.query.filter_by(username=username.data).first()
