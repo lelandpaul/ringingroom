@@ -84,6 +84,17 @@ hr {
     vertical-align: middle;
 }
 
+.volume_icon {
+    font-size: 1.25rem;
+    color: $primary;
+}
+
+/* Special styling for WebKit/Blink */
+input[type=range]::slider-thumb {
+  color: $primary;
+  background-color: $primary;
+}
+
 .user_list {
   display: table;
   border-width: 3px;
