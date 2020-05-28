@@ -127,6 +127,14 @@ socketio.on('s_audio_change',function(msg,cb){
   bell_circle.audio = msg.new_audio == 'Tower' ? tower : hand;
 });
 
+// A chat message was received
+socketio.on('s_msg_sent', function(msg,cb){
+    bell_circle.$refs.chatbox.messages.push(msg);
+    bell_circle.$nextTick(function(){
+        $('#chat_messages').scrollTop($('#chat_messages')[0].scrollHeight);
+    });
+});
+
 
 
 
@@ -596,6 +604,90 @@ Vue.component('help', {
                `,
 }); // End help
 
+Vue.component('chatbox', {
+
+    data: function(){
+        return { name: window.tower_parameters.cur_user_name,
+                 cur_msg: '',
+                 messages: [],
+        }
+    },
+
+    methods: {
+
+        send_msg: function() {
+            console.log('send_msg');
+            socketio.emit('c_msg_sent', { user: this.name,
+                                          msg: this.cur_msg,
+                                          time: new Date(),
+                                          tower_id: window.tower_parameters.id});
+            this.cur_msg = '';
+        },
+
+        leave_tower: function(){
+            socketio.emit('c_user_left',
+                  {user_name: window.tower_parameters.cur_user_name, 
+                  tower_id: cur_tower_id });
+        },
+
+        open_user_display: function(){
+            if (!$('#user_display_body').hasClass('show')){
+                $('#user_display_body').collapse('show');
+            }
+        },
+    },
+
+    template: `
+        <div class="card" id="chatbox">
+            <div class="card-header">
+                <h2 style="display: inline; cursor: pointer;"
+                    id="chat_header"
+                    @click="open_user_display"
+                    data-toggle="collapse"
+                    data-target="#chat_body"
+                    >
+                    Chat
+                     <span class="float-right w-50"
+                           @click="leave_tower">
+                        <a role="button" class="btn btn-outline-primary w-100" href='/'>Leave Tower</a>
+                     </span>
+                </h2>
+            </div>
+            <div class="card-body collapse show" 
+                 id="chat_body"
+                 data-parent="#sidebar_accordion">
+                <div class="row no-gutters p-0" id="chat_messages">
+                    <div class="col p-0">
+                        <div class="message" v-for="msg in messages">
+                            <span class="msg_username">[[msg.user]]:</span>
+                            <span class="msg_msg">[[msg.msg]]</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row no-gutters p-0" id="chat_input">
+                <div class="col p-o">
+                <form action="" @submit.prevent="send_msg">
+                <div class="input-group">
+                    <input type="text" 
+                           id="chat_input_box"
+                           class="form-control" 
+                           placeholder=""
+                           v-model="cur_msg"></input>
+                    <div class="input-group-append">
+                        <input class="btn btn-outline-primary" 
+                                type="submit"
+                                value="Send"></input>
+                    </div>
+                </form>
+                </div>
+                </div>
+            </div>
+        </div>
+              `
+
+
+});
+
 Vue.component('volume_control', {
     data: function() {
         return {
@@ -606,10 +698,6 @@ Vue.component('volume_control', {
     watch: {
         value: function(new_value) {
             window.user_parameters.bell_volume = new_value;
-        },
-    },
-
-    template: `
     <div class="row justify-content-between">
         <label class="col-auto" for="volumeSlider">Volume:</label>
         <!-- slider bar overlaps its own padding, so put it in a div to make it line up with the edges-->
@@ -619,7 +707,8 @@ Vue.component('volume_control', {
         </div>
     </div>
 `
-})
+});
+
 
 // user_display holds functionality required for users
 Vue.component('user_display', {
@@ -633,10 +722,12 @@ Vue.component('user_display', {
                  observers: parseInt(window.tower_parameters.observers),
         } },
 
+
     methods: {
 
         toggle_assignment: function(){
             if (window.tower_parameters.anonymous_user){ return }; // don't do anything if not logged in
+            if (!$('#user_display_body').hasClass('show')) $('#user_display_body').collapse('show');
             this.assignment_mode = !this.assignment_mode;
             if (this.assignment_mode){
                 this.selected_user = this.cur_user;
@@ -690,71 +781,82 @@ Vue.component('user_display', {
             }
         },
 
-        leave_tower: function(){
-            socketio.emit('c_user_left',
-                  {user_name: window.tower_parameters.cur_user_name, 
-                  tower_id: cur_tower_id });
+        open_chat: function(){
+            if (!$('#chat_body').hasClass('show')){
+                $('#chat_body').collapse('show');
+            }
         },
 
     },
 
 	template: 
     `
-         <div>
-         <div class="row">
-
-         <div class="col">
-         <ul class="list-group">
-            <li class="list-group-item">
-                <h2 style="display: inline;">Users</h2>
-                <span class="float-right">
-                <button class="btn btn-outline-primary"
+         <div class="card">
+             <div class="card-header"
+                  @click="open_chat"
+                  v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.lister_link"
+                  >
+                <h2 style="display: inline;"
+                    class="collapsed"
+                    id="user_display_header"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#user_display_body">
+                        Users 
+                </h2>
+                <span class="float-right w-50">
+                <button class="btn btn-outline-primary w-100"
                         :class="{active: assignment_mode}"
                         @click="toggle_assignment"
-                        v-if="!window.tower_parameters.anonymous_user"
                         >
                    [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
                  </button>
                  </span>
-            </li>
-            <li class="list-group-item cur_user d-inline-flex align-items-center"
-                 :class="{assignment_active: assignment_mode,
-                          active: cur_user == selected_user && assignment_mode}"
-                 v-if="window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link"
+             </div>
+             <div class="card-header"
+                  v-else
+                  >
+                <h2 style="display: inline;">
+                        Users
+                </h2>
+             </div>
+             <ul class="list-group list-group-flush"
+                 id="user_display_body"
+                 :class="{collapse: (!window.tower_parameters.anonymous_user && !window.tower_parameters.listener_link)}"
+                 data-parent="#sidebar_accordion">
+                <li class="list-group-item cur_user d-inline-flex align-items-center"
+                     :class="{assignment_active: assignment_mode,
+                              active: cur_user == selected_user && assignment_mode}"
+                     v-if="window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link"
+                     >
+                     <span class="mr-auto">Log in to ring</span>
+                     <span class="float-right">
+                     <a class="btn btn-outline-primary btn-sm" 
+                        :href="'/authenticate?next=' + window.location.pathname">Log In</a>
+                     </span>
+                </li>
+                <li class="list-group-item list-group-item-action cur_user d-inline-flex align-items-center"
+                     :class="{assignment_active: assignment_mode,
+                              active: cur_user == selected_user && assignment_mode}"
+                     v-if="!window.tower_parameters.anonymous_user"
+                     @click="select_user(cur_user)"
+                     >
+                     <span class="user_list_cur_user_name mr-auto">[[ cur_user ]]</span>
+                 </li>
+                <li v-for="user in user_names"
+                    class="list-group-item list-group-item-action"
+                    v-if="user != cur_user"
+                     :class="{cur_user: user == cur_user,
+                              disabled: !assignment_mode,
+                              assignment_active: assignment_mode,
+                              active: user == selected_user && assignment_mode}"
+                     @click="select_user(user)"
                  >
-                 <span class="mr-auto">Log in to ring</span>
-                 <span class="float-right">
-                 <a class="btn btn-outline-primary btn-sm" 
-                    :href="'/authenticate?next=' + window.location.pathname">Log In</a>
-                 </span>
-            </li>
-            <li class="list-group-item list-group-item-action cur_user d-inline-flex align-items-center"
-                 :class="{assignment_active: assignment_mode,
-                          active: cur_user == selected_user && assignment_mode}"
-                 v-if="!window.tower_parameters.anonymous_user"
-                 @click="select_user(cur_user)"
-                 >
-                 <span class="user_list_cur_user_name mr-auto">[[ cur_user ]]</span>
-                 <span class="float-right" v-show="!assignment_mode"
-                       @click="leave_tower">
-                    <a role="button" class="btn btn-outline-primary btn-sm" href='/'>Leave Tower</a>
-                 </span>
-             </li>
-            <li v-for="user in user_names"
-                class="list-group-item list-group-item-action"
-                v-if="user != cur_user"
-                 :class="{cur_user: user == cur_user,
-                          disabled: !assignment_mode,
-                          assignment_active: assignment_mode,
-                          active: user == selected_user && assignment_mode}"
-                 @click="select_user(user)"
-             >
-                        [[ user ]]
-             </li>
+                            [[ user ]]
+                 </li>
                  </ul>
-        </div></div>
-        </div>
-    `,
+            </div>
+        `,
 }); // End user_display
 
 
@@ -787,8 +889,7 @@ bell_circle = new Vue({
             // Do a special thing to prevent space from pressing focused buttons
             window.addEventListener('keyup', (e) => {
                 this.keys_down.splice(this.keys_down.indexOf(e.key),1)
-                console.log('LIST IS: ' + this.keys_down);
-                if (e.which == 32) {
+                if (e.which == 32 && !$('#chat_input_box').is(':focus')) {
                     e.preventDefault();
                 }
             });
@@ -801,9 +902,15 @@ bell_circle = new Vue({
 			// Shift+1 produces code "Digit1"; this gets the digit itself
 			const code = e.code[e.code.length - 1];
 
+            if($("#chat_input_box").is(":focus")){
+                if (key == 'Escape') {
+                    $('#chat_input_box').blur();
+                } else return; // disable hotkeys when typing
+            }
+
+
             if (bell_circle.keys_down.includes(key)){ return };
             bell_circle.keys_down.push(key);
-            console.log('LIST IS: ' + bell_circle.keys_down);
 
 
             // Do a special thing to prevent space and the arrow keys from hitting focused elements
@@ -1014,9 +1121,9 @@ bell_circle = new Vue({
 
 	template: 
     `
-        <div>
+        <div id="bell_circle_wrapper">
 
-        <div class="row flex-lg-nowrap">
+        <div class="row flex-lg-nowrap" id="sidebar_col_row">
         
         <div class="col-12 col-lg-4 sidebar_col"> <!-- sidebar col -->
 
@@ -1084,12 +1191,30 @@ bell_circle = new Vue({
              >
 
 
-        <tower_controls ref="controls"></tower_controls>
 
+        <tower_controls ref="controls"></tower_controls>
+        
         <volume_control ref="volume"></volume_control>
 
+        <template v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.listern_link">
+            <div class="row pb-0 flex-grow-1">
+            <div class="col flex-grow-1">
+            <div class="accordion" id="sidebar_accordion">
+                <user_display ref="users"></user_display>
+                <chatbox ref="chatbox"></chatbox>
+            </div>
+            </div>
+            </div>
+        </template>
+        <template v-else>
+            <div class="row pb-0 flex-grow-1">
+            <div class="col flex-grow-1">
+            <user_display ref="users"></user_display>
+            </div>
+            </div>
+        </template>
 
-        <user_display ref="users"></user_display>
+
 
 
         </div> <!-- hidden sidebar -->

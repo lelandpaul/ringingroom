@@ -276,3 +276,9 @@ def on_set_bells(json):
     tower.set_at_hand()
     emit('s_global_state', {'global_bell_state': tower.bell_state},
          broadcast = True, include_self=True, room=tower_id)
+
+# A chat message was received
+@socketio.on('c_msg_sent')
+def on_msg(json):
+    print('Received message: ', json)
+    emit('s_msg_sent', json, broadcast=True, include_self=True, room=json['tower_id'])
