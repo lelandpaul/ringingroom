@@ -58,33 +58,36 @@
         {{ registration_form.hidden_tag() }}
 
         <div class="form-group">
+            {{ registration_form.email.label }}
+            {{ registration_form.email(size=64,class="form-control") }}
+            <small class="form-text text-muted">
+                You'll use your email address to log in. We will never share it with anyone.
+                {% for error in registration_form.email.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </small>
+        </div>
+
+        <div class="form-group">
             {{ registration_form.username.label }}
             {{ registration_form.username(size=32, class="form-control") }}
             <small class="form-text text-muted">
                 This is the name that will appear in the tower when you're ringing. You can change it later.
-            </small>
             {% for error in registration_form.username.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
-        </div>
-        <div class="form-group">
-            {{ registration_form.email.label }}
-            {{ registration_form.email(size=64,class="form-control") }}
-            <small class="form-text text-muted">
-                We will never share your email address with anyone.
             </small>
-            {% for error in registration_form.email.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
         </div>
         <div class="row">
             <div class="col-5">
                 <div class="form-group">
                     {{ registration_form.password.label }}
                     {{ registration_form.password(size=32, class="form-control") }}
-                    {% for error in registration_form.password.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
+                    <small class="form-text text-muted">
+                        {% for error in registration_form.password.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </small>
                 </div>
             </div>
             <div class="col-7">
@@ -92,15 +95,37 @@
                     {{ registration_form.password2.label }}
                     <div class="input-group">
                         {{ registration_form.password2(size=32, class="form-control") }}
-                        {% for error in registration_form.password2.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                        {% endfor %}
+                        <small class="form-text text-muted">
+                            {% for error in registration_form.password2.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                        </small>
                         <div class="input-group-append">
                             {{ registration_form.submit(class="btn btn-primary") }}
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="offset-5 col-7">
+                <div class="form-group form-check form-check-inline mb-n1">
+                    {{registration_form.accept_privacy(class="form-check-input",
+                                                       id="privacy_check")}}
+                    <label class="form-check-label form-text text-muted" for-"privacy_check">
+                        I have read and accept the
+                        <a class="ml-1" href="#" type="button" data-toggle="modal" data-target="#privacy_modal">
+                            Privacy Policy
+                        </a>.
+                    </label>
+                </div>
+            <small class="form-text text-muted">
+            {% for error in registration_form.accept_privacy.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+            </small>
         </div>
     </form>
+
+    {% include '_privacy_policy.html' %}
+
+
 {% endblock %}

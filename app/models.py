@@ -48,6 +48,9 @@ class User(UserMixin, db.Model):
         return User.query.get(id)
 
 
+    def clear_all_towers(self):
+        for rel in self.towers:
+            db.session.delete(rel)
 
     def  add_recent_tower(self, tower):
         if isinstance(tower, Tower):

@@ -20,6 +20,14 @@ class RequiredIf(DataRequired):
         if bool(other_field.data):
             super(RequiredIf, self).__call__(form, field)
 
+class EmailIf(Email):
+    # A validator which checks that something is an email only if it's not empty
+
+    def __call__(self, form, field):
+        if not field.data:
+            return True
+        super(EmailIf, self).__call__(form,field)
+
 class LoginForm(FlaskForm):
     username = StringField('Email Address', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
@@ -40,11 +48,8 @@ class RegistrationForm(FlaskForm):
     password2 = PasswordField(
         'Repeat Password', validators = [DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
-
-    def validate_username(self, username):
-        user = User.query.filter_by(username=username.data).first()
-        if user is not None:
-            raise ValidationError('Please choose a different username.')
+    accept_privacy = BooleanField('I have read and accept the Privacy Policy', \
+                  validators=[DataRequired(message='Please accept our Privacy Policy to continue.')])
 
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
@@ -52,27 +57,30 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('There is already a username associated with that email address.')
 
 class UserSettingsForm(FlaskForm):
-    password = PasswordField('Current Password', validators=[RequiredIf('new_password'),
-                                                     RequiredIf('new_password2'),
-                                                     RequiredIf('new_username'),
-                                                     RequiredIf('new_email')])
+    password = PasswordField('Current Password', validators=[RequiredIf('submit'),
+                                                             RequiredIf('new_username'),
+                                                             RequiredIf('new_email'),
+                                                             RequiredIf('new_password'),
+                                                             RequiredIf('new_password2')])
     submit = SubmitField('Save changes')
 
-    new_username = StringField('Username', validators=[DataRequired()])
-    new_email = StringField('Email', validators=[DataRequired(), Email()])
+
+    new_username = StringField('New Username', validators=[])
+    new_email = StringField('New Email', validators=[EmailIf()])
     new_password = PasswordField('New Password', validators=[])
     new_password2 = PasswordField('Repeat New Password', validators=[EqualTo('new_password'),
                                                                      RequiredIf('new_password')])
 
-    def validate_new_username(self, new_username):
-        users = User.query.filter_by(username=new_username.data).all()
-        if len(users) > 1:
-            raise ValidationError('That username is already taken.')
-
-    def validate_email(self, email):
-        user = User.query.filter_by(email=email.data).first()
+    def validate_new_email(self, new_email):
+        user = User.query.filter_by(email=new_email.data).first()
         if user is not None:
             raise ValidationError('There is already a username associated with that email address.')
+
+class UserDeleteForm(FlaskForm):
+    delete_password = PasswordField('Enter your password to delete', validators=[RequiredIf('delete')])
+    delete = SubmitField('Delete account')
+
+
 
 class ResetPasswordRequestForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(),Email()])
