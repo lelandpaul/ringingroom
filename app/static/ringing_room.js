@@ -259,7 +259,7 @@ Vue.component("bell_rope", {
     },
 
 	template:`
-            <div class="bell"
+            <div class="bell unclickable_div"
                  :class="[left_side ? 'left_side' : '',
                           image_prefix === 'h-' ? 'handbell' : '',
                           top_side ? 'top_side' : '',
