@@ -23,23 +23,27 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body px-4">
 
           <div class="iframe-container mb-4 mt-2">
           <iframe src="https://www.youtube.com/embed/l0mYK8QQx8w" allowfullscreen></iframe>
           </div>
 
-          <p> Welcome to Ringing Room! The video above will give you an introduction to English change-ringing and to Ringing Room, a virtual platform used by change-ringers all over the world.</p>
+          <p> Welcome to Ringing Room! The video above will give you an introduction to English change-ringing and to Ringing Room, a virtual platform used by change-ringers all over the world. You can learn more about change-ringing <a href="http://www.nagcr.org/pamphlet.html">here</a>.</p>
             
-        <p> Think you'd like to give it a go? Click here to join a tower specifically for BBC watchers. Or, if you'd like a more guided experience, we have friendly, helpful ringers running guided practices at regular intervals through the week. The times and dates are posted below.</p>
+          <p> Think you'd like to give it a go? Click <a href="https://ringingroom.com/987654321/the_bbc1_news_tower">here</a> to join a tower specifically for BBC viewers. Or, if you'd like a more guided experience, we have friendly, helpful ringers running guided lessons through the week. The times are posted below, and also on our <a href="https://www.facebook.com/ringingroom/">Facebook page</a>.
            
-        <p> If you have any troubles, please feel free to reach out on Facebook or by email. Looking forward to seeing you up the tower! </p>
+        <p> Please feel free to reach out on <a href="https://www.facebook.com/ringingroom/">Facebook</a> or by <a href="mailto://ringingroom@gmail.com">email</a>. Looking forward to seeing you up the tower! </p>
+
 
         <h5>Open practices:</h5>
-        <ul>
-            <li> TBD!</li>
-        </ul>
+        <div id="practice_times"></div>
 
+            <script>
+                $('document').ready(function(){
+                    $('#practice_times').load('static/news/practice_times.txt');
+                });
+            </script>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>

@@ -275,7 +275,7 @@ Vue.component("bell_rope", {
                           />
 
 
-                    <div class="bell_metadata">
+                    <div class="bell_metadata clickable">
 
 
                     <template v-if="left_side">
