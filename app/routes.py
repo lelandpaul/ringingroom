@@ -177,7 +177,7 @@ def register():
 def user_settings():
     form = UserSettingsForm()
     del_form = UserDeleteForm()
-    if form.validate_on_submit():
+    if form.submit.data and form.validate_on_submit():
         if not current_user.check_password(form.password.data):
             flash('Incorrect password.')
             return render_template('user_settings.html',form=form, del_form=del_form)
@@ -192,8 +192,8 @@ def user_settings():
             flash('Username updated.')
         db.session.commit()
         return redirect(url_for('user_settings'))
-    if del_form.validate_on_submit():
-        if not current_user.check_password(del_form.password.data):
+    if del_form.delete.data and del_form.validate_on_submit():
+        if not current_user.check_password(del_form.delete_password.data):
             flash('Incorrect password.')
             return render_template('user_settings.html',form=form, del_form=del_form)
         current_user.clear_all_towers()

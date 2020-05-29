@@ -77,7 +77,7 @@ class UserSettingsForm(FlaskForm):
             raise ValidationError('There is already a username associated with that email address.')
 
 class UserDeleteForm(FlaskForm):
-    delete_password = PasswordField('Enter your password to delete', validators=[RequiredIf('delete')])
+    delete_password = PasswordField('Enter your password to delete', validators=[DataRequired('delete')])
     delete = SubmitField('Delete account')
 
 
