@@ -737,7 +737,7 @@ Vue.component('user_display', {
 
         toggle_assignment: function(){
             if (window.tower_parameters.anonymous_user){ return }; // don't do anything if not logged in
-            if (!$('#user_display_body').hasClass('show')) $('#user_display_body').collapse('show');
+            $('#user_display_body').collapse('show');
             this.assignment_mode = !this.assignment_mode;
             if (this.assignment_mode){
                 this.selected_user = this.cur_user;
@@ -792,7 +792,7 @@ Vue.component('user_display', {
         },
 
         open_chat: function(){
-            if (!$('#chat_body').hasClass('show')){
+            if (!this.assignment_mode && !$('#chat_body').hasClass('show')){
                 $('#chat_body').collapse('show');
             }
         },
