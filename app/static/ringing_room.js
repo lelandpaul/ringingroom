@@ -686,10 +686,20 @@ Vue.component('chatbox', {
                 </div>
                 <div class="row my-n1 p-0">
                 <div class="col mb-n2 pb-0">
-                    <small 
+                    <small style="font-size: 1rem;">
+                        <a href="#"
+                           data-toggle="modal"
+                           data-target="#code_of_conduct"
+                            >
+                            Code of Conduct
+                        </a> |
+                        <a href="#"
                         data-toggle="modal"
                         data-target="#report_box"
-                        style="font-size: 1rem;"><a href="#">Report inappropriate behavior</a></small>
+                            >
+                            Report behavior
+                        </a>
+                    </small>
                 </div>
                 </div>
             </div>
