@@ -806,7 +806,7 @@ Vue.component('user_display', {
                   @click="open_chat"
                   v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.lister_link"
                   >
-                <h2 style="display: inline;"
+                <h2 style="display: inline; cursor: pointer;"
                     class="collapsed"
                     id="user_display_header"
                     data-toggle="collapse"
@@ -1199,7 +1199,7 @@ bell_circle = new Vue({
              id="tower_controls"
              >
 
-        <volume_control ref="volume"></volume_control>
+        <!-- <volume_control ref="volume"></volume_control> -->
 
 
         <tower_controls ref="controls"></tower_controls>
