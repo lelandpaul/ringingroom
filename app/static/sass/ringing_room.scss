@@ -175,6 +175,14 @@ input[type=range]::slider-thumb {
     padding: 1% 5%;
 }
 
+.unclickable_div {
+    pointer-events: none;
+}
+.clickable {
+    cursor: pointer;
+    pointer-events: auto;
+}
+
 .btn_number, .btn_unassign {
     width: 1.75rem;
 }

@@ -264,12 +264,12 @@ Vue.component("bell_rope", {
                           image_prefix === 'h-' ? 'handbell' : '',
                           top_side ? 'top_side' : '',
                           window.tower_parameters.anonymous_user ? 'no_ring' : '']">
-                <div class="row"
+                <div class="row unclickable_div"
                     :class="[left_side ? 'flex-row-reverse' :  '',
                              top_side ? 'align-items-start' : 'align-items-end']">
 
                      <img @click='emit_ringing_event'
-                           class="bell_img" 
+                           class="bell_img clickable" 
                           :class="[assignment_mode ? 'assignment_mode' : '']"
                           :src="'static/images/' + image_prefix + (stroke ? images[0] : images[1]) + '.png'"
                           />
