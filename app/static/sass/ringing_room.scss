@@ -315,18 +315,8 @@ input[type=range]::slider-thumb {
     font-size: 1.5rem;
 }
 
-.custom-range::-webkit-slider-thumb {
-  background: $primary;
-  color: $primary;
-  background-color: $primary;
-}
-
-.custom-range::-moz-range-thumb {
-  background: $primary;
-}
-
-.custom-range::-ms-thumb {
-  background: $primary;
+.modal-dialog {
+    background-color: white;
 }
 
 /* Scary mixin land */
@@ -357,5 +347,6 @@ input[type=range]::slider-thumb {
         max-width: 20rem;
     }
 }
+
 
 

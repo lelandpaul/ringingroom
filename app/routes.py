@@ -79,6 +79,7 @@ def tower(tower_id, decorator=None):
     return render_template('ringing_room.html',
                             tower = tower,
                             user_name = '' if current_user.is_anonymous else current_user.username,
+                            user_email = '' if current_user.is_anonymous else current_user.email,
                             server_ip=get_server_ip(tower_id),
                             user_token = user_token,
                             listen_link = False)

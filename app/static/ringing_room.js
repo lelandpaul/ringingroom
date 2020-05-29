@@ -618,6 +618,7 @@ Vue.component('chatbox', {
         send_msg: function() {
             console.log('send_msg');
             socketio.emit('c_msg_sent', { user: this.name,
+                                          email: window.tower_parameters.cur_user_email,
                                           msg: this.cur_msg,
                                           time: new Date(),
                                           tower_id: window.tower_parameters.id});
@@ -635,7 +636,9 @@ Vue.component('chatbox', {
                 $('#user_display_body').collapse('show');
             }
         },
+
     },
+
 
     template: `
         <div class="card" id="chatbox">
@@ -681,9 +684,101 @@ Vue.component('chatbox', {
                 </form>
                 </div>
                 </div>
+                <div class="row my-n1 p-0">
+                <div class="col mb-n2 pb-0">
+                    <small style="font-size: 1rem;">
+                        <a href="#"
+                           data-toggle="modal"
+                           data-target="#code_of_conduct"
+                            >
+                            Code of Conduct
+                        </a> &#8226
+                        <a href="#"
+                        data-toggle="modal"
+                        data-target="#report_box"
+                            >
+                            Report behavior
+                        </a>
+                    </small>
+                </div>
+                </div>
             </div>
         </div>
               `
+
+
+});
+
+// For silly CSS reasons, this needs to be it's own Vue instance
+var report_form = new Vue({
+
+    el: '#report_box',
+
+    data: { report_description: '',
+            unsubmitted: true,},
+    
+    methods: {
+
+        send_report: function() {
+            socketio.emit('c_report',
+                            { time: new Date(),
+                              user: window.tower_parameters.cur_user_name,
+                              email: window.tower_parameters.cur_user_email,
+                              messages: bell_circle.$refs.chatbox.messages });
+            this.unsubmitted = false;
+
+            setTimeout( function(){
+                $('#report_box').modal('hide');
+                report_form.unsubmitted = true;
+                report_form.report_description = '';
+            }, 3000);
+        },
+
+    },
+
+    template: `
+    <div id="report_box" 
+         tabindex="-1"
+         class="modal fade">
+         <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Report inappropriate behavior</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group" v-if="unsubmitted">
+                    <textarea id="report_textarea" 
+                              class="form-control"
+                              rows="4" 
+                              v-model="report_description"
+                              placeholder="Please describe the behavior you would like to report.">
+                    </textarea>
+                </div>
+                <div v-else>
+                    <p> Thank you — your report and a log of the chat has been submitted to the developers.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-secondary" data-dismiss="modal">
+                        [[ unsubmitted ? 'Cancel' : 'Close' ]]
+                </button>
+                <button type="button" 
+                        v-if="unsubmitted"
+                        class="btn btn-primary"
+                        @click="send_report"
+                        >
+                        Send report
+                </button>
+            </div>
+            </div>
+        </div>
+    </div>
+    `
+
 
 
 });
@@ -911,10 +1006,14 @@ bell_circle = new Vue({
 			// Shift+1 produces code "Digit1"; this gets the digit itself
 			const code = e.code[e.code.length - 1];
 
-            if($("#chat_input_box").is(":focus")){
+            if ($("#chat_input_box").is(":focus")){
                 if (key == 'Escape') {
                     $('#chat_input_box').blur();
                 } else return; // disable hotkeys when typing
+            }
+
+            if ($('#report_box').hasClass('show')) {
+                return; // disable hotkeys when the report is active
             }
 
 
@@ -1258,80 +1357,4 @@ bell_circle = new Vue({
 }); // end Vue bell_circle
 
 }); // end document.ready
-
-
-////////////////////////
-/* Chat functionality */
-////////////////////////
-// This was temporary for testing room functionality when we first added it. 
-// It may be useful later.
-
-// var tower_selector = new Vue({
-
-// 	delimiters: ['[[',']]'], // don't interfere with flask
-
-// 	el: "#message-sender",
-
-// 	data: {
-// 		cur_username: '',
-// 		cur_message: '',
-// 		tower_selected: '',
-// 	},
-
-// 	methods: {
-
-// 		submit_message: function(un,msg){
-// 			console.log('sending message: ' + un + msg);
-// 			socketio.emit('message_sent', { user_name : un, 
-// 											message : msg,
-// 											tower : cur_tower_id})
-// 		},
-
-// 		enter_tower: function(){
-// 			if (cur_tower_id) {
-// 				console.log('leaving tower: ' + cur_tower_id);
-// 				socketio.emit('leave',{username: this.cur_username, tower: cur_tower_id});
-// 			};
-// 			console.log('entering tower: ' + this.tower_selected);
-// 			socketio.emit('join', {username: this.cur_username, tower: this.tower_selected});
-// 			cur_tower_id = this.tower_selected;
-// 		}
-
-// 	},
-
-// 	template: `
-// 	<form v-on:submit.prevent="submit_message(cur_username,cur_message)">
-// 		<select v-model="tower_selected" v-on:change="enter_tower">
-// 		  <option disabled value="">Please select a tower</option>
-// 		  <option>Advent</option>
-// 		  <option>Old North</option>
-// 		</select>
-// 		<input v-model="cur_username" placeholder="User Name"/>
-// 		<input v-model="cur_message" placeholder="Message"/>
-// 		<input type="submit"/>
-// 	</form>
-
-// 	`
-
-// });
-
-// var message_display = new Vue({
-// 	delimiters: ['[[',']]'], // don't interfere with flask
-
-// 	el: "#message-container",
-
-// 	data : {messages: []},
-
-// 	template: `<div v-html='messages.join("<br/>")'></div>`
-
-
-// });
-
-
-/* Listeners for chat function */
-
-// socketio.on('message_received',function(msg){
-// 	console.log(msg)
-// 	message_display.messages.push('<b>' + msg.user_name + '</b>: ' + msg.message)
-// });
 
