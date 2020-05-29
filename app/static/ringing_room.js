@@ -692,7 +692,7 @@ Vue.component('chatbox', {
                            data-target="#code_of_conduct"
                             >
                             Code of Conduct
-                        </a> |
+                        </a> &#8226
                         <a href="#"
                         data-toggle="modal"
                         data-target="#report_box"
