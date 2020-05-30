@@ -1,6 +1,5 @@
 from flask import render_template, send_from_directory, abort, flash, redirect, url_for, session, request
 from flask_login import login_user, logout_user, current_user, login_required
-from wtforms import ValidationError
 from app import app, towers, log, db
 from app.models import User
 from flask_login import current_user, login_user, logout_user, login_required
@@ -138,8 +137,11 @@ def login():
 
         user = User.query.filter_by(email=login_form.username.data.lower()).first()
         if user is None or not user.check_password(login_form.password.data):
-            raise ValidationError('Incorrect username or password.')
-            return redirect(url_for('authenticate'))
+            flash('Incorrect username or password.')
+            return render_template('authenticate.html', 
+                                   login_form=login_form,
+                                   registration_form=registration_form,
+                                   next=next)
 
         login_user(user, remember=login_form.remember_me.data)
 
