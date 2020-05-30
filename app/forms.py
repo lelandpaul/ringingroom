@@ -29,7 +29,7 @@ class EmailIf(Email):
         super(EmailIf, self).__call__(form,field)
 
 class LoginForm(FlaskForm):
-    username = StringField('Email Address', validators=[DataRequired(),Email(message="Please use your email addres to log in, not your username.")])
+    username = StringField('Email Address', validators=[DataRequired(),Email(message="Please use your email address to log in, not your username.")])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember me')
     submit = SubmitField('Sign In')
