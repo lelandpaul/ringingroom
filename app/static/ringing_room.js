@@ -596,6 +596,8 @@ Vue.component('help', {
     <li>t<b>[h]</b>at's all</li>
     <li>s<b>[t]</b>and next</li>
 </ul>
+
+You can read more on our <a href="/help">Help page</a>.
 </div>
 </div>
 </div>
