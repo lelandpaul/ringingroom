@@ -726,6 +726,7 @@ var report_form = new Vue({
                             { time: new Date(),
                               user: window.tower_parameters.cur_user_name,
                               email: window.tower_parameters.cur_user_email,
+                              report_description: this.report_description,
                               messages: bell_circle.$refs.chatbox.messages });
             this.unsubmitted = false;
 
