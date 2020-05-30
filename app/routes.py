@@ -118,6 +118,7 @@ def authenticate():
     return render_template('authenticate.html', 
                            login_form=login_form,
                            registration_form=registration_form,
+                           hide_cookie_warning=True,
                            next=next)
 
 @app.route('/login', methods=['POST'])
