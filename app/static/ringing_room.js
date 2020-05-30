@@ -52,7 +52,10 @@ var leave_room = function(){
 window.addEventListener("beforeunload", leave_room, "useCapture");
 window.onbeforeunload = leave_room;
 
-
+// initial data state
+window.user_parameters = {
+    bell_volume: 5,
+};
 
 ////////////////////////
 /* SOCKETIO LISTENERS */
@@ -122,6 +125,14 @@ socketio.on('s_audio_change',function(msg,cb){
   console.log('changing audio to: ' + msg.new_audio);
   bell_circle.$refs.controls.audio_type = msg.new_audio;
   bell_circle.audio = msg.new_audio == 'Tower' ? tower : hand;
+});
+
+// A chat message was received
+socketio.on('s_msg_sent', function(msg,cb){
+    bell_circle.$refs.chatbox.messages.push(msg);
+    bell_circle.$nextTick(function(){
+        $('#chat_messages').scrollTop($('#chat_messages')[0].scrollHeight);
+    });
 });
 
 
@@ -213,7 +224,8 @@ Vue.component("bell_rope", {
 
       // Ringing event received; now ring the bell
 	  ring: function(){
-		this.stroke = !this.stroke;
+        this.stroke = !this.stroke;
+        this.audio._volume = window.user_parameters.bell_volume * 0.1;
         const audio_type = this.$root.$refs.controls.audio_type;
         console.log(audio_type + ' ' + this.number_of_bells);
 		this.audio.play(bell_mappings[audio_type][this.number_of_bells][this.number - 1]);
@@ -247,23 +259,23 @@ Vue.component("bell_rope", {
     },
 
 	template:`
-            <div class="bell"
+            <div class="bell unclickable_div"
                  :class="[left_side ? 'left_side' : '',
                           image_prefix === 'h-' ? 'handbell' : '',
                           top_side ? 'top_side' : '',
                           window.tower_parameters.anonymous_user ? 'no_ring' : '']">
-                <div class="row"
+                <div class="row unclickable_div"
                     :class="[left_side ? 'flex-row-reverse' :  '',
                              top_side ? 'align-items-start' : 'align-items-end']">
 
                      <img @click='emit_ringing_event'
-                           class="bell_img" 
+                           class="bell_img clickable" 
                           :class="[assignment_mode ? 'assignment_mode' : '']"
                           :src="'static/images/' + image_prefix + (stroke ? images[0] : images[1]) + '.png'"
                           />
 
 
-                    <div class="bell_metadata">
+                    <div class="bell_metadata clickable">
 
 
                     <template v-if="left_side">
@@ -384,6 +396,39 @@ Vue.component('call_display', {
                </h2>
               `
 }); // end call_display component
+
+
+// The focus_display indicated when the window has lost focus
+Vue.component('focus_display', {
+
+    // data in components should be a function, to maintain scope
+	data: function(){
+		return { visible: true };
+	},
+
+    mounted: function() {
+        this.$nextTick(function() {
+            window.addEventListener('focus', this.hide)
+            window.addEventListener('blur', this.show)
+
+            document.hasFocus() ? this.hide() : this.show()
+        })
+    },
+
+    methods: {
+        show() {
+            this.visible = true;
+        },
+        hide() {
+            this.visible = false;
+        }
+    },
+
+	template: `<h2 v-show="visible" id='focus_display'>
+                   Click anywhere in Ringing Room to resume ringing.
+               </h2>
+              `
+}); // end focus_display component
 
 
 // tower_controls holds title, id, size buttons, audio toggle
@@ -551,6 +596,8 @@ Vue.component('help', {
     <li>t<b>[h]</b>at's all</li>
     <li>s<b>[t]</b>and next</li>
 </ul>
+
+You can read more on our <a href="/help">Help page</a>.
 </div>
 </div>
 </div>
@@ -558,6 +605,217 @@ Vue.component('help', {
 </div>
                `,
 }); // End help
+
+Vue.component('chatbox', {
+
+    data: function(){
+        return { name: window.tower_parameters.cur_user_name,
+                 cur_msg: '',
+                 messages: [],
+        }
+    },
+
+    methods: {
+
+        send_msg: function() {
+            console.log('send_msg');
+            socketio.emit('c_msg_sent', { user: this.name,
+                                          email: window.tower_parameters.cur_user_email,
+                                          msg: this.cur_msg,
+                                          time: new Date(),
+                                          tower_id: window.tower_parameters.id});
+            this.cur_msg = '';
+        },
+
+        leave_tower: function(){
+            socketio.emit('c_user_left',
+                  {user_name: window.tower_parameters.cur_user_name, 
+                  tower_id: cur_tower_id });
+        },
+
+        open_user_display: function(){
+            if (!$('#user_display_body').hasClass('show')){
+                $('#user_display_body').collapse('show');
+            }
+        },
+
+    },
+
+
+    template: `
+        <div class="card" id="chatbox">
+            <div class="card-header">
+                <h2 style="display: inline; cursor: pointer;"
+                    id="chat_header"
+                    @click="open_user_display"
+                    data-toggle="collapse"
+                    data-target="#chat_body"
+                    >
+                    Chat
+                     <span class="float-right w-50"
+                           @click="leave_tower">
+                        <a role="button" class="btn btn-outline-primary w-100" href='/'>Leave Tower</a>
+                     </span>
+                </h2>
+            </div>
+            <div class="card-body collapse show" 
+                 id="chat_body"
+                 data-parent="#sidebar_accordion">
+                <div class="row no-gutters p-0" id="chat_messages">
+                    <div class="col p-0">
+                        <div class="message" v-for="msg in messages">
+                            <span class="msg_username">[[msg.user]]:</span>
+                            <span class="msg_msg">[[msg.msg]]</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row no-gutters p-0" id="chat_input">
+                <div class="col p-o">
+                <form action="" @submit.prevent="send_msg">
+                <div class="input-group">
+                    <input type="text" 
+                           id="chat_input_box"
+                           class="form-control" 
+                           placeholder=""
+                           v-model="cur_msg"></input>
+                    <div class="input-group-append">
+                        <input class="btn btn-outline-primary" 
+                                type="submit"
+                                value="Send"></input>
+                    </div>
+                </form>
+                </div>
+                </div>
+                <div class="row my-n1 p-0">
+                <div class="col mb-n2 pb-0">
+                    <small style="font-size: 1rem;">
+                        <a href="#"
+                           data-toggle="modal"
+                           data-target="#code_of_conduct"
+                            >
+                            Code of Conduct
+                        </a> &#8226
+                        <a href="#"
+                        data-toggle="modal"
+                        data-target="#report_box"
+                            >
+                            Report behavior
+                        </a>
+                    </small>
+                </div>
+                </div>
+            </div>
+        </div>
+              `
+
+
+});
+
+// For silly CSS reasons, this needs to be it's own Vue instance
+var report_form = new Vue({
+
+    el: '#report_box',
+
+    data: { report_description: '',
+            unsubmitted: true,},
+    
+    methods: {
+
+        send_report: function() {
+            socketio.emit('c_report',
+                            { time: new Date(),
+                              user: window.tower_parameters.cur_user_name,
+                              email: window.tower_parameters.cur_user_email,
+                              messages: bell_circle.$refs.chatbox.messages });
+            this.unsubmitted = false;
+
+            setTimeout( function(){
+                $('#report_box').modal('hide');
+                report_form.unsubmitted = true;
+                report_form.report_description = '';
+            }, 3000);
+        },
+
+    },
+
+    template: `
+    <div id="report_box" 
+         tabindex="-1"
+         class="modal fade">
+         <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Report inappropriate behavior</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group" v-if="unsubmitted">
+                    <textarea id="report_textarea" 
+                              class="form-control"
+                              rows="4" 
+                              v-model="report_description"
+                              placeholder="Please describe the behavior you would like to report.">
+                    </textarea>
+                </div>
+                <div v-else>
+                    <p> Thank you — your report and a log of the chat has been submitted to the developers.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-secondary" data-dismiss="modal">
+                        [[ unsubmitted ? 'Cancel' : 'Close' ]]
+                </button>
+                <button type="button" 
+                        v-if="unsubmitted"
+                        class="btn btn-primary"
+                        @click="send_report"
+                        >
+                        Send report
+                </button>
+            </div>
+            </div>
+        </div>
+    </div>
+    `
+
+
+
+});
+
+Vue.component('volume_control', {
+    data: function() {
+        return {
+            value: window.user_parameters.bell_volume,
+        }
+    },
+
+    watch: {
+        value: function(new_value) {
+            window.user_parameters.bell_volume = new_value;
+        },
+    },
+
+    template: `
+    <div class="row justify-content-between mt-n2">
+        <!-- slider bar overlaps its own padding, so put it in a div to make it line up with the edges-->
+        <div class="col-2 pl-4">
+        <i class="fas fa-volume-down volume_icon align-middle"></i>
+        </div>
+        <div class="col-8 px-0">
+            <input type="range" v-model="value" min=0 max=10 id="volumeSlider" class="volume_control_slider custom-range align-middle">
+            </input>
+        </div>
+        <div class="col-2">
+        <i class="fas fa-volume-up volume_icon align-middle"></i>
+        </div>
+        </div>
+    </div>
+`
+});
+
 
 // user_display holds functionality required for users
 Vue.component('user_display', {
@@ -571,10 +829,12 @@ Vue.component('user_display', {
                  observers: parseInt(window.tower_parameters.observers),
         } },
 
+
     methods: {
 
         toggle_assignment: function(){
             if (window.tower_parameters.anonymous_user){ return }; // don't do anything if not logged in
+            $('#user_display_body').collapse('show');
             this.assignment_mode = !this.assignment_mode;
             if (this.assignment_mode){
                 this.selected_user = this.cur_user;
@@ -628,71 +888,81 @@ Vue.component('user_display', {
             }
         },
 
-        leave_tower: function(){
-            socketio.emit('c_user_left',
-                  {user_name: window.tower_parameters.cur_user_name, 
-                  tower_id: cur_tower_id });
+        open_chat: function(){
+            if (!this.assignment_mode && !$('#chat_body').hasClass('show')){
+                $('#chat_body').collapse('show');
+            }
         },
 
     },
 
 	template: 
     `
-         <div>
-         <div class="row">
-
-         <div class="col">
-         <ul class="list-group">
-            <li class="list-group-item">
-                <h2 style="display: inline;">Users</h2>
-                <span class="float-right">
-                <button class="btn btn-outline-primary"
+         <div class="card">
+             <div class="card-header"
+                  @click="open_chat"
+                  v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.lister_link"
+                  >
+                <h2 style="display: inline; cursor: pointer;"
+                    class="collapsed"
+                    id="user_display_header"
+                    data-toggle="collapse"
+                    data-target="#user_display_body">
+                        Users 
+                </h2>
+                <span class="float-right w-50">
+                <button class="btn btn-outline-primary w-100"
                         :class="{active: assignment_mode}"
                         @click="toggle_assignment"
-                        v-if="!window.tower_parameters.anonymous_user"
                         >
                    [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
                  </button>
                  </span>
-            </li>
-            <li class="list-group-item cur_user d-inline-flex align-items-center"
-                 :class="{assignment_active: assignment_mode,
-                          active: cur_user == selected_user && assignment_mode}"
-                 v-if="window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link"
+             </div>
+             <div class="card-header"
+                  v-else
+                  >
+                <h2 style="display: inline;">
+                        Users
+                </h2>
+             </div>
+             <ul class="list-group list-group-flush"
+                 id="user_display_body"
+                 :class="{collapse: (!window.tower_parameters.anonymous_user && !window.tower_parameters.listener_link)}"
+                 data-parent="#sidebar_accordion">
+                <li class="list-group-item cur_user d-inline-flex align-items-center"
+                     :class="{assignment_active: assignment_mode,
+                              active: cur_user == selected_user && assignment_mode}"
+                     v-if="window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link"
+                     >
+                     <span class="mr-auto">Log in to ring</span>
+                     <span class="float-right">
+                     <a class="btn btn-outline-primary btn-sm" 
+                        :href="'/authenticate?next=' + window.location.pathname">Log In</a>
+                     </span>
+                </li>
+                <li class="list-group-item list-group-item-action cur_user d-inline-flex align-items-center"
+                     :class="{assignment_active: assignment_mode,
+                              active: cur_user == selected_user && assignment_mode}"
+                     v-if="!window.tower_parameters.anonymous_user"
+                     @click="select_user(cur_user)"
+                     >
+                     <span class="user_list_cur_user_name mr-auto">[[ cur_user ]]</span>
+                 </li>
+                <li v-for="user in user_names"
+                    class="list-group-item list-group-item-action"
+                    v-if="user != cur_user"
+                     :class="{cur_user: user == cur_user,
+                              disabled: !assignment_mode,
+                              assignment_active: assignment_mode,
+                              active: user == selected_user && assignment_mode}"
+                     @click="select_user(user)"
                  >
-                 <span class="mr-auto">Log in to ring</span>
-                 <span class="float-right">
-                 <a class="btn btn-outline-primary btn-sm" 
-                    :href="'/authenticate?next=' + window.location.pathname">Log In</a>
-                 </span>
-            </li>
-            <li class="list-group-item list-group-item-action cur_user d-inline-flex align-items-center"
-                 :class="{assignment_active: assignment_mode,
-                          active: cur_user == selected_user && assignment_mode}"
-                 v-if="!window.tower_parameters.anonymous_user"
-                 @click="select_user(cur_user)"
-                 >
-                 <span class="user_list_cur_user_name mr-auto">[[ cur_user ]]</span>
-                 <span class="float-right" v-show="!assignment_mode"
-                       @click="leave_tower">
-                    <a role="button" class="btn btn-outline-primary btn-sm" href='/'>Leave Tower</a>
-                 </span>
-             </li>
-            <li v-for="user in user_names"
-                class="list-group-item list-group-item-action"
-                v-if="user != cur_user"
-                 :class="{cur_user: user == cur_user,
-                          disabled: !assignment_mode,
-                          assignment_active: assignment_mode,
-                          active: user == selected_user && assignment_mode}"
-                 @click="select_user(user)"
-             >
-                        [[ user ]]
-             </li>
+                            [[ user ]]
+                 </li>
                  </ul>
-        </div></div>
-        </div>
-    `,
+            </div>
+        `,
 }); // End user_display
 
 
@@ -725,8 +995,7 @@ bell_circle = new Vue({
             // Do a special thing to prevent space from pressing focused buttons
             window.addEventListener('keyup', (e) => {
                 this.keys_down.splice(this.keys_down.indexOf(e.key),1)
-                console.log('LIST IS: ' + this.keys_down);
-                if (e.which == 32) {
+                if (e.which == 32 && !$('#chat_input_box').is(':focus')) {
                     e.preventDefault();
                 }
             });
@@ -739,9 +1008,19 @@ bell_circle = new Vue({
 			// Shift+1 produces code "Digit1"; this gets the digit itself
 			const code = e.code[e.code.length - 1];
 
+            if ($("#chat_input_box").is(":focus")){
+                if (key == 'Escape') {
+                    $('#chat_input_box').blur();
+                } else return; // disable hotkeys when typing
+            }
+
+            if ($('#report_box').hasClass('show')) {
+                return; // disable hotkeys when the report is active
+            }
+
+
             if (bell_circle.keys_down.includes(key)){ return };
             bell_circle.keys_down.push(key);
-            console.log('LIST IS: ' + bell_circle.keys_down);
 
 
             // Do a special thing to prevent space and the arrow keys from hitting focused elements
@@ -952,9 +1231,9 @@ bell_circle = new Vue({
 
 	template: 
     `
-        <div>
+        <div id="bell_circle_wrapper">
 
-        <div class="row flex-lg-nowrap">
+        <div class="row flex-lg-nowrap" id="sidebar_col_row">
         
         <div class="col-12 col-lg-4 sidebar_col"> <!-- sidebar col -->
 
@@ -1021,11 +1300,30 @@ bell_circle = new Vue({
              id="tower_controls"
              >
 
+        <!-- <volume_control ref="volume"></volume_control> -->
+
 
         <tower_controls ref="controls"></tower_controls>
+        
+        <template v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.listern_link">
+            <div class="row pb-0 flex-grow-1">
+            <div class="col flex-grow-1">
+            <div class="accordion" id="sidebar_accordion">
+                <user_display ref="users"></user_display>
+                <chatbox ref="chatbox"></chatbox>
+            </div>
+            </div>
+            </div>
+        </template>
+        <template v-else>
+            <div class="row pb-0 flex-grow-1">
+            <div class="col flex-grow-1">
+            <user_display ref="users"></user_display>
+            </div>
+            </div>
+        </template>
 
 
-        <user_display ref="users"></user_display>
 
 
         </div> <!-- hidden sidebar -->
@@ -1042,6 +1340,7 @@ bell_circle = new Vue({
                             number_of_bells == 10 ? 'ten'    : '',
                             number_of_bells == 12 ? 'twelve' : '']">
             <call_display v-bind:audio="audio" ref="display"></call_display>
+            <focus_display ref="focus"></focus_display>
               <bell_rope v-for="bell in bells"
                          v-bind:key="bell.number"
                          v-bind:number="bell.number"
@@ -1060,81 +1359,4 @@ bell_circle = new Vue({
 }); // end Vue bell_circle
 
 }); // end document.ready
-
-
-////////////////////////
-/* Chat functionality */
-////////////////////////
-// This was temporary for testing room functionality when we first added it. 
-// It may be useful later.
-
-// var tower_selector = new Vue({
-
-// 	delimiters: ['[[',']]'], // don't interfere with flask
-
-// 	el: "#message-sender",
-
-// 	data: {
-// 		cur_username: '',
-// 		cur_message: '',
-// 		tower_selected: '',
-// 	},
-
-// 	methods: {
-
-// 		submit_message: function(un,msg){
-// 			console.log('sending message: ' + un + msg);
-// 			socketio.emit('message_sent', { user_name : un, 
-// 											message : msg,
-// 											tower : cur_tower_id})
-// 		},
-
-// 		enter_tower: function(){
-// 			if (cur_tower_id) {
-// 				console.log('leaving tower: ' + cur_tower_id);
-// 				socketio.emit('leave',{username: this.cur_username, tower: cur_tower_id});
-// 			};
-// 			console.log('entering tower: ' + this.tower_selected);
-// 			socketio.emit('join', {username: this.cur_username, tower: this.tower_selected});
-// 			cur_tower_id = this.tower_selected;
-// 		}
-
-// 	},
-
-// 	template: `
-// 	<form v-on:submit.prevent="submit_message(cur_username,cur_message)">
-// 		<select v-model="tower_selected" v-on:change="enter_tower">
-// 		  <option disabled value="">Please select a tower</option>
-// 		  <option>Advent</option>
-// 		  <option>Old North</option>
-// 		</select>
-// 		<input v-model="cur_username" placeholder="User Name"/>
-// 		<input v-model="cur_message" placeholder="Message"/>
-// 		<input type="submit"/>
-// 	</form>
-
-// 	`
-
-// });
-
-// var message_display = new Vue({
-// 	delimiters: ['[[',']]'], // don't interfere with flask
-
-// 	el: "#message-container",
-
-// 	data : {messages: []},
-
-// 	template: `<div v-html='messages.join("<br/>")'></div>`
-
-
-// });
-
-
-/* Listeners for chat function */
-
-// socketio.on('message_received',function(msg){
-// 	console.log(msg)
-// 	message_display.messages.push('<b>' + msg.user_name + '</b>: ' + msg.message)
-// });
-
 

@@ -42,8 +42,12 @@ body {
 
 // positioning for tower controls
 .tower_controls {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-basis: 0%;
     position: relative;
-    overflow: hidden; /* Disable horizontal scroll */
+    overflow: visible;
     width: 100%;
     z-index: 2;
 }
@@ -75,6 +79,21 @@ hr {
     margin-bottom: 0.5rem;
 }
 
+.volume_control_slider {
+    width: 100%;
+    vertical-align: middle;
+}
+
+.volume_icon {
+    font-size: 1.25rem;
+    color: $primary;
+}
+
+/* Special styling for WebKit/Blink */
+input[type=range]::slider-thumb {
+  color: $primary;
+  background-color: $primary;
+}
 
 .user_list {
   display: table;
@@ -154,6 +173,14 @@ hr {
 .bell_metadata button.btn {
     font-size: 0.75rem;
     padding: 1% 5%;
+}
+
+.unclickable_div {
+    pointer-events: none;
+}
+.clickable {
+    cursor: pointer;
+    pointer-events: auto;
 }
 
 .btn_number, .btn_unassign {
@@ -250,19 +277,76 @@ hr {
   transform: scale(1.5) scaleX(-1) translateY(-10%);
 }
 
+/* Chatbox */
+
+
+.msg_username {
+    font-weight: bold;
+    font-size: 1.25rem;
+    padding-right: 0.25rem;
+}
+
+#chat_messages {
+    overflow: scroll;
+    min-height: 20rem;
+    max-height: 20rem;
+    font-size: 1.25rem;
+}
+
+.message {
+    max-width: fit-content;
+    white-space: normal;
+}
+
+#chatbox {
+    width: 100%;
+    min-width: 20rem;
+}
+
+#user_display_header.collapsed::after,
+#chat_header.collapsed::after{
+    content: '▸';
+    font-size: 1.5rem;
+}
+
+#user_display_header::after,
+#chat_header::after{
+    content: '▾';
+    font-size: 1.5rem;
+}
+
+.modal-dialog {
+    background-color: white;
+}
+
 /* Scary mixin land */
 
 /* On larger screens, permanently open the menu */
 @include media-breakpoint-up(lg){
-    .collapse.tower_controls, .collaps.tower_controls:not(.show) { 
-        display: block; 
+    html { min-height:100%; }
+    .collapse.tower_controls, .collapse.tower_controls:not(.show) { 
+        display: flex; 
+        flex-grow: 1;
     }
     .sidebar_col {
         min-width: max-content;
-        max-width: 25rem;
+        max-width: max-content;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .tower_controls{
+        height: 30rem;
     }
     .help {
         width: 40rem;
     }
+    #chatbox {
+        max-width: 20rem;
+    }
 }
+
+
 

@@ -35,6 +35,7 @@
             observers: parseInt({{tower.observers}}),
             assignments: {{tower.assignments_as_list() | safe }},
             cur_user_name: "{{user_name}}",
+            cur_user_email: "{{user_email}}",
             anonymous_user: {{'true' if current_user.is_anonymous or listen_link else 'false'}},
             user_token: "{{user_token}}",
             listen_link: {{'true' if listen_link else 'false'}},
@@ -57,11 +58,32 @@
 </head>
 
 <body onbeforeunload="leave_room">
-	<div class="container-fluid">
+	<div class="container-fluid"
+      id="global_wrapper">
 		<div id="bell_circle">
 			<!-- app will go here -->
 		</div>
 	</div>
+    <div id="report_box"></div>
+    <!-- Modal -->
+    <div class="modal fade" id="code_of_conduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Code of Conduct</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+              {% include '_code_of_conduct.html' %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
 </body>
 
 </html>

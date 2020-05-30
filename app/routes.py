@@ -1,10 +1,11 @@
 from flask import render_template, send_from_directory, abort, flash, redirect, url_for, session, request
 from flask_login import login_user, logout_user, current_user, login_required
+from wtforms import ValidationError
 from app import app, towers, log, db
 from app.models import User
 from flask_login import current_user, login_user, logout_user, login_required
 from app.forms import LoginForm, RegistrationForm, UserSettingsForm, ResetPasswordRequestForm, \
-    ResetPasswordForm
+    ResetPasswordForm, UserDeleteForm
 from urllib.parse import urlparse
 import string
 import random
@@ -78,6 +79,7 @@ def tower(tower_id, decorator=None):
     return render_template('ringing_room.html',
                             tower = tower,
                             user_name = '' if current_user.is_anonymous else current_user.username,
+                            user_email = '' if current_user.is_anonymous else current_user.email,
                             server_ip=get_server_ip(tower_id),
                             user_token = user_token,
                             listen_link = False)
@@ -108,6 +110,10 @@ def donate():
 def blog():
     return render_template('blog.html')
 
+@app.route('/code_of_conduct')
+def code_of_conduct():
+    return render_template('code_of_conduct.html')
+
 @app.route('/authenticate')
 def authenticate():
     login_form = LoginForm()
@@ -116,6 +122,7 @@ def authenticate():
     return render_template('authenticate.html', 
                            login_form=login_form,
                            registration_form=registration_form,
+                           hide_cookie_warning=True,
                            next=next)
 
 @app.route('/login', methods=['POST'])
@@ -129,8 +136,7 @@ def login():
         next = ''
     if login_form.validate_on_submit():
 
-        user = User.query.filter_by(email=login_form.username.data.lower()).first() or \
-               User.query.filter_by(username=login_form.username.data).first()
+        user = User.query.filter_by(email=login_form.username.data.lower()).first()
         if user is None or not user.check_password(login_form.password.data):
             raise ValidationError('Incorrect username or password.')
             return redirect(url_for('authenticate'))
@@ -157,7 +163,7 @@ def register():
     login_form = LoginForm()
     registration_form = RegistrationForm()
     if registration_form.validate_on_submit():
-        user = User(username=registration_form.username.data, 
+        user = User(username=registration_form.username.data.strip(), 
                     email=registration_form.email.data.lower())
         user.set_password(registration_form.password.data)
         db.session.add(user)
@@ -175,17 +181,32 @@ def register():
 @login_required
 def user_settings():
     form = UserSettingsForm()
-    if form.validate_on_submit() and current_user.check_password(form.password.data):
+    del_form = UserDeleteForm()
+    if form.submit.data and form.validate_on_submit():
+        if not current_user.check_password(form.password.data):
+            flash('Incorrect password.')
+            return render_template('user_settings.html',form=form, del_form=del_form)
         if form.new_password.data:
             current_user.set_password(form.new_password.data)
             flash('Password updated.')
         if form.new_email.data:
             current_user.email = form.new_email.data.lower()
+            flash('Email updated.')
         if form.new_username.data:
-            current_user.username = form.new_username.data
+            current_user.username = form.new_username.data.strip()
             flash('Username updated.')
         db.session.commit()
-    return render_template('user_settings.html', form=form)
+        return redirect(url_for('user_settings'))
+    if del_form.delete.data and del_form.validate_on_submit():
+        if not current_user.check_password(del_form.delete_password.data):
+            flash('Incorrect password.')
+            return render_template('user_settings.html',form=form, del_form=del_form)
+        current_user.clear_all_towers()
+        db.session.delete(current_user)
+        db.session.commit()
+        logout_user()
+        return redirect(url_for('index'))
+    return render_template('user_settings.html', form=form, del_form=del_form)
 
 @app.route('/reset_password', methods=['GET','POST'])
 def request_reset_password():

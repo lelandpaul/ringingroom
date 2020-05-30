@@ -8,10 +8,9 @@
 
 <p>To use the Ringing Room, you will need an account. You can create an account by clicking the "Log In / Register" button at the top right of your screen.</p>
 
-<p>Once you've created an account, you'll be able to ring in any tower. Additionally, when not in a tower, the menu at the top right will include shortcuts to your 5 most recently visited towers. You can also modify your username, email address, or password.</p>
+<p>Once you've created an account, you'll be able to ring in any tower. Additionally, when not in a tower, the menu at the top right will include shortcuts to your 5 most recently visited towers. You can also modify your username, email address, or password by going to the Settings page, entering the information you want to change along with your current password, and pressing "Save Changes". From this page you can also permanently delete your account.</p>
 
-<p>Your email address and an encrypted version of your password are stored securely on our server. We will not share them with anyone for any reason.</p>
-
+<p>Your email address and an encrypted version of your password are stored securely on our server. We will not share them with anyone for any reason. If you ever forget your password, you can use the password reset link on the log-in page, which will send an email to your address on file with a link to reset your password. Note that this link is only good for 1 hour after being sent. Make sure to check your spam filter for the email if it doesn't arrive promptly.</p>
             
 <h3>Creating a new tower</h3>
 
@@ -35,12 +34,16 @@
 </ul>
 
 <p>The tower controls will either be in the left-hand sidebar (on larger screens), or accessible by pressing the "Controls" button in the top right (on smaller screens). The controls allow you to set the number of bells in the tower (four to twelve); control whether the images and sounds are of handbells or of tower bells and ropes; and set all of the bells at hand.</p>
+   
+<!--    There is also a volume control, which sets the volume of the bells (and calls) for you only, not for the other ringers in the tower; this can be useful for making sure that the bells are the right volume in relation to a voice-chat call, for example.</p>-->
 
 <p>The tower controls also include a list of users presently in the tower, which you can use to <i>assign bells</i> to particular ringers. To assign ringers, press the "Assign Bells" button to enter bell assignment mode. While in this mode, you may select any ringer from the user list by clicking on them, and then click on the box next to the bell you want to assign them to. Clicking the "x" by a user's name will unassign them from that bell. While in assignment mode, you can't ring any bells; when you're done assigning bells, click the "Stop Assigning" button to return to normal mode.</p>
 
 <p>Assigning a user to a bell will have the effect of automatically rotating that ringer's "perspective" on the tower so that the bell is placed in the bottom right position. This will allow it to be rung using the [SPACE] or [j] hotkeys. If a user is assigned to multiple bells, the lowest-numbered one will be placed in position; this means that if the user is assigned to exactly 2 bells, those bells we be ringable with [f] and [j].</p>
 
-<p>The user display will always list your own username first (or present you with the option to log in). By your username is a "Leave Tower" button that will remove you from the tower and send you back to the homepage. Finally, if there is anyone in the room who is not logged in (or who is there via the "listener link" — see below), the number of such users will be listed at the bottom of the user display.</p>
+<p>The user display will always list your own username first (or present you with the option to log in). If there is anyone in the room who is not logged in (or who is there via the "listener link" — see below), the number of such users will be listed at the bottom of the user display.</p>
+
+<p>If you're logged in and not a listener, you will also see a chat box in the control panel; you can use this for communicating with the other ringers by text. In the Chat box is a "Leave Tower" button that will remove you from the tower and send you back to the homepage. Please be sure to read our <a href="{{url_for('code_of_conduct')}}">Code of Conduct</a> and abide by it in the chat; there is a link to report any violations of that to us below the chat box.</p>
 
 <h3>Making calls</h3>
 
@@ -53,6 +56,10 @@
     <li>t<b>[h]</b>at's all</li>
     <li>s<b>[t]</b>and next</li>
 </ul>
+
+<h3>Leaving a tower</h3>
+
+If you're logged in, you will see a "Leave Tower" button by the chat box in the control panel. Clicking this will remove you from the tower and send you back to the Ringing Room homepage.
 
 
 <h3>Listener links</h3>
@@ -73,7 +80,7 @@
 
 <h3>Handbell Simulators</h3>
 
-<p>Graham John's <a href="https://handbellmanager.changeringing.co.uk/">Handbell Manager</a> has been adapted for use with Ringing Room, and supports using Android phones to as simulated handbells. Contributors to this project include Richard Johnston, Adrian Nash, and Mike Pidd. You can read more about this at Richard's site <a href="http://ringingtraining.pbworks.com/w/page/139440417/Handbell%20Manager%20for%20Ringingroom">here</a>.</p>
+<p>Graham John's <a href="https://handbellmanager.changeringing.co.uk/">Handbell Manager</a> has been adapted for use with Ringing Room, and supports using both Android phones and iPhones as simulated handbells. Contributors to this project include Richard Johnston, Adrian Nash, Mike Pidd, and David Wilson. You can read more about this at Richard's site <a href="http://ringingtraining.pbworks.com/w/page/139440417/Handbell%20Manager%20for%20Ringingroom">here</a>.</p>
 
 <p>Tom Farthing has developed a Python script for those who have simulated handbells with a serial port input. This is definitely a "batteries not included" setup; if you're not comfortable with scripting in Python and working on the command-line, this probably isn't for you. But if you meet that description, you can download the necessary files <a href="static/downloads/serial-port-handbell-simulator.zip" download>here</a>.</p>
 
@@ -104,6 +111,8 @@ Always try refreshing as a first start when dealing with a bug; it may be the so
     pretty hard to fix without building a dedicated app. At the moment, it's best to use a desktop or laptop.</li>
 
 <li><b>Bells are sometimes laggy:</b> This is, to an extent, an unavoidable problem with ringing over the internet. We have a number of possible improvements in mind, but the lagginess will always depend on the quality of your internet connection. If you're experiencing very bad lag, try restarting your wifi router. You might also consider using a wired network connection, if possible.</li>
+
+<li><b>I can't see all the usernames:</b> When the username lists get long, sometimes you will need to scroll down the page using the scroll bar on the right-hand side of the screen in order to see the full user list.</li>
 
 </ul>
 

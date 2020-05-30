@@ -33,7 +33,7 @@ class User(UserMixin, db.Model):
         for rel in old_rels:
             db.session.delete(rel)
 
-    def get_reset_password_token(self, expires_in=600):
+    def get_reset_password_token(self, expires_in=3600):
         return jwt.encode(
             {'reset_password': self.id, 'exp': time() + expires_in},
             Config.SECRET_KEY, algorithm='HS256').decode('utf-8')
@@ -48,6 +48,9 @@ class User(UserMixin, db.Model):
         return User.query.get(id)
 
 
+    def clear_all_towers(self):
+        for rel in self.towers:
+            db.session.delete(rel)
 
     def  add_recent_tower(self, tower):
         if isinstance(tower, Tower):

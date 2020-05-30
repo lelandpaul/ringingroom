@@ -9,6 +9,8 @@
 
 <h1>User settings: {{ current_user.username }}</h1>
 
+<small class="form-text text-muted">
+
     {% with messages = get_flashed_messages() %}
         {% if messages %}
         <ul>
@@ -19,51 +21,65 @@
     {% endif %}
     {% endwith %}
 
-<hr>
+</small>
 
-<div class="form-row">
+<hr class="mb-5">
 
-    <div class="form-group col">
+<small class="form-text text-muted">To change your username, email, or password, enter the updates you would like (leaving other fields blank), then enter your current password below and press "Save changes".</small>
+
+<div class="form-row mt-2">
+
+    <div class="form-group col-6">
         {{ form.new_username.label }}
-        {{ form.new_username(size=32, class="form-control", value=current_user.username) }}
+        {{ form.new_username(size=32, class="form-control")}}
+    </div>
+
+    <div class="form-group col-6">
+        {{ form.new_email.label }}
+        {{ form.new_email(size=32, class="form-control")}}
+    </div>
+
+    <small class="form-text text-muted col-6 mt-n2">
+        Current username: {{current_user.username}}<br>
         {% for error in form.new_username.errors %}
         <span style="color: red;">{{ error }}</span>
         {% endfor %}
-    </div>
-
-    <div class="form-group">
-        {{ form.new_email.label }}
-        {{ form.new_email(size=32, class="form-control", value=current_user.email) }}
+    </small>
+    <small class="form-text text-muted col-6 mt-n2">
+        Current email: {{current_user.email}}<br>
         {% for error in form.new_email.errors %}
         <span style="color: red;">{{ error }}</span>
         {% endfor %}
-    </div>
+    </small>
 
 </div>
 
 
-<div class="form-row">
+<div class="form-row mt-3">
 
     <div class="form-group col">
         {{ form.new_password.label }}
         {{ form.new_password(size=32, class="form-control") }}
+        <small class="form-text text-muted">
         {% for error in form.new_password.errors %}
         <span style="color: red;">{{ error }}</span>
         {% endfor %}
+        </small>
     </div>
 
     <div class="form-group col">
         {{ form.new_password2.label }}
         {{ form.new_password2(size=32, class="form-control") }}
+        <small class="form-text text-muted">
         {% for error in form.new_password2.errors %}
         <span style="color: red;">{{ error }}</span>
         {% endfor %}
+        </small>
     </div>
 
 </div>
 
-
-<hr/>
+<hr class="my-5">
 
 <div class="form-row align-items-center">
 
@@ -80,8 +96,8 @@
     </div>
 
     <div class="col-9 offset-3">
-        <small class="form-text text-muted">
-            Enter your current password to make changes.
+        <small class="form-text text-muted mt-n2">
+            Enter your current password to make changes.<br>
             {% for error in form.password.errors %}
             <span style="color: red;">{{ error }}</span>
             {% endfor %}
@@ -93,8 +109,43 @@
     
 </div>
 
+</form>
+
+<hr class="my-5">
+
+<small class="form-text text-muted">If you would like to permanently delete your account, enter your current password here and then click "Delete account".</small>
+
+<form action="" method="post" novalidate>
+    {{del_form.hidden_tag()}}
+
+<div class="form-row align-items-center mt-3">
+
+    <div class="col-5 col-form-label">
+        {{del_form.delete_password.label}}
+    </div>
+    <div class="col-7">
+        <div class="input-group">
+            {{del_form.delete_password(size=32,class="form-control")}}
+            <div class="input-group-append">
+                {{ del_form.delete(class="btn btn-outline-primary") }}
+            </div>
+        </div>
+    </div>
+    <div class="col-7 offset-5">
+        <small class="form-text text-muted mt-n2">
+            This will immediately delete all of your stored data.<br>
+            {% for error in del_form.delete_password.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </small>
+    </div>
+</div>
 
 </form>
+
+
+
+
 
 
 {% endblock %}

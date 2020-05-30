@@ -3,6 +3,7 @@ from flask import session, request
 from flask_login import current_user
 from app import socketio, towers, log, app
 from app.models import Tower, load_user
+from app.email import send_email
 import random
 import string
 import jwt
@@ -276,3 +277,21 @@ def on_set_bells(json):
     tower.set_at_hand()
     emit('s_global_state', {'global_bell_state': tower.bell_state},
          broadcast = True, include_self=True, room=tower_id)
+
+# A chat message was received
+@socketio.on('c_msg_sent')
+def on_msg(json):
+    emit('s_msg_sent', json, broadcast=True, include_self=True, room=json['tower_id'])
+
+# We got a report of inappropriate behavior
+@socketio.on('c_report')
+def on_report(json):
+    log('c_report', json)
+    send_email(subject='Behavior Report',
+               recipient='ringingroom@gmail.com',
+               text_body="A report was submitted. Details:\n\n" + str(json),
+               html_body="A report was submitted. Details:\n\n" + str(json))
+
+
+
+
