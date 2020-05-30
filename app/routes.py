@@ -110,6 +110,10 @@ def donate():
 def blog():
     return render_template('blog.html')
 
+@app.route('/code_of_conduct')
+def code_of_conduct():
+    return render_template('code_of_conduct.html')
+
 @app.route('/authenticate')
 def authenticate():
     login_form = LoginForm()
