@@ -147,6 +147,7 @@ input[type=range]::slider-thumb {
 /* Help */
 
 .help {
+    z-index: 100;
     margin-left: 1.5rem;
     margin-right: 1.5rem;
 }
