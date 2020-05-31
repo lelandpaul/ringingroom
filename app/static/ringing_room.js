@@ -902,7 +902,7 @@ Vue.component('user_display', {
          <div class="card">
              <div class="card-header"
                   @click="open_chat"
-                  v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.lister_link"
+                  v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link"
                   >
                 <h2 style="display: inline; cursor: pointer;"
                     class="collapsed"
@@ -929,7 +929,7 @@ Vue.component('user_display', {
              </div>
              <ul class="list-group list-group-flush"
                  id="user_display_body"
-                 :class="{collapse: (!window.tower_parameters.anonymous_user && !window.tower_parameters.listener_link)}"
+                 :class="{collapse: (!window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link)}"
                  data-parent="#sidebar_accordion">
                 <li class="list-group-item cur_user d-inline-flex align-items-center"
                      :class="{assignment_active: assignment_mode,
@@ -1306,7 +1306,7 @@ bell_circle = new Vue({
 
         <tower_controls ref="controls"></tower_controls>
         
-        <template v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.listern_link">
+        <template v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link">
             <div class="row pb-0 flex-grow-1">
             <div class="col flex-grow-1">
             <div class="accordion" id="sidebar_accordion">
