@@ -8,6 +8,7 @@ from flask_migrate import Migrate
 from flask_socketio import SocketIO
 from flask_assets import Environment, Bundle
 from flask_session import Session
+from flask_login import LoginManager
 
 from config import Config
 import os
@@ -18,9 +19,9 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 assets = Environment(app)
 socketio = SocketIO(app, 
-                    manage_session=False,
-                    logging=True)
-Session(app)
+                    logging=True,
+                    cors_allowed_origins='*')
+login = LoginManager(app)
 
 
 # Set up logging
@@ -71,16 +72,10 @@ bundles = {
                            # filters='jsmin',
                             output='gen/rr.%(version)s.js'),
 
-    'js_rr_observe': Bundle('observe.js',
-                           'audio.js',
-                           output='gen/rr-observe.%(version)s.js'),
-
     'css_static':   Bundle( 'css/static.css',
                             output='gen/static.%(version)s.css'),
 
-    'css_rr':   Bundle( 'css/marx.min.css',
-                        'css/ringing_room.css',
-                        'css/circle.css',
+    'css_rr':   Bundle( 'css/ringing_room.css',
                          output='gen/rr.%(version)s.css'),
 
 }

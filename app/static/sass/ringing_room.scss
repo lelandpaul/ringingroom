@@ -1,0 +1,353 @@
+@import "global_design";
+@import "circle";
+
+
+body {
+  overflow-x: hidden;
+}
+
+
+/* Tower Controls */
+
+// positioning of tower header
+.tower_header {
+    position: relative;
+    top: 0; /* Stay at the top */
+    left: 0;
+    width: 100%;
+    padding-top: 2rem;
+    padding-bottom: 0;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    z-index: 3;
+}
+
+// tower name positioning
+#tower_name {
+    font-family: 'Simonetta', cursive;
+    white-space: nowrap;
+    max-width: 25rem;
+}
+
+// tower id positioning
+#tower_id {
+    font-size: larger;
+}
+
+.tower_header .row:last-child {
+    padding-bottom: 0.5rem;
+}
+
+.toggle_controls { visibility: visible; }
+
+// positioning for tower controls
+.tower_controls {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-basis: 0%;
+    position: relative;
+    overflow: visible;
+    width: 100%;
+    z-index: 2;
+}
+
+.size_control button {
+    width: 100%;
+}
+
+.row {
+    padding-bottom: 0.75rem; /* a bit more space between rows */
+}
+
+.row .tower_controls .row {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.row .row { /* don't add extra padding on embedded grids */
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.row h1 { margin: 0; }
+
+.row h3 { margin: 0; }
+
+hr {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.volume_control_slider {
+    width: 100%;
+    vertical-align: middle;
+}
+
+.volume_icon {
+    font-size: 1.25rem;
+    color: $primary;
+}
+
+/* Special styling for WebKit/Blink */
+input[type=range]::slider-thumb {
+  color: $primary;
+  background-color: $primary;
+}
+
+.user_list {
+  display: table;
+  border-width: 3px;
+  border-left-style: solid;
+  padding-left: 0px;
+  margin-top: 0px;
+  margin-left: 1rem;
+  margin-top: 0.5rem;
+
+}
+
+.user_list li {
+  display: table;
+  margin-left: 1rem;
+  list-style-type: none;
+  font-size: larger;
+}
+
+.list-group-item.disabled {
+    color: black;
+}
+
+.btn {
+    cursor: pointer;
+}
+
+.observers {
+    font-style: italic;
+}
+
+.cur_user {
+    font-weight: bold;
+}
+
+.toggle_assign {
+  cursor: pointer;
+}
+
+/* Username Input Form */
+
+.un_input_form { 
+  position: absolute;
+  max-width: 25em;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+/* Help */
+
+.help {
+    z-index: 100;
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+}
+
+
+/* Bells */ 
+
+.bell {
+    padding: 0;
+    white-space: nowrap;
+    z-index: 1;
+    overflow: visible;
+    width: 10rem;
+}
+
+.bell.no_ring img {
+    cursor: unset;
+}
+
+.user_cartouche{
+    max-width: 6rem;
+}
+
+.bell_metadata button.btn {
+    font-size: 0.75rem;
+    padding: 1% 5%;
+}
+
+.unclickable_div {
+    pointer-events: none;
+}
+.clickable {
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.btn_number, .btn_unassign {
+    width: 1.75rem;
+}
+
+.btn_number:hover {
+    color: $secondary;
+    background-color: inherit;
+    border-color: $secondary;
+}
+
+.btn_number.treble:hover, .btn_number.treble:active, .btn_number.treble:focus,
+.btn-primary.treble:not(:disabled):not(.disabled):active {
+    color: $body-bg;
+    background-color: $primary;
+    border-color: $primary;
+    box-shadow: none;
+}
+
+
+.btn-outline-secondary.btn_number:not(:disabled):not(.disabled).active{
+    color: $secondary;
+    background-color: inherit;
+    border-color: $secondary;
+}
+
+.btn-outline-primary.btn_number:not(:disabled):not(.disabled).active{
+    color: $primary;
+    background-color: inherit;
+    border-color: $primary;
+}
+
+.btn-primary.btn_number:not(:disabled):not(.disabled).active:focus,
+.btn-outline-secondary.btn_number:not(:disabled):not(.disabled).active:focus,
+.btn-outline-primary.btn_number:not(:disabled):not(.disabled).active:focus{
+    box-shadow: none;
+}
+
+.btn-primary.btn_assigned_user.disabled,
+.btn-outline-secondary.btn_assigned_user.disabled,
+.btn-outline-primary.btn_assigned_user.disabled{
+    opacity: 1;
+    cursor: inherit;
+}
+
+.btn-primary.btn_assigned_user.disabled:focus,
+.btn-outline-secondary.btn_assigned_user.disabled:focus,
+.btn-outline-primary.btn_assigned_user.disabled:focus{
+    box-shadow: none;
+}
+
+.btn_assigned_user {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+}
+
+.assigned_user {
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+      cursor: pointer;
+}
+
+.bell_metadata [class^="col-"] {
+    padding: 0;
+}
+
+.bell_img {
+    cursor: pointer;
+}
+
+.bell_img.assignment_mode{
+    opacity: 0.4;
+}
+
+.assign {
+    width: max-content;
+}
+
+.assignment_active {
+    cursor: pointer;
+}
+
+.handbell .bell_img {
+  -webkit-transform: scale(1.5) translateY(-10%);
+  transform: scale(1.5) translateY(-10%);
+
+}
+
+.handbell.left_side .bell_img {
+  -webkit-transform: scale(1.5) scaleX(-1) translateY(-10%);
+  transform: scale(1.5) scaleX(-1) translateY(-10%);
+}
+
+/* Chatbox */
+
+
+.msg_username {
+    font-weight: bold;
+    font-size: 1.25rem;
+    padding-right: 0.25rem;
+}
+
+#chat_messages {
+    overflow: scroll;
+    min-height: 20rem;
+    max-height: 20rem;
+    font-size: 1.25rem;
+}
+
+.message {
+    max-width: fit-content;
+    white-space: normal;
+}
+
+#chatbox {
+    width: 100%;
+    min-width: 20rem;
+}
+
+#user_display_header.collapsed::after,
+#chat_header.collapsed::after{
+    content: '▸';
+    font-size: 1.5rem;
+}
+
+#user_display_header::after,
+#chat_header::after{
+    content: '▾';
+    font-size: 1.5rem;
+}
+
+.modal-dialog {
+    background-color: white;
+}
+
+/* Scary mixin land */
+
+/* On larger screens, permanently open the menu */
+@include media-breakpoint-up(lg){
+    html { min-height:100%; }
+    .collapse.tower_controls, .collapse.tower_controls:not(.show) { 
+        display: flex; 
+        flex-grow: 1;
+    }
+    .sidebar_col {
+        min-width: 25rem;
+        max-width: 25rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .tower_controls{
+        height: 30rem;
+    }
+    .help {
+        width: 40rem;
+    }
+    #chatbox {
+        max-width: 20rem;
+    }
+}
+
+
+

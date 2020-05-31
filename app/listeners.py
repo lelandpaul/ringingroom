@@ -1,9 +1,12 @@
 from flask_socketio import emit, join_room
 from flask import session, request
-from app import socketio, towers, log
-from app.models import Tower
+from flask_login import current_user
+from app import socketio, towers, log, app
+from app.models import Tower, load_user
+from app.email import send_email
 import random
 import string
+import jwt
 
 # SocketIO Handlers
 
@@ -38,9 +41,16 @@ def on_create_tower(data):
     new_tower = Tower(tower_name)
     towers[new_tower.tower_id] = new_tower
 
+    if not current_user.is_anonymous:
+        new_tower.to_TowerDB().created_by(current_user)
+
     emit('s_redirection',
          str(new_tower.tower_id) + '/' + new_tower.url_safe_name)
 
+# Helper function to generate a random string for use as a uid
+def assign_user_id():
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(8))
 
 
 # Set up the room when a user first joins
@@ -48,123 +58,71 @@ def on_create_tower(data):
 def on_join(json):
     log('c_join',json)
 
-    # Helper function to generate a random string for use as a uid
-    def assign_user_id():
-        letters = string.ascii_lowercase
-        return ''.join(random.choice(letters) for i in range(8))
 
-    # First: check that the user has a unique ID in their cookie
-    # This will be used for keeping track of who's in the room
-    if 'user_id' not in session.keys():
-        session['user_id'] = assign_user_id()
-    user_id = session['user_id']
-
-    # The user may already have a username set in their cookies. if so, get it
-    user_name = session.get('user_name') or ''
-    if user_name: log('SETUP Found username in cookie:',user_name)
-
-    # Next, get the tower_id & tower from the client, then join the room
+    # First, get the tower_id & tower from the client and find the tower
     tower_id = json['tower_id']
     tower = towers[tower_id]
+
+
+    # Next, join the tower
     join_room(tower_id)
     log('SETUP Joined tower:',tower_id)
 
-    # Store the tower in case of accidental disconnect
-    session['tower_id'] = json['tower_id']
+    # We need to custom-load the user based on the jwt token passed up
+    user = None
+    if not json['anonymous_user']:
+        try:
+            user_id = jwt.decode(json['user_token'],app.config['SECRET_KEY'],algorithms=['HS256'])['id']
+            user = load_user(user_id)
+        except:
+            pass # leave user set to None
 
-    # It's possible we already have them listed in the tower's user
-    # Check this via the user_id
-    user_already_present = user_id in tower.users.keys()
+    # Whether the user is anonymous or not, send them the list of current users
+    emit('s_set_userlist',{'user_list': tower.user_names})
 
-    # Give the user the list of currently-present users
-    emit('s_set_users', {'users': list(tower.users.values())})
-    log('SETUP s_set_users:', list(tower.users.values()))
-
-    # If the user is in the room: Remove them (in preparation for adding them again)
-    if user_already_present:
-        log('SETUP User already present')
-        tower.remove_user(user_id)
-        emit('s_user_left', {'user_name': user_name}, 
-                            broadcast = True,
-                            include_self = True,
-                            room = tower_id)
-        # Change the user id, to prevent getting kicked out unexpectedly on refresh
+    # If the user is anonymous, mark them as an observer and set some cookies
+    if not user:
+        # Check they're not already in the room
+        if 'user_id' in session.keys():
+            tower.remove_observer(session['user_id'])
         session['user_id'] = assign_user_id()
+        tower.add_observer(session['user_id'])
+        log('SETUP Observer joined tower:',tower_id)
+        emit('s_set_observers', {'observers': tower.observers},
+             broadcast=True, include_self=True, room=tower_id)
+        log('SETUP observer s_set_observers', tower.observers)
+    else:
+        # The user is logged in. Add this as a recent tower
+        user.add_recent_tower(tower)
+        # If the user is logged in, but is already in the room: Remove them (in
+        # preparation for adding them again)
+        if user.username in tower.users.keys():
+            log('SETUP User already present')
+            tower.remove_user(user.id)
+            emit('s_user_left', {'user_name': user.username}, 
+                                broadcast = True,
+                                include_self = True,
+                                room = tower_id)
+        # For now: Keeping the "id/username" split in the tower model
+        # Eventually, this will allow us to have display names different
+        # from the username
+        tower.add_user(user.id, user.username)
 
-    # Check whether their selected name is available
-    user_name_available = user_name not in tower.users.values()
+        # Hack to fix a bug with the multiserver setup
+        emit('s_size_change',{'size': tower.n_bells})
+        emit('s_audio_change',{'new_audio':tower.audio})
 
-    # Send the user their name, along with whether it's currently available or not
-    emit('s_set_user_name', {'user_name': user_name,
-                             'name_available': user_name_available})
-    log('SETUP s_set_user_name:', {'user_name': user_name, 'name_available': user_name_available})
+        emit('s_user_entered', { 'user_name': user.username },
+             broadcast=True, include_self = True, room=json['tower_id'])
 
-    # emit the number of observers
-    emit('s_set_observers', {'observers': tower.observers},
-         broadcast=True, include_self=True, room=tower_id)
-    log('SETUP s_set_observers', tower.observers)
-    
-    # Set up tower metadata
-    emit('s_name_change', {'new_name': tower.name})
-    emit('s_audio_change', {'new_audio': tower.audio})
-    log('SETUP s_name_change', tower.name)
-    log('SETUP s_audio_change', tower.audio)
-
-    # Set the size (then wait for the client to ask for the global state)
-    emit('s_size_change', {'size': tower.n_bells})
-    log('SETUP s_size_change',tower.n_bells)
-
-
-# Set up room when a observer first joins
-@socketio.on('c_join_observer')
-def on_observer_joined(json):
-    log('c_join_observer',json)
-
-    # Helper function to generate a random string for use as a uid
-    def assign_user_id():
-        letters = string.ascii_lowercase
-        return ''.join(random.choice(letters) for i in range(8))
-
-    # First, get the tower_id & tower from the client, then join the room
-    tower_id = json['tower_id']
-    tower = towers[tower_id]
-    join_room(tower_id)
-    log('SETUP Observer joined tower:',tower_id)
-
-    # Next: check that the user has a unique ID in their cookie
-    # This will be used for keeping track of who's in the room
-    # If they already have one: Remove them from the room, then give them a new one,
-    # to prevent their getting kicked out unexpectedly on refresh
-    if 'user_id' in session.keys():
-        tower.remove_observer(session['user_id'])
-    session['user_id'] = assign_user_id()
-    user_id = session['user_id']
 
 
     # Store the tower in case of accidental disconnect
-    # Also note that this was an observer
-    session['tower_id'] = json['tower_id']
-    session['observer'] = True
-
-    # Add the observer and emit the total number of observer
-    tower.add_observer(user_id)
-    emit('s_set_observers', {'observers': tower.observers},
-         broadcast=True, include_self=True, room=tower_id)
-    log('SETUP observer s_set_observers', tower.observers)
-
-    # Give the user the list of currently-present users
-    emit('s_set_users', {'users': list(tower.users.values())})
-    log('SETUP Observer s_set_users:', list(tower.users.values()))
-
-    # Set up tower metadata
-    emit('s_name_change', {'new_name': tower.name})
-    emit('s_audio_change', {'new_audio': tower.audio})
-    log('SETUP s_name_change', tower.name)
-    log('SETUP s_audio_change', tower.audio)
-
-    # Set the size (then wait for the client to ask for the global state)
-    emit('s_size_change', {'size': tower.n_bells})
-    log('SETUP s_size_change',tower.n_bells)
+    # We need to do it under the SocketIO SID, otherwise a refresh might kick us out of the room
+    if not 'tower_ids' in session.keys():
+        session['tower_ids'] = {}
+    session['tower_ids'][request.sid] = json['tower_id']
+    session.modified= True
 
 
 # Helper for sending assignments
@@ -176,54 +134,33 @@ def send_assignments(tower_id):
              broadcast=True, include_self=True, room=tower_id)
 
 
-# A user entered a room
-@socketio.on('c_user_entered')
-def on_user_entered(json):
-    log('c_user_entered',json)
-
-    # Store their username for the future
-    session['user_name'] = json['user_name']
-    user_name = json['user_name']
-    session.modified = True
-
-    # Get their unique ID
-    user_id = session['user_id']
-
-    # Get the tower
-    tower = towers[json['tower_id']]
-    tower.add_user(user_id, user_name)
-
-    emit('s_user_entered', { 'user_name': user_name },
-         broadcast=True, include_self = True, room=json['tower_id'])
-
-
 # A user left a room (and the event actually fired)
 @socketio.on('c_user_left')
 def on_user_left(json):
     log('c_user_left', json)
     tower_id = json['tower_id']
     tower = towers[tower_id]
-    user_id = session['user_id']
 
-    if json['observer']:
+    # We need to custom-load the user based on the jwt token passed up
+    user = None
+    if not json['anonymous_user']:
+        try:
+            user_id = jwt.decode(json['user_token'],app.config['SECRET_KEY'],algorithms=['HS256'])['id']
+            user = load_user(user_id)
+        except:
+            user_id = session['user_id']
+            pass # leave user set to None
 
+    if not user:
         tower.remove_observer(user_id)
         emit('s_set_observers', {'observers': tower.observers},
              broadcast = True, include_self = False, room=tower_id)
-        session['observer'] = False
         return
 
-    user_name = json['user_name']
 
-    try:
-        tower.remove_user(user_id)
-    except KeyError:
-        # The user key wasn't present in the tower, for some reason
-        # For now, just pass
-        pass
-
-    emit('s_user_left', { 'user_name': user_name },
-         broadcast=True, include_self = False, room=tower_id)
+    tower.remove_user(user_id)
+    emit('s_user_left', { 'user_name': user.username },
+         broadcast=True, include_self = True, room=tower_id)
 
     send_assignments(tower_id)
 
@@ -312,7 +249,6 @@ def on_size_change(size):
 @socketio.on('c_request_global_state')
 def on_request_global_state(json):
     log('c_request_global_state', json)
-    print('global state requested')
     tower_id = json['tower_id']
     tower = towers[tower_id]
     state = tower.bell_state
@@ -328,9 +264,8 @@ def on_request_global_state(json):
 def on_audio_change(json):
     log('c_audio_change', json)
     tower_id = json['tower_id']
-    new_audio = 'Hand' if json['old_audio'] == 'Tower' else 'Tower'
-    towers[tower_id].audio = new_audio
-    emit('s_audio_change', {'new_audio': new_audio},
+    towers[tower_id].audio = json['new_audio']
+    emit('s_audio_change', {'new_audio': json['new_audio']},
          broadcast=True, include_self=True, room=tower_id)
 
 # Set all bells at hand
@@ -342,3 +277,21 @@ def on_set_bells(json):
     tower.set_at_hand()
     emit('s_global_state', {'global_bell_state': tower.bell_state},
          broadcast = True, include_self=True, room=tower_id)
+
+# A chat message was received
+@socketio.on('c_msg_sent')
+def on_msg(json):
+    emit('s_msg_sent', json, broadcast=True, include_self=True, room=json['tower_id'])
+
+# We got a report of inappropriate behavior
+@socketio.on('c_report')
+def on_report(json):
+    log('c_report', json)
+    send_email(subject='Behavior Report',
+               recipient='ringingroom@gmail.com',
+               text_body="A report was submitted. Details:\n\n" + str(json),
+               html_body="A report was submitted. Details:\n\n" + str(json))
+
+
+
+

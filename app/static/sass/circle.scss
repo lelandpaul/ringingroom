@@ -2,6 +2,8 @@
 
 /* Mixins to arrange things in a circle easily
 /* We need multiple precomputed mixins for different tower sizes */
+@import "global_design";
+
 @mixin on-circle($item-count, $circle-size) {
   width:  $circle-size;
   height: $circle-size;
@@ -30,14 +32,28 @@
                        rotate($rot * 1deg) 
                        translate($circle-size / 2) 
                        rotate($rot * -1deg)
-                       translateX(-35%);
+                       translate(-50%,15%);
+            &.top_side {
+                transform: translate(-50%,-50%)
+                           rotate($rot * 1deg) 
+                           translate($circle-size / 2) 
+                           rotate($rot * -1deg)
+                           translate(-50%,-15%);
+            }
         }
         transform: 
           translate(-50%, -50%)
           rotate($rot * 1deg) 
           translate($circle-size / 2) 
           rotate($rot * -1deg)
-          translateX(35%);
+          translate(50%,15%);
+            &.top_side {
+                transform: translate(-50%,-50%)
+                           rotate($rot * 1deg) 
+                           translate($circle-size / 2) 
+                           rotate($rot * -1deg)
+                           translate(50%,-15%);
+            }
 
       }
 
@@ -46,39 +62,6 @@
     }
 }
 
-
-@mixin bell_circle_margin($media-circ-size, $media-lr-offset, $media-tb-offset) {
-
-    #call_display {
-        position: absolute;
-        text-align: center;
-        height: 4em;
-        margin-top: 50%;
-        margin-left: 50%;
-        transform: translate(-50%,-50%);
-    }
-
-
-    .bell_circle_col {
-        position: relative;
-    }
-
-
-    .bell_circle {
-      $circ-size: $media-circ-size;
-
-      position: absolute;
-      margin-top: $media-tb-offset;
-      margin-left: $media-lr-offset;
-      transform: translate(-50%, -50%);
-
-      &.four   { @include on-circle(4, $circ-size); }
-      &.six    { @include on-circle(6, $circ-size); }
-      &.eight  { @include on-circle(8, $circ-size); }
-      &.ten    { @include on-circle(10, $circ-size); }
-      &.twelve { @include on-circle(12, $circ-size); }
-    }
-}
 
 @mixin bell_circle($media-circ-size, $media-lr-offset, $media-tb-offset) {
 
@@ -91,6 +74,18 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%,-50%);
+    }
+
+    #focus_display {
+        position: absolute;
+        text-align: center;
+        top: 70%;
+        left: 50%;
+        width: 80%;
+        padding: 10%;
+        transform: translate(-50%,0);
+        background-color: $text-color;
+        color: $body-bg;
     }
 
 
@@ -110,81 +105,89 @@
     }
 }
 
-/* Tiny screen */
-@media screen and (max-width: 600px) and (max-height: 700px){
-    @include bell_circle_margin(30vh, 50vw, 40vh);
-    .bell {
-        width: 8rem;
-        font-size: x-small;
+@include media-breakpoint-up(xs) {
+    @include bell_circle(20rem,50vw,30vh);
+    @supports (width: max(5px,5px)){
+        @include bell_circle(20rem,50vw,max(30vh,15rem));
+    }
+    .bell_metadata {
+        margin-left: -0.5rem;
+        margin-right: -0.5rem;
+    }
+    .handbell .bell_metadata {
+        margin-left: 0.1rem;
+        margin-right: 0.1rem;
+    }
+    .bell_img {
+        width: 2.25rem;
+    }
+    .handbell .bell_img{
+        width: 3rem;
     }
 }
 
-@media screen and (max-width: 600px) and (min-height: 700px){
-    @include bell_circle_margin(30vh, 50vw, 40vh);
-    .bell {
+@include media-breakpoint-up(sm) {
+    @include bell_circle(25rem,50vw, 35vh);
+    @supports (width: max(5px,5px)){
+        @include bell_circle(25rem,50vw,max(35vh,20rem));
+    }
+    .bell_img {
+        width: 3rem;
+    }
+    .handbell .bell_img{
+        width: 3.5rem;
+    }
+}
+
+@include media-breakpoint-up(md) {
+    @include bell_circle(35rem,50vw, 40vh);
+    @supports (width: max(5px,5px)){
+        @include bell_circle(35rem,50vw,max(40vh,24rem));
+    }
+    .bell_img {
+        width: 3.5rem;
+    }
+    .handbell .bell_img{
+        width: 4.5rem;
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    @include bell_circle(35rem,32vw,50vh);
+    @supports (width: max(5px,5px)){
+        @include bell_circle(35rem,32vw, max(24rem,50vh));
+    }
+    .bell_metadata {
+        margin-left: -0.75rem;
+        margin-right: -0.75rem;
+    }
+    .handbell .bell_metadata {
+        margin-left: 0.1rem;
+        margin-right: 0.1rem;
+    }
+    .handbell .bell_img{
+        width: 4rem;
+    }
+    .bell .bell_metadata button.btn {
+        font-size: 1rem;
+    }
+    .bell .user_cartouche {
+       max-width: 14rem; 
+    }
+}
+
+@include media-breakpoint-up(xl) {
+    @include bell_circle(40rem,30vw,50vh);
+    @supports (width: max(5px,5px)){
+        @include bell_circle(40rem,30vw,max(27rem,50vh));
+    }
+    .bell_img {
+        width: 4rem;
+    }
+    .handbell .bell_img{
         width: 10rem;
-        font-size: x-small;
     }
-}
-
-/* Smaller screen */
-@media screen and (min-width: 600px) and (max-width: 800px) and (max-height: 700px){
-    @include bell_circle_margin(50vh, 50vw, 40vh);
-    .bell {
-        width: 8rem;
-        font-size: large;
+    .handbell .bell_img{
+        width: 4rem;
     }
-}
-
-@media screen and (min-width: 600px) and (max-width: 800px) and (min-height: 700px){
-    @include bell_circle_margin(50vh, 50vw, 40vh);
-    .bell {
-        width: 11rem;
-        font-size: large;
-    }
-}
-
-
-/*  Small screen */
-@media screen and (min-width: 800px) and (max-width: 64rem) and (max-height: 700px){
-    @include bell_circle_margin(55vh, 50vw, 40vh);
-    .bell {
-        width: 10rem;
-        font-size: large;
-    }
-}
-
-@media screen and (min-width: 800px) and (max-width: 64rem) and (min-height: 700px) {
-    @include bell_circle_margin(55vh, 50vw, 40vh);
-    .bell {
-        width: 12rem;
-        font-size: large;
-    }
-}
-
-/*  Medium screen */
-@media screen and (min-width: 64rem) and (max-height: 700px) {
-    @include bell_circle(60vh, 60%, 50%);
-    .bell {
-        width: 10rem;
-        font-size: x-large;
-    }
-}
-
-@media screen and (min-width: 64rem) and (min-height: 700px) {
-    @include bell_circle(60vh, 60%, 50%);
-    .bell {
-        width: 13rem;
-        font-size: x-large;
-    }
-}
-
-/*  Large screen */
-@media screen and (min-width: 1400px){
-    @include bell_circle(65vh, 60%, 50%);
-}
-
-/*  X-Large screen */
-@media screen and (min-width: 1600px){
-    @include bell_circle(75vh, 50%, 50%);
 }

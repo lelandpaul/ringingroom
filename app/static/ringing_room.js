@@ -23,29 +23,39 @@ var logger = function()
 
     return pub;
 }();
-logger.disableLogger()
+// logger.disableLogger()
 
 // Set up socketio instance
-var socketio = io()
 
-// Get the current tower_id and let the server know where we are
-var cur_path = window.location.pathname.split('/')
-var cur_tower_id = parseInt(cur_path[1])
-socketio.emit('c_join',{tower_id: cur_tower_id})
+var socketio = io(window.tower_parameters.server_ip);
+
+
+
+// Various Vue instances need this on creation
+var cur_tower_id = parseInt(window.tower_parameters.id);
+
+
+// If they're not anonymous, get their username
+var cur_user_name = window.tower_parameters.cur_user_name;
 
 // Set up a handler for leaving, then register it *everywhere*
 
 var leave_room = function(){
     socketio.emit('c_user_left',
-          {user_name: bell_circle.$refs.users.cur_user, 
-          tower_id: cur_tower_id,
-          observer: false});
-}
+          {user_name: window.tower_parameters.cur_user_name, 
+           user_token: window.tower_parameters.user_token,
+           anonymous_user: window.tower_parameters.anonymous_user,
+          tower_id: cur_tower_id});
+};
 
 // set up disconnection at beforeunload
 window.addEventListener("beforeunload", leave_room, "useCapture");
 window.onbeforeunload = leave_room;
 
+// initial data state
+window.user_parameters = {
+    bell_volume: 5,
+};
 
 ////////////////////////
 /* SOCKETIO LISTENERS */
@@ -58,24 +68,10 @@ socketio.on('s_bell_rung', function(msg,cb){
 	bell_circle.ring_bell(msg.who_rang);
 });
 
-// We got a username from the server
-// (It might be empty)
-socketio.on('s_set_user_name', function(msg, cb){
-    console.log('received un: ' + msg.user_name);
-    console.log('it is available: ' + msg.name_available)
-    bell_circle.$refs.un_input.input = msg.user_name;
-    if (!msg.name_available){
-        bell_circle.$refs.un_input.user_message = "This username is already taken.";
-    }
-    if (msg.name_available && msg.user_name){
-        bell_circle.$refs.un_input.send_user_name();
-    }
-});
-
-// getting initial user state
-socketio.on('s_set_users', function(msg, cb){
-	console.log('Getting users: ' + msg.users);
-    bell_circle.$refs.users.user_names = msg.users
+// Userlist was set
+socketio.on('s_set_userlist', function(msg,cb){
+    console.log('s_set_userlist: ' + msg.user_list);
+    bell_circle.$refs.users.user_names = msg.user_list;
 });
 
 // User entered the room
@@ -95,7 +91,6 @@ socketio.on('s_set_observers', function(msg, cb){
     console.log('observers: ' + msg.observers);
     bell_circle.$refs.users.observers = msg.observers;
 });
-
 
 // User was assigned to a bell
 socketio.on('s_assign_user', function(msg, cb){
@@ -125,14 +120,6 @@ socketio.on('s_global_state',function(msg,cb){
 	};
 });
 
-// The server told us the name of the tower
-socketio.on('s_name_change',function(msg,cb){
-	console.log('Received name change: ' + msg.new_name);
-	bell_circle.tower_name = msg.new_name;
-	bell_circle.tower_id = parseInt(cur_tower_id);
-});
-
-
 // The server told us whether to use handbells or towerbells
 socketio.on('s_audio_change',function(msg,cb){
   console.log('changing audio to: ' + msg.new_audio);
@@ -140,12 +127,17 @@ socketio.on('s_audio_change',function(msg,cb){
   bell_circle.audio = msg.new_audio == 'Tower' ? tower : hand;
 });
 
+// A chat message was received
+socketio.on('s_msg_sent', function(msg,cb){
+    bell_circle.$refs.chatbox.messages.push(msg);
+    bell_circle.$nextTick(function(){
+        $('#chat_messages').scrollTop($('#chat_messages')[0].scrollHeight);
+    });
+});
 
-///////////
-/* AUDIO */
-///////////
 
-// import {tower, hand, bell_mappings} from './audio.js';
+
+
 
 /////////
 /* VUE */
@@ -178,7 +170,7 @@ Vue.component("bell_rope", {
 			   circled_digits: ["①", "②", "③", "④", "⑤", "⑥", 
 								"⑦", "⑧", "⑨", "⑩", "⑪","⑫"],
 			   images: ["handstroke", "backstroke"],
-               assigned_user: '',
+               assigned_user: window.tower_parameters.assignments[this.number-1],
 	  };
 	},
 
@@ -222,6 +214,7 @@ Vue.component("bell_rope", {
       
       // emit a ringing event ot the server
 	  emit_ringing_event: function() {
+        if (window.tower_parameters.anonymous_user){ return }; // don't ring if not logged in
         if (this.assignment_mode){ return }; // disable while assigning
 		socketio.emit('c_bell_rung',
 				{bell: this.number, stroke: this.stroke, tower_id: cur_tower_id});
@@ -231,7 +224,8 @@ Vue.component("bell_rope", {
 
       // Ringing event received; now ring the bell
 	  ring: function(){
-		this.stroke = !this.stroke;
+        this.stroke = !this.stroke;
+        this.audio._volume = window.user_parameters.bell_volume * 0.1;
         const audio_type = this.$root.$refs.controls.audio_type;
         console.log(audio_type + ' ' + this.number_of_bells);
 		this.audio.play(bell_mappings[audio_type][this.number_of_bells][this.number - 1]);
@@ -246,6 +240,7 @@ Vue.component("bell_rope", {
 	  },
 
       assign_user: function(){
+          if (window.tower_parameters.anonymous_user){ return }; // don't ring if not logged in
           const selected_user = this.$root.$refs.users.selected_user;
           if (!this.assignment_mode){ return };
           console.log('assigning user: ' +  selected_user + ' to ' + this.number);
@@ -255,6 +250,7 @@ Vue.component("bell_rope", {
       },
 
       unassign: function(){
+          if (window.tower_parameters.anonymous_user){ return }; // don't ring if not logged in
           socketio.emit('c_assign_user', { bell: this.number,
                                            user: '',
                                            tower_id: cur_tower_id });
@@ -263,72 +259,98 @@ Vue.component("bell_rope", {
     },
 
 	template:`
-            <div class="bell"
+            <div class="bell unclickable_div"
                  :class="[left_side ? 'left_side' : '',
-                          image_prefix === 'h-' ? 'handbell' : '']">
-                <div class="col-xs-12">
-                <div class="row"
-                    :class="[left_side ? 'reverse' :  '',
-                             top_side ? 'top-xs' : 'bottom-xs']">
+                          image_prefix === 'h-' ? 'handbell' : '',
+                          top_side ? 'top_side' : '',
+                          window.tower_parameters.anonymous_user ? 'no_ring' : '']">
+                <div class="row unclickable_div"
+                    :class="[left_side ? 'flex-row-reverse' :  '',
+                             top_side ? 'align-items-start' : 'align-items-end']">
 
-                    <div :class="[image_prefix == 'h-' ? 'col-xs-5' : 'col-xs-3']">
                      <img @click='emit_ringing_event'
-                           class="bell_img" 
+                           class="bell_img clickable" 
                           :class="[assignment_mode ? 'assignment_mode' : '']"
                           :src="'static/images/' + image_prefix + (stroke ? images[0] : images[1]) + '.png'"
                           />
-                    </div>
-                    <div class="bell_metadata"
-                         :class="[image_prefix == 'h-' ? 'col-xs-7' : 'col-xs-9']">
-                    <div class="row left-xs-12"
-                         :class="{reverse: top_side}">
 
-                        <div class="col-xs-12"
-                             v-show="top_side">
-                        <span class='number' 
-                             :class="[number == 1 ? 'treble' : '',
-                                      assigned_user == cur_user ? 'cur_user' : '']"
-                              >
 
-                         [[ circled_digits[number-1] ]]
+                    <div class="bell_metadata clickable">
 
-                        </span>
-                        </div>
 
-                        <div class="col-xs-12">
-                            <div class="row">
-                            <div class="col-xs assign"
-                                :class="{treble: number == 1}"
-                                  @click="assign_user"
+                    <template v-if="left_side">
+                        <div class="btn-group user_cartouche">
+                            <button class="btn btn-sm btn_unassign"
+                                   :class="[number == 1 ? 'treble' : '',
+                                            number == 1 ? 'btn-primary' : 'btn-outline-secondary']"
+                                v-if="assignment_mode && assigned_user"
+                                @click="unassign">
+                                <span class="unassign"><i class="fas fa-window-close"></i></span>
+                            </button>
+
+                            <button class="btn btn-small btn_assigned_user"
+                                   :class="[number == 1 ? 'treble' : '',
+                                            number == 1 ? 'btn-primary' : 'btn-outline-secondary',
+                                            assigned_user==cur_user ? 'cur_user' :'',
+                                            assignment_mode ? '' : 'disabled']"
+                                   @click="assign_user"
+                                   v-if="assignment_mode || assigned_user"
                                   > 
-                        [[ (assignment_mode) ? ((assigned_user) ? assigned_user : '(assign ringer)')
-                                                 : assigned_user ]]
-                             </div>
-                             <div class="col-xs unassign"
-                                  v-if="assignment_mode && 
-                                         assigned_user"
-                                 @click="unassign"
-                                   > 🆇
-                            </div>
-                            </div>
+                                  <span class="assigned_user">
+                                    [[ (assignment_mode) ? 
+                                        ((assigned_user) ? assigned_user : '(none)')
+                                        : assigned_user ]]
+                                  </span>
+                             </button>
+
+                             <button class='btn btn-sm btn_number' 
+                                 :class="[number == 1 ? 'treble' : 'active',
+                                            number == 1 ? 'btn-primary' : 'btn-outline-secondary',
+                                          assigned_user == cur_user ? 'cur_user' : '']"
+                                  style="cursor: inherit;"
+                                  >
+                                <span class="number"> [[number]] </number>
+                             </button>
                         </div>
+                    </template>
+                    <template v-else>
+                        <div class="btn-group user_cartouche">
+                             <button class='btn btn-sm btn_number' 
+                                 :class="[number == 1 ? 'treble' : 'active',
+                                            number == 1 ? 'btn-primary' : 'btn-outline-secondary',
+                                          assigned_user == cur_user ? 'cur_user' : '']"
+                                  style="cursor: inherit;"
+                                  >
+                                <span class="number">[[number]]</span>
+                             </button>
 
+                             <button class="btn btn-small btn_assigned_user"
+                                   :class="[number == 1 ? 'treble' : '',
+                                            number == 1 ? 'btn-primary' : 'btn-outline-secondary',
+                                            assigned_user==cur_user ? 'cur_user' :'',
+                                            assignment_mode ? '' : 'disabled']"
+                                  @click="assign_user"
+                                  v-if="assignment_mode || assigned_user"
+                                   > 
+                                  <span class="assigned_user_name">
+                                     [[ (assignment_mode) ? 
+                                         ((assigned_user) ? assigned_user : '(none)')
+                                         : assigned_user ]]
+                                  </span>
+                              </button>
 
-                        <div class="col-xs-12"
-                             v-show="!top_side">
-                        <span class='number' 
-                             :class="[number == 1 ? 'treble' : '',
-                                      assigned_user == cur_user ? 'cur_user' : '']"
-                              >
-
-                         [[ circled_digits[number-1] ]]
-
-                        </span>
+                             <button class="btn btn-sm btn_unassign"
+                                   :class="[number == 1 ? 'treble' : '',
+                                            number == 1 ? 'btn-primary' : 'btn-outline-secondary']"
+                                    v-if="assignment_mode && assigned_user"
+                                    @click="unassign">
+                                 <span class="unassign"><i class="fas fa-window-close"></i></span>
+                             </button>
                         </div>
+                    </template>
 
                     </div>
                     </div>
-                </div>
                 </div>
             </div>
 		     `
@@ -345,6 +367,15 @@ Vue.component('call_display', {
 		return { cur_call: '' };
 	},
 
+    computed: {
+
+        assignment_mode: function(){
+            return this.$root.$refs.users.assignment_mode;
+        },
+
+
+    },
+
 	methods: {
 
         // a call was received from the server; display it and play audio
@@ -360,10 +391,44 @@ Vue.component('call_display', {
 	},
 
 	template: `<h2 id='call_display' 
-                   ref='display'>[[ cur_call ]]
+                   ref='display'>
+                   [[ assignment_mode ? 'To resume ringing, press "Stop Assigning" on the control panel.' : cur_call ]]
                </h2>
               `
 }); // end call_display component
+
+
+// The focus_display indicated when the window has lost focus
+Vue.component('focus_display', {
+
+    // data in components should be a function, to maintain scope
+	data: function(){
+		return { visible: true };
+	},
+
+    mounted: function() {
+        this.$nextTick(function() {
+            window.addEventListener('focus', this.hide)
+            window.addEventListener('blur', this.show)
+
+            document.hasFocus() ? this.hide() : this.show()
+        })
+    },
+
+    methods: {
+        show() {
+            this.visible = true;
+        },
+        hide() {
+            this.visible = false;
+        }
+    },
+
+	template: `<h2 v-show="visible" id='focus_display'>
+                   Click anywhere in Ringing Room to resume ringing.
+               </h2>
+              `
+}); // end focus_display component
 
 
 // tower_controls holds title, id, size buttons, audio toggle
@@ -372,7 +437,7 @@ Vue.component('tower_controls', {
     // data in components should be a function, to maintain scope
 	data: function(){ 
 		return {tower_sizes: [4,6,8,10,12],
-                audio_type: 'Tower'} },
+                audio_type: window.tower_parameters.audio} },
 
     computed: {
         
@@ -382,22 +447,26 @@ Vue.component('tower_controls', {
 
     },
 
+    watch: {
+
+        audio_type: function(){
+            console.log('swapped audio type');
+              socketio.emit('c_audio_change',{new_audio: this.audio_type, tower_id: cur_tower_id});
+        },
+
+    },
+
 	methods: {
 
         // the user clicked a tower-size button
 		set_tower_size: function(size){
+            if (window.tower_parameters.anonymous_user){ return }; // don't do anything if not logged in
 			console.log('setting tower size to ' + size);
 			socketio.emit('c_size_change',{new_size: size, tower_id: cur_tower_id});
 		},
 
-        // the user clicked the audio toggle
-        swap_audio: function(){
-          console.log('swapping audio');
-          socketio.emit('c_audio_change',{old_audio: this.audio_type, tower_id: cur_tower_id});
-
-        },
-
         set_bells_at_hand: function(){
+            if (window.tower_parameters.anonymous_user){ return }; // don't do anything if not logged in
             console.log('setting all bells at hand')
             socketio.emit('c_set_bells', {tower_id: cur_tower_id});
         },
@@ -405,32 +474,59 @@ Vue.component('tower_controls', {
 
 	template: 
     `
-        <div class="tower_controls_inner">
+        <div class="tower_controls_inner"
+             v-if="!window.tower_parameters.anonymous_user">
 
              <div class="row between-xs">
-                 <div class="col-xs size_control center-xs"
-                      v-for="size in tower_sizes"
-                      :size="size"
-                      @click="set_tower_size(size)"
-                      >
-                     <button :class="{cur_size: size === number_of_bells}">
-                        [[ size ]]
-                     </button>
-                 </div>
-             </div>
-
-             <div class="row">
-
-                 <div class="col-xs">
-                      <button class="audio_toggle"
-                           @click="swap_audio"
+             <div class="col">
+                <div class="btn-group btn-block btn-group-toggle">
+                    <label v-for="size in tower_sizes"
+                           :size="size"
+                           class="btn btn-outline-primary"
+                           :class="{active: size === number_of_bells}"
+                           @click="set_tower_size(size)"
                            >
-                           Audio: [[ audio_type ]]
-                      </button>
+                           <input type="radio"
+                                  name="size"
+                                  :value="size"
+                                  />
+                                  [[ size ]]
+                      </label>
+                </div>
+            </div>
+            </div>
+
+
+             <div class="row justify-content-between">
+
+                 <div class="col">
+                      <div class="btn-group btn-block btn-group-toggle">
+                        <label class="btn btn-outline-primary"
+                               :class="{active: audio_type == 'Tower'}">
+                        <input type="radio" 
+                               name="audio"
+                               id="audio_tower"
+                               value="Tower"
+                               v-model="audio_type"
+                               />
+                               Tower
+                        </label>
+
+                        <label class="btn btn-outline-primary"
+                               :class="{active: audio_type == 'Hand'}">
+                        <input type="radio" 
+                               name="audio"
+                               id="audio_hand"
+                               value="Hand"
+                               v-model="audio_type"
+                               />
+                               Hand
+                        </label>
+                       </div>
                  </div>
 
-                 <div class="col-xs end-xs">
-                     <button class="set_at_hand"
+                 <div class="col">
+                     <button class="set_at_hand btn btn-outline-primary btn-block"
                            @click="set_bells_at_hand"
                            >
                          Set at hand
@@ -467,52 +563,260 @@ Vue.component('help', {
 
 
 	template: `
-			<div class="help">
-				<div
-				class="help_toggle"
-				@click="show_help"
-				>
-                       <button> Help [[ help_showing ? '▾' : '▸' ]] </button>
-                </div>
-                <div v-if="help_showing"
-                class="help_showing"
-                @click="show_help">
-                  	<p>
-                  		On the top left, you may set the number of bells in the tower by clicking the desired number. 
-                  		To ring, you may either click on the ropes or use the following hot-keys:
-                  	</p>
-					<ul>
-						<li> <b>[1-9], [0], [-], [=]:</b> Rings bells 1 - 9, 10, 11, and 12</li>
-						<li><b>[SPACE]:</b> Rings the bell in the lower right corner.</li>
-						<li><b>[LEFT] and [RIGHT] arrow keys:</b> Rings the left and right bottom-most bells.</li>
-						<li><b>[f] and [j]:</b> same as [LEFT] and [RIGHT]</li>
-						<li><b>[SHIFT]+[0-9]\\[0]\\[-]\\[=]:</b> Rotate the "perspective" of the ringing room to put that bell in the lower right corner so it may be rung by [SPACE] or [j].</li>
-					</ul>
-					<p>
-						There are also hot-keys for various calls, but be aware that in some browsers using these 
-						results in the sound of the bells being interrupted.
-					</p>
-					
-					<p>Ringers may now <i>assign bells</i> by entering bell assignment mode (top left of the screen). While in
-					this mode, any ringer may be selected under the user list and then a second click by a bell will assign
-					that user to a bell. Clicking the "x" by the user's name will kick them off that bell. Bells may not be rung
-					in bell assignment mode. Simply click the button in the control towers to exit bell assignment mode.
-					For now, anyone may assign anyone (and kick off anyone).</p>
+<div class="row" v-if="!window.tower_parameters.observer">
+<div class="col">
+<div class="card text-justify">
+<div class="card-body">
+<h5 class="card-title">How to use Ringing Room</h5>
+
+<p>To ring, you may either click on the ropes or use the following hot-keys:</p>
+
+<ul>
+    <li> <b>[1-9], [0], [-], [=]:</b> Rings bells 1 - 9, 10, 11, and 12</li>
+    <li><b>[SPACE]:</b> Rings the bell in the lower right corner.</li>
+    <li><b>[LEFT] and [RIGHT] arrow keys:</b> Rings the left and right bottom-most bells.</li>
+    <li><b>[f] and [j]:</b> same as [LEFT] and [RIGHT]</li>
+    <li><b>[SHIFT]+[0-9]\\[0]\\[-]\\[=]:</b> Rotate the "perspective" of the ringing room to put that bell in the lower right corner so it may be rung by [SPACE] or [j].</li>
+</ul>
+
+<p> The tower controls allow you to set the number of bells, change whether you're using towerbell or handbell images and sounds, and set all the bells at hand.</p>
+
+<p>The user list allows you to <i>assign bells</i> to particular ringers. To assign ringers, press the "Assign Bells" button to enter bell assignment mode. While in this mode, you may select any ringer from the user list by clicking on them, and then click on the box next to the bell you want to assign them to. Clicking the "x" by a user's name will unassign them from that bell. While in assignment mode, you can't ring any bells; when you're done assigning bells, click the "Stop Assigning" button to return to normal mode.</p>
+
+<p>Assigning a user to a bell will have the effect of automatically rotating that ringer's "perspective" on the tower so that the bell is placed in the bottom right position. This will allow it to be rung using the [SPACE] or [j] hotkeys. If a user is assigned to multiple bells, the lowest-numbered one will be placed in position; this means that if the user is assigned to exactly 2 bells, those bells we be ringable with [f] and [j].</p>
+
 			
-					<p>There are also hot-keys for various calls, but be aware that in some browsers using these results
-							in the sound of the bells being interrupted.</p>
-					<ul>
-						<li><b>[l]</b>ook to...</li>
-						<li><b>[g]</b>o next time</li>
-						<li><b>[b]</b>ob</li>
-						<li>si<b>[n]</b>gle</li>
-						<li>t<b>[h]</b>at's all</li>
-						<li>s<b>[t]</b>and next</li>
-					</ul>
-				</div>
-			</div>
+<p>You can make calls by using the hotkeys below. However, be aware that in some browsers these result in the sound of the bells being interrupted.</p>
+
+<ul>
+    <li><b>[l]</b>ook to...</li>
+    <li><b>[g]</b>o next time</li>
+    <li><b>[b]</b>ob</li>
+    <li>si<b>[n]</b>gle</li>
+    <li>t<b>[h]</b>at's all</li>
+    <li>s<b>[t]</b>and next</li>
+</ul>
+
+You can read more on our <a href="/help">Help page</a>.
+</div>
+</div>
+</div>
+</div>
+</div>
                `,
 }); // End help
+
+Vue.component('chatbox', {
+
+    data: function(){
+        return { name: window.tower_parameters.cur_user_name,
+                 cur_msg: '',
+                 messages: [],
+        }
+    },
+
+    methods: {
+
+        send_msg: function() {
+            console.log('send_msg');
+            socketio.emit('c_msg_sent', { user: this.name,
+                                          email: window.tower_parameters.cur_user_email,
+                                          msg: this.cur_msg,
+                                          time: new Date(),
+                                          tower_id: window.tower_parameters.id});
+            this.cur_msg = '';
+        },
+
+        leave_tower: function(){
+            socketio.emit('c_user_left',
+                  {user_name: window.tower_parameters.cur_user_name, 
+                  tower_id: cur_tower_id });
+        },
+
+        open_user_display: function(){
+            if (!$('#user_display_body').hasClass('show')){
+                $('#user_display_body').collapse('show');
+            }
+        },
+
+    },
+
+
+    template: `
+        <div class="card" id="chatbox">
+            <div class="card-header">
+                <h2 style="display: inline; cursor: pointer;"
+                    id="chat_header"
+                    @click="open_user_display"
+                    data-toggle="collapse"
+                    data-target="#chat_body"
+                    >
+                    Chat
+                     <span class="float-right w-50"
+                           @click="leave_tower">
+                        <a role="button" class="btn btn-outline-primary w-100" href='/'>Leave Tower</a>
+                     </span>
+                </h2>
+            </div>
+            <div class="card-body collapse show" 
+                 id="chat_body"
+                 data-parent="#sidebar_accordion">
+                <div class="row no-gutters p-0" id="chat_messages">
+                    <div class="col p-0">
+                        <div class="message" v-for="msg in messages">
+                            <span class="msg_username">[[msg.user]]:</span>
+                            <span class="msg_msg">[[msg.msg]]</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row no-gutters p-0" id="chat_input">
+                <div class="col p-o">
+                <form action="" @submit.prevent="send_msg">
+                <div class="input-group">
+                    <input type="text" 
+                           id="chat_input_box"
+                           class="form-control" 
+                           placeholder=""
+                           v-model="cur_msg"></input>
+                    <div class="input-group-append">
+                        <input class="btn btn-outline-primary" 
+                                type="submit"
+                                value="Send"></input>
+                    </div>
+                </form>
+                </div>
+                </div>
+                <div class="row my-n1 p-0">
+                <div class="col mb-n2 pb-0">
+                    <small style="font-size: 1rem;">
+                        <a href="#"
+                           data-toggle="modal"
+                           data-target="#code_of_conduct"
+                            >
+                            Code of Conduct
+                        </a> &#8226
+                        <a href="#"
+                        data-toggle="modal"
+                        data-target="#report_box"
+                            >
+                            Report behavior
+                        </a>
+                    </small>
+                </div>
+                </div>
+            </div>
+        </div>
+              `
+
+
+});
+
+// For silly CSS reasons, this needs to be it's own Vue instance
+var report_form = new Vue({
+
+    el: '#report_box',
+
+    data: { report_description: '',
+            unsubmitted: true,},
+    
+    methods: {
+
+        send_report: function() {
+            socketio.emit('c_report',
+                            { time: new Date(),
+                              user: window.tower_parameters.cur_user_name,
+                              email: window.tower_parameters.cur_user_email,
+                              report_description: this.report_description,
+                              messages: bell_circle.$refs.chatbox.messages });
+            this.unsubmitted = false;
+
+            setTimeout( function(){
+                $('#report_box').modal('hide');
+                report_form.unsubmitted = true;
+                report_form.report_description = '';
+            }, 3000);
+        },
+
+    },
+
+    template: `
+    <div id="report_box" 
+         tabindex="-1"
+         class="modal fade">
+         <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Report inappropriate behavior</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group" v-if="unsubmitted">
+                    <textarea id="report_textarea" 
+                              class="form-control"
+                              rows="4" 
+                              v-model="report_description"
+                              placeholder="Please describe the behavior you would like to report.">
+                    </textarea>
+                </div>
+                <div v-else>
+                    <p> Thank you — your report and a log of the chat has been submitted to the developers.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-secondary" data-dismiss="modal">
+                        [[ unsubmitted ? 'Cancel' : 'Close' ]]
+                </button>
+                <button type="button" 
+                        v-if="unsubmitted"
+                        class="btn btn-primary"
+                        @click="send_report"
+                        >
+                        Send report
+                </button>
+            </div>
+            </div>
+        </div>
+    </div>
+    `
+
+
+
+});
+
+Vue.component('volume_control', {
+    data: function() {
+        return {
+            value: window.user_parameters.bell_volume,
+        }
+    },
+
+    watch: {
+        value: function(new_value) {
+            window.user_parameters.bell_volume = new_value;
+        },
+    },
+
+    template: `
+    <div class="row justify-content-between mt-n2">
+        <!-- slider bar overlaps its own padding, so put it in a div to make it line up with the edges-->
+        <div class="col-2 pl-4">
+        <i class="fas fa-volume-down volume_icon align-middle"></i>
+        </div>
+        <div class="col-8 px-0">
+            <input type="range" v-model="value" min=0 max=10 id="volumeSlider" class="volume_control_slider custom-range align-middle">
+            </input>
+        </div>
+        <div class="col-2">
+        <i class="fas fa-volume-up volume_icon align-middle"></i>
+        </div>
+        </div>
+    </div>
+`
+});
+
 
 // user_display holds functionality required for users
 Vue.component('user_display', {
@@ -522,13 +826,16 @@ Vue.component('user_display', {
 		return { user_names: [],
                  assignment_mode: false,
                  selected_user: '',
-                 cur_user: '',
-                 observers: 0,
+                 cur_user: window.tower_parameters.cur_user_name,
+                 observers: parseInt(window.tower_parameters.observers),
         } },
+
 
     methods: {
 
         toggle_assignment: function(){
+            if (window.tower_parameters.anonymous_user){ return }; // don't do anything if not logged in
+            $('#user_display_body').collapse('show');
             this.assignment_mode = !this.assignment_mode;
             if (this.assignment_mode){
                 this.selected_user = this.cur_user;
@@ -538,6 +845,7 @@ Vue.component('user_display', {
         },
 
         rotate_to_assignment: function(){
+            if (window.tower_parameters.anonymous_user){ return }; // don't do anything if not logged in
             console.log('rotating to assignment')
             // Don't rotate while assigning bells
             if (this.assignment_mode){ return };
@@ -563,13 +871,12 @@ Vue.component('user_display', {
 
 
         select_user: function(user){
+            if (window.tower_parameters.anonymous_user){ return }; // don't do anything if not logged in
             this.selected_user = user;
         },
 
         add_user: function(user){
-            if (user === this.cur_user){
-                this.user_names.unshift(user);
-            } else {
+            if (!this.user_names.includes(user)){
                 this.user_names.push(user);
             }
         },
@@ -582,129 +889,82 @@ Vue.component('user_display', {
             }
         },
 
+        open_chat: function(){
+            if (!this.assignment_mode && !$('#chat_body').hasClass('show')){
+                $('#chat_body').collapse('show');
+            }
+        },
+
     },
 
 	template: 
     `
-         <div>
-         <div class="row middle-xs between-xs">
-             <div class="col-xs"><h3>Users</h3></div>
-             <div class="col-xs end-xs">
-                <button class="toggle_assign"
-                      :class="{active: assignment_mode}"
-                      @click="toggle_assignment"
-                >
-                    [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
-                </button>
+         <div class="card">
+             <div class="card-header"
+                  @click="open_chat"
+                  v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.lister_link"
+                  >
+                <h2 style="display: inline; cursor: pointer;"
+                    class="collapsed"
+                    id="user_display_header"
+                    data-toggle="collapse"
+                    data-target="#user_display_body">
+                        Users 
+                </h2>
+                <span class="float-right w-50">
+                <button class="btn btn-outline-primary w-100"
+                        :class="{active: assignment_mode}"
+                        @click="toggle_assignment"
+                        >
+                   [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
+                 </button>
+                 </span>
              </div>
-         </div>
-         
-         <div class="row"><div class="col-xs">
-                 <ul class="user_list">
-                     <li v-for="user in user_names"
-                         :class="{cur_user: user == cur_user,
-                                  assignment_active: assignment_mode,
-                                  selected_user: user == selected_user}"
-                         @click="select_user(user)"
+             <div class="card-header"
+                  v-else
+                  >
+                <h2 style="display: inline;">
+                        Users
+                </h2>
+             </div>
+             <ul class="list-group list-group-flush"
+                 id="user_display_body"
+                 :class="{collapse: (!window.tower_parameters.anonymous_user && !window.tower_parameters.listener_link)}"
+                 data-parent="#sidebar_accordion">
+                <li class="list-group-item cur_user d-inline-flex align-items-center"
+                     :class="{assignment_active: assignment_mode,
+                              active: cur_user == selected_user && assignment_mode}"
+                     v-if="window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link"
                      >
-                         [[ user ]]
-                     </li>
-                    <li class="observers"
-                        v-show="observers != 0">
-                        Listeners: [[ observers ]]
-                    </li>
+                     <span class="mr-auto">Log in to ring</span>
+                     <span class="float-right">
+                     <a class="btn btn-outline-primary btn-sm" 
+                        :href="'/authenticate?next=' + window.location.pathname">Log In</a>
+                     </span>
+                </li>
+                <li class="list-group-item list-group-item-action cur_user d-inline-flex align-items-center"
+                     :class="{assignment_active: assignment_mode,
+                              active: cur_user == selected_user && assignment_mode}"
+                     v-if="!window.tower_parameters.anonymous_user"
+                     @click="select_user(cur_user)"
+                     >
+                     <span class="user_list_cur_user_name mr-auto">[[ cur_user ]]</span>
+                 </li>
+                <li v-for="user in user_names"
+                    class="list-group-item list-group-item-action"
+                    v-if="user != cur_user"
+                     :class="{cur_user: user == cur_user,
+                              disabled: !assignment_mode,
+                              assignment_active: assignment_mode,
+                              active: user == selected_user && assignment_mode}"
+                     @click="select_user(user)"
+                 >
+                            [[ user ]]
+                 </li>
                  </ul>
-        </div></div>
-        </div>
-    `,
+            </div>
+        `,
 }); // End user_display
-
-
-
-
-Vue.component("user_name_input", {
-
-
-    data: function(){ 
-            return { input: "",
-                     final_name: "",
-                     user_name_taken: true,
-                     button_disabled: true,
-                     logged_in: false,
-user_message: "Please input a username. Must be unique and between 1 and 12 characters. " +
-"This username is NOT permanent; you will make a new (transient) username periodically.",
-
-def_user_message: "Please input a username. Must be unique and between 1 and 12 characters. " +
-"This username is NOT permanent; you will make a new (transient) username periodically.",
-        } },
-
-    methods: {
-
-		check_user_name: function(){
-			console.log('checking username, length is: ' + this.input.length);
-
-			if (this.input.length > 0 && this.input.length < 13) {
-				console.log('checking for name');
-				if(this.$root.$refs.users.user_names.includes(this.input)) {
-					// not a valid user name
-					this.button_disabled = true;
-					this.user_name_taken = true;
-					this.user_message = "This user name is already taken.";
-				} else {
-					this.button_disabled = false;
-					this.user_name_taken = false;
-					this.user_message = this.def_user_message;
-				}
-			} else {
-                // not a valid user name
-				this.button_disabled = true;
-				this.user_name_taken = true;
-				this.user_message = this.def_user_message;
-			}
-		},
-
-		send_user_name: function() {
-			console.log("Sending username")
-            this.final_name = this.input;
-			console.log(this.final_name)
-            this.$root.$refs.users.cur_user = this.final_name;
-			socketio.emit('c_user_entered', {user_name: this.final_name, tower_id: cur_tower_id});
-			this.$root.logged_in = true;
-		},
-
-    },
-
-    mounted: function() {
-        this.$refs.username_input.focus()
-    },
-
-    template: `
-              <form class="un_input_form"
-			  	    v-on:submit.prevent="send_user_name"
-                    >
-                  <fieldset>
-                      <input class="un_input_box"
-                             type="text" 
-                             placeholder="username" 
-                             v-model="input" 
-                             v-on:input="check_user_name"
-                             ref="username_input"
-                             required
-                             >
-                      <button type="submit"
-                      		  :disabled="button_disabled"
-                              class="un_input_button"
-                              >
-                          Join
-                      </button>
-                  </fieldset>
-                  <div id="username-message"> 
-                      [[ user_message ]]
-                  </div>
-			  </form>
-              `
-
-});
 
 
 // The master Vue application
@@ -712,54 +972,62 @@ bell_circle = new Vue({
 
 	el: "#bell_circle",
 
-	data: {
-		number_of_bells: 0,
-		bells: [],
-        audio: tower,
-        call_throttled: false,
-        logged_in: false,
-        tower_name: '',
-        tower_id: 0,
-        hidden_sidebar: true,
+    mounted: function() {
+        
+        /////////////////
+        /* Tower setup */
+        /////////////////
 
-	},
+        // set this separately so that the watcher fires
+        this.number_of_bells = window.tower_parameters.size;
 
+        // Join the tower
+        socketio.emit('c_join',{tower_id: cur_tower_id, 
+                                user_token: window.tower_parameters.user_token,
+                                anonymous_user: window.tower_parameters.anonymous_user})
 
-	watch: {
-        // Change the list of bells to track the current number
-		number_of_bells: function(new_count){
-            console.log('changing number of bells to ' + new_count)
-			const new_bells = [];
-			for (var i=1; i <= new_count; i++){
-                console.log('pushing bell: ' + i);
-				new_bells.push({number: i, position: i});
-                console.log(new_bells);
-			}
-            console.log(new_bells);
-			this.bells = new_bells;
-            // Request the global state from the server
-            socketio.emit('c_request_global_state', {tower_id: cur_tower_id});
-		},
+        this.$nextTick(function(){
+            this.$refs.users.rotate_to_assignment();
+        });
 
-		logged_in: function(inf) {
+        if (!window.tower_parameters.anonymous_user){
 			console.log('turning on keypress listening')
 
             // Do a special thing to prevent space from pressing focused buttons
             window.addEventListener('keyup', (e) => {
-                if (e.which == 32) {
+                this.keys_down.splice(this.keys_down.indexOf(e.key),1)
+                if (e.which == 32 && !$('#chat_input_box').is(':focus')) {
                     e.preventDefault();
                 }
             });
 
+            $('[data-toggle="tooltip"]').tooltip();
+
 			window.addEventListener('keydown', (e) => {
 			e = e || window.event;
-			const key = e.key // this wil be the character generated by the keypress
+			const key = e.key; // this wil be the character generated by the keypress
 			// Shift+1 produces code "Digit1"; this gets the digit itself
-			const code = e.code[e.code.length - 1]
+			const code = e.code[e.code.length - 1];
 
-            // Do a special thing to prevent space from focusing buttons
-            if (e.which == 32) {
+            if ($("#chat_input_box").is(":focus")){
+                if (key == 'Escape') {
+                    $('#chat_input_box').blur();
+                } else return; // disable hotkeys when typing
+            }
+
+            if ($('#report_box').hasClass('show')) {
+                return; // disable hotkeys when the report is active
+            }
+
+
+            if (bell_circle.keys_down.includes(key)){ return };
+            bell_circle.keys_down.push(key);
+
+
+            // Do a special thing to prevent space and the arrow keys from hitting focused elements
+            if (e.which == 32 || e.which == 37 || e.which == 39) {
                 e.preventDefault();
+
             }
 
 			// The numberkeys 1-0 ring those bells, with -, = ringing E, T
@@ -791,46 +1059,79 @@ bell_circle = new Vue({
 
 			const n_b = bell_circle.number_of_bells;
 			// Space, j, and ArrowRight ring the bell in position n/2
-			if ([' ','j','ArrowRight'].includes(key)){
+			if ([' ','j','J','ArrowRight'].includes(key)){
 				bell_circle.pull_rope_by_pos(1);
 			}
 
 			// f and ArrowLeft ring the bell in position n/2 + 1
-			if (['f','ArrowLeft'].includes(key)){
+			if (['f','F','ArrowLeft'].includes(key)){
 				bell_circle.pull_rope_by_pos(2);
 			}
 
 			// Calls are: g = go; h = stop; b = bob; n = single.
-			if (['b'].includes(key)){
+			if (['b','B'].includes(key)){
 				console.log('calling bob');
 				bell_circle.make_call('Bob');
 			}
-			if (['n'].includes(key)){
+			if (['n','N'].includes(key)){
 				console.log('calling single');
 				bell_circle.make_call('Single');
 			}
 
-			if(['g'].includes(key)){
+			if(['g','G'].includes(key)){
 				console.log('calling go');
 				bell_circle.make_call('Go');
 			}
 
-			if (['h'].includes(key)){
+			if (['h','H'].includes(key)){
 				console.log('calling stop');
 				bell_circle.make_call("That's all");
 			}
 
-			if (['t'].includes(key)){
+			if (['t','T'].includes(key)){
 				console.log('calling stand');
 				bell_circle.make_call("Stand next");
 			}
 
-			if (['l'].includes(key)){
+			if (['l','L'].includes(key)){
 				console.log('calling look-to');
 				bell_circle.make_call("Look to");
 			}
-		});
-		}
+            });
+        };
+
+    },
+
+	data: {
+		number_of_bells: 0,
+		bells: [],
+        audio: window.tower_parameters.audio == 'Tower' ? tower : hand,
+        call_throttled: false,
+        tower_name: window.tower_parameters.name,
+        tower_id: parseInt(window.tower_parameters.id),
+        hidden_sidebar: true,
+        hidden_help: true,
+        keys_down: [],
+
+	},
+
+
+	watch: {
+        // Change the list of bells to track the current number
+		number_of_bells: function(new_count){
+            console.log('changing number of bells to ' + new_count)
+			const new_bells = [];
+			for (var i=1; i <= new_count; i++){
+                console.log('pushing bell: ' + i);
+				new_bells.push({number: i, position: i});
+                console.log(new_bells);
+			}
+            console.log(new_bells);
+			this.bells = new_bells;
+            // Request the global state from the server
+            socketio.emit('c_request_global_state', {tower_id: cur_tower_id});
+		},
+
 	},
 
 	methods: {
@@ -904,39 +1205,85 @@ bell_circle = new Vue({
 	  },
 
       toggle_controls: function() {
+          $('#help').collapse('hide');
+          this.hidden_help = true;
           this.hidden_sidebar = !this.hidden_sidebar;
       },
+
+      toggle_help: function() {
+          if (window.tower_parameters.observer){ return } // don't do anything if in listener mode
+          $('#tower_controls').collapse('hide');
+          this.hidden_sidebar = true;
+          this.hidden_help = !this.hidden_help;
+      },
+
+      copy_id: function() {
+
+          setTimeout(() => {$('#id_clipboard_tooltip').tooltip('hide')},1000);
+              var dummy = document.createElement("textarea");
+              document.body.appendChild(dummy);
+              dummy.value = cur_tower_id;
+              dummy.select();
+              document.execCommand("copy");
+              document.body.removeChild(dummy);
+      }
 
 	},
 
 	template: 
     `
-        <div>
+        <div id="bell_circle_wrapper">
 
-        <user_name_input ref="un_input"
-                         v-show="!logged_in"></user_name_input>
-
-        <div class="row"
-             v-show="logged_in">
+        <div class="row flex-lg-nowrap" id="sidebar_col_row">
         
-        <div class="col-xs-12 col-lg-4 maxed_col sidebar_col"> <!-- sidebar col -->
+        <div class="col-12 col-lg-4 sidebar_col"> <!-- sidebar col -->
 
         <div class="tower_header">
         <div class="row">
-             <div class="col-xs">
+             <div class="col">
                  <h1 id="tower_name"> [[ tower_name ]] </h1>
              </div>
          </div>
 
          <div class="row">
-             <div class="col-xs">
-                 <div class="row between-xs bottom-xs">
-                     <div class="col-xs-4 col-md-6"><span class="tower_id">ID: [[tower_id]]</div>
-                     <div class="col-xs-4 col-md-6 center-xs end-md">
-                         <help ref="help"></help>
+             <div class="col">
+                 <div class="row justify-content-between">
+                     <div class="col-auto">
+
+                     <div class="tower_id input-group" style="flex-wrap:nowrap">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">[[tower_id]]</span>
+                        </div>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-primary"
+                               data-toggle="tooltip"
+                               data-placement="bottom"
+                               data-container="body"
+                               data-trigger="click"
+                               id="id_clipboard_tooltip"
+                               @click="copy_id"
+                               title="Copied to clipboard">
+                                   <i class="far fa-clipboard fa-fw"></i>
+                            </button>
+                        </div>
                      </div>
-                     <div class="col-xs-4 toggle_controls end-xs">
-                         <button class="toggle_controls" @click="toggle_controls">
+                     </div>
+                     <div class="col-auto">
+                        <button class="toggle_help btn btn-outline-primary"
+                                data-toggle="collapse"
+                                data-target="#help"
+                                v-if="!window.tower_parameters.listen_link"
+                                @click="toggle_help"
+                                >
+                                Help [[ hidden_help ? '▸' : '▾' ]]
+                            </button>
+                     </div>
+                     <div class="col-auto toggle_controls d-lg-none">
+                         <button class="toggle_controls btn btn-outline-primary" 
+                                 data-toggle="collapse"
+                                 data-target="#tower_controls"
+                                 @click="toggle_controls"
+                                >
                          Controls [[ hidden_sidebar ? '▸' : '▾' ]]
                          </button>
                      </div>
@@ -945,25 +1292,47 @@ bell_circle = new Vue({
         </div>
         </div> <!-- tower header -->
 
-        <div class="tower_controls"
-             :class="{collapsed: hidden_sidebar}">
+        <div class="help collapse" id="help">
+        
+             <help ref="help"></help>
+         </div>
 
-        <div class="row"><div class="col-xs"><hr/></div></div>
+        <div class="tower_controls collapse"
+             id="tower_controls"
+             >
+
+        <!-- <volume_control ref="volume"></volume_control> -->
+
 
         <tower_controls ref="controls"></tower_controls>
+        
+        <template v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.listern_link">
+            <div class="row pb-0 flex-grow-1">
+            <div class="col flex-grow-1">
+            <div class="accordion" id="sidebar_accordion">
+                <user_display ref="users"></user_display>
+                <chatbox ref="chatbox"></chatbox>
+            </div>
+            </div>
+            </div>
+        </template>
+        <template v-else>
+            <div class="row pb-0 flex-grow-1">
+            <div class="col flex-grow-1">
+            <user_display ref="users"></user_display>
+            </div>
+            </div>
+        </template>
 
-        <div class="row"><div class="col-xs"><hr/></div></div>
 
-        <user_display ref="users"></user_display>
 
-        <div class="row final_hr"><div class="col-xs"><hr/></div></div>
 
         </div> <!-- hidden sidebar -->
 
         </div> <!-- sidebar col -->
 
 
-        <div class="col-xs-12 col-sm-8 bell_circle_col"> <!-- bell circle col -->
+        <div class="col-12 col-lg-8 bell_circle_col"> <!-- bell circle col -->
 
         <div class="bell_circle"
              v-bind:class="[number_of_bells == 4 ? 'four'    : '',
@@ -972,6 +1341,7 @@ bell_circle = new Vue({
                             number_of_bells == 10 ? 'ten'    : '',
                             number_of_bells == 12 ? 'twelve' : '']">
             <call_display v-bind:audio="audio" ref="display"></call_display>
+            <focus_display ref="focus"></focus_display>
               <bell_rope v-for="bell in bells"
                          v-bind:key="bell.number"
                          v-bind:number="bell.number"
@@ -990,81 +1360,4 @@ bell_circle = new Vue({
 }); // end Vue bell_circle
 
 }); // end document.ready
-
-
-////////////////////////
-/* Chat functionality */
-////////////////////////
-// This was temporary for testing room functionality when we first added it. 
-// It may be useful later.
-
-// var tower_selector = new Vue({
-
-// 	delimiters: ['[[',']]'], // don't interfere with flask
-
-// 	el: "#message-sender",
-
-// 	data: {
-// 		cur_username: '',
-// 		cur_message: '',
-// 		tower_selected: '',
-// 	},
-
-// 	methods: {
-
-// 		submit_message: function(un,msg){
-// 			console.log('sending message: ' + un + msg);
-// 			socketio.emit('message_sent', { user_name : un, 
-// 											message : msg,
-// 											tower : cur_tower_id})
-// 		},
-
-// 		enter_tower: function(){
-// 			if (cur_tower_id) {
-// 				console.log('leaving tower: ' + cur_tower_id);
-// 				socketio.emit('leave',{username: this.cur_username, tower: cur_tower_id});
-// 			};
-// 			console.log('entering tower: ' + this.tower_selected);
-// 			socketio.emit('join', {username: this.cur_username, tower: this.tower_selected});
-// 			cur_tower_id = this.tower_selected;
-// 		}
-
-// 	},
-
-// 	template: `
-// 	<form v-on:submit.prevent="submit_message(cur_username,cur_message)">
-// 		<select v-model="tower_selected" v-on:change="enter_tower">
-// 		  <option disabled value="">Please select a tower</option>
-// 		  <option>Advent</option>
-// 		  <option>Old North</option>
-// 		</select>
-// 		<input v-model="cur_username" placeholder="User Name"/>
-// 		<input v-model="cur_message" placeholder="Message"/>
-// 		<input type="submit"/>
-// 	</form>
-
-// 	`
-
-// });
-
-// var message_display = new Vue({
-// 	delimiters: ['[[',']]'], // don't interfere with flask
-
-// 	el: "#message-container",
-
-// 	data : {messages: []},
-
-// 	template: `<div v-html='messages.join("<br/>")'></div>`
-
-
-// });
-
-
-/* Listeners for chat function */
-
-// socketio.on('message_received',function(msg){
-// 	console.log(msg)
-// 	message_display.messages.push('<b>' + msg.user_name + '</b>: ' + msg.message)
-// });
-
 

@@ -1,130 +1,133 @@
+@import "global_design";
 
-/* Global style */
-
-body {
-  font-size: x-large;
-  font-family: serif;
-  background-color: #F0EAD6;
+// whole page width of static
+.container {
+    max-width: 65rem;
 }
 
-.title {
-  position: relative;
-  left: 50%;
-  margin-top: 5rem;
-
-  transform: translate(-50%);
-
-  font-size: xx-large;
-  font-weight: bold;
-
-  text-align: center;
-}
-
-.welcome, .tagline {
-  margin: 0.5em;
-  font-size: x-large;
-  font-weight: normal;
-}
-
-/* Nav menu */
-
-.pure-menu {
-  padding: 1em;
-  display: inline-block;
-  font-size: x-large;
-}
-
-.pure-menu-link {
-  padding: 0.44em 0.5em;
-}
-
-.home {
-  font-weight: bold;
-  border-bottom: 3px solid;
-  padding: 0px;
-  padding-bottom: 0.44em;
-  margin: 0.44em 0.5em;
-  margin-bottom: 0em;
-}
-
-/* content */
-
-.content {
-    width: 100%;
-
-}
-
-
-/* Hacky news block */
-
-.news {
-
-  font-size: small;
-  text-align: justify;
-  padding: 2rem;
-  li{
+// content container for e.g. text
+.content_container {
     text-align: left;
-  }
+    max-width: 57rem;
+    padding-top: 20px;
+    min-height: 100%;
+}
+
+// the whole navbar
+.navbar {
+    margin-bottom: 0;
+}
+
+
+.centered_block {
+    width: 25rem;
+    margin-top: max(8rem, 22vh);
 
 }
 
-/* Input form */
 
-form.pure-form { 
-  position: relative;
-  width: 19em;
-  left: 50%;
-  margin-top: 8rem;
-  transform: translate(-50%, 0%);
+.dropdown-toggle::after{
+    vertical-align: middle;
 }
 
-.pure-input {
-  width: 14em;
+// the element that is the Ringing Room brand/logo
+.navbar-brand {
+    font-family: 'Simonetta', cursive;
+    font-weight: bold;
 }
 
-.pure-form {
-  width: 40%;
+// make the navbar a bit higher contrast
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255,255,255,0.75);
+    font-weight: 400;
+    font-size: 1.25rem;
+}
+
+.navbar-dark .navbar-brand {
+    font-size: 1.5rem;
+}
+
+.navbar-brand-text {
+    vertical-align: -0.25;
 
 }
 
-fieldset {
-  white-space: nowrap;
+// for the top page of Ringing Room
+.title h1 {
+    font-family: 'Simonetta', cursive;
+    font-weight: normal;
+    text-align: center;
+    margin-bottom: 0.6rem;
+    font-style: normal;
+    font-size: 3.5rem;
+}
+
+// blueline/grid circle
+.grid_circle {
+    padding-top:1rem;
+    display: relative;
+    width: max(49rem, 90vh);
+    position:absolute;
+    top: max(27rem, 50vh);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
 }
 
 #join-message {
-  width: 100%;
-  font-size: smaller;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+
+}
+/* Stuff for the BBC alert */
+
+#bbc_alert {
+    position: fixed;
+    top: 7rem;
+    left: 50%;
+    transform: translate(-50%);
+    width: 25rem;
+    opacity: 1;
+    font-size: 1.25rem;
+    backdrop-filter: none;
+    background-color: $body-bg;
+
+    .close {
+        color: $body-bg;
+        text-shadow: none;
+
+    }
+}
+
+#bbc_alert .toast-body{
+    padding:  0.75rem 1.25rem;
 
 }
 
 
-.copy {
-  padding-top: 2em;
-  font-size: smaller;
-
-  li {
-
-    padding-top: 0.5em;
-
-  }
+#bbc_alert .toast-header {
+    background-color: $primary;
+    color: $body-bg;
 }
 
-@media screen and (max-width: 64rem){
-
-    form.pure-form{
-        left:50%;
-        width: 15rem;
-        transform: translate(-50%, 0%);
+@include media-breakpoint-up(lg) {
+    #bbc_alert{
+        left:unset;
+        transform: unset;
+        right: 5rem;
+        box-shadow: none;
     }
 
-    .pure-input{
-        width:10rem;
-        font-size: medium;
-    }
-    .pure-button{
-        width:4rem;
-        font-size: medium;
-        padding-left: 0.7rem;
+}
+
+#bbc_modal {
+    .modal-header {
+        background-color: $primary;
+        color: #fbfbff;
+        .close {
+            color: #fbfbff;
+            text-shadow: none;
+        }
     }
 }
 
