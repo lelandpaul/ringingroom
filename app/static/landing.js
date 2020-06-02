@@ -23,7 +23,7 @@ var logger = function()
 
     return pub;
 }();
-logger.disableLogger()
+// logger.disableLogger()
 
 
 // Set up socketio instance
@@ -84,32 +84,38 @@ tower_selector = new Vue({
 
     },
 
+    computed: {
+        trimmed_input: function() {
+            return this.input_field.trim()
+        }
+    },
+
 	methods: {
 
         // Send the tower (or id) to the tower to create (or join) it
 		send_tower_name: function(){
-			console.log('Sending name: ' + this.input_field);
+			console.log('Sending name: ' + this.trimmed_input);
 
 			if (this.join_tower){
                 // what we have is an ID; parse it as int, then join that tower
-				socketio.emit('c_join_tower_by_id',{tower_id: parseInt(this.input_field)});
+				socketio.emit('c_join_tower_by_id',{tower_id: parseInt(this.trimmed_input)});
 			} else {
                 //what we have is a name; create that tower
-				socketio.emit('c_create_tower',{tower_name: this.input_field});
+				socketio.emit('c_create_tower',{tower_name: this.trimmed_input});
 			}
 		},
 
         // Fires on each keypress in the input box: Is this a tower_id?
 		check_tower_id: function(){
-			console.log('checking, length is: ' + this.input_field.length);
+			console.log('checking, length is: ' + this.trimmed_input.length);
 
-			if (this.input_field.length == 9) {
+			if (this.trimmed_input.length == 9) {
                 // It's a valid length
 				console.log('checking for integer');
-				console.log(parseInt(this.input_field));
+				console.log(parseInt(this.trimmed_input));
 				try {
                     // it's an int, so it's a plausible tower_id
-					tower_id = parseInt(this.input_field)
+					tower_id = parseInt(this.trimmed_input)
 				}
 				catch(error){
                     // it's  not a plausible tower_id
