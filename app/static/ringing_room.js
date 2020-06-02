@@ -981,6 +981,7 @@ bell_circle = new Vue({
         // set this separately so that the watcher fires
         this.number_of_bells = window.tower_parameters.size;
 
+
         // Join the tower
         socketio.emit('c_join',{tower_id: cur_tower_id, 
                                 user_token: window.tower_parameters.user_token,
@@ -1105,6 +1106,7 @@ bell_circle = new Vue({
 	data: {
 		number_of_bells: 0,
 		bells: [],
+        rang_bell_recently: [],
         audio: window.tower_parameters.audio == 'Tower' ? tower : hand,
         call_throttled: false,
         tower_name: window.tower_parameters.name,
@@ -1112,7 +1114,6 @@ bell_circle = new Vue({
         hidden_sidebar: true,
         hidden_help: true,
         keys_down: [],
-
 	},
 
 
@@ -1128,6 +1129,7 @@ bell_circle = new Vue({
 			}
             console.log(new_bells);
 			this.bells = new_bells;
+			this.rang_bell_recently = new Array(new_count).fill(false);
             // Request the global state from the server
             socketio.emit('c_request_global_state', {tower_id: cur_tower_id});
 		},
@@ -1146,8 +1148,11 @@ bell_circle = new Vue({
     
       // Trigger a specific bell to emit a ringing event
 	  pull_rope: function(bell) {
-		console.log("Pulling the " + bell)
-		this.$refs.bells[bell-1].emit_ringing_event()
+        if (this.rang_bell_recently[bell-1]) { return; }
+        console.log("Pulling the " + bell);
+        this.$refs.bells[bell-1].emit_ringing_event();
+        this.rang_bell_recently[bell-1] = true;
+        setTimeout(()=>{this.rang_bell_recently[bell-1] = false;}, 500);
 	  },
 	
       // Like ring_bell, but calculated by the position in the circle (respecting rotation)
@@ -1175,7 +1180,7 @@ bell_circle = new Vue({
         if (this.call_throttled){ return };
         socketio.emit('c_call',{call: call,tower_id: cur_tower_id});
         this.call_throttled = true;
-        setTimeout(()=>{this.call_throttled = false}, 1000);
+        setTimeout(()=>{this.call_throttled = false}, 500);
 	  },
 	
       // rotate the view of the circle
