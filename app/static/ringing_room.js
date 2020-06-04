@@ -627,10 +627,8 @@ Vue.component('chatbox', {
             this.cur_msg = '';
         },
 
-        leave_tower: function(){
-            socketio.emit('c_user_left',
-                  {user_name: window.tower_parameters.cur_user_name, 
-                  tower_id: cur_tower_id });
+        leave_tower: function() {
+            leave_room();
         },
 
         open_user_display: function(){
