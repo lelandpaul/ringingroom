@@ -225,7 +225,6 @@ Vue.component("bell_rope", {
       // Ringing event received; now ring the bell
 	  ring: function(){
         this.stroke = !this.stroke;
-        this.audio._volume = window.user_parameters.bell_volume * 0.1;
         const audio_type = this.$root.$refs.controls.audio_type;
         console.log(audio_type + ' ' + this.number_of_bells);
 		this.audio.play(bell_mappings[audio_type][this.number_of_bells][this.number - 1]);
@@ -794,6 +793,7 @@ Vue.component('volume_control', {
     watch: {
         value: function(new_value) {
             window.user_parameters.bell_volume = new_value;
+            bell_circle.audio._volume = window.user_parameters.bell_volume * 0.1;
         },
     },
 
@@ -803,7 +803,7 @@ Vue.component('volume_control', {
         <div class="col-2 pl-4">
         <i class="fas fa-volume-down volume_icon align-middle"></i>
         </div>
-        <div class="col-8 px-0">
+        <div class="col-8 px-0 align-middle">
             <input type="range" v-model="value" min=0 max=10 id="volumeSlider" class="volume_control_slider custom-range align-middle">
             </input>
         </div>
@@ -1304,7 +1304,7 @@ bell_circle = new Vue({
              id="tower_controls"
              >
 
-        <!-- <volume_control ref="volume"></volume_control> -->
+        <volume_control ref="volume"></volume_control>
 
 
         <tower_controls ref="controls"></tower_controls>

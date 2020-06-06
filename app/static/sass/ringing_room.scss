@@ -22,6 +22,28 @@ body {
     z-index: 3;
 }
 
+/* Volume control style */
+
+input[type=range] {
+  -webkit-appearance: none;
+}
+
+/* Special styling for WebKit/Blink */
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background-color: $primary;
+}
+
+/* All the same stuff for Firefox */
+input[type=range]::-moz-range-thumb {
+  background-color: $primary;
+}
+
+/* All the same stuff for IE */
+input[type=range]::-ms-thumb {
+  background-color: $primary;
+}
+
 // tower name positioning
 #tower_name {
     font-family: 'Simonetta', cursive;
@@ -131,16 +153,6 @@ input[type=range]::slider-thumb {
 
 .toggle_assign {
   cursor: pointer;
-}
-
-/* Username Input Form */
-
-.un_input_form { 
-  position: absolute;
-  max-width: 25em;
-  top: 30%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 
 
@@ -348,6 +360,5 @@ input[type=range]::slider-thumb {
         max-width: 20rem;
     }
 }
-
 
 
