@@ -803,7 +803,7 @@ Vue.component('volume_control', {
         <div class="col-2 pl-4">
         <i class="fas fa-volume-down volume_icon align-middle"></i>
         </div>
-        <div class="col-8 px-0">
+        <div class="col-8 px-0 align-middle">
             <input type="range" v-model="value" min=0 max=10 id="volumeSlider" class="volume_control_slider custom-range align-middle">
             </input>
         </div>
