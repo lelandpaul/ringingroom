@@ -40,8 +40,9 @@
         <div id="practice_times"></div>
 
             <script>
+                var cachebuster = Math.round(new Date().getTime() / 1000);
                 $('document').ready(function(){
-                    $('#practice_times').load('static/news/practice_times.txt');
+                    $('#practice_times').load('static/news/practice_times.txt?cb=' + cachebuster);
                 });
             </script>
       </div>

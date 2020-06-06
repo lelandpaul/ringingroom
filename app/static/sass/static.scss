@@ -81,13 +81,17 @@
 }
 /* Stuff for the BBC alert */
 
-#bbc_alert {
+#toast_column {
     position: fixed;
     top: 7rem;
     left: 50%;
     transform: translate(-50%);
     width: 25rem;
     opacity: 1;
+
+}
+
+.toast {
     font-size: 1.25rem;
     backdrop-filter: none;
     background-color: $body-bg;
@@ -99,28 +103,30 @@
     }
 }
 
-#bbc_alert .toast-body{
+.toast .toast-body{
     padding:  0.75rem 1.25rem;
 
 }
 
 
-#bbc_alert .toast-header {
+.toast .toast-header {
     background-color: $primary;
     color: $body-bg;
 }
 
 @include media-breakpoint-up(lg) {
-    #bbc_alert{
+    #toast_column {
         left:unset;
         transform: unset;
         right: 5rem;
+    }
+    .toast {
         box-shadow: none;
     }
 
 }
 
-#bbc_modal {
+.toast{
     .modal-header {
         background-color: $primary;
         color: #fbfbff;
