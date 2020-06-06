@@ -84,6 +84,12 @@ socketio.on('s_user_entered', function(msg, cb){
 socketio.on('s_user_left', function(msg, cb){
     console.log(msg.user_name + ' left')
     bell_circle.$refs.users.remove_user(msg.user_name);
+    bell_circle.$refs.bells.forEach((bell,index)=>
+        {
+            if (bell.assigned_user === msg.user_name) {
+                bell.assigned_user = '';
+            }
+        });
 });
 
 // Number of observers changed
@@ -96,7 +102,9 @@ socketio.on('s_set_observers', function(msg, cb){
 socketio.on('s_assign_user', function(msg, cb){
     console.log('Received user assignment: ' + msg.bell + ' ' + msg.user);
     bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
-    bell_circle.$refs.users.rotate_to_assignment();
+    if (msg.user === window.tower_parameters.cur_user_name){
+        bell_circle.$refs.users.rotate_to_assignment();
+    }
 });
 
 // A call was made
@@ -228,7 +236,6 @@ Vue.component("bell_rope", {
       // Ringing event received; now ring the bell
 	  ring: function(){
         this.stroke = !this.stroke;
-        this.audio._volume = window.user_parameters.bell_volume * 0.1;
         const audio_type = this.$root.$refs.controls.audio_type;
         console.log(audio_type + ' ' + this.number_of_bells);
 		this.audio.play(bell_mappings[audio_type][this.number_of_bells][this.number - 1]);
@@ -632,10 +639,8 @@ Vue.component('chatbox', {
             this.cur_msg = '';
         },
 
-        leave_tower: function(){
-            socketio.emit('c_user_left',
-                  {user_name: window.tower_parameters.cur_user_name, 
-                  tower_id: cur_tower_id });
+        leave_tower: function() {
+            leave_room();
         },
 
         open_user_display: function(){
@@ -807,6 +812,7 @@ Vue.component('volume_control', {
     watch: {
         value: function(new_value) {
             window.user_parameters.bell_volume = new_value;
+            bell_circle.audio._volume = window.user_parameters.bell_volume * 0.1;
         },
     },
 
@@ -816,7 +822,7 @@ Vue.component('volume_control', {
         <div class="col-2 pl-4">
         <i class="fas fa-volume-down volume_icon align-middle"></i>
         </div>
-        <div class="col-8 px-0">
+        <div class="col-8 px-0 align-middle">
             <input type="range" v-model="value" min=0 max=10 id="volumeSlider" class="volume_control_slider custom-range align-middle">
             </input>
         </div>
@@ -992,6 +998,7 @@ bell_circle = new Vue({
         // set this separately so that the watcher fires
         this.number_of_bells = window.tower_parameters.size;
 
+
         // Join the tower
         socketio.emit('c_join',{tower_id: cur_tower_id, 
                                 user_token: window.tower_parameters.user_token,
@@ -1116,6 +1123,7 @@ bell_circle = new Vue({
 	data: {
 		number_of_bells: 0,
 		bells: [],
+        rang_bell_recently: [],
         audio: window.tower_parameters.audio == 'Tower' ? tower : hand,
         call_throttled: false,
         tower_name: window.tower_parameters.name,
@@ -1138,6 +1146,7 @@ bell_circle = new Vue({
 			}
             console.log(new_bells);
 			this.bells = new_bells;
+			this.rang_bell_recently = new Array(new_count).fill(false);
             // Request the global state from the server
             socketio.emit('c_request_global_state', {tower_id: cur_tower_id});
 		},
@@ -1156,8 +1165,11 @@ bell_circle = new Vue({
     
       // Trigger a specific bell to emit a ringing event
 	  pull_rope: function(bell) {
-		console.log("Pulling the " + bell)
-		this.$refs.bells[bell-1].emit_ringing_event()
+        if (this.rang_bell_recently[bell-1]) { return; }
+        console.log("Pulling the " + bell);
+        this.$refs.bells[bell-1].emit_ringing_event();
+        this.rang_bell_recently[bell-1] = true;
+        setTimeout(()=>{this.rang_bell_recently[bell-1] = false;}, 250);
 	  },
 	
       // Like ring_bell, but calculated by the position in the circle (respecting rotation)
@@ -1185,7 +1197,7 @@ bell_circle = new Vue({
         if (this.call_throttled){ return };
         socketio.emit('c_call',{call: call,tower_id: cur_tower_id});
         this.call_throttled = true;
-        setTimeout(()=>{this.call_throttled = false}, 1000);
+        setTimeout(()=>{this.call_throttled = false}, 500);
 	  },
 	
       // rotate the view of the circle
@@ -1314,7 +1326,7 @@ bell_circle = new Vue({
              id="tower_controls"
              >
 
-        <!-- <volume_control ref="volume"></volume_control> -->
+        <volume_control ref="volume"></volume_control>
 
 
         <tower_controls ref="controls"></tower_controls>

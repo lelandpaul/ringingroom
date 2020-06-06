@@ -33,7 +33,7 @@ class User(UserMixin, db.Model):
         for rel in old_rels:
             db.session.delete(rel)
 
-    def get_reset_password_token(self, expires_in=3600):
+    def get_reset_password_token(self, expires_in=86400):
         return jwt.encode(
             {'reset_password': self.id, 'exp': time() + expires_in},
             Config.SECRET_KEY, algorithm='HS256').decode('utf-8')
