@@ -84,6 +84,12 @@ socketio.on('s_user_entered', function(msg, cb){
 socketio.on('s_user_left', function(msg, cb){
     console.log(msg.user_name + ' left')
     bell_circle.$refs.users.remove_user(msg.user_name);
+    bell_circle.$refs.bells.forEach((bell,index)=>
+        {
+            if (bell.assigned_user === msg.user_name) {
+                bell.assigned_user = '';
+            }
+        });
 });
 
 // Number of observers changed
@@ -96,7 +102,9 @@ socketio.on('s_set_observers', function(msg, cb){
 socketio.on('s_assign_user', function(msg, cb){
     console.log('Received user assignment: ' + msg.bell + ' ' + msg.user);
     bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
-    bell_circle.$refs.users.rotate_to_assignment();
+    if (msg.user === window.tower_parameters.cur_user_name){
+        bell_circle.$refs.users.rotate_to_assignment();
+    }
 });
 
 // A call was made
