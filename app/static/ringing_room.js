@@ -1150,7 +1150,7 @@ bell_circle = new Vue({
         console.log("Pulling the " + bell);
         this.$refs.bells[bell-1].emit_ringing_event();
         this.rang_bell_recently[bell-1] = true;
-        setTimeout(()=>{this.rang_bell_recently[bell-1] = false;}, 500);
+        setTimeout(()=>{this.rang_bell_recently[bell-1] = false;}, 250);
 	  },
 	
       // Like ring_bell, but calculated by the position in the circle (respecting rotation)
