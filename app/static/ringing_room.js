@@ -138,6 +138,9 @@ socketio.on('s_audio_change',function(msg,cb){
 // A chat message was received
 socketio.on('s_msg_sent', function(msg,cb){
     bell_circle.$refs.chatbox.messages.push(msg);
+    if(msg.email != window.tower_parameters.cur_user_email) {
+        bell_circle.unread_messages++;
+    }
     bell_circle.$nextTick(function(){
         $('#chat_messages').scrollTop($('#chat_messages')[0].scrollHeight);
     });
@@ -622,6 +625,8 @@ Vue.component('chatbox', {
         }
     },
 
+    props: ["unread_messages"],
+
     methods: {
 
         send_msg: function() {
@@ -644,6 +649,10 @@ Vue.component('chatbox', {
             }
         },
 
+        remove_all_unreads: function(){
+            bell_circle.unread_messages = 0;
+        },
+
     },
 
 
@@ -656,7 +665,7 @@ Vue.component('chatbox', {
                     data-toggle="collapse"
                     data-target="#chat_body"
                     >
-                    Chat
+                    Chat <span class="badge badge-dark" v-if="unread_messages > 0"> [[ unread_messages ]] </span><span class="sr-only" v-if="unread_messages > 0">unread messages</span>
                      <span class="float-right w-50"
                            @click="leave_tower">
                         <a role="button" class="btn btn-outline-primary w-100" href='/'>Leave Tower</a>
@@ -682,7 +691,9 @@ Vue.component('chatbox', {
                            id="chat_input_box"
                            class="form-control" 
                            placeholder=""
-                           v-model="cur_msg"></input>
+                           v-model="cur_msg"
+                           @focus="remove_all_unreads"
+                           ></input>
                     <div class="input-group-append">
                         <input class="btn btn-outline-primary" 
                                 type="submit"
@@ -908,7 +919,7 @@ Vue.component('user_display', {
          <div class="card">
              <div class="card-header"
                   @click="open_chat"
-                  v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.lister_link"
+                  v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link"
                   >
                 <h2 style="display: inline; cursor: pointer;"
                     class="collapsed"
@@ -935,7 +946,7 @@ Vue.component('user_display', {
              </div>
              <ul class="list-group list-group-flush"
                  id="user_display_body"
-                 :class="{collapse: (!window.tower_parameters.anonymous_user && !window.tower_parameters.listener_link)}"
+                 :class="{collapse: (!window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link)}"
                  data-parent="#sidebar_accordion">
                 <li class="list-group-item cur_user d-inline-flex align-items-center"
                      :class="{assignment_active: assignment_mode,
@@ -1120,8 +1131,8 @@ bell_circle = new Vue({
         hidden_sidebar: true,
         hidden_help: true,
         keys_down: [],
+        unread_messages: 0,
 	},
-
 
 	watch: {
         // Change the list of bells to track the current number
@@ -1295,7 +1306,10 @@ bell_circle = new Vue({
                                  data-target="#tower_controls"
                                  @click="toggle_controls"
                                 >
-                         Controls [[ hidden_sidebar ? '▸' : '▾' ]]
+                         Controls 
+                         <span class="badge badge-dark" v-if="hidden_sidebar && unread_messages > 0 && !window.tower_parameters.listen_link && !window.tower_parameters.anonymous_user"> [[ unread_messages ]] </span>
+                         <span class="sr-only" v-if="hidden_sidebar && unread_messages > 0 && !window.tower_parameters.listen_link && !window.tower_parameters.anonymous_user">unread messages</span>
+                         [[ hidden_sidebar ? '▸' : '▾' ]]
                          </button>
                      </div>
                  </div>
@@ -1317,12 +1331,12 @@ bell_circle = new Vue({
 
         <tower_controls ref="controls"></tower_controls>
         
-        <template v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.listern_link">
+        <template v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link">
             <div class="row pb-0 flex-grow-1">
             <div class="col flex-grow-1">
             <div class="accordion" id="sidebar_accordion">
                 <user_display ref="users"></user_display>
-                <chatbox ref="chatbox"></chatbox>
+                <chatbox ref="chatbox" v-bind:unread_messages="unread_messages"></chatbox>
             </div>
             </div>
             </div>
