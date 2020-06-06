@@ -130,8 +130,8 @@ def send_assignments(tower_id):
     tower = towers[tower_id]
     for (bell, user_name) in tower.assignments.items():
         log('s_assign_user', {'bell': bell, 'user': user_name})
-        emit('s_assign_user', {'bell': bell, 'user': user_name},
-             broadcast=True, include_self=True, room=tower_id)
+        emit('s_assign_user', {'bell': bell, 'user': user_name})
+             
 
 
 # A user left a room (and the event actually fired)
@@ -161,9 +161,6 @@ def on_user_left(json):
     tower.remove_user(user_id)
     emit('s_user_left', { 'user_name': user.username },
          broadcast=True, include_self = True, room=tower_id)
-
-    send_assignments(tower_id)
-
 
 # # A user disconnected (via timeout)
 # @socketio.on('disconnect')
@@ -255,7 +252,6 @@ def on_request_global_state(json):
     emit('s_global_state', {'global_bell_state': state})
 
     # Send assignments
-    # Broadcast these bc the relevant user might have been removed from their assignments
     send_assignments(tower_id)
 
 
