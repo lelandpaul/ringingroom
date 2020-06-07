@@ -138,7 +138,7 @@ socketio.on('s_audio_change',function(msg,cb){
 // A chat message was received
 socketio.on('s_msg_sent', function(msg,cb){
     bell_circle.$refs.chatbox.messages.push(msg);
-    if(msg.email != window.tower_parameters.cur_user_email) {
+    if(msg.email != window.tower_parameters.cur_user_email && !$('#chat_input_box').is(':focus')) {
         bell_circle.unread_messages++;
     }
     bell_circle.$nextTick(function(){
