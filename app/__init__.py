@@ -7,7 +7,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_socketio import SocketIO
 from flask_assets import Environment, Bundle
-from flask_session import Session
 from flask_login import LoginManager
 
 from config import Config

@@ -84,6 +84,12 @@ socketio.on('s_user_entered', function(msg, cb){
 socketio.on('s_user_left', function(msg, cb){
     console.log(msg.user_name + ' left')
     bell_circle.$refs.users.remove_user(msg.user_name);
+    bell_circle.$refs.bells.forEach((bell,index)=>
+        {
+            if (bell.assigned_user === msg.user_name) {
+                bell.assigned_user = '';
+            }
+        });
 });
 
 // Number of observers changed
@@ -96,7 +102,9 @@ socketio.on('s_set_observers', function(msg, cb){
 socketio.on('s_assign_user', function(msg, cb){
     console.log('Received user assignment: ' + msg.bell + ' ' + msg.user);
     bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
-    bell_circle.$refs.users.rotate_to_assignment();
+    if (msg.user === window.tower_parameters.cur_user_name){
+        bell_circle.$refs.users.rotate_to_assignment();
+    }
 });
 
 // A call was made
@@ -130,6 +138,9 @@ socketio.on('s_audio_change',function(msg,cb){
 // A chat message was received
 socketio.on('s_msg_sent', function(msg,cb){
     bell_circle.$refs.chatbox.messages.push(msg);
+    if(msg.email != window.tower_parameters.cur_user_email && !$('#chat_input_box').is(':focus')) {
+        bell_circle.unread_messages++;
+    }
     bell_circle.$nextTick(function(){
         $('#chat_messages').scrollTop($('#chat_messages')[0].scrollHeight);
     });
@@ -225,7 +236,6 @@ Vue.component("bell_rope", {
       // Ringing event received; now ring the bell
 	  ring: function(){
         this.stroke = !this.stroke;
-        this.audio._volume = window.user_parameters.bell_volume * 0.1;
         const audio_type = this.$root.$refs.controls.audio_type;
         console.log(audio_type + ' ' + this.number_of_bells);
 		this.audio.play(bell_mappings[audio_type][this.number_of_bells][this.number - 1]);
@@ -615,6 +625,8 @@ Vue.component('chatbox', {
         }
     },
 
+    props: ["unread_messages"],
+
     methods: {
 
         send_msg: function() {
@@ -637,6 +649,10 @@ Vue.component('chatbox', {
             }
         },
 
+        remove_all_unreads: function(){
+            bell_circle.unread_messages = 0;
+        },
+
     },
 
 
@@ -649,7 +665,7 @@ Vue.component('chatbox', {
                     data-toggle="collapse"
                     data-target="#chat_body"
                     >
-                    Chat
+                    Chat <span class="badge badge-dark" v-if="unread_messages > 0"> [[ unread_messages ]] </span><span class="sr-only" v-if="unread_messages > 0">unread messages</span>
                      <span class="float-right w-50"
                            @click="leave_tower">
                         <a role="button" class="btn btn-outline-primary w-100" href='/'>Leave Tower</a>
@@ -675,7 +691,9 @@ Vue.component('chatbox', {
                            id="chat_input_box"
                            class="form-control" 
                            placeholder=""
-                           v-model="cur_msg"></input>
+                           v-model="cur_msg"
+                           @focus="remove_all_unreads"
+                           ></input>
                     <div class="input-group-append">
                         <input class="btn btn-outline-primary" 
                                 type="submit"
@@ -794,6 +812,7 @@ Vue.component('volume_control', {
     watch: {
         value: function(new_value) {
             window.user_parameters.bell_volume = new_value;
+            bell_circle.audio._volume = window.user_parameters.bell_volume * 0.1;
         },
     },
 
@@ -803,7 +822,7 @@ Vue.component('volume_control', {
         <div class="col-2 pl-4">
         <i class="fas fa-volume-down volume_icon align-middle"></i>
         </div>
-        <div class="col-8 px-0">
+        <div class="col-8 px-0 align-middle">
             <input type="range" v-model="value" min=0 max=10 id="volumeSlider" class="volume_control_slider custom-range align-middle">
             </input>
         </div>
@@ -900,7 +919,7 @@ Vue.component('user_display', {
          <div class="card">
              <div class="card-header"
                   @click="open_chat"
-                  v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.lister_link"
+                  v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link"
                   >
                 <h2 style="display: inline; cursor: pointer;"
                     class="collapsed"
@@ -927,7 +946,7 @@ Vue.component('user_display', {
              </div>
              <ul class="list-group list-group-flush"
                  id="user_display_body"
-                 :class="{collapse: (!window.tower_parameters.anonymous_user && !window.tower_parameters.listener_link)}"
+                 :class="{collapse: (!window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link)}"
                  data-parent="#sidebar_accordion">
                 <li class="list-group-item cur_user d-inline-flex align-items-center"
                      :class="{assignment_active: assignment_mode,
@@ -1112,8 +1131,8 @@ bell_circle = new Vue({
         hidden_sidebar: true,
         hidden_help: true,
         keys_down: [],
+        unread_messages: 0,
 	},
-
 
 	watch: {
         // Change the list of bells to track the current number
@@ -1150,7 +1169,7 @@ bell_circle = new Vue({
         console.log("Pulling the " + bell);
         this.$refs.bells[bell-1].emit_ringing_event();
         this.rang_bell_recently[bell-1] = true;
-        setTimeout(()=>{this.rang_bell_recently[bell-1] = false;}, 500);
+        setTimeout(()=>{this.rang_bell_recently[bell-1] = false;}, 250);
 	  },
 	
       // Like ring_bell, but calculated by the position in the circle (respecting rotation)
@@ -1287,7 +1306,10 @@ bell_circle = new Vue({
                                  data-target="#tower_controls"
                                  @click="toggle_controls"
                                 >
-                         Controls [[ hidden_sidebar ? '▸' : '▾' ]]
+                         Controls 
+                         <span class="badge badge-dark" v-if="hidden_sidebar && unread_messages > 0 && !window.tower_parameters.listen_link && !window.tower_parameters.anonymous_user"> [[ unread_messages ]] </span>
+                         <span class="sr-only" v-if="hidden_sidebar && unread_messages > 0 && !window.tower_parameters.listen_link && !window.tower_parameters.anonymous_user">unread messages</span>
+                         [[ hidden_sidebar ? '▸' : '▾' ]]
                          </button>
                      </div>
                  </div>
@@ -1304,17 +1326,17 @@ bell_circle = new Vue({
              id="tower_controls"
              >
 
-        <!-- <volume_control ref="volume"></volume_control> -->
+        <volume_control ref="volume"></volume_control>
 
 
         <tower_controls ref="controls"></tower_controls>
         
-        <template v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.listern_link">
+        <template v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link">
             <div class="row pb-0 flex-grow-1">
             <div class="col flex-grow-1">
             <div class="accordion" id="sidebar_accordion">
                 <user_display ref="users"></user_display>
-                <chatbox ref="chatbox"></chatbox>
+                <chatbox ref="chatbox" v-bind:unread_messages="unread_messages"></chatbox>
             </div>
             </div>
             </div>
