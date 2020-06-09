@@ -135,7 +135,7 @@ def login():
         next = ''
     if login_form.validate_on_submit():
 
-        user = User.query.filter_by(email=login_form.username.data.lower()).first()
+        user = User.query.filter_by(email=login_form.username.data.lower().strip()).first()
         if user is None or not user.check_password(login_form.password.data):
             flash('Incorrect username or password.')
             return render_template('authenticate.html', 
@@ -166,7 +166,7 @@ def register():
     registration_form = RegistrationForm()
     if registration_form.validate_on_submit():
         user = User(username=registration_form.username.data.strip(), 
-                    email=registration_form.email.data.lower())
+                    email=registration_form.email.data.lower().strip())
         user.set_password(registration_form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -216,7 +216,7 @@ def request_reset_password():
         return redirect(url_for('index'))
     form = ResetPasswordRequestForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data.lower()).first()
+        user = User.query.filter_by(email=form.email.data.lower().strip()).first()
         if user:
             send_password_reset_email(user)
         flash('Check your email for the instructions to reset your password.')
