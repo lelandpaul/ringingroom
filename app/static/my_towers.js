@@ -103,6 +103,17 @@ my_towers = new Vue({
             Recent
         </a>
     </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" 
+           id="favorite_tab" 
+           data-toggle="tab" 
+           href="#favorite" 
+           role="tab"
+           aria-controls="recent"
+           aria-selected="true">
+            Favorites
+        </a>
+    </li>
 </ul>
 
 <div class="tab-content" id="my_towers_content">
@@ -147,6 +158,28 @@ my_towers = new Vue({
         </tbody>
     </table>
 </div>
+
+
+<div class="tab-pane fade" 
+     id="favorite"
+     role="tabpanel"
+     aria-labelledby="favorite_tab">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Name</th>
+                <th scope="col">ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tower_row v-for="tower in tower_rels"
+                       v-if="tower.favorite"
+                       v-bind:tower="tower"></tower_row>
+        </tbody>
+    </table>
+</div>
+
 </div>
 
 </div>
