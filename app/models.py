@@ -89,6 +89,17 @@ class User(UserMixin, db.Model):
                 in sorted(self.towers, key=lambda r: r.visited, reverse=True)
                 if rel.recent][:n]
 
+    @property
+    def tower_properties(self):
+        # For the my_towers page, we need the tower relations as a list of dictionaries,
+        # which each include the tower info + the relation info
+        tower_properties = []
+        for rel in self.towers:
+            tower_properties.append(dict(\
+                                    {'tower_id': rel.tower.tower_id,
+                                     'tower_name': rel.tower.tower_name}, **rel.relation_dict))
+        return tower_properties
+
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
@@ -142,15 +153,18 @@ class UserTowerRelation(db.Model):
                                                      self.tower.tower_name,
                                                      self.tower.tower_id)
 
+    @property
+    def relation_dict(self):
+        # return the relation types as a dictionary
+        return {'recent': self.recent,
+                'creator': self.creator,
+                'favorite': self.favorite}
+
     def clean_up(self):
         # Call this whenever you change a boolean column from True to False
         # Checks if all relations are false, deletes if relevant
-        relationship_types = [self.recent, self.creator, self.favorite]
-        if not any(relationship_types):
+        if not any(relation_dict.values()):
             self.delete()
-
-
-
 
 # Keep track of towers
 class Tower:

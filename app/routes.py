@@ -1,4 +1,5 @@
 from flask import render_template, send_from_directory, abort, flash, redirect, url_for, session, request
+from flask.json import dumps
 from flask_login import login_user, logout_user, current_user, login_required
 from app import app, towers, log, db
 from app.models import User
@@ -181,7 +182,9 @@ def register():
 
 @app.route('/my_towers')
 def my_towers():
-    return render_template('my_towers.html', tower_rels=current_user.towers)
+    # We need to pass in all of the users related towers, marked by the kind of relation they have
+    print(current_user.tower_properties)
+    return render_template('my_towers.html', tower_props=current_user.tower_properties)
 
 @app.route('/settings', methods=['GET','POST'])
 @login_required
