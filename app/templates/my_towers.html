@@ -2,6 +2,17 @@
 
 {% block app_content %}
 
+<!-- Connect via SocketIO so that we can favorite/unfavorite things without refreshing -->
+    <script>
+        var socketio = io()
+        var fav_tower = function(tower_id){
+            console.log('favorited ' + tower_id);
+            socketio.emit('c_toggle_favorite', tower_id);
+            $('.' + tower_id + '_star').toggleClass('far').toggleClass('fas')
+        };
+    </script>
+
+
 <h1>My Towers</h1>
 
 <ul class="nav nav-tabs" id="tower_relation_nav" role="tablist">
@@ -39,6 +50,7 @@
     <table class="table table-hover">
         <thead>
             <tr>
+                <th scope="col"></th>
                 <th scope="col">Name</th>
                 <th scope="col">ID</th>
                 <th scope="col">Visited</th>
@@ -47,11 +59,7 @@
         <tbody>
             {% for rel in tower_rels if rel.creator %}
 
-                <tr>
-                    <td>{{rel.tower.tower_name}}</td>
-                    <td>{{rel.tower.tower_id}}</td>
-                    <td>{{rel.visited}}</td>
-                </tr>
+            {% include '_my_tower_row.html' %}
 
             {% endfor %}
         </tbody>
@@ -65,6 +73,7 @@
     <table class="table table-hover">
         <thead>
             <tr>
+                <th scope="col"></th>
                 <th scope="col">Name</th>
                 <th scope="col">ID</th>
                 <th scope="col">Visited</th>
@@ -73,11 +82,7 @@
         <tbody>
             {% for rel in tower_rels if rel.recent %}
 
-                <tr>
-                    <td>{{rel.tower.tower_name}}</td>
-                    <td>{{rel.tower.tower_id}}</td>
-                    <td>{{rel.visited}}</td>
-                </tr>
+            {% include '_my_tower_row.html' %}
 
             {% endfor %}
         </tbody>
@@ -85,7 +90,6 @@
 </div>
 
 </div>
-
 
 
 

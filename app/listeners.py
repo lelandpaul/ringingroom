@@ -290,4 +290,12 @@ def on_report(json):
 
 
 
+# The user toggled favorite status for a tower
+@socketio.on('c_toggle_favorite')
+def on_toggle_favorite(tower_id):
+    log('c_toggle_favorite',current_user,tower_id)
+    tower = towers[tower_id]
+    current_user.toggle_favorite_tower(tower)
+
+
 

@@ -47,12 +47,9 @@ class User(UserMixin, db.Model):
             return
         return User.query.get(id)
 
-
-    def clear_all_towers(self):
-        for rel in self.towers:
-            db.session.delete(rel)
-
-    def  add_recent_tower(self, tower):
+    def _get_relation_to_tower(self,tower):
+        # Helper function: returns a relation between the user and the tower.
+        # Creates the relation if none existed before.
         if isinstance(tower, Tower):
             # cast to TowerDB
             tower = tower.to_TowerDB()
@@ -60,16 +57,28 @@ class User(UserMixin, db.Model):
         rel = UserTowerRelation.query.filter(UserTowerRelation.user == self, 
                                              UserTowerRelation.tower == tower).first()
         if not rel:
-            # Just instantiating this is enough — back population takes care of the rest
-            # (If you add it, it winds up duplicated)
-            UserTowerRelation(user=self, tower=tower, recent=True)
-        else:
-            # Update the timestamp (and recent, if necessary)
-            rel.recent = True
-            rel.visited = datetime.now()
+            # Just creating this is enough to add it to the database with relevant relations
+            rel = UserTowerRelation(user=self, tower=tower)
+
+        return rel
+
+
+    def clear_all_towers(self):
+        for rel in self.towers:
+            db.session.delete(rel)
+
+    def add_recent_tower(self, tower):
+        rel = self._get_relation_to_tower(tower)
+        # Update the timestamp (and recent, if necessary)
+        rel.recent = True
+        rel.visited = datetime.now()
         self._clean_recent_towers()
         db.session.commit()
 
+    def toggle_favorite_tower(self, tower):
+        rel = self._get_relation_to_tower(tower)
+        rel.favorite = not rel.favorite
+        db.session.commit()
    
     def recent_towers(self, n=0):
         # Allows you to limit to n items; returns all by default
@@ -126,6 +135,7 @@ class UserTowerRelation(db.Model):
     # Boolean columns for relationship types; also
     recent = db.Column('recent',db.Boolean, default=False)
     creator = db.Column('creator',db.Boolean,default=False)
+    favorite = db.Column('favorite',db.Boolean,default=False)
 
     def __repr__(self):
         return '<Relationship: {} --- {} {}>'.format(self.user.username,
@@ -135,7 +145,7 @@ class UserTowerRelation(db.Model):
     def clean_up(self):
         # Call this whenever you change a boolean column from True to False
         # Checks if all relations are false, deletes if relevant
-        relationship_types = [self.recent, self.creator]
+        relationship_types = [self.recent, self.creator, self.favorite]
         if not any(relationship_types):
             self.delete()
 
