@@ -89,6 +89,15 @@ class User(UserMixin, db.Model):
                 in sorted(self.towers, key=lambda r: r.visited, reverse=True)
                 if rel.recent][:n]
 
+    def favorite_towers(self,n=0):
+        # Allows you to limit to n items; returns all by default
+        # This returns a list of TowerDB objects — if we want to convert them to memory, that should
+        # happen by looking them up in the TowerDict instance
+        n = n or len(self.towers)
+        return [rel.tower for rel \
+                in self.towers \
+                if rel.favorite][:n]
+
     @property
     def tower_properties(self):
         # For the my_towers page, we need the tower relations as a list of dictionaries,

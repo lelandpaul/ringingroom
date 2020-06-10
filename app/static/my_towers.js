@@ -29,7 +29,6 @@ var logger = function()
 
 var socketio = io();
 
-
 /////////
 /* VUE */
 /////////
@@ -75,6 +74,22 @@ my_towers = new Vue({
 
         towers: window.tower_rels,
 
+    },
+
+    mounted: function(){
+        this.$nextTick(function(){
+            // Javascript to enable link to tab
+            var url = document.location.toString();
+            if (url.match('#')) {
+                $('#' + url.split('#')[1] + '_tab').tab('show');
+                window.scrollTo(0, 0)
+            } 
+
+            // Change hash for page-reload
+            $('.nav-tabs a').on('shown.bs.tab', function (e) {
+                window.location.hash = e.target.hash;
+            })
+        });
     },
 
     template:
