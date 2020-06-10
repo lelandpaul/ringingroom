@@ -179,6 +179,10 @@ def register():
                            registration_form=registration_form,
                            next=next)
 
+@app.route('/my_towers')
+def my_towers():
+    return render_template('my_towers.html')
+
 @app.route('/settings', methods=['GET','POST'])
 @login_required
 def user_settings():
