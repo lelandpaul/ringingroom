@@ -80,7 +80,6 @@ class User(UserMixin, db.Model):
                 in sorted(self.towers, key=lambda r: r.visited, reverse=True)
                 if rel.recent][:n]
 
-
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))

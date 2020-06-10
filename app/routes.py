@@ -181,7 +181,7 @@ def register():
 
 @app.route('/my_towers')
 def my_towers():
-    return render_template('my_towers.html')
+    return render_template('my_towers.html', tower_rels=current_user.towers)
 
 @app.route('/settings', methods=['GET','POST'])
 @login_required
