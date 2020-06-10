@@ -45,20 +45,53 @@ Vue.component("tower_row",{
         toggle_favorite: function(){
             socketio.emit('c_toggle_favorite',this.tower.tower_id);
             this.tower.favorite = !this.tower.favorite;
+        }, 
+
+        copy_id: function() {
+ 
+            setTimeout(() => {$('.id_clipboard_tooltip').tooltip('hide')},1000);
+                var dummy = document.createElement("textarea");
+                document.body.appendChild(dummy);
+                dummy.value = this.tower.tower_id;
+                dummy.select();
+                document.execCommand("copy");
+                document.body.removeChild(dummy);
         }
     },
     template:
     `
     <tr>
-        <td>
+        <td class="align-baseline">
             <span @click="toggle_favorite" style="cursor: pointer;">
                 <i class="fa-star"
                    :class="[tower.favorite ? 'fas':'far']">
                 </i>
             </span>
         </td>
-        <td>[[tower.tower_name]]</td>
-        <td>[[tower.tower_id]]</td>
+        <td class="align-baseline">
+            <a :href="tower.tower_id + '/' + tower.tower_name">
+                [[tower.tower_name]]
+            </a>
+        </td>
+        <td class="align-text-bottom">
+            [[tower.tower_id]]
+            <button class="btn id_clipboard_tooltip align-baseline"
+               data-toggle="tooltip"
+               data-placement="bottom"
+               data-container="body"
+               data-trigger="click"
+               @click="copy_id"
+               title="Copied to clipboard">
+                   <i class="far fa-clipboard fa-fw"></i>
+            </button>
+        </td>
+        <td class="align-baseline">
+            <a :href="'tower_settings/'+ tower.tower_id"
+               class="btn btn-sm btn-outline-primary align-baseline"
+               >
+               Settings
+           </a>
+        </td>
     </tr>
     `
 });
@@ -82,13 +115,9 @@ my_towers = new Vue({
             var url = document.location.toString();
             if (url.match('#')) {
                 $('#' + url.split('#')[1] + '_tab').tab('show');
-                window.scrollTo(0, 0)
             } 
-
-            // Change hash for page-reload
-            $('.nav-tabs a').on('shown.bs.tab', function (e) {
-                window.location.hash = e.target.hash;
-            })
+            window.scrollTo(0, 0)
+            $('[data-toggle="tooltip"]').tooltip();
         });
     },
 
@@ -143,6 +172,7 @@ my_towers = new Vue({
                 <th scope="col"></th>
                 <th scope="col">Name</th>
                 <th scope="col">ID</th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
@@ -164,6 +194,7 @@ my_towers = new Vue({
                 <th scope="col"></th>
                 <th scope="col">Name</th>
                 <th scope="col">ID</th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
@@ -185,6 +216,7 @@ my_towers = new Vue({
                 <th scope="col"></th>
                 <th scope="col">Name</th>
                 <th scope="col">ID</th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
