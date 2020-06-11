@@ -197,7 +197,6 @@ def tower_settings(tower_id):
             db.session.commit()
             form.tower_name.data = ''
             flash('Tower name changed.')
-            print('TOWER NAME: '+tower.name)
             return render_template('tower_settings.html',
                                    form=form,
                                    delete_form=delete_form,
