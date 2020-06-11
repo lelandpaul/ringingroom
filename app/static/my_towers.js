@@ -93,7 +93,7 @@ Vue.component("tower_row",{
         <td class="align-baseline">
             <a :href="'tower_settings/'+ tower.tower_id"
                class="btn btn-sm align-baseline"
-               :class="[tower.creator ? 'btn-primary' : 'btn-outline-secondary disabled']"
+               :class="[tower.creator ? 'btn-primary' : 'btn-primary disabled']"
                >
                Settings
             </a>
@@ -120,6 +120,22 @@ my_towers = new Vue({
     data: {
 
         towers: window.tower_rels,
+
+    },
+
+    computed: {
+
+        no_recent: function(){
+            return this.towers.reduce((acc, cur) => cur.recent ? ++acc : acc, 0);
+        },
+
+        no_created: function(){
+            return this.towers.reduce((acc, cur) => cur.creator ? ++acc : acc, 0);
+        },
+
+        no_favorite: function(){
+            return this.towers.reduce((acc, cur) => cur.favorite ? ++acc : acc, 0);
+        }
 
     },
 
@@ -180,6 +196,9 @@ my_towers = new Vue({
      id="created"
      role="tabpanel"
      aria-labelledby="created_tab">
+
+    <p class="my-3"><small>Towers you have created. You can edit or delete these towers by pressing the Settings button. (Only you can edit or delete towers you've created.)</small></p>
+
     <table class="table table-hover">
         <thead>
             <tr>
@@ -194,6 +213,7 @@ my_towers = new Vue({
                        v-if="tower.creator"
                        v-bind:tower="tower"
                        v-bind:tab="'created'"></tower_row>
+            <tr v-if="no_created===0"><td colspan="3">You haven't created any towers.</td></tr>
         </tbody>
     </table>
 </div>
@@ -203,6 +223,7 @@ my_towers = new Vue({
      id="recent"
      role="tabpanel"
      aria-labelledby="recent_tab">
+    <p class="my-3"><small>Towers you have recently visited. Click the "Remove from Recents" button to delete them from the list.</small></p>
     <table class="table table-hover">
         <thead>
             <tr>
@@ -218,6 +239,7 @@ my_towers = new Vue({
                        v-if="tower.recent"
                        v-bind:tower="tower"
                        v-bind:tab="'recent'"></tower_row>
+            <tr v-if="no_recent===0"><td colspan="3">You haven't visited any towers.</td></tr>
         </tbody>
     </table>
 </div>
@@ -227,6 +249,7 @@ my_towers = new Vue({
      id="favorite"
      role="tabpanel"
      aria-labelledby="favorite_tab">
+    <p class="my-3"><small>Towers you have marked as favorites. Click the star to unfavorite them.</small></p>
     <table class="table table-hover">
         <thead>
             <tr>
@@ -241,6 +264,7 @@ my_towers = new Vue({
                        v-if="tower.favorite"
                        v-bind:tower="tower"
                        v-bind:tab="'favorite'"></tower_row>
+            <tr v-if="no_favorite===0"><td colspan="3">You haven't favorited any towers.</td></tr>
         </tbody>
     </table>
 </div>
