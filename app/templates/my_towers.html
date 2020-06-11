@@ -13,6 +13,16 @@
 
 <div id="my_towers"></div>
 
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endwith %}
+
 {% assets "js_my_towers" %}
 <script type="text/javascript" src="{{ ASSET_URL }}"></script>
 {% endassets %}
