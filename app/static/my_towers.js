@@ -103,7 +103,7 @@ Vue.component("tower_row",{
                     @click="remove_recent"
                     class="btn btn-sm align-baseline btn-primary"
                     >
-                    Remove
+                    Remove from Recent
             </button>
         </td>
     </tr>
