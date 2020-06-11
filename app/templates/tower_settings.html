@@ -41,7 +41,7 @@
 
 
 
-{% if current_user.check_permissions(tower.tower_id) %}
+{% if current_user.check_permissions(tower.tower_id,permission='creator') %}
 
 
 

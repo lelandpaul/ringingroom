@@ -116,10 +116,13 @@ class User(UserMixin, db.Model):
                                      'tower_name': rel.tower.tower_name}, **rel.relation_dict))
         return tower_properties
 
-    def check_permissions(self, tower_id):
-        # Given a tower_id: Do we have the status 'Admin' with respect to that tower?
-        # TEMPORARY: Map this to creator for now
-        return tower_id in [t.tower_id for t in self.towers if t.creator]
+    def check_permission(self, tower_id, permission):
+        # Given a tower_id: check if the user has relevant permissions permissions
+        # 'creator': can edit settings
+        # 'host': can manage practices in host mode
+        if permission not in ['creator','host']:
+            raise KeyError('The requested permission type does not exist.')
+        return tower_id in [t.tower_id for t in self.towers if getattr(t,permission)]
 
 @login.user_loader
 def load_user(id):
@@ -152,6 +155,12 @@ class TowerDB(db.Model):
         return UserTowerRelation.query.filter(UserTowerRelation.tower==self, 
                                               UserTowerRelation.creator==True).first().user
 
+    @property
+    def hosts(self):
+        return [rel.user for rel in \
+                UserTowerRelation.query.filter(UserTowerRelation.tower==self,
+                                               UserTowerRelation.host==True).all()]
+
 
 
 
@@ -168,6 +177,7 @@ class UserTowerRelation(db.Model):
     recent = db.Column('recent',db.Boolean, default=False)
     creator = db.Column('creator',db.Boolean,default=False)
     bookmark = db.Column('bookmark',db.Boolean,default=False)
+    host = db.Column('host',db.Boolean,default=False)
 
     def __repr__(self):
         return '<Relationship: {} --- {} {}>'.format(self.user.username,
@@ -180,6 +190,7 @@ class UserTowerRelation(db.Model):
         return {'recent': self.recent,
                 'creator': self.creator,
                 'bookmark': self.bookmark}
+                'host': self.host}
 
     def clean_up(self):
         # Call this whenever you change a boolean column from True to False
