@@ -109,6 +109,11 @@ class User(UserMixin, db.Model):
                                      'tower_name': rel.tower.tower_name}, **rel.relation_dict))
         return tower_properties
 
+    def check_permissions(self, tower_id):
+        # Given a tower_id: Do we have the status 'Admin' with respect to that tower?
+        # TEMPORARY: Map this to creator for now
+        return tower_id in [t.tower_id for t in self.towers if t.creator]
+
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))

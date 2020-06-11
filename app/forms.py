@@ -84,3 +84,11 @@ class ResetPasswordForm(FlaskForm):
     password2 = PasswordField(
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Reset Password')
+
+class TowerSettingsForm(FlaskForm):
+    tower_name = StringField('Change name',validators=[])
+    submit = SubmitField('Save Changes')
+
+class TowerDeleteForm(FlaskForm):
+    delete = SubmitField('Delete Tower')
+    
