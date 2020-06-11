@@ -182,7 +182,8 @@ def register():
 @app.route('/my_towers')
 def my_towers():
     # We need to pass in all of the users related towers, marked by the kind of relation they have
-    return render_template('my_towers.html', tower_props=current_user.tower_properties)
+    return render_template('my_towers.html', 
+                           tower_props=current_user.tower_properties)
 
 @app.route('/tower_settings/<int:tower_id>', methods=['GET','POST'])
 def tower_settings(tower_id):

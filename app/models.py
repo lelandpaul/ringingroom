@@ -110,7 +110,7 @@ class User(UserMixin, db.Model):
         # For the my_towers page, we need the tower relations as a list of dictionaries,
         # which each include the tower info + the relation info
         tower_properties = []
-        for rel in self.towers:
+        for rel in sorted(self.towers, key=lambda x: x.visited, reverse=True):
             tower_properties.append(dict(\
                                     {'tower_id': rel.tower.tower_id,
                                      'tower_name': rel.tower.tower_name}, **rel.relation_dict))
