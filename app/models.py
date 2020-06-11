@@ -75,10 +75,17 @@ class User(UserMixin, db.Model):
         self._clean_recent_towers()
         db.session.commit()
 
+    def remove_recent_tower(self,tower):
+        rel = self._get_relation_to_tower(tower)
+        rel.recent = False
+        db.session.commit()
+
+
     def toggle_favorite_tower(self, tower):
         rel = self._get_relation_to_tower(tower)
         rel.favorite = not rel.favorite
         db.session.commit()
+
    
     def recent_towers(self, n=0):
         # Allows you to limit to n items; returns all by default

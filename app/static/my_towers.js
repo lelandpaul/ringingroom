@@ -39,7 +39,7 @@ Vue.options.delimiters = ['[[', ']]']; // make sure Vue doesn't interfere with j
 $(document).ready(function() {
 
 Vue.component("tower_row",{
-    props:['tower'],
+    props:['tower','tab'],
 
     methods: {
         toggle_favorite: function(){
@@ -56,6 +56,11 @@ Vue.component("tower_row",{
                 dummy.select();
                 document.execCommand("copy");
                 document.body.removeChild(dummy);
+        },
+
+        remove_recent: function(){
+            socketio.emit('c_remove_recent',this.tower.tower_id);
+            this.tower.recent=false;
         }
     },
     template:
@@ -87,10 +92,19 @@ Vue.component("tower_row",{
         </td>
         <td class="align-baseline">
             <a :href="'tower_settings/'+ tower.tower_id"
-               class="btn btn-sm btn-outline-primary align-baseline"
+               class="btn btn-sm align-baseline"
+               :class="[tower.creator ? 'btn-primary' : 'btn-outline-secondary disabled']"
                >
                Settings
-           </a>
+            </a>
+        </td>
+        <td>
+            <button v-if="tab == 'recent'"
+                    @click="remove_recent"
+                    class="btn btn-sm align-baseline btn-primary"
+                    >
+                    Remove
+            </button>
         </td>
     </tr>
     `
@@ -178,7 +192,8 @@ my_towers = new Vue({
         <tbody>
             <tower_row v-for="tower in towers"
                        v-if="tower.creator"
-                       v-bind:tower="tower"></tower_row>
+                       v-bind:tower="tower"
+                       v-bind:tab="'created'"></tower_row>
         </tbody>
     </table>
 </div>
@@ -195,12 +210,14 @@ my_towers = new Vue({
                 <th scope="col">Name</th>
                 <th scope="col">ID</th>
                 <th scope="col"></th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
             <tower_row v-for="tower in tower_rels"
                        v-if="tower.recent"
-                       v-bind:tower="tower"></tower_row>
+                       v-bind:tower="tower"
+                       v-bind:tab="'recent'"></tower_row>
         </tbody>
     </table>
 </div>
@@ -222,7 +239,8 @@ my_towers = new Vue({
         <tbody>
             <tower_row v-for="tower in tower_rels"
                        v-if="tower.favorite"
-                       v-bind:tower="tower"></tower_row>
+                       v-bind:tower="tower"
+                       v-bind:tab="'favorite'"></tower_row>
         </tbody>
     </table>
 </div>
