@@ -147,7 +147,7 @@ class TowerDB(db.Model):
     def created_by(self, user):
         # Expects a User object
         # Just instantiating this is enough
-        UserTowerRelation(user=user, tower=self, creator=True)
+        UserTowerRelation(user=user, tower=self, creator=True, host=True)
         db.session.commit()
 
     @property
