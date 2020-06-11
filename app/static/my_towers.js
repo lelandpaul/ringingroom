@@ -206,6 +206,7 @@ my_towers = new Vue({
                 <th scope="col">Name</th>
                 <th scope="col">ID</th>
                 <th scope="col"></th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
