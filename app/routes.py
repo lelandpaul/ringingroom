@@ -191,17 +191,29 @@ def tower_settings(tower_id):
     tower_db = tower.to_TowerDB()
     form = TowerSettingsForm()
     delete_form = TowerDeleteForm()
-    if form.submit.data and form.validate_on_submit():
+    if form.validate_on_submit():
         if form.tower_name.data:
             tower.name = form.tower_name.data
             tower_db.tower_name = form.tower_name.data
-            db.session.commit()
             form.tower_name.data = ''
             flash('Tower name changed.')
-            return render_template('tower_settings.html',
-                                   form=form,
-                                   delete_form=delete_form,
-                                   tower=tower)
+        if form.add_host.data:
+            new_host = User.query.filter_by(email=form.add_host.data).first()
+            if new_host.check_permissions(tower_id, permission='host'):
+                flash('User is already a host.')
+            new_host.make_host(tower)
+        if form.remove_host.data:
+            host = User.query.filter_by(email=form.remove_host.data).first()
+            if host == tower_db.creator:
+                flash('Cannot remove tower creator from host list.')
+            else:
+                host.remove_host(tower)
+        db.session.commit()
+        return render_template('tower_settings.html',
+                               form=form,
+                               delete_form=delete_form,
+                               tower=tower_db)
+        form = TowerSettingsForm()
     elif delete_form.delete.data and delete_form.validate_on_submit():
         rels = UserTowerRelation.query.filter_by(tower=tower_db)
         for rel in rels: db.session.delete(rel)
@@ -214,7 +226,7 @@ def tower_settings(tower_id):
     return render_template('tower_settings.html',
                            form=form,
                            delete_form=delete_form,
-                           tower=tower)
+                           tower=tower_db)
 
 
 

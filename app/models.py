@@ -116,13 +116,23 @@ class User(UserMixin, db.Model):
                                      'tower_name': rel.tower.tower_name}, **rel.relation_dict))
         return tower_properties
 
-    def check_permission(self, tower_id, permission):
+    def check_permissions(self, tower_id, permission):
         # Given a tower_id: check if the user has relevant permissions permissions
         # 'creator': can edit settings
         # 'host': can manage practices in host mode
         if permission not in ['creator','host']:
             raise KeyError('The requested permission type does not exist.')
         return tower_id in [t.tower_id for t in self.towers if getattr(t,permission)]
+
+    def make_host(self, tower):
+        rel = self._get_relation_to_tower(tower)
+        rel.host = True
+        db.session.commit()
+
+    def remove_host(self, tower):
+        rel = self._get_relation_to_tower(tower)
+        rel.host = False
+        db.session.commit()
 
 @login.user_loader
 def load_user(id):
