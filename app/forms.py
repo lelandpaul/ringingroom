@@ -2,7 +2,7 @@
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
+from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Optional
 from app.models import User
 
 class RequiredIf(DataRequired):
@@ -87,7 +87,14 @@ class ResetPasswordForm(FlaskForm):
 
 class TowerSettingsForm(FlaskForm):
     tower_name = StringField('Change name',validators=[])
+    add_host = StringField('Add host', validators=[Optional(),Email()])
+    remove_host = StringField('Remove host', validators=[Optional(),Email()])
     submit = SubmitField('Save Changes')
+
+    def validate_add_host(self, new_host_email):
+        user = User.query.filter_by(email=new_host_email.data).first()
+        if user is None:
+            raise ValidationError('Unknown user: ' + new_host_email.data)
 
 class TowerDeleteForm(FlaskForm):
     delete = SubmitField('Delete Tower')
