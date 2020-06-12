@@ -146,6 +146,11 @@ socketio.on('s_msg_sent', function(msg,cb){
     });
 });
 
+// Host mode was changed
+socketio.on('s_host_mode', function(msg,cb){
+    bell_circle.$refs.controls.host_mode = msg.new_mode;
+});
+
 
 
 
@@ -447,13 +452,18 @@ Vue.component('tower_controls', {
     // data in components should be a function, to maintain scope
 	data: function(){ 
 		return {tower_sizes: [4,6,8,10,12],
-                audio_type: window.tower_parameters.audio} },
+                audio_type: window.tower_parameters.audio,
+                host_mode: window.tower_parameters.host_mode} },
 
     computed: {
         
         number_of_bells: function() {
             return this.$root.number_of_bells;
         },
+
+        lock_controls: function(){
+            return this.host_mode && !window.tower_parameters.host_permissions;
+        }
 
     },
 
@@ -462,6 +472,12 @@ Vue.component('tower_controls', {
         audio_type: function(){
             console.log('swapped audio type');
               socketio.emit('c_audio_change',{new_audio: this.audio_type, tower_id: cur_tower_id});
+        },
+
+        host_mode: function(){
+            console.log('swapped host mode to: ' + this.host_mode);
+            socketio.emit('c_host_mode',{new_mode: this.host_mode, tower_id: cur_tower_id});
+
         },
 
     },
@@ -487,13 +503,56 @@ Vue.component('tower_controls', {
         <div class="tower_controls_inner"
              v-if="!window.tower_parameters.anonymous_user">
 
+             <div class="row justify-content-between"
+                  v-if="window.tower_parameters.host_permissions">
+
+                  <div class="col">
+                    <h4 class="mb-0 pt-1">Host Mode:</h4>
+                  </div>
+
+                 <div class="col">
+                      <div class="btn-group btn-block btn-group-toggle align-bottom">
+                        <label class="btn btn-outline-primary"
+                               :class="{active: !host_mode}">
+                        <input type="radio" 
+                               name="host_mode"
+                               id="host_false"
+                               :value="false"
+                               v-model="host_mode"
+                               />
+                               Off
+                        </label>
+
+                        <label class="btn btn-outline-primary"
+                               :class="{active: host_mode}">
+                        <input type="radio" 
+                               name="host_mode"
+                               id="host_true"
+                               :value="true"
+                               v-model="host_mode"
+                               />
+                               On
+                        </label>
+                       </div>
+                 </div>
+             </div>
+
+             <div v-if="lock_controls" class="row">
+                <div class="col">
+                    <small class="text-muted">
+                        Host mode is enabled. Only hosts can change tower settings or assign bells.
+                    </small>
+                </div>
+             </div>
+
              <div class="row between-xs">
              <div class="col">
                 <div class="btn-group btn-block btn-group-toggle">
                     <label v-for="size in tower_sizes"
                            :size="size"
                            class="btn btn-outline-primary"
-                           :class="{active: size === number_of_bells}"
+                           :class="{active: size === number_of_bells,
+                                    disabled: lock_controls}"
                            @click="set_tower_size(size)"
                            >
                            <input type="radio"
@@ -512,7 +571,8 @@ Vue.component('tower_controls', {
                  <div class="col">
                       <div class="btn-group btn-block btn-group-toggle">
                         <label class="btn btn-outline-primary"
-                               :class="{active: audio_type == 'Tower'}">
+                               :class="{active: audio_type == 'Tower',
+                                    disabled: lock_controls}">
                         <input type="radio" 
                                name="audio"
                                id="audio_tower"
@@ -523,7 +583,9 @@ Vue.component('tower_controls', {
                         </label>
 
                         <label class="btn btn-outline-primary"
-                               :class="{active: audio_type == 'Hand'}">
+                               :class="{active: audio_type == 'Hand',
+                               disabled: lock_controls}"
+                               >
                         <input type="radio" 
                                name="audio"
                                id="audio_hand"
@@ -537,6 +599,7 @@ Vue.component('tower_controls', {
 
                  <div class="col">
                      <button class="set_at_hand btn btn-outline-primary btn-block"
+                           :class="{disabled: lock_controls}"
                            @click="set_bells_at_hand"
                            >
                          Set at hand
@@ -930,7 +993,8 @@ Vue.component('user_display', {
                 </h2>
                 <span class="float-right w-50">
                 <button class="btn btn-outline-primary w-100"
-                        :class="{active: assignment_mode}"
+                        :class="{active: assignment_mode,
+                                 disabled: $root.$refs.controls.lock_controls}"
                         @click="toggle_assignment"
                         >
                    [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
@@ -1132,6 +1196,7 @@ bell_circle = new Vue({
         hidden_help: true,
         keys_down: [],
         unread_messages: 0,
+        host_mode: window.tower_parameters.host_mode,
 	},
 
 	watch: {

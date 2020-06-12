@@ -222,6 +222,7 @@ class Tower:
         self._users = {}
         self._assignments = {i+1: '' for i in range(n)}
         self._observers = set()
+        self._host_mode = False
 
     def generate_random_change(self):
         # generate a random caters change, for use as uid
@@ -276,6 +277,15 @@ class Tower:
     @property
     def user_names(self):
         return list(self._users.values())
+
+    @property
+    def host_mode(self):
+        return self._host_mode
+
+    @host_mode.setter
+    def host_mode(self, new_mode):
+        self._host_mode = new_mode
+
 
     @property
     def assignments(self):

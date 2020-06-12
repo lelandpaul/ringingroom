@@ -332,6 +332,11 @@ input[type=range]::slider-thumb {
     background-color: white;
 }
 
+.disabled {
+    pointer-events: none;
+    cursor: auto;
+}
+
 /* Scary mixin land */
 
 /* On larger screens, permanently open the menu */
