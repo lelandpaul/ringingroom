@@ -257,6 +257,7 @@ Vue.component("bell_rope", {
 
       assign_user: function(){
           if (window.tower_parameters.anonymous_user){ return }; // don't ring if not logged in
+          if (this.assigned_user){ return }; // don't kick people off
           const selected_user = this.$root.$refs.users.selected_user;
           if (!this.assignment_mode){ return };
           console.log('assigning user: ' +  selected_user + ' to ' + this.number);
@@ -299,7 +300,8 @@ Vue.component("bell_rope", {
                             <button class="btn btn-sm btn_unassign"
                                    :class="[number == 1 ? 'treble' : '',
                                             number == 1 ? 'btn-primary' : 'btn-outline-secondary']"
-                                v-if="assignment_mode && assigned_user"
+                                v-if="assignment_mode && assigned_user &&
+                                !(assigned_user!==cur_user && $root.$refs.controls.lock_controls)"
                                 @click="unassign">
                                 <span class="unassign"><i class="fas fa-window-close"></i></span>
                             </button>
@@ -307,6 +309,7 @@ Vue.component("bell_rope", {
                             <button class="btn btn-small btn_assigned_user"
                                    :class="[number == 1 ? 'treble' : '',
                                             number == 1 ? 'btn-primary' : 'btn-outline-secondary',
+                                            assigned_user ? 'disabled' : '',
                                             assigned_user==cur_user ? 'cur_user' :'',
                                             assignment_mode ? '' : 'disabled']"
                                    @click="assign_user"
@@ -344,6 +347,7 @@ Vue.component("bell_rope", {
                                    :class="[number == 1 ? 'treble' : '',
                                             number == 1 ? 'btn-primary' : 'btn-outline-secondary',
                                             assigned_user==cur_user ? 'cur_user' :'',
+                                            assigned_user ? 'disabled' : '',
                                             assignment_mode ? '' : 'disabled']"
                                   @click="assign_user"
                                   v-if="assignment_mode || assigned_user"
@@ -358,7 +362,8 @@ Vue.component("bell_rope", {
                              <button class="btn btn-sm btn_unassign"
                                    :class="[number == 1 ? 'treble' : '',
                                             number == 1 ? 'btn-primary' : 'btn-outline-secondary']"
-                                    v-if="assignment_mode && assigned_user"
+                                    v-if="assignment_mode && assigned_user &&
+                                !(assigned_user!==cur_user && $root.$refs.controls.lock_controls)"
                                     @click="unassign">
                                  <span class="unassign"><i class="fas fa-window-close"></i></span>
                              </button>
@@ -965,6 +970,9 @@ Vue.component('user_display', {
 
         select_user: function(user){
             if (window.tower_parameters.anonymous_user){ return }; // don't do anything if not logged in
+            if (this.$root.$refs.controls.host_mode){
+                return
+            };
             this.selected_user = user;
         },
 
@@ -1006,8 +1014,7 @@ Vue.component('user_display', {
                 </h2>
                 <span class="float-right w-50">
                 <button class="btn btn-outline-primary w-100"
-                        :class="{active: assignment_mode,
-                                 disabled: $root.$refs.controls.lock_controls}"
+                        :class="{active: assignment_mode}"
                         @click="toggle_assignment"
                         >
                    [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
@@ -1044,11 +1051,15 @@ Vue.component('user_display', {
                      >
                      <span class="user_list_cur_user_name mr-auto">[[ cur_user ]]</span>
                  </li>
+                 <li v-if="$root.$refs.controls.lock_controls"
+                     class="list-group-item">
+                     <small class="text-muted">In host mode, you may catch hold, but not assign others.</small>
+                 </li>
                 <li v-for="user in user_names"
                     class="list-group-item list-group-item-action"
                     v-if="user != cur_user"
                      :class="{cur_user: user == cur_user,
-                              disabled: !assignment_mode,
+                              disabled: !assignment_mode || $root.$refs.controls.lock_controls,
                               assignment_active: assignment_mode,
                               active: user == selected_user && assignment_mode}"
                      @click="select_user(user)"
