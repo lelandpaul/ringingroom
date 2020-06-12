@@ -210,12 +210,6 @@ def on_bell_rung(event_dict):
     tower_id = event_dict["tower_id"]
     cur_tower = towers[tower_id]
 
-    if cur_tower.host_mode and not current_user.username == cur_tower.assignments[int(cur_bell)]:
-        # The user is not assigned to this bell and host-mode is enabled: they can't ring it.
-        log('s_bad_ring')
-        emit('s_bad_ring')
-        return
-
     bell_state = cur_tower.bell_state
     if bell_state[cur_bell - 1] is event_dict["stroke"]:
         bell_state[cur_bell - 1] = not bell_state[cur_bell - 1]
@@ -234,10 +228,6 @@ def on_bell_rung(event_dict):
 def on_call(call_dict):
     tower_id = call_dict['tower_id']
     tower = towers[tower_id]
-    if tower.host_mode and not current_user.check_permissions(tower_id,'host'):
-        log('c_call by non-host',call_dict)
-        emit('s_bad_call')
-        return
     log('c_call', call_dict)
     tower_id = call_dict['tower_id']
     emit('s_call', call_dict, broadcast=True,
