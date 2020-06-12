@@ -151,20 +151,6 @@ socketio.on('s_host_mode', function(msg,cb){
     bell_circle.$refs.controls.host_mode = msg.new_mode;
 });
 
-// The user tried to make a call in host-mode, but isn't a host
-socketio.on('s_bad_call', function(){
-    console.log('bad call')
-    bell_circle.$refs.display.display_message('Only hosts may make calls.');
-});
-
-// The user tried to make a call in host-mode, but isn't a host
-socketio.on('s_bad_ring', function(){
-    bell_circle.$refs.display.display_message('You may only ring your assigned bells.');
-});
-
-
-
-
 /////////
 /* VUE */
 /////////
@@ -242,6 +228,11 @@ Vue.component("bell_rope", {
 	  emit_ringing_event: function() {
         if (window.tower_parameters.anonymous_user){ return }; // don't ring if not logged in
         if (this.assignment_mode){ return }; // disable while assigning
+        if (this.$root.$refs.controls.host_mode && this.assigned_user !== cur_user_name){
+            // user is not allowed to ring this bell
+            bell_circle.$refs.display.display_message('You may only ring your assigned bells.');
+            return
+        }
 		socketio.emit('c_bell_rung',
 				{bell: this.number, stroke: this.stroke, tower_id: cur_tower_id});
 		var report = "Bell " + this.number + " will ring a " + (this.stroke ? "handstroke":"backstroke");
@@ -1281,6 +1272,11 @@ bell_circle = new Vue({
 
       // emit a call
 	  make_call: function(call){
+        if (this.$root.$refs.controls.host_mode && !window.tower_parameters.host_permissions){
+            // user is not allowed to make calls
+            this.$root.$refs.display.display_message('Only hosts may make calls.');
+            return
+        };
         if (this.call_throttled){ return };
         socketio.emit('c_call',{call: call,tower_id: cur_tower_id});
         this.call_throttled = true;
