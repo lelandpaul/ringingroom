@@ -274,6 +274,16 @@ def on_set_bells(json):
     emit('s_global_state', {'global_bell_state': tower.bell_state},
          broadcast = True, include_self=True, room=tower_id)
 
+# Toggle host mode
+@socketio.on('c_host_mode')
+def on_host_mode(json):
+    log('c_host_mode')
+    tower_id = json['tower_id']
+    tower = towers[tower_id]
+    tower.host_mode = json['new_mode']
+    emit('s_host_mode', json,
+         broadcast=True, include_self=False, room=tower_id)
+
 # A chat message was received
 @socketio.on('c_msg_sent')
 def on_msg(json):
@@ -304,6 +314,7 @@ def on_remove_recent(tower_id):
     log('c_remove_recent',current_user,tower_id)
     tower = towers[tower_id]
     current_user.remove_recent_tower(tower)
+
 
     
 

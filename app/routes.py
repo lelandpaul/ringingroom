@@ -81,6 +81,8 @@ def tower(tower_id, decorator=None):
                             user_email = '' if current_user.is_anonymous else current_user.email,
                             server_ip=get_server_ip(tower_id),
                             user_token = user_token,
+                            host_permissions = current_user.check_permissions(tower_id,'host')\
+                                                if current_user.is_authenticated else False,
                             listen_link = False)
 
 
