@@ -151,6 +151,16 @@ socketio.on('s_host_mode', function(msg,cb){
     bell_circle.$refs.controls.host_mode = msg.new_mode;
 });
 
+// The user tried to make a call in host-mode, but isn't a host
+socketio.on('s_bad_call', function(){
+    console.log('bad call')
+    bell_circle.$refs.display.display_message('Only hosts may make calls.');
+});
+
+// The user tried to make a call in host-mode, but isn't a host
+socketio.on('s_bad_ring', function(){
+    bell_circle.$refs.display.display_message('You may only ring your assigned bells.');
+});
 
 
 
@@ -392,6 +402,18 @@ Vue.component('call_display', {
     },
 
 	methods: {
+
+        // Used to display temporary messages to users (typically when they do something they're
+        // not permitted to do in host-mode).
+        display_message: function(message){
+            console.log('display message: ', message);
+			this.cur_call = message;
+			var self = this;
+            // remove the call after 2 seconds
+			setTimeout(function() { self.cur_call = ''; 
+						console.log('changing cur_call back');}, 3000);
+
+        },
 
         // a call was received from the server; display it and play audio
 		make_call: function(call){
