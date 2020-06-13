@@ -7,7 +7,21 @@
 <form action="" method="post" novalidate>
     {{form.hidden_tag()}}
 
-<h1>Tower settings: {{ tower.name }}</h1>
+<div class="row">
+    <div class="col">
+        <h1 style="display:inline">Tower settings: {{ tower.name }}</h1>
+        {{delete_form.delete(class="btn btn-outline-primary float-right mt-2",
+                             onclick="return confirm('Are you sure you want to delete this tower?');",
+                             style="height:max-content;")}}
+    </div>
+</div>
+
+
+<form action="" method="post" novalidate>
+    {{delete_form.hidden_tag()}}
+
+
+</form>
 
 <small class="form-text text-muted">
 
@@ -31,33 +45,53 @@
 
 
 
-<small class="form-text text-muted">
-    To change the tower name, enter the name and then press 'Save Changes'.
-   </small>
+<div class="form-row mt-2 justify-content-between">
 
-<div class="form-row mt-2">
-
-    <div class="form-group col-6">
+    <div class="form-group col-8">
         {{ form.tower_name.label }}
-        {{ form.tower_name(size=32, class="form-control")}}
+        <div class="input-group">
+            {{ form.tower_name(size=32, class="form-control")}}
+            <div class="input-group-append">
+                {{ form.submit(class="btn btn-outline-primary",value="Change")}}
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group col">
+    <div class="float-right">
+    <label for="tower_id">Tower ID</label>
+    <div class="tower_id input-group">
+    <div class="input-group-prepend">
+        <span class="input-group-text" name="tower_id">{{tower.tower_id}}</span>
+    </div>
+    <div class="input-group-append">
+        <button class="btn btn-outline-primary"
+           data-toggle="tooltip"
+           data-placement="bottom"
+           data-container="body"
+           data-trigger="click"
+           id="id_clipboard_tooltip"
+           onclick="
+              setTimeout(() => {$('#id_clipboard_tooltip').tooltip('hide')},1000);
+                  var dummy = document.createElement("textarea");
+                  document.body.appendChild(dummy);
+                  dummy.value = cur_tower_id;
+                  dummy.select();
+                  document.execCommand("copy");
+                  document.body.removeChild(dummy);
+              }
+              "
+           title="Copied to clipboard">
+               <i class="far fa-clipboard fa-fw"></i>
+        </button>
+    </div>
+    </div>
+    </div>
     </div>
 
 </div>
 
-
-<div class="form-group">
-    {{ form.submit(class="btn btn-outline-primary") }}
-</div>
-</form>
-
-<form action="" method="post" novalidate>
-    {{delete_form.hidden_tag()}}
-
-<div class="form-group">
-    {{delete_form.delete(class="btn btn-primary",onclick="return confirm('Are you sure you want to delete this tower?');")}}
-</div>
-
-</form>
 
 {% else %}
 
