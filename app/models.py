@@ -171,6 +171,13 @@ class TowerDB(db.Model):
                 UserTowerRelation.query.filter(UserTowerRelation.tower==self,
                                                UserTowerRelation.host==True).all()]
 
+    @property
+    def host_ids(self):
+        return [rel.user.id for rel in \
+                UserTowerRelation.query.filter(UserTowerRelation.tower==self,
+                                               UserTowerRelation.host==True).all()]
+
+
 
 
 
@@ -223,6 +230,7 @@ class Tower:
         self._assignments = {i+1: '' for i in range(n)}
         self._observers = set()
         self._host_mode = False
+        self._host_ids = self.to_TowerDB().host_ids
 
     def generate_random_change(self):
         # generate a random caters change, for use as uid
@@ -345,6 +353,12 @@ class Tower:
         except KeyError:
             log("Tried to remove an observer that didn't exist.")
             pass
+
+    def host_present(self):
+        for id in self._users.keys():
+            if id in self._host_ids:
+                return True
+        return False
 
 class TowerDict(dict):
 
