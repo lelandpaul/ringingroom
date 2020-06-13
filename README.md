@@ -5,32 +5,29 @@ A space where socially-distanced ringers can practice together.
 ## Build instructions
 
 Get the CSS set up with sass:
-
-- Install dart-sass (e.g. `brew install sass/sass/sass`); https://github.com/sass/dart-sass/releases
-- (Optional) Create & activate a [virtual environment](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/);
-- Install python dependencies `pip install -r requirements.txt`
-- In the project root, run `sass app/static/sass/:app/static/css/`. This will compile the sass to css.
-
-Get the DB set up with flask:
-
-- In the project root, run `flask db upgrade`
-
-You are now ready to run the server
-
-- In the project root, run `flask run`
-- This will give you a local address where you can access the app 
+ - Install dart-sass (e.g. `brew install sass/sass/sass`); https://github.com/sass/dart-sass/releases
+ - (Optional) Create & activate a [virtual environment](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/);
+ - Install python dependencies `pip install -r requirements.txt`
+ - In the project root, run `sass app/static/sass/:app/static/css/`. This will compile the sass to css.
+ 
+Get the DB set up with Flask:
+ - In the project root, run `flask db upgrade`
+ 
+You are now ready to run the server:
+ - In the project root, run `flask run`
+ - This will give you a local address where you can access the app 
 
 ## Filestructure
 
 ```text
 .
 ├── README.md                           => this file
-├── .flaskev                            => defines an environment variable
+├── .flaskenv                           => defines environment variables
 ├── requirements.txt                    => requirements for virtual environment
 ├── setup_helper.py                     => script for deployment tasks
-├── ringingroom.py                      => launches serverside app
+├── ringingroom.py                      => launches server-side app
 ├── config.py                           => flask configuration
-├── migrations/                         => database migrations (maintined by `flask db`)
+├── migrations/                         => database migrations (maintained by `flask db`)
 └── app                                 => all of the actual application
     ├── __init__.py                     => sets up flask app
     ├── listeners.py                    => socketio listeners
@@ -69,9 +66,9 @@ You are now ready to run the server
 Communication between client & server is handled by Socket.IO events.
 
 Events are prefixed by *origin*:
+- "c_" for client
+- "s_" for server
 
-- "c-" for client
-- "s-" for server
 
 Currently, the following events are defined:
 
@@ -86,9 +83,9 @@ Currently, the following events are defined:
 - **s_redirection, Str ("tower_id/tower_name")**:
   send the user to a specific tower
 - **c_create_tower, {tower_name: Str}**:
-  user ended a tower name; create it
+  user entered a tower name; create it
 - **c_join, {tower_id: Int}**:
-  emited when the ringing_room page loads
+  emitted when the ringing_room page loads
 - **c_size_change, {size: Int, tower_id: Int}**,
   **s_size_change, {size: Int}**:
   change the number of bells in a tower
