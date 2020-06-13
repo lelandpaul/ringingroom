@@ -87,7 +87,7 @@ class ResetPasswordForm(FlaskForm):
 
 class TowerSettingsForm(FlaskForm):
     tower_name = StringField('Change name',validators=[])
-    add_host = StringField('Add host', validators=[Optional(),Email()])
+    add_host = StringField('Add host by email', validators=[Optional(),Email()])
     remove_host = StringField('Remove host', validators=[Optional(),Email()])
     submit = SubmitField('Save Changes')
 
