@@ -133,6 +133,8 @@ socketio.on('s_audio_change',function(msg,cb){
   console.log('changing audio to: ' + msg.new_audio);
   bell_circle.$refs.controls.audio_type = msg.new_audio;
   bell_circle.audio = msg.new_audio == 'Tower' ? tower : hand;
+  // Make sure the volume is set consistently
+  bell_circle.audio._volume = window.user_parameters.bell_volume * 0.1;
 });
 
 // A chat message was received
