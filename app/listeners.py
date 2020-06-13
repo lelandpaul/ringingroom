@@ -115,6 +115,12 @@ def on_join(json):
         emit('s_user_entered', { 'user_name': user.username },
              broadcast=True, include_self = True, room=json['tower_id'])
 
+    # Check if there are any hosts in the room, and if not, make sure that
+    # the tower is not in host mode.
+    if not tower.host_present():
+        emit('s_host_mode',{'tower_id': tower_id,
+                            'new_mode': False},
+             broadcast=True, include_self=True, room=tower_id)
 
 
     # Store the tower in case of accidental disconnect
@@ -160,7 +166,16 @@ def on_user_left(json):
 
     tower.remove_user(user_id)
     emit('s_user_left', { 'user_name': user.username },
-         broadcast=True, include_self = True, room=tower_id)
+         broadcast=True, include_self=True, room=tower_id)
+
+    print('CHECKING FOR HOSTS')
+    # Now that the user is gone, check if there are any hosts left. If not, make sure
+    # the tower is not in host mode.
+    if not tower.host_present():
+        print('HOSTS PRESENT')
+        emit('s_host_mode',{'tower_id': tower_id,
+                            'new_mode': False},
+             broadcast=True, include_self=True, room=tower_id)
 
 # # A user disconnected (via timeout)
 # @socketio.on('disconnect')
