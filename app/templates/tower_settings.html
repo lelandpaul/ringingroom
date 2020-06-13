@@ -4,8 +4,10 @@
 
 {% block app_content %}
 
-<form action="" method="post" id='tower_settings_form' novalidate>
-    {{form.hidden_tag()}}
+<form action="" method="post" novalidate>
+    {{delete_form.hidden_tag()}}
+
+
 
 <div class="row">
     <div class="col">
@@ -17,16 +19,7 @@
 </div>
 
 
-<form action="" method="post" novalidate>
-    {{delete_form.hidden_tag()}}
-
-
 </form>
-
-    {%for error in form.errors%}
-    {{error}}
-    {%endfor %}
-
 
 <small class="form-text text-muted">
 
@@ -40,11 +33,15 @@
     {% endif %}
     {% endwith %}
 
+
+
 </small>
 
 <hr class="mb-5">
 
 
+<form action="" method="post" id='tower_settings_form' novalidate>
+    {{form.hidden_tag()}}
 
 {% if current_user.check_permissions(tower.tower_id,permission='creator') %}
 
@@ -61,63 +58,6 @@
             </div>
         </div>
     </div>
-
-</div>
-
-
-<div class="form-group">
-    {{ form.submit(class="btn btn-outline-primary",id="submit_tower_settings") }}
-</div>
-
-
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <th scope="col">Email</th>
-            <th scope="col">Username</th>
-            <th scope="col"></th>
-        </tr>
-    </thead>
-    <tbody >
-    {% for user in tower.hosts %}
-    <tr>
-        <td>{{user.email}}</td>
-        <td>{{user.username}}</td>
-        <td>
-            {% if tower.creator.email != user.email %}
-            <button type="button" 
-                    class="close" 
-                    aria-label="Close"
-                    onclick="$('#remove_host_input').val('{{user.email}}'); 
-                             $('#submit_tower_settings').click();"
-                    >
-              <span aria-hidden="true">&times;</span>
-            </button>
-            {% else %}
-            <small class="text-muted float-right">(creator)</small>
-            {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
-
-<div class="form-row mt-2">
-    <div class="form-group">
-        {{form.add_host.label}}
-        <div class="input-group">
-            {{form.add_host(class="form-control")}}
-            <div class="input-group-append">
-                {{form.submit(class="btn btn-outline-primary",value="Add")}}
-            </div>
-        </div>
-    </div>
-</div>
-
-{{form.remove_host(id='remove_host_input',class="d-none")}}
-
-</form>
-
     <div class="form-group col">
     <div class="float-right">
     <label for="tower_id">Tower ID</label>
@@ -151,6 +91,85 @@
     </div>
 
 </div>
+
+<hr class="mt-4">
+
+<div class="form-row mt-4">
+<div class="col-6 pr-2">
+    <div class="row">
+        <div class="col pt-1">
+            <h4>Tower Hosts:</h4>
+<table class="table table-hover border-bottom">
+    <thead>
+        <tr>
+            <th scope="col">Email</th>
+            <th scope="col">Username</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody >
+    {% for user in tower.hosts %}
+    <tr>
+        <td>{{user.email}}</td>
+        <td>{{user.username}}</td>
+        <td>
+            {% if tower.creator.email != user.email %}
+            <button type="button" 
+                    class="close" 
+                    aria-label="Close"
+                    onclick="$('#remove_host_input').val('{{user.email}}'); 
+                             $('#submit_tower_settings').click();"
+                    >
+              <span aria-hidden="true">&times;</span>
+            </button>
+            {% else %}
+            <small class="text-muted float-right">(creator)</small>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+    </div>
+    <div class="row">
+<div class="col mt-2 px-3">
+    <div class="form-group px-5">
+        {{form.add_host.label}}
+        <div class="input-group">
+            {{form.add_host(class="form-control")}}
+            <div class="input-group-append">
+                {{form.submit(class="btn btn-outline-primary",value="Add")}}
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+<div class="col-6">
+    <small class="form-text pl-3 pr-0 mt-2" style="text-align:justify;">
+        <p>
+        Hosts are users with special privileges at the tower. If a host is present, they may choose to enable "Host Mode", in which:
+        </p>
+
+        <ul style="padding-left:0; margin-left:1.25rem;">
+            <li>Only hosts may change the number of bells, or switch from handbell to towerbell mode</li>
+            <li> Only hosts may make calls (by using keyboard hotkeys).</li>
+            <li> All ringers may only ring the bells they are assigned to.</li>
+            <li>Only hosts may assign other ringers to bells.</li>
+            <li>Non-host ringers may assign themselves to open bells only.</li>
+        </ul>
+
+        Host Mode will automatically be disabled if there are no hosts in the tower. The creator of the tower may always enable host mode.
+    </small>
+</div>
+
+
+</div>
+
+{{form.remove_host(id='remove_host_input',class="d-none")}}
+
+</form>
 
 
 {% else %}
