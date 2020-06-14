@@ -4,8 +4,6 @@
 
 {% block app_content %}
 
-<form action="" method="post" novalidate>
-    {{form.hidden_tag()}}
 
 <div class="row">
     <div class="col">
@@ -22,6 +20,10 @@
 
 
 </form>
+
+<form action="" method="post" novalidate>
+    {{form.hidden_tag()}}
+
 
 <small class="form-text text-muted">
 
@@ -42,7 +44,6 @@
 
 
 {% if current_user.check_permissions(tower.tower_id) %}
-
 
 
 <div class="form-row mt-2 justify-content-between">
