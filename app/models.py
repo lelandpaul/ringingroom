@@ -206,7 +206,7 @@ class UserTowerRelation(db.Model):
         # return the relation types as a dictionary
         return {'recent': self.recent,
                 'creator': self.creator,
-                'bookmark': self.bookmark}
+                'bookmark': self.bookmark,
                 'host': self.host}
 
     def clean_up(self):

@@ -238,7 +238,7 @@ my_towers = new Vue({
      id="host"
      role="tabpanel"
      aria-labelledby="host_tab">
-    <p class="my-3"><small>Towers at which you are a host. You are always a host at towers you've created.</small></p>
+    <p class="my-3"><small>Towers at which you are a host. You are always a host at towers you've created.<br>Only tower creators may access tower settings. Creators may add hosts from the tower settings page.</small></p>
     <table class="table table-hover">
         <thead>
             <tr>
@@ -254,7 +254,7 @@ my_towers = new Vue({
                        v-if="tower.host"
                        v-bind:tower="tower"
                        v-bind:tab="'host'"></tower_row>
-            <tr v-if="no_recent===0"><td colspan="3">You aren't a host at any towers.</td></tr>
+            <tr v-if="no_host===0"><td colspan="3">You aren't a host at any towers.</td></tr>
         </tbody>
     </table>
 </div>
