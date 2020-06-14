@@ -202,20 +202,17 @@ def tower_settings(tower_id):
         if form.add_host.data:
             new_host = User.query.filter_by(email=form.add_host.data).first()
             if new_host.check_permissions(tower_id, permission='host'):
-                flash('User is already a host.')
+                form.add_host.errors.append('User is already a host.')
             new_host.make_host(tower)
+            form.add_host.data = ''
         if form.remove_host.data:
             host = User.query.filter_by(email=form.remove_host.data).first()
             if host == tower_db.creator:
-                flash('Cannot remove tower creator from host list.')
+                form.add_host.errors.append('Cannot remove tower creator from host list.')
             else:
                 host.remove_host(tower)
+            form.remove_host.data =''
         db.session.commit()
-        return render_template('tower_settings.html',
-                               form=form,
-                               delete_form=delete_form,
-                               tower=tower_db)
-        form = TowerSettingsForm()
     elif delete_form.delete.data and delete_form.validate_on_submit():
         rels = UserTowerRelation.query.filter_by(tower=tower_db)
         for rel in rels: db.session.delete(rel)

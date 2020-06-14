@@ -117,8 +117,9 @@
             <button type="button" 
                     class="close" 
                     aria-label="Close"
-                    onclick="$('#remove_host_input').val('{{user.email}}'); 
-                             $('#submit_tower_settings').click();"
+                    onclick="$('#add_host').val('');
+                             $('#remove_host_input').val('{{user.email}}'); 
+                             $('#submit').click();"
                     >
               <span aria-hidden="true">&times;</span>
             </button>
@@ -139,9 +140,15 @@
         <div class="input-group">
             {{form.add_host(class="form-control")}}
             <div class="input-group-append">
-                {{form.submit(class="btn btn-outline-primary",value="Add")}}
+                {{form.submit(class="btn btn-outline-primary",
+                              value="Add")}}
             </div>
         </div>
+        <small class="form-text text-muted">
+            {% for error in form.add_host.errors %}
+                <span style="color: red;">{{ error }}<br></span>
+            {% endfor %}
+        </small>
     </div>
 </div>
 </div>
