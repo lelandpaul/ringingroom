@@ -197,7 +197,7 @@ my_towers = new Vue({
      role="tabpanel"
      aria-labelledby="created_tab">
 
-    <p class="my-3"><small>Towers you have created. You can edit or delete these towers by pressing the Settings button. (Only you can edit or delete towers you've created.)</small></p>
+    <p class="my-3"><small>Towers you have created. You can edit or delete these towers by pressing the Settings button.<br>Only you can edit or delete towers you've created.</small></p>
 
     <table class="table table-hover">
         <thead>
@@ -224,7 +224,7 @@ my_towers = new Vue({
      id="recent"
      role="tabpanel"
      aria-labelledby="recent_tab">
-    <p class="my-3"><small>Towers you have recently visited. Click the "Remove from Recents" button to delete them from the list.</small></p>
+    <p class="my-3"><small>Towers you have recently visited. Click the "Remove from Recents" button to delete them from the list.<br>Only tower creators may access tower settings.</small></p>
     <table class="table table-hover">
         <thead>
             <tr>
@@ -250,7 +250,7 @@ my_towers = new Vue({
      id="bookmark"
      role="tabpanel"
      aria-labelledby="bookmark_tab">
-    <p class="my-3"><small>Towers you have bookmarked. Click the icon to the left of the tower name to remove the bookmark.</small></p>
+    <p class="my-3"><small>Towers you have bookmarked. Click the icon to the left of the tower name to remove the bookmark.<br>Only tower creators may access tower settings.</small></p>
     <table class="table table-hover">
         <thead>
             <tr>
