@@ -42,9 +42,9 @@ Vue.component("tower_row",{
     props:['tower','tab'],
 
     methods: {
-        toggle_favorite: function(){
-            socketio.emit('c_toggle_favorite',this.tower.tower_id);
-            this.tower.favorite = !this.tower.favorite;
+        toggle_bookmark: function(){
+            socketio.emit('c_toggle_bookmark',this.tower.tower_id);
+            this.tower.bookmark = !this.tower.bookmark;
         }, 
 
         copy_id: function() {
@@ -67,9 +67,9 @@ Vue.component("tower_row",{
     `
     <tr>
         <td class="align-baseline">
-            <span @click="toggle_favorite" style="cursor: pointer;">
-                <i class="fa-star"
-                   :class="[tower.favorite ? 'fas':'far']">
+            <span @click="toggle_bookmark" style="cursor: pointer;">
+                <i class="fa-bookmark"
+                   :class="[tower.bookmark ? 'fas':'far']">
                 </i>
             </span>
         </td>
@@ -133,8 +133,8 @@ my_towers = new Vue({
             return this.towers.reduce((acc, cur) => cur.creator ? ++acc : acc, 0);
         },
 
-        no_favorite: function(){
-            return this.towers.reduce((acc, cur) => cur.favorite ? ++acc : acc, 0);
+        no_bookmark: function(){
+            return this.towers.reduce((acc, cur) => cur.bookmark ? ++acc : acc, 0);
         }
 
     },
@@ -179,13 +179,13 @@ my_towers = new Vue({
     </li>
     <li class="nav-item" role="presentation">
         <a class="nav-link" 
-           id="favorite_tab" 
+           id="bookmark_tab" 
            data-toggle="tab" 
-           href="#favorite" 
+           href="#bookmark" 
            role="tab"
            aria-controls="recent"
            aria-selected="true">
-            Favorites
+            Bookmarks
         </a>
     </li>
 </ul>
@@ -247,10 +247,10 @@ my_towers = new Vue({
 
 
 <div class="tab-pane fade" 
-     id="favorite"
+     id="bookmark"
      role="tabpanel"
-     aria-labelledby="favorite_tab">
-    <p class="my-3"><small>Towers you have marked as favorites. Click the star to unfavorite them.</small></p>
+     aria-labelledby="bookmark_tab">
+    <p class="my-3"><small>Towers you have bookmarked. Click the icon to the left of the tower name to remove the bookmark.</small></p>
     <table class="table table-hover">
         <thead>
             <tr>
@@ -262,10 +262,10 @@ my_towers = new Vue({
         </thead>
         <tbody>
             <tower_row v-for="tower in tower_rels"
-                       v-if="tower.favorite"
+                       v-if="tower.bookmark"
                        v-bind:tower="tower"
-                       v-bind:tab="'favorite'"></tower_row>
-            <tr v-if="no_favorite===0"><td colspan="3">You haven't favorited any towers.</td></tr>
+                       v-bind:tab="'bookmark'"></tower_row>
+            <tr v-if="no_bookmark===0"><td colspan="3">You haven't bookmarked any towers.</td></tr>
         </tbody>
     </table>
 </div>

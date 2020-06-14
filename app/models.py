@@ -81,9 +81,9 @@ class User(UserMixin, db.Model):
         db.session.commit()
 
 
-    def toggle_favorite_tower(self, tower):
+    def toggle_bookmark(self, tower):
         rel = self._get_relation_to_tower(tower)
-        rel.favorite = not rel.favorite
+        rel.bookmark = not rel.bookmark
         db.session.commit()
 
    
@@ -96,14 +96,14 @@ class User(UserMixin, db.Model):
                 in sorted(self.towers, key=lambda r: r.visited, reverse=True)
                 if rel.recent][:n]
 
-    def favorite_towers(self,n=0):
+    def bookmarked_towers(self,n=0):
         # Allows you to limit to n items; returns all by default
         # This returns a list of TowerDB objects — if we want to convert them to memory, that should
         # happen by looking them up in the TowerDict instance
         n = n or len(self.towers)
         return [rel.tower for rel \
                 in self.towers \
-                if rel.favorite][:n]
+                if rel.bookmark][:n]
 
     @property
     def tower_properties(self):
@@ -167,7 +167,7 @@ class UserTowerRelation(db.Model):
     # Boolean columns for relationship types; also
     recent = db.Column('recent',db.Boolean, default=False)
     creator = db.Column('creator',db.Boolean,default=False)
-    favorite = db.Column('favorite',db.Boolean,default=False)
+    bookmark = db.Column('bookmark',db.Boolean,default=False)
 
     def __repr__(self):
         return '<Relationship: {} --- {} {}>'.format(self.user.username,
@@ -179,7 +179,7 @@ class UserTowerRelation(db.Model):
         # return the relation types as a dictionary
         return {'recent': self.recent,
                 'creator': self.creator,
-                'favorite': self.favorite}
+                'bookmark': self.bookmark}
 
     def clean_up(self):
         # Call this whenever you change a boolean column from True to False
