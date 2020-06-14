@@ -82,7 +82,7 @@
 /* Stuff for the BBC alert */
 
 #toast_column {
-    position: fixed;
+    position: relative;
     top: 7rem;
     left: 50%;
     transform: translate(-50%);
@@ -108,7 +108,6 @@
 
 }
 
-
 .toast .toast-header {
     background-color: $primary;
     color: $body-bg;
@@ -116,6 +115,7 @@
 
 @include media-breakpoint-up(lg) {
     #toast_column {
+        position: fixed;
         left:unset;
         transform: unset;
         right: 5rem;

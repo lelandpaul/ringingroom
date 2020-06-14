@@ -2,13 +2,6 @@
 
 {% block app_content %}
 
-<div id="toast_column">
-    {% for toast in toasts %}
-
-    {{ toast | safe }}
-
-    {% endfor %}
-</div>
 
 
 <img class="grid_circle" src="{{url_for('static', filename='images/dncb.png')}}"/>
@@ -22,6 +15,13 @@
 <div id='tower_selector'></div>
 </div>
 
+<div id="toast_column" class="d-flex justify-content-center justify-content-lg-end justify-content-xl-start">
+    {% for toast in toasts %}
+
+    {{ toast | safe }}
+
+    {% endfor %}
+</div>
 
 {% for modal in modals %}
     {{ modal | safe }}
