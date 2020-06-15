@@ -8,7 +8,7 @@
 
 <p>To use the Ringing Room, you will need an account. You can create an account by clicking the "Log In / Register" button at the top right of your screen.</p>
 
-<p>Once you've created an account, you'll be able to ring in any tower. Additionally, when not in a tower, the menu at the top right will include shortcuts to your 5 most recently visited towers. You can also modify your username, email address, or password by going to the Settings page, entering the information you want to change along with your current password, and pressing "Save Changes". From this page you can also permanently delete your account.</p>
+<p>Once you've created an account, you'll be able to ring in any tower. Additionally, the "Log In/ Register" button will be replaced with the user menu. This menu includes links to your bookmarked or recently visited towers, the "My Towers" page, and the Settings page. From the Settings page, you can change your username, email address, or password by entering the information you want to change along with your current password and then pressing "Save Changes". You can also permanently delete your account.</p>
 
 <p>Your email address and an encrypted version of your password are stored securely on our server. We will not share them with anyone for any reason. If you ever forget your password, you can use the password reset link on the log-in page, which will send an email to your address on file with a link to reset your password. Note that this link is only good for 1 hour after being sent. Make sure to check your spam filter for the email if it doesn't arrive promptly.</p>
             
@@ -20,6 +20,29 @@
 
 <p>There are currently two ways to join a tower that already exists. The easiest way is to go directly to the link that the room's creator has sent you. Alternatively you may type in <i>just</i> the numerical ID (a nine-digit number) into the text box on the homepage and then click "Join".</p>
 
+<h3>Managing your towers</h3>
+
+<p>The My Towers page, available from the user menu in the top right, allows you to see and manage all your towers. There are four tabs available:</p>
+
+<ul>
+    <li><b>Created</b> shows a list of all towers that you have created.</li>
+    <li><b>Host</b> shows a list of towers at which you are a host (see below).</li>
+    <li><b>Recent</b> shows a reverse-chronological list of towers that you have visited.</li>
+    <li><b>Bookmarks</b> shows a list of all towers that you have specifically bookmarked.</li>
+</ul>
+
+<p>From any of these tabs, you may:</p>
+
+<ul>
+    <li>Click the Bookmark icon (<i class="far fa-bookmark"></i>) to add or remove the tower from your list of bookmarks. Your bookmarked towers will show up in the user menu as well as on the Bookmarks tab of the My Towers page, allowing you to access them quickly.</li>
+    <li>Click the tower name to go to that tower.</li>
+    <li>Click the copy icon (<i class="far fa-clipboard"></i>) to copy the tower ID number.</li>
+    <li><i>If you are the tower's creator:</i> Click the Settings button to access the Tower Settings page, where you can change the tower name, add or remove hosts, or permanently delete the tower.</li>
+    <li><i>On the Recent tab only:</i> Click the Remove from Recent button to remove the tower from the list of recently-visited towers.</li>
+</ul>
+
+<p>Only tower creators have access to the Settings page for that tower. The Delete Tower button allows you to permanently delete the tower; all ringers will lose access to that tower, not just you. The Change Name field allows you to modify the tower name. Finally, the Tower Hosts list shows all of the hosts at that tower, and allows you to enter the email address of a Ringing Room user to add them as a host. For more about tower hosts, see below.</p>
+    
 <h3>Setting up and ringing in a tower</h3>
 
 <p>Once you're in a tower, you can click on the ropes or handbells to ring them. Alternatively, the following hot-keys are enabled:</p>
@@ -33,9 +56,7 @@
         in the lower right corner so it may be rung by [SPACE] or [j].</li>
 </ul>
 
-<p>The tower controls will either be in the left-hand sidebar (on larger screens), or accessible by pressing the "Controls" button in the top right (on smaller screens). The controls allow you to set the number of bells in the tower (four to twelve); control whether the images and sounds are of handbells or of tower bells and ropes; and set all of the bells at hand.</p>
-   
-<!--    There is also a volume control, which sets the volume of the bells (and calls) for you only, not for the other ringers in the tower; this can be useful for making sure that the bells are the right volume in relation to a voice-chat call, for example.</p>-->
+<p>The tower controls will either be in the left-hand sidebar (on larger screens), or accessible by pressing the "Controls" button in the top right (on smaller screens). The controls allow you to set the number of bells in the tower (four to twelve); control whether the images and sounds are of handbells or of tower bells and ropes; and set all of the bells at hand. There is also a volume control, which sets the volume of the bells (and calls) for you only, not for the other ringers in the tower; this can be useful for making sure that the bells are the right volume in relation to a voice-chat call, for example.</p>
 
 <p>The tower controls also include a list of users presently in the tower, which you can use to <i>assign bells</i> to particular ringers. To assign ringers, press the "Assign Bells" button to enter bell assignment mode. While in this mode, you may select any ringer from the user list by clicking on them, and then click on the box next to the bell you want to assign them to. Clicking the "x" by a user's name will unassign them from that bell. While in assignment mode, you can't ring any bells; when you're done assigning bells, click the "Stop Assigning" button to return to normal mode.</p>
 
@@ -44,6 +65,22 @@
 <p>The user display will always list your own username first (or present you with the option to log in). If there is anyone in the room who is not logged in (or who is there via the "listener link" — see below), the number of such users will be listed at the bottom of the user display.</p>
 
 <p>If you're logged in and not a listener, you will also see a chat box in the control panel; you can use this for communicating with the other ringers by text. In the Chat box is a "Leave Tower" button that will remove you from the tower and send you back to the homepage. Please be sure to read our <a href="{{url_for('code_of_conduct')}}">Code of Conduct</a> and abide by it in the chat; there is a link to report any violations of that to us below the chat box. You will only receive messages sent to the tower while you are in the tower. Messages are not saved when you exit the tower.</p>
+
+<h3>Hosts and Host Mode</h3>
+
+<p>A <i>tower host</i> is someone who has special privileges at a Ringing Room virtual tower. You can think of this as being like a tower captain or a ringing master: A host is someone who might take charge of a practice. A tower can have multiple hosts who can share responsibility for running practices. You can add hosts to towers that you have created by going to the My Towers page, finding the tower you want, clicking the Settings button, and entering the email address of the Ringing Room account you want to add as a host in the box at the bottom left. You can remove hosts from a tower by clicking the "X" icon in the list of tower hosts. The creator of a tower is always a host there.</p>
+
+<p>Hosts at a tower have an extra switch in the tower controls on the left-hand side, allowing them to enable or disable Host Mode. When a tower is in Host Mode, various restrictions are imposed:</p>
+
+<ul>
+    <li>Non-hosts may not change the number of bells or switch between handbell and towerbell mode.</li>
+    <li>Non-hosts may not make calls using the in-app hotkeys.</li>
+    <li>All ringers may only ring bells that they are assigned to.</li>
+    <li>Only hosts may assign other ringers to bells.</li>
+    <li>Non-hosts may assign themselves to open bells only — that is, they can "catch hold" of unused bells, but not displace other ringers.</li>
+</ul>
+
+<p>Host mode can be activated or deactivated by any hosts currently in the tower. If there are no hosts present, host mode will automatically be disabled so that ringing can proceed normally.</p>
 
 <h3>Making calls</h3>
 
