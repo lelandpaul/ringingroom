@@ -13,4 +13,16 @@
 <div id='tower_selector'></div>
 </div>
 
+<div id="toast_column" class="d-flex justify-content-center justify-content-md-end">
+    {% for toast in toasts %}
+
+    {{ toast | safe }}
+
+    {% endfor %}
+</div>
+
+{% for modal in modals %}
+    {{ modal | safe }}
+{% endfor %}
+
 {% endblock %}

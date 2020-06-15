@@ -164,6 +164,12 @@ class TowerDB(db.Model):
     def creator(self):
         return UserTowerRelation.query.filter(UserTowerRelation.tower==self, 
                                               UserTowerRelation.creator==True).first().user
+    # We need to be able to get this from the TowerDB object for the User Menu
+    @property
+    def url_safe_name(self):
+        out = re.sub(r'\s', '_', self.tower_name)
+        out = re.sub(r'\W', '', out)
+        return out.lower()
 
     @property
     def hosts(self):

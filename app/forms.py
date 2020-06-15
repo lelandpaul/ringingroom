@@ -45,7 +45,7 @@ class RegistrationForm(FlaskForm):
                   validators=[DataRequired(message='Please accept our Privacy Policy to continue.')])
 
     def validate_email(self, email):
-        user = User.query.filter_by(email=email.data).first()
+        user = User.query.filter_by(email=email.data.lower().strip()).first()
         if user is not None:
             raise ValidationError('There is already a username associated with that email address.')
 

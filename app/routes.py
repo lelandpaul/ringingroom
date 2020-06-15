@@ -10,6 +10,7 @@ import string
 import random
 from app.email import send_password_reset_email
 import jwt
+import os
 
 # Helper function to get a server IP, with load balancing
 # If there is a list of IPs set in SOCKETIO_SERVER_ADDRESSES, this will automatically balance rooms
@@ -19,7 +20,7 @@ def get_server_ip(tower_id):
     if not servers:
         return request.url_root
     else:
-        return 'https://' + servers[tower_id % len(servers)]
+        return 'https://' + servers[tower_id % 10 % len(servers)]
 
 # redirect for static files on subdomains
 
@@ -29,11 +30,18 @@ def redirect_static(tower_id, path, decorator = None):
     return send_from_directory(app.static_folder, path)
 
 
+# Helper function to load toasts
+def load_toasts(modal):
+    return [render_template('news/' + f,modal_id=i, modal=modal) for (i, f) \
+                in enumerate(os.listdir('app/templates/' + 'news/')) if not f.startswith('.')]
+
 # Serve the landing page
 
 @app.route('/', methods=('GET', 'POST'))
 def index():
-    return render_template('landing_page.html')
+    return render_template('landing_page.html', 
+                           toasts=load_toasts(modal=False),
+                           modals=load_toasts(modal=True))
 
 
 # Create / find other towers/rooms as an observer
@@ -137,7 +145,7 @@ def login():
         next = ''
     if login_form.validate_on_submit():
 
-        user = User.query.filter_by(email=login_form.username.data.lower()).first()
+        user = User.query.filter_by(email=login_form.username.data.lower().strip()).first()
         if user is None or not user.check_password(login_form.password.data):
             flash('Incorrect username or password.')
             return render_template('authenticate.html', 
@@ -168,7 +176,7 @@ def register():
     registration_form = RegistrationForm()
     if registration_form.validate_on_submit():
         user = User(username=registration_form.username.data.strip(), 
-                    email=registration_form.email.data.lower())
+                    email=registration_form.email.data.lower().strip())
         user.set_password(registration_form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -266,7 +274,7 @@ def request_reset_password():
         return redirect(url_for('index'))
     form = ResetPasswordRequestForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data.lower()).first()
+        user = User.query.filter_by(email=form.email.data.lower().strip()).first()
         if user:
             send_password_reset_email(user)
         flash('Check your email for the instructions to reset your password.')
