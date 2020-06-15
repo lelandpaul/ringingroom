@@ -2,7 +2,7 @@
 
 {% block app_content %}
 
-    {% include '_bbc_capture.html' %}
+
 
 <img class="grid_circle" src="{{url_for('static', filename='images/dncb.png')}}"/>
 
@@ -14,5 +14,17 @@
 </div>
 <div id='tower_selector'></div>
 </div>
+
+<div id="toast_column" class="d-flex justify-content-center justify-content-md-end">
+    {% for toast in toasts %}
+
+    {{ toast | safe }}
+
+    {% endfor %}
+</div>
+
+{% for modal in modals %}
+    {{ modal | safe }}
+{% endfor %}
 
 {% endblock %}

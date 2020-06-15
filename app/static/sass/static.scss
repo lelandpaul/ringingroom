@@ -7,6 +7,7 @@
 
 // content container for e.g. text
 .content_container {
+    position: relative;
     text-align: left;
     max-width: 57rem;
     padding-top: 20px;
@@ -21,7 +22,7 @@
 
 .centered_block {
     width: 25rem;
-    margin-top: max(8rem, 22vh);
+    margin-top: max(10rem, 22vh);
 
 }
 
@@ -64,11 +65,10 @@
 
 // blueline/grid circle
 .grid_circle {
-    padding-top:1rem;
     display: relative;
     width: max(49rem, 90vh);
     position:absolute;
-    top: max(27rem, 50vh);
+    top: max(25rem, 45vh);
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: -1;
@@ -81,13 +81,17 @@
 }
 /* Stuff for the BBC alert */
 
-#bbc_alert {
-    position: fixed;
+#toast_column {
+    position: relative;
     top: 7rem;
     left: 50%;
     transform: translate(-50%);
     width: 25rem;
     opacity: 1;
+    z-index: 0;
+}
+
+.toast {
     font-size: 1.25rem;
     backdrop-filter: none;
     background-color: $body-bg;
@@ -99,28 +103,35 @@
     }
 }
 
-#bbc_alert .toast-body{
+.toast .toast-body{
     padding:  0.75rem 1.25rem;
 
 }
 
-
-#bbc_alert .toast-header {
+.toast .toast-header {
     background-color: $primary;
     color: $body-bg;
 }
 
-@include media-breakpoint-up(lg) {
-    #bbc_alert{
+@include media-breakpoint-up(md) {
+    #toast_column {
+        position: fixed;
         left:unset;
         transform: unset;
-        right: 5rem;
+        right: 1rem;
+    }
+}
+@include media-breakpoint-up(xl){
+    #toast_column{
+        right: 15vw;
+    }
+    .toast {
         box-shadow: none;
     }
 
 }
 
-#bbc_modal {
+.toast{
     .modal-header {
         background-color: $primary;
         color: #fbfbff;

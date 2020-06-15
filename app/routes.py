@@ -10,6 +10,7 @@ import string
 import random
 from app.email import send_password_reset_email
 import jwt
+import os
 
 # Helper function to get a server IP, with load balancing
 # If there is a list of IPs set in SOCKETIO_SERVER_ADDRESSES, this will automatically balance rooms
@@ -29,11 +30,18 @@ def redirect_static(tower_id, path, decorator = None):
     return send_from_directory(app.static_folder, path)
 
 
+# Helper function to load toasts
+def load_toasts(modal):
+    return [render_template('news/' + f,modal_id=i, modal=modal) for (i, f) \
+                in enumerate(os.listdir('app/templates/' + 'news/')) if not f.startswith('.')]
+
 # Serve the landing page
 
 @app.route('/', methods=('GET', 'POST'))
 def index():
-    return render_template('landing_page.html')
+    return render_template('landing_page.html', 
+                           toasts=load_toasts(modal=False),
+                           modals=load_toasts(modal=True))
 
 
 # Create / find other towers/rooms as an observer
