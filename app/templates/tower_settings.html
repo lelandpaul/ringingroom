@@ -9,10 +9,13 @@
     {{delete_form.hidden_tag()}}
 
 
-<div class="row">
-    <div class="col">
-        <h1 style="display:inline">Tower settings: {{ tower.tower_name }}</h1>
-        {{delete_form.delete(class="btn btn-outline-primary float-right mt-2",
+<div class="row justify-content-between">
+    <div class="col-12 col-lg-auto">
+        <h1 style="display:inline">Tower settings: 
+            <span class="d-inline-block">{{ tower.tower_name }}</span></h1>
+    </div>
+    <div class="col-12 col-lg-1">
+        {{delete_form.delete(class="btn btn-outline-primary float-none float-lg-right mt-2",
                              onclick="return confirm('Are you sure you want to delete this tower?');",
                              style="height:max-content;")}}
     </div>
@@ -98,7 +101,7 @@
 <hr class="mt-4">
 
 <div class="form-row mt-4">
-<div class="col-6 pr-2">
+<div class="col-12 col-md-6 pr-2">
     <div class="row">
         <div class="col pt-1">
             <h4>Tower Hosts:</h4>
@@ -156,21 +159,21 @@
 </div>
 </div>
 </div>
-<div class="col-6">
+<div class="col-12 col-md-6">
     <small class="form-text pl-3 pr-0 mt-2" style="text-align:justify;">
         <p>
         Hosts are users with special privileges at the tower. If a host is present, they may choose to enable "Host Mode", in which:
         </p>
 
         <ul style="padding-left:0; margin-left:1.25rem;">
-            <li>Only hosts may change the number of bells, or switch from handbell to towerbell mode</li>
-            <li> Only hosts may make calls (by using keyboard hotkeys).</li>
-            <li> All ringers may only ring the bells they are assigned to.</li>
+            <li>Only hosts may change the number of bells, or switch between handbell and towerbell mode.</li>
+            <li>Only hosts may make calls (by using keyboard hotkeys).</li>
+            <li>All ringers may only ring the bells they are assigned to.</li>
             <li>Only hosts may assign other ringers to bells.</li>
             <li>Non-host ringers may assign themselves to open bells only.</li>
         </ul>
 
-        Host Mode will automatically be disabled if there are no hosts in the tower. The creator of the tower may always enable host mode.
+        Host Mode will automatically be disabled if there are no hosts in the tower. The creator of the tower may always enable Host Mode.
     </small>
 </div>
 
