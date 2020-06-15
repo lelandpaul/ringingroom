@@ -214,7 +214,6 @@ def tower_settings(tower_id):
             form.remove_host.data =''
         db.session.commit()
     if delete_form.delete.data and delete_form.validate_on_submit():
-        print('DELETE FORM TRIGGERED')
         rels = UserTowerRelation.query.filter_by(tower=tower_db)
         for rel in rels: db.session.delete(rel)
         db.session.delete(tower_db)

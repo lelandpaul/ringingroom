@@ -174,11 +174,9 @@ def on_user_left(json):
     emit('s_user_left', { 'user_name': user.username },
          broadcast=True, include_self=True, room=tower_id)
 
-    print('CHECKING FOR HOSTS')
     # Now that the user is gone, check if there are any hosts left. If not, make sure
     # the tower is not in host mode.
     if not tower.host_present():
-        print('HOSTS PRESENT')
         emit('s_host_mode',{'tower_id': tower_id,
                             'new_mode': False},
              broadcast=True, include_self=True, room=tower_id)
