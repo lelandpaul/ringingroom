@@ -115,6 +115,12 @@ def on_join(json):
         emit('s_user_entered', { 'user_name': user.username },
              broadcast=True, include_self = True, room=json['tower_id'])
 
+    # Check if there are any hosts in the room, and if not, make sure that
+    # the tower is not in host mode.
+    if not tower.host_present():
+        emit('s_host_mode',{'tower_id': tower_id,
+                            'new_mode': False},
+             broadcast=True, include_self=True, room=tower_id)
 
 
     # Store the tower in case of accidental disconnect
@@ -166,7 +172,16 @@ def on_user_left(json):
 
     tower.remove_user(user_id)
     emit('s_user_left', { 'user_name': user.username },
-         broadcast=True, include_self = True, room=tower_id)
+         broadcast=True, include_self=True, room=tower_id)
+
+    print('CHECKING FOR HOSTS')
+    # Now that the user is gone, check if there are any hosts left. If not, make sure
+    # the tower is not in host mode.
+    if not tower.host_present():
+        print('HOSTS PRESENT')
+        emit('s_host_mode',{'tower_id': tower_id,
+                            'new_mode': False},
+             broadcast=True, include_self=True, room=tower_id)
 
 # # A user disconnected (via timeout)
 # @socketio.on('disconnect')
@@ -215,6 +230,7 @@ def on_bell_rung(event_dict):
     cur_bell = event_dict["bell"]
     tower_id = event_dict["tower_id"]
     cur_tower = towers[tower_id]
+
     bell_state = cur_tower.bell_state
     if bell_state[cur_bell - 1] is event_dict["stroke"]:
         bell_state[cur_bell - 1] = not bell_state[cur_bell - 1]
@@ -231,6 +247,8 @@ def on_bell_rung(event_dict):
 # A call was made
 @socketio.on('c_call')
 def on_call(call_dict):
+    tower_id = call_dict['tower_id']
+    tower = towers[tower_id]
     log('c_call', call_dict)
     tower_id = call_dict['tower_id']
     emit('s_call', call_dict, broadcast=True,
@@ -280,6 +298,16 @@ def on_set_bells(json):
     emit('s_global_state', {'global_bell_state': tower.bell_state},
          broadcast = True, include_self=True, room=tower_id)
 
+# Toggle host mode
+@socketio.on('c_host_mode')
+def on_host_mode(json):
+    log('c_host_mode')
+    tower_id = json['tower_id']
+    tower = towers[tower_id]
+    tower.host_mode = json['new_mode']
+    emit('s_host_mode', json,
+         broadcast=True, include_self=False, room=tower_id)
+
 # A chat message was received
 @socketio.on('c_msg_sent')
 def on_msg(json):
@@ -310,6 +338,7 @@ def on_remove_recent(tower_id):
     log('c_remove_recent',current_user,tower_id)
     tower = towers[tower_id]
     current_user.remove_recent_tower(tower)
+
 
     
 

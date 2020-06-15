@@ -135,6 +135,10 @@ my_towers = new Vue({
 
         no_bookmark: function(){
             return this.towers.reduce((acc, cur) => cur.bookmark ? ++acc : acc, 0);
+        },
+
+        no_host: function(){
+            return this.towers.reduce((acc, cur) => cur.host ? ++acc : acc, 0);
         }
 
     },
@@ -164,6 +168,17 @@ my_towers = new Vue({
            aria-controls="created"
            aria-selected="true">
             Created
+        </a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" 
+           id="host_tab" 
+           data-toggle="tab" 
+           href="#host" 
+           role="tab"
+           aria-controls="host"
+           aria-selected="true">
+            Host
         </a>
     </li>
     <li class="nav-item" role="presentation">
@@ -215,6 +230,31 @@ my_towers = new Vue({
                        v-bind:tower="tower"
                        v-bind:tab="'created'"></tower_row>
             <tr v-if="no_created===0"><td colspan="3">You haven't created any towers.</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="tab-pane fade" 
+     id="host"
+     role="tabpanel"
+     aria-labelledby="host_tab">
+    <p class="my-3"><small>Towers at which you are a host. You are always a host at towers you've created.<br>Only tower creators may access tower settings. Creators may add hosts from the tower settings page.</small></p>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Name</th>
+                <th scope="col">ID</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tower_row v-for="tower in tower_rels"
+                       v-if="tower.host"
+                       v-bind:tower="tower"
+                       v-bind:tab="'host'"></tower_row>
+            <tr v-if="no_host===0"><td colspan="3">You aren't a host at any towers.</td></tr>
         </tbody>
     </table>
 </div>

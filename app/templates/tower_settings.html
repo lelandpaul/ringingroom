@@ -5,18 +5,18 @@
 {% block app_content %}
 
 
+<form action="" method="post" novalidate>
+    {{delete_form.hidden_tag()}}
+
+
 <div class="row">
     <div class="col">
-        <h1 style="display:inline">Tower settings: {{ tower.name }}</h1>
+        <h1 style="display:inline">Tower settings: {{ tower.tower_name }}</h1>
         {{delete_form.delete(class="btn btn-outline-primary float-right mt-2",
                              onclick="return confirm('Are you sure you want to delete this tower?');",
                              style="height:max-content;")}}
     </div>
 </div>
-
-
-<form action="" method="post" novalidate>
-    {{delete_form.hidden_tag()}}
 
 
 </form>
@@ -37,13 +37,17 @@
     {% endif %}
     {% endwith %}
 
+
+
 </small>
 
 <hr class="mb-5">
 
 
+<form action="" method="post" id='tower_settings_form' novalidate>
+    {{form.hidden_tag()}}
 
-{% if current_user.check_permissions(tower.tower_id) %}
+{% if current_user.check_permissions(tower.tower_id,permission='creator') %}
 
 
 <div class="form-row mt-2 justify-content-between">
@@ -57,8 +61,6 @@
             </div>
         </div>
     </div>
-
-
     <div class="form-group col">
     <div class="float-right">
     <label for="tower_id">Tower ID</label>
@@ -92,6 +94,92 @@
     </div>
 
 </div>
+
+<hr class="mt-4">
+
+<div class="form-row mt-4">
+<div class="col-6 pr-2">
+    <div class="row">
+        <div class="col pt-1">
+            <h4>Tower Hosts:</h4>
+<table class="table table-hover border-bottom">
+    <thead>
+        <tr>
+            <th scope="col">Email</th>
+            <th scope="col">Username</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody >
+    {% for user in tower.hosts %}
+    <tr>
+        <td>{{user.email}}</td>
+        <td>{{user.username}}</td>
+        <td>
+            {% if tower.creator.email != user.email %}
+            <button type="button" 
+                    class="close" 
+                    aria-label="Close"
+                    onclick="$('#add_host').val('');
+                             $('#remove_host_input').val('{{user.email}}'); 
+                             $('#submit').click();"
+                    >
+              <span aria-hidden="true">&times;</span>
+            </button>
+            {% else %}
+            <small class="text-muted float-right">(creator)</small>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+    </div>
+    <div class="row">
+<div class="col mt-2 px-3">
+    <div class="form-group px-5">
+        {{form.add_host.label}}
+        <div class="input-group">
+            {{form.add_host(class="form-control")}}
+            <div class="input-group-append">
+                {{form.submit(class="btn btn-outline-primary",
+                              value="Add")}}
+            </div>
+        </div>
+        <small class="form-text text-muted">
+            {% for error in form.add_host.errors %}
+                <span style="color: red;">{{ error }}<br></span>
+            {% endfor %}
+        </small>
+    </div>
+</div>
+</div>
+</div>
+<div class="col-6">
+    <small class="form-text pl-3 pr-0 mt-2" style="text-align:justify;">
+        <p>
+        Hosts are users with special privileges at the tower. If a host is present, they may choose to enable "Host Mode", in which:
+        </p>
+
+        <ul style="padding-left:0; margin-left:1.25rem;">
+            <li>Only hosts may change the number of bells, or switch from handbell to towerbell mode</li>
+            <li> Only hosts may make calls (by using keyboard hotkeys).</li>
+            <li> All ringers may only ring the bells they are assigned to.</li>
+            <li>Only hosts may assign other ringers to bells.</li>
+            <li>Non-host ringers may assign themselves to open bells only.</li>
+        </ul>
+
+        Host Mode will automatically be disabled if there are no hosts in the tower. The creator of the tower may always enable host mode.
+    </small>
+</div>
+
+
+</div>
+
+{{form.remove_host(id='remove_host_input',class="d-none")}}
+
+</form>
 
 
 {% else %}

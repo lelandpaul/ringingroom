@@ -38,6 +38,8 @@
             cur_user_email: "{{user_email}}",
             anonymous_user: {{'true' if current_user.is_anonymous or listen_link else 'false'}},
             user_token: "{{user_token}}",
+            host_mode: {{'true' if tower.host_mode else 'false'}},
+            host_permissions: {{'true' if host_permissions else 'false'}},
             listen_link: {{'true' if listen_link else 'false'}},
             server_ip: "{{server_ip}}",
         };

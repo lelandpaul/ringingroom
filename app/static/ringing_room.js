@@ -146,9 +146,10 @@ socketio.on('s_msg_sent', function(msg,cb){
     });
 });
 
-
-
-
+// Host mode was changed
+socketio.on('s_host_mode', function(msg,cb){
+    bell_circle.$refs.controls.host_mode = msg.new_mode;
+});
 
 /////////
 /* VUE */
@@ -227,6 +228,11 @@ Vue.component("bell_rope", {
 	  emit_ringing_event: function() {
         if (window.tower_parameters.anonymous_user){ return }; // don't ring if not logged in
         if (this.assignment_mode){ return }; // disable while assigning
+        if (this.$root.$refs.controls.host_mode && this.assigned_user !== cur_user_name){
+            // user is not allowed to ring this bell
+            bell_circle.$refs.display.display_message('You may only ring your assigned bells.');
+            return
+        }
 		socketio.emit('c_bell_rung',
 				{bell: this.number, stroke: this.stroke, tower_id: cur_tower_id});
 		var report = "Bell " + this.number + " will ring a " + (this.stroke ? "handstroke":"backstroke");
@@ -251,6 +257,7 @@ Vue.component("bell_rope", {
 
       assign_user: function(){
           if (window.tower_parameters.anonymous_user){ return }; // don't ring if not logged in
+          if (this.assigned_user){ return }; // don't kick people off
           const selected_user = this.$root.$refs.users.selected_user;
           if (!this.assignment_mode){ return };
           console.log('assigning user: ' +  selected_user + ' to ' + this.number);
@@ -293,7 +300,8 @@ Vue.component("bell_rope", {
                             <button class="btn btn-sm btn_unassign"
                                    :class="[number == 1 ? 'treble' : '',
                                             number == 1 ? 'btn-primary' : 'btn-outline-secondary']"
-                                v-if="assignment_mode && assigned_user"
+                                v-if="assignment_mode && assigned_user &&
+                                !(assigned_user!==cur_user && $root.$refs.controls.lock_controls)"
                                 @click="unassign">
                                 <span class="unassign"><i class="fas fa-window-close"></i></span>
                             </button>
@@ -301,6 +309,7 @@ Vue.component("bell_rope", {
                             <button class="btn btn-small btn_assigned_user"
                                    :class="[number == 1 ? 'treble' : '',
                                             number == 1 ? 'btn-primary' : 'btn-outline-secondary',
+                                            assigned_user ? 'disabled' : '',
                                             assigned_user==cur_user ? 'cur_user' :'',
                                             assignment_mode ? '' : 'disabled']"
                                    @click="assign_user"
@@ -338,6 +347,7 @@ Vue.component("bell_rope", {
                                    :class="[number == 1 ? 'treble' : '',
                                             number == 1 ? 'btn-primary' : 'btn-outline-secondary',
                                             assigned_user==cur_user ? 'cur_user' :'',
+                                            assigned_user ? 'disabled' : '',
                                             assignment_mode ? '' : 'disabled']"
                                   @click="assign_user"
                                   v-if="assignment_mode || assigned_user"
@@ -352,7 +362,8 @@ Vue.component("bell_rope", {
                              <button class="btn btn-sm btn_unassign"
                                    :class="[number == 1 ? 'treble' : '',
                                             number == 1 ? 'btn-primary' : 'btn-outline-secondary']"
-                                    v-if="assignment_mode && assigned_user"
+                                    v-if="assignment_mode && assigned_user &&
+                                !(assigned_user!==cur_user && $root.$refs.controls.lock_controls)"
                                     @click="unassign">
                                  <span class="unassign"><i class="fas fa-window-close"></i></span>
                              </button>
@@ -387,6 +398,18 @@ Vue.component('call_display', {
     },
 
 	methods: {
+
+        // Used to display temporary messages to users (typically when they do something they're
+        // not permitted to do in host-mode).
+        display_message: function(message){
+            console.log('display message: ', message);
+			this.cur_call = message;
+			var self = this;
+            // remove the call after 2 seconds
+			setTimeout(function() { self.cur_call = ''; 
+						console.log('changing cur_call back');}, 3000);
+
+        },
 
         // a call was received from the server; display it and play audio
 		make_call: function(call){
@@ -447,13 +470,18 @@ Vue.component('tower_controls', {
     // data in components should be a function, to maintain scope
 	data: function(){ 
 		return {tower_sizes: [4,6,8,10,12],
-                audio_type: window.tower_parameters.audio} },
+                audio_type: window.tower_parameters.audio,
+                host_mode: window.tower_parameters.host_mode} },
 
     computed: {
         
         number_of_bells: function() {
             return this.$root.number_of_bells;
         },
+
+        lock_controls: function(){
+            return this.host_mode && !window.tower_parameters.host_permissions;
+        }
 
     },
 
@@ -462,6 +490,12 @@ Vue.component('tower_controls', {
         audio_type: function(){
             console.log('swapped audio type');
               socketio.emit('c_audio_change',{new_audio: this.audio_type, tower_id: cur_tower_id});
+        },
+
+        host_mode: function(){
+            console.log('swapped host mode to: ' + this.host_mode);
+            socketio.emit('c_host_mode',{new_mode: this.host_mode, tower_id: cur_tower_id});
+
         },
 
     },
@@ -487,13 +521,56 @@ Vue.component('tower_controls', {
         <div class="tower_controls_inner"
              v-if="!window.tower_parameters.anonymous_user">
 
+             <div class="row justify-content-between"
+                  v-if="window.tower_parameters.host_permissions">
+
+                  <div class="col">
+                    <h4 class="mb-0 pt-1">Host Mode:</h4>
+                  </div>
+
+                 <div class="col">
+                      <div class="btn-group btn-block btn-group-toggle align-bottom">
+                        <label class="btn btn-outline-primary"
+                               :class="{active: !host_mode}">
+                        <input type="radio" 
+                               name="host_mode"
+                               id="host_false"
+                               :value="false"
+                               v-model="host_mode"
+                               />
+                               Off
+                        </label>
+
+                        <label class="btn btn-outline-primary"
+                               :class="{active: host_mode}">
+                        <input type="radio" 
+                               name="host_mode"
+                               id="host_true"
+                               :value="true"
+                               v-model="host_mode"
+                               />
+                               On
+                        </label>
+                       </div>
+                 </div>
+             </div>
+
+             <div v-if="lock_controls" class="row">
+                <div class="col">
+                    <small class="text-muted">
+                        Host mode is enabled. Only hosts can change tower settings or assign bells.
+                    </small>
+                </div>
+             </div>
+
              <div class="row between-xs">
              <div class="col">
                 <div class="btn-group btn-block btn-group-toggle">
                     <label v-for="size in tower_sizes"
                            :size="size"
                            class="btn btn-outline-primary"
-                           :class="{active: size === number_of_bells}"
+                           :class="{active: size === number_of_bells,
+                                    disabled: lock_controls}"
                            @click="set_tower_size(size)"
                            >
                            <input type="radio"
@@ -512,7 +589,8 @@ Vue.component('tower_controls', {
                  <div class="col">
                       <div class="btn-group btn-block btn-group-toggle">
                         <label class="btn btn-outline-primary"
-                               :class="{active: audio_type == 'Tower'}">
+                               :class="{active: audio_type == 'Tower',
+                                    disabled: lock_controls}">
                         <input type="radio" 
                                name="audio"
                                id="audio_tower"
@@ -523,7 +601,9 @@ Vue.component('tower_controls', {
                         </label>
 
                         <label class="btn btn-outline-primary"
-                               :class="{active: audio_type == 'Hand'}">
+                               :class="{active: audio_type == 'Hand',
+                               disabled: lock_controls}"
+                               >
                         <input type="radio" 
                                name="audio"
                                id="audio_hand"
@@ -537,6 +617,7 @@ Vue.component('tower_controls', {
 
                  <div class="col">
                      <button class="set_at_hand btn btn-outline-primary btn-block"
+                           :class="{disabled: lock_controls}"
                            @click="set_bells_at_hand"
                            >
                          Set at hand
@@ -889,6 +970,9 @@ Vue.component('user_display', {
 
         select_user: function(user){
             if (window.tower_parameters.anonymous_user){ return }; // don't do anything if not logged in
+            if (this.$root.$refs.controls.host_mode){
+                return
+            };
             this.selected_user = user;
         },
 
@@ -967,11 +1051,15 @@ Vue.component('user_display', {
                      >
                      <span class="user_list_cur_user_name mr-auto">[[ cur_user ]]</span>
                  </li>
+                 <li v-if="$root.$refs.controls.lock_controls"
+                     class="list-group-item">
+                     <small class="text-muted">In host mode, you may catch hold, but not assign others.</small>
+                 </li>
                 <li v-for="user in user_names"
                     class="list-group-item list-group-item-action"
                     v-if="user != cur_user"
                      :class="{cur_user: user == cur_user,
-                              disabled: !assignment_mode,
+                              disabled: !assignment_mode || $root.$refs.controls.lock_controls,
                               assignment_active: assignment_mode,
                               active: user == selected_user && assignment_mode}"
                      @click="select_user(user)"
@@ -1132,6 +1220,7 @@ bell_circle = new Vue({
         hidden_help: true,
         keys_down: [],
         unread_messages: 0,
+        host_mode: window.tower_parameters.host_mode,
 	},
 
 	watch: {
@@ -1194,6 +1283,11 @@ bell_circle = new Vue({
 
       // emit a call
 	  make_call: function(call){
+        if (this.$root.$refs.controls.host_mode && !window.tower_parameters.host_permissions){
+            // user is not allowed to make calls
+            this.$root.$refs.display.display_message('Only hosts may make calls.');
+            return
+        };
         if (this.call_throttled){ return };
         socketio.emit('c_call',{call: call,tower_id: cur_tower_id});
         this.call_throttled = true;
