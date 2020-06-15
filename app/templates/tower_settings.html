@@ -4,9 +4,9 @@
 
 {% block app_content %}
 
+
 <form action="" method="post" novalidate>
     {{delete_form.hidden_tag()}}
-
 
 
 <div class="row">
@@ -20,6 +20,10 @@
 
 
 </form>
+
+<form action="" method="post" novalidate>
+    {{form.hidden_tag()}}
+
 
 <small class="form-text text-muted">
 
@@ -44,7 +48,6 @@
     {{form.hidden_tag()}}
 
 {% if current_user.check_permissions(tower.tower_id,permission='creator') %}
-
 
 
 <div class="form-row mt-2 justify-content-between">
