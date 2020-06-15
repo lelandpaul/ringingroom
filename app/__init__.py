@@ -70,6 +70,8 @@ bundles = {
                            'audio.js',
                            # filters='jsmin',
                             output='gen/rr.%(version)s.js'),
+    'js_my_towers': Bundle('my_towers.js',
+                           output='gen/my_towers.%(version)s.js'),
 
     'css_static':   Bundle( 'css/static.css',
                             output='gen/static.%(version)s.css'),

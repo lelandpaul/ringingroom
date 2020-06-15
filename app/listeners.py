@@ -296,4 +296,21 @@ def on_report(json):
 
 
 
+# The user toggled bookmark status for a tower
+@socketio.on('c_toggle_bookmark')
+def on_toggle_bookmark(tower_id):
+    log('c_toggle_bookmark',current_user,tower_id)
+    tower = towers[tower_id]
+    current_user.toggle_bookmark(tower)
+
+
+# The user removed a tower from their recent towers
+@socketio.on('c_remove_recent')
+def on_remove_recent(tower_id):
+    log('c_remove_recent',current_user,tower_id)
+    tower = towers[tower_id]
+    current_user.remove_recent_tower(tower)
+
+    
+
 

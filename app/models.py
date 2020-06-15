@@ -47,12 +47,9 @@ class User(UserMixin, db.Model):
             return
         return User.query.get(id)
 
-
-    def clear_all_towers(self):
-        for rel in self.towers:
-            db.session.delete(rel)
-
-    def  add_recent_tower(self, tower):
+    def _get_relation_to_tower(self,tower):
+        # Helper function: returns a relation between the user and the tower.
+        # Creates the relation if none existed before.
         if isinstance(tower, Tower):
             # cast to TowerDB
             tower = tower.to_TowerDB()
@@ -60,14 +57,33 @@ class User(UserMixin, db.Model):
         rel = UserTowerRelation.query.filter(UserTowerRelation.user == self, 
                                              UserTowerRelation.tower == tower).first()
         if not rel:
-            # Just instantiating this is enough — back population takes care of the rest
-            # (If you add it, it winds up duplicated)
-            UserTowerRelation(user=self, tower=tower, recent=True)
-        else:
-            # Update the timestamp (and recent, if necessary)
-            rel.recent = True
-            rel.visited = datetime.now()
+            # Just creating this is enough to add it to the database with relevant relations
+            rel = UserTowerRelation(user=self, tower=tower)
+
+        return rel
+
+
+    def clear_all_towers(self):
+        for rel in self.towers:
+            db.session.delete(rel)
+
+    def add_recent_tower(self, tower):
+        rel = self._get_relation_to_tower(tower)
+        # Update the timestamp (and recent, if necessary)
+        rel.recent = True
+        rel.visited = datetime.now()
         self._clean_recent_towers()
+        db.session.commit()
+
+    def remove_recent_tower(self,tower):
+        rel = self._get_relation_to_tower(tower)
+        rel.recent = False
+        db.session.commit()
+
+
+    def toggle_bookmark(self, tower):
+        rel = self._get_relation_to_tower(tower)
+        rel.bookmark = not rel.bookmark
         db.session.commit()
 
    
@@ -80,6 +96,30 @@ class User(UserMixin, db.Model):
                 in sorted(self.towers, key=lambda r: r.visited, reverse=True)
                 if rel.recent][:n]
 
+    def bookmarked_towers(self,n=0):
+        # Allows you to limit to n items; returns all by default
+        # This returns a list of TowerDB objects — if we want to convert them to memory, that should
+        # happen by looking them up in the TowerDict instance
+        n = n or len(self.towers)
+        return [rel.tower for rel \
+                in self.towers \
+                if rel.bookmark][:n]
+
+    @property
+    def tower_properties(self):
+        # For the my_towers page, we need the tower relations as a list of dictionaries,
+        # which each include the tower info + the relation info
+        tower_properties = []
+        for rel in sorted(self.towers, key=lambda x: x.visited, reverse=True):
+            tower_properties.append(dict(\
+                                    {'tower_id': rel.tower.tower_id,
+                                     'tower_name': rel.tower.tower_name}, **rel.relation_dict))
+        return tower_properties
+
+    def check_permissions(self, tower_id):
+        # Given a tower_id: Do we have the status 'Admin' with respect to that tower?
+        # TEMPORARY: Map this to creator for now
+        return tower_id in [t.tower_id for t in self.towers if t.creator]
 
 @login.user_loader
 def load_user(id):
@@ -127,21 +167,25 @@ class UserTowerRelation(db.Model):
     # Boolean columns for relationship types; also
     recent = db.Column('recent',db.Boolean, default=False)
     creator = db.Column('creator',db.Boolean,default=False)
+    bookmark = db.Column('bookmark',db.Boolean,default=False)
 
     def __repr__(self):
         return '<Relationship: {} --- {} {}>'.format(self.user.username,
                                                      self.tower.tower_name,
                                                      self.tower.tower_id)
 
+    @property
+    def relation_dict(self):
+        # return the relation types as a dictionary
+        return {'recent': self.recent,
+                'creator': self.creator,
+                'bookmark': self.bookmark}
+
     def clean_up(self):
         # Call this whenever you change a boolean column from True to False
         # Checks if all relations are false, deletes if relevant
-        relationship_types = [self.recent, self.creator]
-        if not any(relationship_types):
+        if not any(relation_dict.values()):
             self.delete()
-
-
-
 
 # Keep track of towers
 class Tower:

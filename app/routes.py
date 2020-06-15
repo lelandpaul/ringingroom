@@ -1,10 +1,10 @@
 from flask import render_template, send_from_directory, abort, flash, redirect, url_for, session, request
 from flask_login import login_user, logout_user, current_user, login_required
 from app import app, towers, log, db
-from app.models import User
+from app.models import User, UserTowerRelation
 from flask_login import current_user, login_user, logout_user, login_required
 from app.forms import LoginForm, RegistrationForm, UserSettingsForm, ResetPasswordRequestForm, \
-    ResetPasswordForm, UserDeleteForm
+    ResetPasswordForm, UserDeleteForm, TowerSettingsForm, TowerDeleteForm
 from urllib.parse import urlparse
 import string
 import random
@@ -179,6 +179,45 @@ def register():
                            registration_form=registration_form,
                            next=next)
 
+@app.route('/my_towers')
+def my_towers():
+    # We need to pass in all of the users related towers, marked by the kind of relation they have
+    return render_template('my_towers.html', 
+                           tower_props=current_user.tower_properties)
+
+@app.route('/tower_settings/<int:tower_id>', methods=['GET','POST'])
+def tower_settings(tower_id):
+    tower = towers[tower_id]
+    tower_db = tower.to_TowerDB()
+    form = TowerSettingsForm()
+    delete_form = TowerDeleteForm()
+    if form.submit.data and form.validate_on_submit():
+        if form.tower_name.data:
+            tower.name = form.tower_name.data
+            tower_db.tower_name = form.tower_name.data
+            db.session.commit()
+            form.tower_name.data = ''
+            flash('Tower name changed.')
+            return render_template('tower_settings.html',
+                                   form=form,
+                                   delete_form=delete_form,
+                                   tower=tower)
+    elif delete_form.delete.data and delete_form.validate_on_submit():
+        rels = UserTowerRelation.query.filter_by(tower=tower_db)
+        for rel in rels: db.session.delete(rel)
+        db.session.delete(tower_db)
+        db.session.commit()
+        del tower
+        towers.pop(tower_id)
+        flash('Tower ' + str(tower_id) + ' deleted.')
+        return redirect(url_for('my_towers'))
+    return render_template('tower_settings.html',
+                           form=form,
+                           delete_form=delete_form,
+                           tower=tower)
+
+
+
 @app.route('/settings', methods=['GET','POST'])
 @login_required
 def user_settings():
@@ -237,3 +276,5 @@ def reset_password(token):
         flash('Your password has been reset.')
         return redirect(url_for('authenticate'))
     return render_template('reset_password.html', form=form, token_success=bool(user))
+
+
