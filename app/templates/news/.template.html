@@ -1,0 +1,24 @@
+{% extends '_news_toast.html' %}
+
+{# This is a template file for Ringing Room front-page news items. #}
+{# Fill in the relevant sections below. The modal sections are optional. If you're not using them, remove the "See more" link. #}
+{# The toast items will update automatically without restarting the app, but only if you have a unique name. If you edit a toast after it's been initially rendered, you'll need to change the filename. #}
+
+
+{% block toast_title %}
+    {# The title of the toast #}
+{% endblock %}
+
+{% block toast_body %}
+    {# The content of the toast #}
+    {# Remove this next line if you're not using the modal blocks #}
+    <a class="d-block" href='#' data-toggle="modal" data-target="#modal_{{modal_id}}">See more</a>
+{% endblock %}
+
+{% block modal_title %}
+    {# The title of the modal popover — OPTIONAL #}
+{% endblock %}
+
+{% block modal_body %}
+    {# The content of the modal popover — OPTIONAL #}
+{% endblock %}
