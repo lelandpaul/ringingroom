@@ -751,7 +751,7 @@ Vue.component('chatbox', {
                     Chat <span class="badge badge-dark" v-if="unread_messages > 0"> [[ unread_messages ]] </span><span class="sr-only" v-if="unread_messages > 0">unread messages</span>
                      <span class="float-right w-50"
                            @click="leave_tower">
-                        <a role="button" class="btn btn-outline-primary w-100" href='/'>Leave Tower</a>
+                        <a role="button" class="btn btn-outline-primary w-100" href='/my_towers'>Leave Tower</a>
                      </span>
                 </h2>
             </div>
