@@ -78,7 +78,7 @@ Vue.component("tower_row",{
                 [[tower.tower_name]]
             </a>
         </td>
-        <td class="align-text-bottom">
+        <td class="align-text-bottom text-nowrap">
             [[tower.tower_id]]
             <button class="btn id_clipboard_tooltip align-baseline"
                data-toggle="tooltip"
