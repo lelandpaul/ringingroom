@@ -118,6 +118,7 @@ def on_join(json):
     # Check if there are any hosts in the room, and if not, make sure that
     # the tower is not in host mode.
     if not tower.host_present():
+        tower.host_mode = False
         emit('s_host_mode',{'tower_id': tower_id,
                             'new_mode': False},
              broadcast=True, include_self=True, room=tower_id)
@@ -177,6 +178,7 @@ def on_user_left(json):
     # Now that the user is gone, check if there are any hosts left. If not, make sure
     # the tower is not in host mode.
     if not tower.host_present():
+        tower.host_mode = False
         emit('s_host_mode',{'tower_id': tower_id,
                             'new_mode': False},
              broadcast=True, include_self=True, room=tower_id)
