@@ -9,13 +9,19 @@
     {{delete_form.hidden_tag()}}
 
 
-<div class="row justify-content-between">
+<div class="row">
     <div class="col-12 col-lg-auto">
         <h1 style="display:inline">Tower settings: 
             <span class="d-inline-block">{{ tower.tower_name }}</span></h1>
     </div>
-    <div class="col-12 col-lg-1">
-        {{delete_form.delete(class="btn btn-outline-primary float-none float-lg-right mt-2",
+</div>
+
+<div class="row my-3">
+    <div class="col">
+        <a href="/my_towers" class="btn btn-outline-primary mr-2">&larr; My Towers</a>
+        <a href="/{{tower.tower_id}}/{{tower.url_safe_name}}"
+            class="btn btn-outline-primary">Go to Tower</a>
+        {{delete_form.delete(class="btn btn-outline-primary float-right",
                              onclick="return confirm('Are you sure you want to delete this tower?');",
                              style="height:max-content;")}}
     </div>
@@ -44,7 +50,7 @@
 
 </small>
 
-<hr class="mb-5">
+<hr>
 
 
 <form action="" method="post" id='tower_settings_form' novalidate>
@@ -53,9 +59,9 @@
 {% if current_user.check_permissions(tower.tower_id,permission='creator') %}
 
 
-<div class="form-row mt-2 justify-content-between">
+<div class="form-row my-3 justify-content-between">
 
-    <div class="form-group col-8">
+    <div class="form-group col-7">
         {{ form.tower_name.label }}
         <div class="input-group">
             {{ form.tower_name(size=32, class="form-control")}}
@@ -98,7 +104,7 @@
 
 </div>
 
-<hr class="mt-4">
+<hr>
 
 <div class="form-row mt-4">
 <div class="col-12 col-md-6 pr-2">
