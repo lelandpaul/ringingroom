@@ -161,6 +161,17 @@ my_towers = new Vue({
 <ul class="nav nav-tabs" id="tower_relation_nav" role="tablist">
     <li class="nav-item" role="presentation">
         <a class="nav-link active" 
+           id="bookmark_tab" 
+           data-toggle="tab" 
+           href="#bookmark" 
+           role="tab"
+           aria-controls="recent"
+           aria-selected="true">
+            Bookmarks
+        </a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" 
            id="created_tab" 
            data-toggle="tab" 
            href="#created" 
@@ -168,17 +179,6 @@ my_towers = new Vue({
            aria-controls="created"
            aria-selected="true">
             Created
-        </a>
-    </li>
-    <li class="nav-item" role="presentation">
-        <a class="nav-link" 
-           id="host_tab" 
-           data-toggle="tab" 
-           href="#host" 
-           role="tab"
-           aria-controls="host"
-           aria-selected="true">
-            Host
         </a>
     </li>
     <li class="nav-item" role="presentation">
@@ -194,13 +194,13 @@ my_towers = new Vue({
     </li>
     <li class="nav-item" role="presentation">
         <a class="nav-link" 
-           id="bookmark_tab" 
+           id="host_tab" 
            data-toggle="tab" 
-           href="#bookmark" 
+           href="#host" 
            role="tab"
-           aria-controls="recent"
+           aria-controls="host"
            aria-selected="true">
-            Bookmarks
+            Host
         </a>
     </li>
 </ul>
