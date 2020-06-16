@@ -135,6 +135,10 @@ input[type=range]::slider-thumb {
   font-size: larger;
 }
 
+.list-group-item {
+    margin-top: 0;
+}
+
 .list-group-item.disabled {
     color: black;
 }

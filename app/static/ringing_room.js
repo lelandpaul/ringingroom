@@ -972,7 +972,7 @@ Vue.component('user_display', {
 
         select_user: function(user){
             if (window.tower_parameters.anonymous_user){ return }; // don't do anything if not logged in
-            if (this.$root.$refs.controls.host_mode){
+            if (this.$root.$refs.controls.lock_controls){
                 return
             };
             this.selected_user = user;
