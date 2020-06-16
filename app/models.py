@@ -105,6 +105,11 @@ class User(UserMixin, db.Model):
                 in self.towers \
                 if rel.bookmark][:n]
 
+    def bookmarked(self,tower_id):
+        # checks if a tower_id is bookmarked
+        return tower_id in [rel.tower.tower_id for rel in self.towers if rel.bookmark]
+
+
     @property
     def tower_properties(self):
         # For the my_towers page, we need the tower relations as a list of dictionaries,

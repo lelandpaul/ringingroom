@@ -1223,6 +1223,7 @@ bell_circle = new Vue({
         keys_down: [],
         unread_messages: 0,
         host_mode: window.tower_parameters.host_mode,
+        bookmarked: window.tower_parameters.bookmarked,
 	},
 
 	watch: {
@@ -1344,8 +1345,12 @@ bell_circle = new Vue({
               dummy.select();
               document.execCommand("copy");
               document.body.removeChild(dummy);
-      }
+      },
 
+      toggle_bookmark: function(){
+          socketio.emit('c_toggle_bookmark',cur_tower_id);
+          this.bookmarked = !this.bookmarked;
+      }, 
 	},
 
 	template: 
@@ -1358,8 +1363,13 @@ bell_circle = new Vue({
 
         <div class="tower_header">
         <div class="row">
-             <div class="col">
-                 <h1 id="tower_name"> [[ tower_name ]] </h1>
+             <div class="col text-nowrap">
+                 <i class="fa-bookmark align-text-top fa-fw"
+                    :class="[bookmarked ? 'fas' : 'far']"
+                    style="cursor:pointer"
+                    @click="toggle_bookmark"
+                 ></i>
+                 <h1 id="tower_name" class="d-inline"> [[ tower_name ]] </h1>
              </div>
          </div>
 
