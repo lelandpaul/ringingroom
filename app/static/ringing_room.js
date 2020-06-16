@@ -1369,14 +1369,15 @@ bell_circle = new Vue({
                     style="cursor:pointer"
                     @click="toggle_bookmark"
                  ></i>
-                 <h1 id="tower_name" class="d-inline"> [[ tower_name ]] </h1>
+                 <h1 id="tower_name" class="d-inline d-lg-none text-wrap"> [[ tower_name ]] </h1>
+                 <h1 id="tower_name" class="d-none d-lg-inline"> [[ tower_name ]] </h1>
              </div>
          </div>
 
          <div class="row">
              <div class="col">
                  <div class="row justify-content-between">
-                     <div class="col-auto">
+                     <div class="col-auto mb-3 mb-sm-0">
 
                      <div class="tower_id input-group" style="flex-wrap:nowrap">
                         <div class="input-group-prepend">
@@ -1396,7 +1397,8 @@ bell_circle = new Vue({
                         </div>
                      </div>
                      </div>
-                     <div class="col-auto">
+                     <div class="w-100 d-block d-sm-none"></div>
+                     <div class="col-auto mb-3 mb-sm-0">
                         <button class="toggle_help btn btn-outline-primary"
                                 data-toggle="collapse"
                                 data-target="#help"
