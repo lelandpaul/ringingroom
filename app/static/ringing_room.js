@@ -930,6 +930,18 @@ Vue.component('user_display', {
                  observers: parseInt(window.tower_parameters.observers),
         } },
 
+    computed: {
+            cur_user_bells: function(){
+                var bell_list = []
+                this.$root.$refs.bells.forEach((bell,index) =>
+                    {if (bell.assigned_user === this.cur_user){
+                        bell_list.push(index+1);
+                    } 
+                });
+                return bell_list;
+            }
+    },
+
 
     methods: {
 
@@ -953,19 +965,13 @@ Vue.component('user_display', {
             // Don't rotate if the user has no name yet
             if (!this.cur_user){ return };
 
-            var cur_user_bells = []
-            this.$root.$refs.bells.forEach((bell,index) =>
-                {if (bell.assigned_user === this.cur_user){
-                    cur_user_bells.push(index+1);
-                } 
-            });
-            console.log(cur_user_bells);
+            console.log(this.cur_user_bells);
             // the user has no bells; don't screw with rotation
-            if (cur_user_bells === []){
+            if (this.cur_user_bells === []){
                 console.log('skipping — no assigned bells');
                 return;
             };
-            const rotate_to = Math.min(...cur_user_bells);
+            const rotate_to = Math.min(...this.cur_user_bells);
             this.$root.rotate(rotate_to);
         },
 
@@ -1286,9 +1292,9 @@ bell_circle = new Vue({
 
       // emit a call
 	  make_call: function(call){
-        if (this.$root.$refs.controls.host_mode && !window.tower_parameters.host_permissions){
+        if (this.$root.$refs.users.cur_user_bells.length == 0 && this.$root.$refs.controls.lock_controls){
             // user is not allowed to make calls
-            this.$root.$refs.display.display_message('Only hosts may make calls.');
+            this.$root.$refs.display.display_message('Only hosts may make calls when not assigned to a bell.');
             return
         };
         if (this.call_throttled){ return };
