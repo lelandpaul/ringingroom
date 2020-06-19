@@ -152,6 +152,7 @@ my_towers = new Vue({
             } 
             window.scrollTo(0, 0)
             $('[data-toggle="tooltip"]').tooltip();
+
         });
     },
 
@@ -208,6 +209,31 @@ my_towers = new Vue({
 <div class="tab-content" id="my_towers_content">
 
 <div class="tab-pane fade show active" 
+     id="bookmark"
+     role="tabpanel"
+     aria-labelledby="bookmark_tab">
+    <p class="my-3"><small>Towers you have bookmarked. Click the icon to the left of the tower name to remove the bookmark.<br>Only tower creators may access tower settings.</small></p>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Name</th>
+                <th scope="col">ID</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tower_row v-for="tower in tower_rels"
+                       v-if="tower.bookmark"
+                       v-bind:tower="tower"
+                       v-bind:tab="'bookmark'"></tower_row>
+            <tr v-if="no_bookmark===0"><td colspan="3">You haven't bookmarked any towers.</td></tr>
+        </tbody>
+    </table>
+</div>
+
+
+<div class="tab-pane fade" 
      id="created"
      role="tabpanel"
      aria-labelledby="created_tab">
@@ -285,30 +311,6 @@ my_towers = new Vue({
     </table>
 </div>
 
-
-<div class="tab-pane fade" 
-     id="bookmark"
-     role="tabpanel"
-     aria-labelledby="bookmark_tab">
-    <p class="my-3"><small>Towers you have bookmarked. Click the icon to the left of the tower name to remove the bookmark.<br>Only tower creators may access tower settings.</small></p>
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th scope="col"></th>
-                <th scope="col">Name</th>
-                <th scope="col">ID</th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tower_row v-for="tower in tower_rels"
-                       v-if="tower.bookmark"
-                       v-bind:tower="tower"
-                       v-bind:tab="'bookmark'"></tower_row>
-            <tr v-if="no_bookmark===0"><td colspan="3">You haven't bookmarked any towers.</td></tr>
-        </tbody>
-    </table>
-</div>
 
 </div>
 
