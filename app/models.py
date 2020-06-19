@@ -132,11 +132,13 @@ class User(UserMixin, db.Model):
     def make_host(self, tower):
         rel = self._get_relation_to_tower(tower)
         rel.host = True
+        tower.add_host_id(self.id)
         db.session.commit()
 
     def remove_host(self, tower):
         rel = self._get_relation_to_tower(tower)
         rel.host = False
+        tower.remove_host_id(self.id)
         db.session.commit()
 
 @login.user_loader
@@ -370,6 +372,13 @@ class Tower:
             if id in self._host_ids:
                 return True
         return False
+
+    def add_host_id(self, user_id):
+        self._host_ids.append(user_id)
+
+    def remove_host_id(self, user_id):
+        self._host_ids.remove(user_id)
+        
 
 class TowerDict(dict):
 
