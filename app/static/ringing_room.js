@@ -726,12 +726,6 @@ Vue.component('chatbox', {
             leave_room();
         },
 
-        open_user_display: function(){
-            if (!$('#user_display_body').hasClass('show')){
-                $('#user_display_body').collapse('show');
-            }
-        },
-
         remove_all_unreads: function(){
             bell_circle.unread_messages = 0;
         },
@@ -744,7 +738,6 @@ Vue.component('chatbox', {
             <div class="card-header">
                 <h2 style="display: inline; cursor: pointer;"
                     id="chat_header"
-                    @click="open_user_display"
                     data-toggle="collapse"
                     data-target="#chat_body"
                     >
@@ -757,7 +750,7 @@ Vue.component('chatbox', {
             </div>
             <div class="card-body collapse show" 
                  id="chat_body"
-                 data-parent="#sidebar_accordion">
+                 >
                 <div class="row no-gutters p-0" id="chat_messages">
                     <div class="col p-0">
                         <div class="message" v-for="msg in messages">
@@ -998,23 +991,16 @@ Vue.component('user_display', {
             }
         },
 
-        open_chat: function(){
-            if (!this.assignment_mode && !$('#chat_body').hasClass('show')){
-                $('#chat_body').collapse('show');
-            }
-        },
 
     },
 
 	template: 
     `
-         <div class="card">
+         <div class="card mb-3">
              <div class="card-header"
-                  @click="open_chat"
                   v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link"
                   >
                 <h2 style="display: inline; cursor: pointer;"
-                    class="collapsed"
                     id="user_display_header"
                     data-toggle="collapse"
                     data-target="#user_display_body">
@@ -1036,10 +1022,10 @@ Vue.component('user_display', {
                         Users
                 </h2>
              </div>
-             <ul class="list-group list-group-flush"
+             <ul class="list-group list-group-flush show"
                  id="user_display_body"
                  :class="{collapse: (!window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link)}"
-                 data-parent="#sidebar_accordion">
+                 >
                 <li class="list-group-item cur_user d-inline-flex align-items-center"
                      :class="{assignment_active: assignment_mode,
                               active: cur_user == selected_user && assignment_mode}"
@@ -1448,10 +1434,8 @@ bell_circle = new Vue({
         <template v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link">
             <div class="row pb-0 flex-grow-1">
             <div class="col flex-grow-1">
-            <div class="accordion" id="sidebar_accordion">
-                <user_display ref="users"></user_display>
-                <chatbox ref="chatbox" v-bind:unread_messages="unread_messages"></chatbox>
-            </div>
+            <user_display ref="users"></user_display>
+            <chatbox ref="chatbox" v-bind:unread_messages="unread_messages"></chatbox>
             </div>
             </div>
         </template>
