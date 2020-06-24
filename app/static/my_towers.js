@@ -45,6 +45,7 @@ Vue.component("tower_row",{
         toggle_bookmark: function(){
             socketio.emit('c_toggle_bookmark',this.tower.tower_id);
             this.tower.bookmark = !this.tower.bookmark;
+            $('[data-toggle="tooltip"]').tooltip('hide');
         }, 
 
         copy_id: function() {
@@ -67,7 +68,14 @@ Vue.component("tower_row",{
     `
     <tr>
         <td class="align-baseline">
-            <span @click="toggle_bookmark" style="cursor: pointer;">
+            <span @click="toggle_bookmark" 
+                  style="cursor: pointer;"
+                  data-toggle="tooltip"
+                  data-placement="left"
+                  title="Click to Bookmark"
+                  data-parent="body"
+                  data-trigger="hover"
+                  data-delay="200">
                 <i class="fa-bookmark"
                    :class="[tower.bookmark ? 'fas':'far']">
                 </i>
