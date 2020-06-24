@@ -3,8 +3,8 @@ from flask_login import login_user, logout_user, current_user, login_required
 from app import app, towers, log, db
 from app.models import User, UserTowerRelation
 from flask_login import current_user, login_user, logout_user, login_required
-from app.forms import LoginForm, RegistrationForm, UserSettingsForm, ResetPasswordRequestForm, \
-    ResetPasswordForm, UserDeleteForm, TowerSettingsForm, TowerDeleteForm
+from app.forms import *
+
 from urllib.parse import urlparse
 import string
 import random
@@ -39,9 +39,11 @@ def load_toasts(modal):
 
 @app.route('/', methods=('GET', 'POST'))
 def index():
+    form = LoginForm() if current_user.is_anonymous else None
     return render_template('landing_page.html', 
                            toasts=load_toasts(modal=False),
-                           modals=load_toasts(modal=True))
+                           modals=load_toasts(modal=True),
+                           login_form=form)
 
 
 # Create / find other towers/rooms as an observer
