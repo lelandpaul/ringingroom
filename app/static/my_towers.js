@@ -170,6 +170,17 @@ my_towers = new Vue({
 <ul class="nav nav-tabs" id="tower_relation_nav" role="tablist">
     <li class="nav-item" role="presentation">
         <a class="nav-link active" 
+           id="recent_tab" 
+           data-toggle="tab" 
+           href="#recent" 
+           role="tab"
+           aria-controls="recent"
+           aria-selected="true">
+            Recent
+        </a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" 
            id="bookmark_tab" 
            data-toggle="tab" 
            href="#bookmark" 
@@ -192,17 +203,6 @@ my_towers = new Vue({
     </li>
     <li class="nav-item" role="presentation">
         <a class="nav-link" 
-           id="recent_tab" 
-           data-toggle="tab" 
-           href="#recent" 
-           role="tab"
-           aria-controls="recent"
-           aria-selected="true">
-            Recent
-        </a>
-    </li>
-    <li class="nav-item" role="presentation">
-        <a class="nav-link" 
            id="host_tab" 
            data-toggle="tab" 
            href="#host" 
@@ -217,6 +217,33 @@ my_towers = new Vue({
 <div class="tab-content" id="my_towers_content">
 
 <div class="tab-pane fade show active" 
+     id="recent"
+     role="tabpanel"
+     aria-labelledby="recent_tab">
+    <p class="my-3"><small>Towers you have recently visited. Click the "Remove from Recents" button to delete them from the list.<br>Only tower creators may access tower settings.</small></p>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Name</th>
+                <th scope="col">ID</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tower_row v-for="tower in tower_rels"
+                       v-if="tower.recent"
+                       v-bind:tower="tower"
+                       v-bind:tab="'recent'"></tower_row>
+            <tr v-if="no_recent===0"><td colspan="3">You haven't visited any towers.</td></tr>
+        </tbody>
+    </table>
+</div>
+
+
+
+<div class="tab-pane fade" 
      id="bookmark"
      role="tabpanel"
      aria-labelledby="bookmark_tab">
@@ -289,32 +316,6 @@ my_towers = new Vue({
                        v-bind:tower="tower"
                        v-bind:tab="'host'"></tower_row>
             <tr v-if="no_host===0"><td colspan="3">You aren't a host at any towers.</td></tr>
-        </tbody>
-    </table>
-</div>
-
-
-<div class="tab-pane fade" 
-     id="recent"
-     role="tabpanel"
-     aria-labelledby="recent_tab">
-    <p class="my-3"><small>Towers you have recently visited. Click the "Remove from Recents" button to delete them from the list.<br>Only tower creators may access tower settings.</small></p>
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th scope="col"></th>
-                <th scope="col">Name</th>
-                <th scope="col">ID</th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tower_row v-for="tower in tower_rels"
-                       v-if="tower.recent"
-                       v-bind:tower="tower"
-                       v-bind:tab="'recent'"></tower_row>
-            <tr v-if="no_recent===0"><td colspan="3">You haven't visited any towers.</td></tr>
         </tbody>
     </table>
 </div>
