@@ -15,6 +15,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     towers = db.relationship("UserTowerRelation", back_populates="user")
+    joined = db.Column(db.Date, default=date.today)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -149,6 +150,7 @@ def load_user(id):
 class TowerDB(db.Model):
     tower_id = db.Column(db.Integer, primary_key=True)
     tower_name = db.Column(db.String(32), index=True)
+    created_on = db.Column(db.Date,default=date.today)
     last_access = db.Column(db.Date, 
                               nullable=False,
                               default=date.today,
