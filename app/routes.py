@@ -26,7 +26,8 @@ def get_server_ip(tower_id):
 
 @app.route('/<int:tower_id>/static/<path:path>')
 @app.route('/<int:tower_id>/<decorator>/static/<path:path>')
-def redirect_static(tower_id, path, decorator = None):
+@app.route('/tower_settings/static/<path:path>')
+def redirect_static(tower_id=None, path=None, decorator = None):
     return send_from_directory(app.static_folder, path)
 
 
@@ -83,7 +84,7 @@ def tower(tower_id, decorator=None):
     user_token = '' if current_user.is_anonymous \
                     else jwt.encode({'id': current_user.get_id()}, app.config['SECRET_KEY'],
                                     algorithm='HS256').decode('utf-8')
-                         
+
     # Pass in both the tower and the user_name
     return render_template('ringing_room.html',
                             tower = tower,
@@ -130,7 +131,7 @@ def authenticate():
     login_form = LoginForm()
     registration_form = RegistrationForm()
     next = request.args.get('next')
-    return render_template('authenticate.html', 
+    return render_template('authenticate.html',
                            login_form=login_form,
                            registration_form=registration_form,
                            hide_cookie_warning=True,
@@ -150,7 +151,7 @@ def login():
         user = User.query.filter_by(email=login_form.username.data.lower().strip()).first()
         if user is None or not user.check_password(login_form.password.data):
             flash('Incorrect username or password.')
-            return render_template('authenticate.html', 
+            return render_template('authenticate.html',
                                    login_form=login_form,
                                    registration_form=registration_form,
                                    next=next)
@@ -158,7 +159,7 @@ def login():
         login_user(user, remember=login_form.remember_me.data)
 
         return redirect(next or url_for('index'))
-    return render_template('authenticate.html', 
+    return render_template('authenticate.html',
                            login_form=login_form,
                            registration_form=registration_form,
                            next=next)
@@ -168,7 +169,7 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
-    
+
 @app.route('/register', methods=['POST'])
 def register():
     if current_user.is_authenticated:
@@ -177,7 +178,7 @@ def register():
     login_form = LoginForm()
     registration_form = RegistrationForm()
     if registration_form.validate_on_submit():
-        user = User(username=registration_form.username.data.strip(), 
+        user = User(username=registration_form.username.data.strip(),
                     email=registration_form.email.data.lower().strip())
         user.set_password(registration_form.password.data)
         db.session.add(user)
@@ -186,7 +187,7 @@ def register():
         login_user(user)
 
         return redirect(url_for('index'))
-    return render_template('authenticate.html', 
+    return render_template('authenticate.html',
                            login_form=login_form,
                            registration_form=registration_form,
                            next=next)
@@ -194,7 +195,7 @@ def register():
 @app.route('/my_towers')
 def my_towers():
     # We need to pass in all of the users related towers, marked by the kind of relation they have
-    return render_template('my_towers.html', 
+    return render_template('my_towers.html',
                            tower_props=current_user.tower_properties)
 
 @app.route('/tower_settings/<int:tower_id>', methods=['GET','POST'])
@@ -268,7 +269,7 @@ def user_settings():
         db.session.commit()
         logout_user()
         return redirect(url_for('index'))
-    return render_template('user_settings.html', form=form, del_form=del_form)
+    return render_template('user_settings.html', form=form, del_form=del_form, user_settings_flag=True)
 
 @app.route('/reset_password', methods=['GET','POST'])
 def request_reset_password():

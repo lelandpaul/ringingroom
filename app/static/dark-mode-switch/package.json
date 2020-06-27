@@ -1,0 +1,23 @@
+{
+  "name": "dark-mode-switch",
+  "version": "1.0.0",
+  "description": "Dark-mode theme switch for Bootstrap with local storage preference",
+  "keywords": [
+    "bootstrap",
+    "dark-mode"
+  ],
+  "homepage": "https://github.com/coliff/dark-mode-switch",
+  "bugs": {
+    "url": "https://github.com/coliff/dark-mode-switch/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coliff/dark-mode-switch.git"
+  },
+  "license": "MIT",
+  "author": "Christian Oliff <christianoliff@pm.me>",
+  "main": "dark-mode-switch.min.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

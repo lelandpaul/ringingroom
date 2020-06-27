@@ -78,7 +78,12 @@
 </head>
 
 <body onbeforeunload="leave_room">
-	<div class="container-fluid"
+    <div class="custom-control custom-switch d-none">
+      <input type="checkbox" class="custom-control-input" id="darkSwitch" />
+      <label class="custom-control-label" for="darkSwitch">Dark Mode</label>
+    </div>
+    <script src="static/dark-mode-switch/dark-mode-switch.min.js"></script>
+    <div class="container-fluid"
       id="global_wrapper">
 		<div id="bell_circle">
 			<!-- app will go here -->
