@@ -66,7 +66,7 @@
         <div class="input-group">
             {{ form.tower_name(size=32, class="form-control")}}
             <div class="input-group-append">
-                {{ form.submit(class="btn btn-outline-primary",value="Change")}}
+                {{ form.submit(class="btn btn-outline-primary",value="Change",id="submit_name_change")}}
             </div>
         </div>
     </div>
@@ -105,9 +105,40 @@
 </div>
 
 <hr>
+{{ form.host_mode_enabled(class="d-none",id="host_mode_toggle") }}
+
 
 <div class="form-row mt-4">
 <div class="col-12 col-md-6 pr-2">
+    <div class="form-row my-2">
+        <div class="col-6 pt-1">
+            <h4>Permit Host Mode:</h4>
+        </div>
+        <div class="col-6">
+
+            <div class="btn-group btn-block btn-group-toggle align-bottom">
+                <label class="btn btn-outline-primary {{ 'active' if not form.host_mode_enabled.data }}">
+                <input type="radio" 
+                       name="host_mode"
+                       id="host_false"
+                       onclick="$('#host_mode_toggle').prop('checked',false); 
+                                $('#submit_name_change').click()"
+                       />
+                       No
+                </label>
+
+                <label class="btn btn-outline-primary {{ 'active' if form.host_mode_enabled.data }}">
+                <input type="radio" 
+                       name="host_mode"
+                       id="host_true"
+                       onclick="$('#host_mode_toggle').prop('checked',true); 
+                                $('#submit_name_change').click()"
+                       />
+                       Yes
+                </label>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col pt-1">
             <h4>Tower Hosts:</h4>
@@ -166,9 +197,10 @@
 </div>
 </div>
 <div class="col-12 col-md-6">
-    <small class="form-text pl-3 pr-0 mt-2" style="text-align:justify;">
+    <small class="form-text pl-3 pr-0" style="text-align:justify;">
         <p>
-        Hosts are users with special privileges at the tower. If a host is present, they may choose to enable "Host Mode", in which:
+        Hosts are users with special privileges at the tower. If Host Mode is permitted, any host may enable it when they are in a tower. When a tower is in Host Mode:
+        
         </p>
 
         <ul style="padding-left:0; margin-left:1.25rem;">

@@ -528,7 +528,7 @@ Vue.component('tower_controls', {
              v-if="!window.tower_parameters.anonymous_user">
 
              <div class="row justify-content-between"
-                  v-if="window.tower_parameters.host_permissions">
+                  v-if="window.tower_parameters.host_permissions && window.tower_parameters.host_mode_permitted">
 
                   <div class="col">
                     <h4 class="mb-0 pt-1">Host Mode:</h4>
