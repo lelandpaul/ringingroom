@@ -8,7 +8,7 @@ var logger = function()
     var oldConsoleLog = null;
     var pub = {};
 
-    pub.enableLogger =  function enableLogger() 
+    pub.enableLogger =  function enableLogger()
                         {
                             if(oldConsoleLog == null){ return;}
 
@@ -45,10 +45,10 @@ Vue.component("tower_row",{
         toggle_bookmark: function(){
             socketio.emit('c_toggle_bookmark',this.tower.tower_id);
             this.tower.bookmark = !this.tower.bookmark;
-        }, 
+        },
 
         copy_id: function() {
- 
+
             setTimeout(() => {$('.id_clipboard_tooltip').tooltip('hide')},1000);
                 var dummy = document.createElement("textarea");
                 document.body.appendChild(dummy);
@@ -93,7 +93,7 @@ Vue.component("tower_row",{
         <td class="align-baseline">
             <a :href="'tower_settings/'+ tower.tower_id"
                class="btn btn-sm align-baseline"
-               :class="[tower.creator ? 'btn-primary' : 'btn-primary disabled']"
+               :class="[tower.creator ? 'btn-outline-primary' : 'btn-outline-primary disabled']"
                >
                Settings
             </a>
@@ -149,7 +149,7 @@ my_towers = new Vue({
             var url = document.location.toString();
             if (url.match('#')) {
                 $('#' + url.split('#')[1] + '_tab').tab('show');
-            } 
+            }
             window.scrollTo(0, 0)
             $('[data-toggle="tooltip"]').tooltip();
 
@@ -161,10 +161,10 @@ my_towers = new Vue({
 <div id="my_towers">
 <ul class="nav nav-tabs" id="tower_relation_nav" role="tablist">
     <li class="nav-item" role="presentation">
-        <a class="nav-link active" 
-           id="bookmark_tab" 
-           data-toggle="tab" 
-           href="#bookmark" 
+        <a class="nav-link active"
+           id="bookmark_tab"
+           data-toggle="tab"
+           href="#bookmark"
            role="tab"
            aria-controls="recent"
            aria-selected="true">
@@ -172,10 +172,10 @@ my_towers = new Vue({
         </a>
     </li>
     <li class="nav-item" role="presentation">
-        <a class="nav-link" 
-           id="created_tab" 
-           data-toggle="tab" 
-           href="#created" 
+        <a class="nav-link"
+           id="created_tab"
+           data-toggle="tab"
+           href="#created"
            role="tab"
            aria-controls="created"
            aria-selected="true">
@@ -183,10 +183,10 @@ my_towers = new Vue({
         </a>
     </li>
     <li class="nav-item" role="presentation">
-        <a class="nav-link" 
-           id="recent_tab" 
-           data-toggle="tab" 
-           href="#recent" 
+        <a class="nav-link"
+           id="recent_tab"
+           data-toggle="tab"
+           href="#recent"
            role="tab"
            aria-controls="recent"
            aria-selected="true">
@@ -194,10 +194,10 @@ my_towers = new Vue({
         </a>
     </li>
     <li class="nav-item" role="presentation">
-        <a class="nav-link" 
-           id="host_tab" 
-           data-toggle="tab" 
-           href="#host" 
+        <a class="nav-link"
+           id="host_tab"
+           data-toggle="tab"
+           href="#host"
            role="tab"
            aria-controls="host"
            aria-selected="true">
@@ -208,7 +208,7 @@ my_towers = new Vue({
 
 <div class="tab-content" id="my_towers_content">
 
-<div class="tab-pane fade show active" 
+<div class="tab-pane fade show active"
      id="bookmark"
      role="tabpanel"
      aria-labelledby="bookmark_tab">
@@ -233,7 +233,7 @@ my_towers = new Vue({
 </div>
 
 
-<div class="tab-pane fade" 
+<div class="tab-pane fade"
      id="created"
      role="tabpanel"
      aria-labelledby="created_tab">
@@ -260,7 +260,7 @@ my_towers = new Vue({
     </table>
 </div>
 
-<div class="tab-pane fade" 
+<div class="tab-pane fade"
      id="host"
      role="tabpanel"
      aria-labelledby="host_tab">
@@ -286,7 +286,7 @@ my_towers = new Vue({
 </div>
 
 
-<div class="tab-pane fade" 
+<div class="tab-pane fade"
      id="recent"
      role="tabpanel"
      aria-labelledby="recent_tab">

@@ -11,7 +11,7 @@
 
 <div class="row">
     <div class="col-12 col-lg-auto">
-        <h1 style="display:inline">Tower settings: 
+        <h1 style="display:inline">Tower settings:
             <span class="d-inline-block">{{ tower.tower_name }}</span></h1>
     </div>
 </div>
@@ -126,11 +126,11 @@
         <td>{{user.username}}</td>
         <td>
             {% if tower.creator.email != user.email %}
-            <button type="button" 
-                    class="close" 
+            <button type="button"
+                    class="close"
                     aria-label="Close"
                     onclick="$('#add_host').val('');
-                             $('#remove_host_input').val('{{user.email}}'); 
+                             $('#remove_host_input').val('{{user.email}}');
                              $('#submit').click();"
                     >
               <span aria-hidden="true">&times;</span>
@@ -194,7 +194,6 @@
 {% else %}
 
 You don't have permission to modify this tower's settings. Please contact the tower administrator.
-
 
 {% endif %}
 
