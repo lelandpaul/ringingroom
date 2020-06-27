@@ -6,11 +6,68 @@
 
 <div class="container centered_block">
 <div class='title'>
-    Welcome to the
+    Welcome to
     <h1>Ringing Room</h1>
     A virtual belltower
 </div>
+
+{% if current_user.is_authenticated %}
+
 <div id='tower_selector'></div>
+
+{% else %}
+
+    <form action="{{ url_for('login') }}" 
+          method="post" 
+          novalidate 
+          style="font-size:1.25rem;"
+          class="mt-n2"
+            >
+        {{ login_form.hidden_tag() }}
+        <div class="form-group">
+
+            {{ login_form.username.label }}
+            {{ login_form.username(size=32, class="form-control") }}
+            {% for error in login_form.username.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="row no-gutters mt-n1">
+        <div class="form-group col-9">
+            {{ login_form.password.label }}
+                <div class="input-group">
+                    {{ login_form.password(size=32, class="form-control") }}
+                    <div class="input-group-append">
+                        {{ login_form.submit(class="btn btn-primary") }}
+                    </div>
+                </div>
+                {% for error in login_form.password.errors %}
+                <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+        </div>
+        <div class="col-3 mb-3 d-flex">
+            <span class="mt-auto mb-n1 ml-4"
+                  style="font-size: 1rem">
+                <a href="{{url_for('request_reset_password')}}" class="float-right">Forgot password?</a>
+            </span>
+        </div>
+        </div>
+        <div class="row mt-1">
+            <div class="col-7">
+                <div class="form-group form-check form-check-inline">
+                {{ login_form.remember_me(class="form-check-input") }} {{ login_form.remember_me.label(class="form-check-label") }}
+                </div>
+            </div>
+            <div class="col-5">
+                <a href="{{url_for('authenticate')}}" class="float-right">Register here.</a>
+            </div>
+        </div>
+
+
+    </form>
+{% endif %}
+
+
 </div>
 
 <div id="toast_column" class="d-flex justify-content-center justify-content-md-end">
