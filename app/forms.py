@@ -2,7 +2,7 @@
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
+from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Optional
 from app.models import User
 
 class RequiredIf(DataRequired):
@@ -31,8 +31,8 @@ class EmailIf(Email):
 class LoginForm(FlaskForm):
     username = StringField('Email Address', validators=[DataRequired(),Email(message="Please use your email address to log in, not your username.")])
     password = PasswordField('Password', validators=[DataRequired()])
-    remember_me = BooleanField('Remember me')
-    submit = SubmitField('Sign In')
+    remember_me = BooleanField('Keep me logged in')
+    submit = SubmitField('Log In')
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -84,3 +84,19 @@ class ResetPasswordForm(FlaskForm):
     password2 = PasswordField(
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Reset Password')
+
+class TowerSettingsForm(FlaskForm):
+    tower_name = StringField('Change name',validators=[Optional()])
+    add_host = StringField('Add host by email', validators=[Optional(),Email()])
+    remove_host = StringField('Remove host', validators=[Optional(),Email()])
+    host_mode_enabled = BooleanField('Host Mode Enabled', validators=[Optional()])
+    submit = SubmitField('Save Changes')
+
+    def validate_add_host(self, new_host_email):
+        user = User.query.filter_by(email=new_host_email.data).first()
+        if user is None:
+            raise ValidationError('Unknown user: ' + new_host_email.data)
+
+class TowerDeleteForm(FlaskForm):
+    delete = SubmitField('Delete Tower')
+    

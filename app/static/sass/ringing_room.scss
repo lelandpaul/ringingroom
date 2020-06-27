@@ -51,10 +51,6 @@ input[type=range]::-ms-thumb {
     max-width: 25rem;
 }
 
-// tower id positioning
-#tower_id {
-    font-size: larger;
-}
 
 .tower_header .row:last-child {
     padding-bottom: 0.5rem;
@@ -133,6 +129,10 @@ input[type=range]::slider-thumb {
   margin-left: 1rem;
   list-style-type: none;
   font-size: larger;
+}
+
+.list-group-item {
+    margin-top: 0;
 }
 
 .list-group-item.disabled {
@@ -330,6 +330,11 @@ input[type=range]::slider-thumb {
 
 .modal-dialog {
     background-color: white;
+}
+
+.disabled {
+    pointer-events: none;
+    cursor: auto;
 }
 
 /* Scary mixin land */

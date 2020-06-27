@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+
+{% block title %} Tower Settings{% endblock %}
+
+{% block app_content %}
+
+
+<form action="" method="post" novalidate>
+    {{delete_form.hidden_tag()}}
+
+
+<div class="row">
+    <div class="col-12 col-lg-auto">
+        <h1 style="display:inline">Tower settings:
+            <span class="d-inline-block">{{ tower.tower_name }}</span></h1>
+    </div>
+</div>
+
+<div class="row my-3">
+    <div class="col">
+        <a href="/my_towers" class="btn btn-outline-primary mr-2">&larr; My Towers</a>
+        <a href="/{{tower.tower_id}}/{{tower.url_safe_name}}"
+            class="btn btn-outline-primary">Go to Tower</a>
+        {{delete_form.delete(class="btn btn-outline-primary float-right",
+                             onclick="return confirm('Are you sure you want to delete this tower?');",
+                             style="height:max-content;")}}
+    </div>
+</div>
+
+
+</form>
+
+<form action="" method="post" novalidate>
+    {{form.hidden_tag()}}
+
+
+<small class="form-text text-muted">
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
+
+
+
+</small>
+
+<hr>
+
+
+<form action="" method="post" id='tower_settings_form' novalidate>
+    {{form.hidden_tag()}}
+
+{% if current_user.check_permissions(tower.tower_id,permission='creator') %}
+
+
+<div class="form-row my-3 justify-content-between">
+
+    <div class="form-group col-7">
+        {{ form.tower_name.label }}
+        <div class="input-group">
+            {{ form.tower_name(size=32, class="form-control")}}
+            <div class="input-group-append">
+                {{ form.submit(class="btn btn-outline-primary",value="Change",id="submit_name_change")}}
+            </div>
+        </div>
+    </div>
+    <div class="form-group col">
+    <div class="float-right">
+    <label for="tower_id">Tower ID</label>
+    <div class="tower_id input-group">
+    <div class="input-group-prepend">
+        <span class="input-group-text" name="tower_id">{{tower.tower_id}}</span>
+    </div>
+    <div class="input-group-append">
+        <button class="btn btn-outline-primary"
+           data-toggle="tooltip"
+           data-placement="bottom"
+           data-container="body"
+           data-trigger="click"
+           id="id_clipboard_tooltip"
+           onclick="
+              setTimeout(() => {$('#id_clipboard_tooltip').tooltip('hide')},1000);
+                  var dummy = document.createElement("textarea");
+                  document.body.appendChild(dummy);
+                  dummy.value = cur_tower_id;
+                  dummy.select();
+                  document.execCommand("copy");
+                  document.body.removeChild(dummy);
+              }
+              "
+           title="Copied to clipboard">
+               <i class="far fa-clipboard fa-fw"></i>
+        </button>
+    </div>
+    </div>
+    </div>
+    </div>
+
+</div>
+
+<hr>
+{{ form.host_mode_enabled(class="d-none",id="host_mode_toggle") }}
+
+
+<div class="form-row mt-4">
+<div class="col-12 col-md-6 pr-2">
+    <div class="form-row my-2">
+        <div class="col-6 pt-1">
+            <h4>Permit Host Mode:</h4>
+        </div>
+        <div class="col-6">
+
+            <div class="btn-group btn-block btn-group-toggle align-bottom">
+                <label class="btn btn-outline-primary {{ 'active' if not form.host_mode_enabled.data }}">
+                <input type="radio" 
+                       name="host_mode"
+                       id="host_false"
+                       onclick="$('#host_mode_toggle').prop('checked',false); 
+                                $('#submit_name_change').click()"
+                       />
+                       No
+                </label>
+
+                <label class="btn btn-outline-primary {{ 'active' if form.host_mode_enabled.data }}">
+                <input type="radio" 
+                       name="host_mode"
+                       id="host_true"
+                       onclick="$('#host_mode_toggle').prop('checked',true); 
+                                $('#submit_name_change').click()"
+                       />
+                       Yes
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col pt-1">
+            <h4>Tower Hosts:</h4>
+<table class="table table-hover border-bottom">
+    <thead>
+        <tr>
+            <th scope="col">Email</th>
+            <th scope="col">Username</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody >
+    {% for user in tower.hosts %}
+    <tr>
+        <td>{{user.email}}</td>
+        <td>{{user.username}}</td>
+        <td>
+            {% if tower.creator.email != user.email %}
+            <button type="button"
+                    class="close"
+                    aria-label="Close"
+                    onclick="$('#add_host').val('');
+                             $('#remove_host_input').val('{{user.email}}');
+                             $('#submit').click();"
+                    >
+              <span aria-hidden="true">&times;</span>
+            </button>
+            {% else %}
+            <small class="text-muted float-right">(creator)</small>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+    </div>
+    <div class="row">
+<div class="col mt-2 px-3">
+    <div class="form-group px-5">
+        {{form.add_host.label}}
+        <div class="input-group">
+            {{form.add_host(class="form-control")}}
+            <div class="input-group-append">
+                {{form.submit(class="btn btn-outline-primary",
+                              value="Add")}}
+            </div>
+        </div>
+        <small class="form-text text-muted">
+            {% for error in form.add_host.errors %}
+                <span style="color: red;">{{ error }}<br></span>
+            {% endfor %}
+        </small>
+    </div>
+</div>
+</div>
+</div>
+<div class="col-12 col-md-6">
+    <small class="form-text pl-3 pr-0" style="text-align:justify;">
+        <p>
+        Hosts are users with special privileges at the tower. If Host Mode is permitted, any host may enable it when they are in a tower. When a tower is in Host Mode:
+        
+        </p>
+
+        <ul style="padding-left:0; margin-left:1.25rem;">
+            <li>Only hosts may change the number of bells, or switch between handbell and towerbell mode.</li>
+            <li>Non-hosts may only make calls using the in-app hotkeys when assigned to a bell.</li>
+            <li>All ringers may only ring the bells they are assigned to.</li>
+            <li>Only hosts may assign other ringers to bells.</li>
+            <li>Non-host ringers may assign themselves to open bells only.</li>
+        </ul>
+
+        Host Mode will automatically be disabled if there are no hosts in the tower. The creator of the tower may always enable Host Mode.
+    </small>
+</div>
+
+
+</div>
+
+{{form.remove_host(id='remove_host_input',class="d-none")}}
+
+</form>
+
+
+{% else %}
+
+You don't have permission to modify this tower's settings. Please contact the tower administrator.
+
+{% endif %}
+
+{% endblock %}

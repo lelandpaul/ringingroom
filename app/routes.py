@@ -1,10 +1,10 @@
 from flask import render_template, send_from_directory, abort, flash, redirect, url_for, session, request
 from flask_login import login_user, logout_user, current_user, login_required
 from app import app, towers, log, db
-from app.models import User
+from app.models import User, UserTowerRelation
 from flask_login import current_user, login_user, logout_user, login_required
-from app.forms import LoginForm, RegistrationForm, UserSettingsForm, ResetPasswordRequestForm, \
-    ResetPasswordForm, UserDeleteForm
+from app.forms import *
+
 from urllib.parse import urlparse
 import string
 import random
@@ -26,7 +26,8 @@ def get_server_ip(tower_id):
 
 @app.route('/<int:tower_id>/static/<path:path>')
 @app.route('/<int:tower_id>/<decorator>/static/<path:path>')
-def redirect_static(tower_id, path, decorator = None):
+@app.route('/tower_settings/static/<path:path>')
+def redirect_static(tower_id=None, path=None, decorator = None):
     return send_from_directory(app.static_folder, path)
 
 
@@ -39,9 +40,11 @@ def load_toasts(modal):
 
 @app.route('/', methods=('GET', 'POST'))
 def index():
+    form = LoginForm() if current_user.is_anonymous else None
     return render_template('landing_page.html', 
                            toasts=load_toasts(modal=False),
-                           modals=load_toasts(modal=True))
+                           modals=load_toasts(modal=True),
+                           login_form=form)
 
 
 # Create / find other towers/rooms as an observer
@@ -81,7 +84,7 @@ def tower(tower_id, decorator=None):
     user_token = '' if current_user.is_anonymous \
                     else jwt.encode({'id': current_user.get_id()}, app.config['SECRET_KEY'],
                                     algorithm='HS256').decode('utf-8')
-                         
+
     # Pass in both the tower and the user_name
     return render_template('ringing_room.html',
                             tower = tower,
@@ -89,6 +92,8 @@ def tower(tower_id, decorator=None):
                             user_email = '' if current_user.is_anonymous else current_user.email,
                             server_ip=get_server_ip(tower_id),
                             user_token = user_token,
+                            host_permissions = current_user.check_permissions(tower_id,'host')\
+                                                if current_user.is_authenticated else False,
                             listen_link = False)
 
 
@@ -126,7 +131,7 @@ def authenticate():
     login_form = LoginForm()
     registration_form = RegistrationForm()
     next = request.args.get('next')
-    return render_template('authenticate.html', 
+    return render_template('authenticate.html',
                            login_form=login_form,
                            registration_form=registration_form,
                            hide_cookie_warning=True,
@@ -146,7 +151,7 @@ def login():
         user = User.query.filter_by(email=login_form.username.data.lower().strip()).first()
         if user is None or not user.check_password(login_form.password.data):
             flash('Incorrect username or password.')
-            return render_template('authenticate.html', 
+            return render_template('authenticate.html',
                                    login_form=login_form,
                                    registration_form=registration_form,
                                    next=next)
@@ -154,7 +159,7 @@ def login():
         login_user(user, remember=login_form.remember_me.data)
 
         return redirect(next or url_for('index'))
-    return render_template('authenticate.html', 
+    return render_template('authenticate.html',
                            login_form=login_form,
                            registration_form=registration_form,
                            next=next)
@@ -164,7 +169,7 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
-    
+
 @app.route('/register', methods=['POST'])
 def register():
     if current_user.is_authenticated:
@@ -173,7 +178,7 @@ def register():
     login_form = LoginForm()
     registration_form = RegistrationForm()
     if registration_form.validate_on_submit():
-        user = User(username=registration_form.username.data.strip(), 
+        user = User(username=registration_form.username.data.strip(),
                     email=registration_form.email.data.lower().strip())
         user.set_password(registration_form.password.data)
         db.session.add(user)
@@ -182,10 +187,61 @@ def register():
         login_user(user)
 
         return redirect(url_for('index'))
-    return render_template('authenticate.html', 
+    return render_template('authenticate.html',
                            login_form=login_form,
                            registration_form=registration_form,
                            next=next)
+
+@app.route('/my_towers')
+def my_towers():
+    # We need to pass in all of the users related towers, marked by the kind of relation they have
+    return render_template('my_towers.html',
+                           tower_props=current_user.tower_properties)
+
+@app.route('/tower_settings/<int:tower_id>', methods=['GET','POST'])
+def tower_settings(tower_id):
+    tower = towers[tower_id]
+    tower_db = tower.to_TowerDB()
+    form = TowerSettingsForm()
+    delete_form = TowerDeleteForm()
+    if form.validate_on_submit():
+        # Set host-mode
+        tower.host_mode_enabled = form.host_mode_enabled.data
+        if form.tower_name.data:
+            tower.name = form.tower_name.data
+            tower_db.tower_name = form.tower_name.data
+            form.tower_name.data = ''
+            flash('Tower name changed.')
+        if form.add_host.data:
+            new_host = User.query.filter_by(email=form.add_host.data).first()
+            if new_host.check_permissions(tower_id, permission='host'):
+                form.add_host.errors.append('User is already a host.')
+            new_host.make_host(tower)
+            form.add_host.data = ''
+        if form.remove_host.data:
+            host = User.query.filter_by(email=form.remove_host.data).first()
+            if host == tower_db.creator:
+                form.add_host.errors.append('Cannot remove tower creator from host list.')
+            else:
+                host.remove_host(tower)
+            form.remove_host.data =''
+        db.session.commit()
+    if delete_form.delete.data and delete_form.validate_on_submit():
+        rels = UserTowerRelation.query.filter_by(tower=tower_db)
+        for rel in rels: db.session.delete(rel)
+        db.session.delete(tower_db)
+        db.session.commit()
+        del tower
+        towers.pop(tower_id)
+        flash('Tower ' + str(tower_id) + ' deleted.')
+        return redirect(url_for('my_towers'))
+    form.host_mode_enabled.data = tower.host_mode_enabled
+    return render_template('tower_settings.html',
+                           form=form,
+                           delete_form=delete_form,
+                           tower=tower_db)
+
+
 
 @app.route('/settings', methods=['GET','POST'])
 @login_required
@@ -216,7 +272,7 @@ def user_settings():
         db.session.commit()
         logout_user()
         return redirect(url_for('index'))
-    return render_template('user_settings.html', form=form, del_form=del_form)
+    return render_template('user_settings.html', form=form, del_form=del_form, user_settings_flag=True)
 
 @app.route('/reset_password', methods=['GET','POST'])
 def request_reset_password():
@@ -245,3 +301,5 @@ def reset_password(token):
         flash('Your password has been reset.')
         return redirect(url_for('authenticate'))
     return render_template('reset_password.html', form=form, token_success=bool(user))
+
+

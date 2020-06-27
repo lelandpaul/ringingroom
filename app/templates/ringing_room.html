@@ -38,6 +38,10 @@
             cur_user_email: "{{user_email}}",
             anonymous_user: {{'true' if current_user.is_anonymous or listen_link else 'false'}},
             user_token: "{{user_token}}",
+            host_mode_permitted: {{'true' if tower.host_mode_enabled else 'false'}},
+            host_mode: {{'true' if tower.host_mode else 'false'}},
+            host_permissions: {{'true' if host_permissions else 'false'}},
+            bookmarked: {{'true' if current_user.bookmarked(tower.tower_id) else 'false'}},
             listen_link: {{'true' if listen_link else 'false'}},
             server_ip: "{{server_ip}}",
         };
@@ -75,7 +79,12 @@
 </head>
 
 <body onbeforeunload="leave_room">
-	<div class="container-fluid"
+    <div class="custom-control custom-switch d-none">
+      <input type="checkbox" class="custom-control-input" id="darkSwitch" />
+      <label class="custom-control-label" for="darkSwitch">Dark Mode</label>
+    </div>
+    <script src="static/dark-mode-switch/dark-mode-switch.min.js"></script>
+    <div class="container-fluid"
       id="global_wrapper">
 		<div id="bell_circle">
 			<!-- app will go here -->

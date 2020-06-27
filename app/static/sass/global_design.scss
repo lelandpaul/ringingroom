@@ -5,7 +5,7 @@
 /* Change sass variables */
 
 // set default background color
-$body-bg: #fbfbff;
+$body-bg: #d3d1dc;
 // set default font color
 $body-color: #0d0a0b;
 $text-color: #0d0a0b;
@@ -18,6 +18,147 @@ $list-group-color: #0d0a0b;
 $list-group-action-hover-color: #0d0a0b;
 $text-muted: #454955;
 $input-color: #454955;
+
+[data-theme="dark"] {
+  background-color: #474e4f !important;
+  color: #eee;
+}
+
+[data-theme="dark"] a:not(.nav-link):not(.navbar-brand):not(.dropdown-item),
+[data-theme="dark"] a:hover:not(.nav-link):not(.navbar-brand):not(.dropdown-item) {
+  background-color: #474e4f !important;
+  color: #48e0f1;
+}
+
+[data-theme="dark"] #my_towers a.nav-link,
+[data-theme="dark"] #my_towers a:hover.nav-link {
+  background-color: #474e4f !important;
+  color: #48e0f1;
+    border-color: #eee;
+    border-bottom-color: transparent;
+}
+
+[data-theme="dark"] #my_towers a.nav-link:not(.active),
+[data-theme="dark"] #my_towers a:hover.nav-link:not(.active) {
+  background-color: #474e4f !important;
+  color: #48e0f1;
+    border-color: #eee;
+}
+
+[data-theme="dark"] #bell_circle_wrapper a.nav-link:not(.active),
+[data-theme="dark"] #bell_circle_wrapper a:hover.nav-link:not(.active) {
+  background-color: #474e4f !important;
+  color: #48e0f1;
+    border-color: #eee;
+}
+
+[data-theme="dark"] #bell_circle_wrapper .volume_icon,
+[data-theme="dark"] #bell_circle_wrapper .volume_control_slider {
+  background-color: #474e4f !important;
+  color: #48e0f1;
+    border-color: #eee;
+}
+
+[data-theme="dark"] #bell_circle_wrapper .card {
+  background-color: #474e4f;
+  border-color: #eee;
+}
+
+[data-theme="dark"] #bell_circle_wrapper .list-group-item:not(.active) {
+  color: #eee;
+    background-color: #474e4f;
+}
+
+[data-theme="dark"] #bell_circle_wrapper .list-group-item {
+  color: $primary;
+    background-color: #474e4f;
+}
+
+[data-theme="dark"] #bell_circle_wrapper #leave_tower_link_button {
+    color: #48e0f1;
+    border-color: #48e0f1;
+    background-color: #474e4f;
+}
+
+[data-theme="dark"] #bell_circle_wrapper .btn-outline-secondary {
+    border-color: #48e0f1;
+    color: #48e0f1;
+    background-color: #474e4f;
+}
+
+[data-theme="dark"] input[type=range] {
+  -webkit-appearance: none;
+}
+
+/* Special styling for WebKit/Blink */
+[data-theme="dark"] input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background-color: #48e0f1;
+}
+
+/* All the same stuff for Firefox */
+[data-theme="dark"] input[type=range]::-moz-range-thumb {
+  background-color: #48e0f1;
+}
+
+/* All the same stuff for IE */
+[data-theme="dark"] input[type=range]::-ms-thumb {
+  background-color: #48e0f1;
+}
+
+/* Special styling for WebKit/Blink */
+[data-theme="dark"] input[type=range]::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+  background-color: black;
+}
+
+/* All the same stuff for Firefox */
+[data-theme="dark"] input[type=range]::-moz-range-track {
+  background-color: black;
+}
+
+/* All the same stuff for IE */
+[data-theme="dark"] input[type=range]::-ms-track {
+  background-color: black;
+}
+
+
+[data-theme="dark"] .btn-outline-primary {
+    color: #48e0f1;
+    border-color: #48e0f1;
+    background-color: #474e4f;
+}
+
+[data-theme="dark"] .btn-outline-primary:hover {
+    color: #474e4f;
+    border-color: #48e0f1;
+    background-color: #48e0f1;
+}
+
+[data-theme=dark] .table,
+[data-theme=dark] .table-hover tbody tr:hover {
+  color: #eee;
+}
+
+[data-theme="dark"] hr {
+    background-color: #eee;
+}
+
+[data-theme="dark"] .bg-light {
+  background-color: #474e4f !important;
+}
+
+[data-theme="dark"] .bg-white {
+  background-color: #474e4f !important;
+}
+
+[data-theme="dark"] .bg-black {
+  background-color: #eee !important;
+}
+
+[data-theme="dark"] .fa-clipboard {
+    color: #eee !important;
+}
 
 /* Import bootstrap */
 @import "../bootstrap/scss/bootstrap";
@@ -40,7 +181,7 @@ html {
 
 body {
   font-family: "Lato", sans-serif;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 100;
 }
 
@@ -64,7 +205,7 @@ h1, h2, h3, h4 {
   padding-top: 56.25%;
   position: relative;
 }
- 
+
 .iframe-container iframe {
    border: 0;
    height: 100%;
@@ -72,4 +213,14 @@ h1, h2, h3, h4 {
    position: absolute;
    top: 0;
    width: 100%;
+}
+
+ul li {
+    margin-top: 0.5rem;
+}
+
+@include media-breakpoint-up(md){
+    body {
+        font-size: 1.5rem;
+    }
 }
