@@ -9,7 +9,7 @@
 
     <form action="{{ url_for('login', next=next) }}" method="post" novalidate>
         {{ login_form.hidden_tag() }}
-        <div class="form-group"
+        <div class="form-group">
 
             {{ login_form.username.label }}
             {{ login_form.username(size=32, class="form-control") }}

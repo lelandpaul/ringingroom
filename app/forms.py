@@ -31,8 +31,8 @@ class EmailIf(Email):
 class LoginForm(FlaskForm):
     username = StringField('Email Address', validators=[DataRequired(),Email(message="Please use your email address to log in, not your username.")])
     password = PasswordField('Password', validators=[DataRequired()])
-    remember_me = BooleanField('Remember me')
-    submit = SubmitField('Sign In')
+    remember_me = BooleanField('Keep me logged in')
+    submit = SubmitField('Log In')
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])

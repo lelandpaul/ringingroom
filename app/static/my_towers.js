@@ -45,7 +45,8 @@ Vue.component("tower_row",{
         toggle_bookmark: function(){
             socketio.emit('c_toggle_bookmark',this.tower.tower_id);
             this.tower.bookmark = !this.tower.bookmark;
-        },
+            $('[data-toggle="tooltip"]').tooltip('hide');
+        }, 
 
         copy_id: function() {
 
@@ -67,7 +68,14 @@ Vue.component("tower_row",{
     `
     <tr>
         <td class="align-baseline">
-            <span @click="toggle_bookmark" style="cursor: pointer;">
+            <span @click="toggle_bookmark" 
+                  style="cursor: pointer;"
+                  data-toggle="tooltip"
+                  data-placement="left"
+                  title="Click to Bookmark"
+                  data-parent="body"
+                  data-trigger="hover"
+                  data-delay="200">
                 <i class="fa-bookmark"
                    :class="[tower.bookmark ? 'fas':'far']">
                 </i>
@@ -161,10 +169,21 @@ my_towers = new Vue({
 <div id="my_towers">
 <ul class="nav nav-tabs" id="tower_relation_nav" role="tablist">
     <li class="nav-item" role="presentation">
-        <a class="nav-link active"
-           id="bookmark_tab"
-           data-toggle="tab"
-           href="#bookmark"
+        <a class="nav-link active" 
+           id="recent_tab" 
+           data-toggle="tab" 
+           href="#recent" 
+           role="tab"
+           aria-controls="recent"
+           aria-selected="true">
+            Recent
+        </a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" 
+           id="bookmark_tab" 
+           data-toggle="tab" 
+           href="#bookmark" 
            role="tab"
            aria-controls="recent"
            aria-selected="true">
@@ -172,25 +191,14 @@ my_towers = new Vue({
         </a>
     </li>
     <li class="nav-item" role="presentation">
-        <a class="nav-link"
-           id="created_tab"
-           data-toggle="tab"
-           href="#created"
+        <a class="nav-link" 
+           id="created_tab" 
+           data-toggle="tab" 
+           href="#created" 
            role="tab"
            aria-controls="created"
            aria-selected="true">
             Created
-        </a>
-    </li>
-    <li class="nav-item" role="presentation">
-        <a class="nav-link"
-           id="recent_tab"
-           data-toggle="tab"
-           href="#recent"
-           role="tab"
-           aria-controls="recent"
-           aria-selected="true">
-            Recent
         </a>
     </li>
     <li class="nav-item" role="presentation">
@@ -208,7 +216,34 @@ my_towers = new Vue({
 
 <div class="tab-content" id="my_towers_content">
 
-<div class="tab-pane fade show active"
+<div class="tab-pane fade show active" 
+     id="recent"
+     role="tabpanel"
+     aria-labelledby="recent_tab">
+    <p class="my-3"><small>Towers you have recently visited. Click the "Remove from Recents" button to delete them from the list.<br>Only tower creators may access tower settings.</small></p>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Name</th>
+                <th scope="col">ID</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tower_row v-for="tower in tower_rels"
+                       v-if="tower.recent"
+                       v-bind:tower="tower"
+                       v-bind:tab="'recent'"></tower_row>
+            <tr v-if="no_recent===0"><td colspan="3">You haven't visited any towers.</td></tr>
+        </tbody>
+    </table>
+</div>
+
+
+
+<div class="tab-pane fade" 
      id="bookmark"
      role="tabpanel"
      aria-labelledby="bookmark_tab">
@@ -281,32 +316,6 @@ my_towers = new Vue({
                        v-bind:tower="tower"
                        v-bind:tab="'host'"></tower_row>
             <tr v-if="no_host===0"><td colspan="3">You aren't a host at any towers.</td></tr>
-        </tbody>
-    </table>
-</div>
-
-
-<div class="tab-pane fade"
-     id="recent"
-     role="tabpanel"
-     aria-labelledby="recent_tab">
-    <p class="my-3"><small>Towers you have recently visited. Click the "Remove from Recents" button to delete them from the list.<br>Only tower creators may access tower settings.</small></p>
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th scope="col"></th>
-                <th scope="col">Name</th>
-                <th scope="col">ID</th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tower_row v-for="tower in tower_rels"
-                       v-if="tower.recent"
-                       v-bind:tower="tower"
-                       v-bind:tab="'recent'"></tower_row>
-            <tr v-if="no_recent===0"><td colspan="3">You haven't visited any towers.</td></tr>
         </tbody>
     </table>
 </div>
