@@ -290,7 +290,11 @@ Vue.component("bell_rope", {
                      <img @click='emit_ringing_event'
                            class="bell_img clickable"
                           :class="[assignment_mode ? 'assignment_mode' : '']"
-                          :src="'static/images/' + image_prefix + (stroke ? images[0] : images[1]) + '.png'"
+                          :src="'static/images/' + 
+                                    image_prefix + 
+                                    (stroke ? images[0] : images[1]) + 
+                                    (number == 1 && stroke ? '-treble' : '') +
+                                    '.png'"
                           />
 
 
