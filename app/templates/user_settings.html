@@ -7,13 +7,54 @@
 <form action="" method="post" novalidate>
     {{form.hidden_tag()}}
 
-<h1>User settings: {{ current_user.username }}</h1>
+<h1>Account settings: {{ current_user.username }}</h1>
 
-<div class="custom-control custom-switch">
-  <input type="checkbox" class="custom-control-input" id="darkSwitch" />
-  <label class="custom-control-label" for="darkSwitch">Dark Mode</label>
+  <!-- <label class="custom-control-label" for="darkSwitch">Dark Mode</label> -->
+
+<div class="row my-4">
+    <div class="col-3">
+        Dark Mode:
+    </div>
+    <div class="col-3">
+        <div class="btn-group btn-block btn-group-toggle align-bottom">
+            <label class="btn btn-outline-primary" id="dark_false_label">
+            <input type="radio" 
+                   name="dark_mode"
+                   id="dark_false"
+                   onclick="$('#darkSwitch').click(); window.toggle_dark_switch()"
+                   />
+                   Off
+            </label>
+
+            <label class="btn btn-outline-primary" id="dark_true_label">
+            <input type="radio" 
+                   name="dark_mode"
+                   id="dark_true"
+                   onclick="$('#darkSwitch').click(); window.toggle_dark_switch()"
+                   />
+                   On
+            </label>
+        </div>
+    </div>
 </div>
+
+
+<input type="checkbox" class="d-none" id="darkSwitch" />
 <script src="static/dark-mode-switch/dark-mode-switch.min.js"></script>
+<script>
+    window.toggle_dark_switch = function(){
+        $('#dark_true_label').toggleClass('active');
+        $('#dark_false_label').toggleClass('active');
+    };
+    $(document).ready(function(){
+        if ( localStorage.getItem('darkSwitch') !== null && 
+             localStorage.getItem('darkSwitch') === 'dark'){
+            $('#dark_true_label').addClass('active');
+        } else {
+            $('#dark_false_label').addClass('active');
+        }
+    });
+</script>
 
 <small class="form-text text-muted">
 
