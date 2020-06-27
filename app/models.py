@@ -156,12 +156,13 @@ class TowerDB(db.Model):
                               default=date.today,
                               onupdate=date.today)
     users = db.relationship("UserTowerRelation", back_populates="tower")
+    host_mode_enabled = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return '<TowerDB {}: {}>'.format(self.tower_id, self.tower_name)
 
     def to_Tower(self):
-        return Tower(self.tower_name, tower_id=self.tower_id)
+        return Tower(self.tower_name, tower_id=self.tower_id, host_mode_enabled=self.host_mode_enabled)
 
     def created_by(self, user):
         # Expects a User object
@@ -232,7 +233,7 @@ class UserTowerRelation(db.Model):
 
 # Keep track of towers
 class Tower:
-    def __init__(self, name, tower_id=None, n=8):
+    def __init__(self, name, tower_id=None, n=8, host_mode_enabled=False):
         if not tower_id:
             self._id = self.generate_random_change()
         else:
@@ -246,6 +247,7 @@ class Tower:
         self._observers = set()
         self._host_mode = False
         self._host_ids = self.to_TowerDB().host_ids
+        self._host_mode_enabled = self.to_TowerDB().host_mode_enabled or False
 
     def generate_random_change(self):
         # generate a random caters change, for use as uid
@@ -262,7 +264,9 @@ class Tower:
         # Check if it's already there — we need this for checking whether a tower is already in a
         # users related towers
         tower_db = TowerDB.query.filter(TowerDB.tower_id==self.tower_id).first()
-        return tower_db or TowerDB(tower_id=self.tower_id, tower_name=self.name)
+        return tower_db or TowerDB(tower_id=self.tower_id, 
+                                   tower_name=self.name, 
+                                   host_mode_enabled=self.host_mode_enabled)
 
     @property
     def tower_id(self):
@@ -380,6 +384,17 @@ class Tower:
 
     def remove_host_id(self, user_id):
         self._host_ids.remove(user_id)
+
+    @property
+    def host_mode_enabled(self):
+        return self._host_mode_enabled
+
+    @host_mode_enabled.setter
+    def host_mode_enabled(self, new_state):
+        self._host_mode_enabled = new_state
+        self.to_TowerDB().host_mode_enabled = new_state
+        db.session.commit()
+
         
 
 class TowerDict(dict):
@@ -446,5 +461,3 @@ class TowerDict(dict):
         dict.__setitem__(self, key, (value, timestamp))
 
         return value
-
-

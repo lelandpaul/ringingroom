@@ -66,7 +66,7 @@
         <div class="input-group">
             {{ form.tower_name(size=32, class="form-control")}}
             <div class="input-group-append">
-                {{ form.submit(class="btn btn-outline-primary",value="Change")}}
+                {{ form.submit(class="btn btn-outline-primary",value="Change",id="submit_name_change")}}
             </div>
         </div>
     </div>
@@ -105,6 +105,14 @@
 </div>
 
 <hr>
+
+<div class="form-row">
+    <div class="form-group col">
+        {{form.host_mode_enabled.label}}
+        {{form.host_mode_enabled(class="form-control",
+                                 onclick="$('#submit_name_change').click()")}}
+    </div>
+</div>
 
 <div class="form-row mt-4">
 <div class="col-12 col-md-6 pr-2">

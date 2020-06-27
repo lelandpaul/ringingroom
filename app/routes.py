@@ -202,6 +202,8 @@ def tower_settings(tower_id):
     form = TowerSettingsForm()
     delete_form = TowerDeleteForm()
     if form.validate_on_submit():
+        # Set host-mode
+        tower.host_mode_enabled = form.host_mode_enabled.data
         if form.tower_name.data:
             tower.name = form.tower_name.data
             tower_db.tower_name = form.tower_name.data
@@ -230,6 +232,7 @@ def tower_settings(tower_id):
         towers.pop(tower_id)
         flash('Tower ' + str(tower_id) + ' deleted.')
         return redirect(url_for('my_towers'))
+    form.host_mode_enabled.data = tower.host_mode_enabled
     return render_template('tower_settings.html',
                            form=form,
                            delete_form=delete_form,
