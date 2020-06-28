@@ -128,7 +128,7 @@ class User(UserMixin, db.Model):
         # 'host': can manage practices in host mode
         if permission not in ['creator','host']:
             raise KeyError('The requested permission type does not exist.')
-        return tower_id in [t.tower_id for t in self.towers if getattr(t,permission)]
+        return tower_id in [int(t.tower_id) for t in self.towers if getattr(t,permission)]
 
     def make_host(self, tower):
         rel = self._get_relation_to_tower(tower)
