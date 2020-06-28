@@ -44,7 +44,7 @@ You are now ready to run the server:
     │   │   └── tower.json              => offsets for towerbell audiosprite
     │   ├── css/                        => compiled css, maintained by sass (don't modify!)
     │   ├── sass
-    │   │   ├── static.scss            => sass for for static pages
+    │   │   ├── static.scss             => sass for for static pages
     │   │   └── ringing_room.scss       => sass for ringing_room itself
     │   ├── images
     │   │   ├── favicon/                => favicon assets
