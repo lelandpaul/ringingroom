@@ -220,10 +220,10 @@ class UserTowerRelation(db.Model):
     @property
     def relation_dict(self):
         # return the relation types as a dictionary
-        return {'recent': int(self.recent),
-                'creator': int(self.creator),
-                'bookmark': int(self.bookmark),
-                'host': int(self.host)}
+        return {'recent': False if self.recent == '0' else bool(self.recent),
+                'creator': False if self.creator == '0' else bool(self.creator),
+                'bookmark': False if self.bookmark == '0' else bool(self.bookmark),
+                'host': False if self.host == '0' else bool(self.host)}
 
     def clean_up(self):
         # Call this whenever you change a boolean column from True to False
