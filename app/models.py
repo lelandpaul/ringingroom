@@ -228,7 +228,7 @@ class UserTowerRelation(db.Model):
     def clean_up(self):
         # Call this whenever you change a boolean column from True to False
         # Checks if all relations are false, deletes if relevant
-        if not any(relation_dict.values()):
+        if not any(self.relation_dict.values()):
             self.delete()
 
 # Keep track of towers
@@ -246,8 +246,8 @@ class Tower:
         self._assignments = {i+1: '' for i in range(n)}
         self._observers = set()
         self._host_mode = False
+        self._host_mode_enabled = host_mode_enabled
         self._host_ids = self.to_TowerDB().host_ids
-        self._host_mode_enabled = self.to_TowerDB().host_mode_enabled or False
 
     def generate_random_change(self):
         # generate a random caters change, for use as uid
@@ -266,7 +266,7 @@ class Tower:
         tower_db = TowerDB.query.filter(TowerDB.tower_id==self.tower_id).first()
         return tower_db or TowerDB(tower_id=self.tower_id, 
                                    tower_name=self.name, 
-                                   host_mode_enabled=self.host_mode_enabled)
+                                   host_mode_enabled=self._host_mode_enabled)
 
     @property
     def tower_id(self):
