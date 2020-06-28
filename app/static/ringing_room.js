@@ -1343,7 +1343,8 @@ bell_circle = new Vue({
       },
 
       toggle_bookmark: function(){
-          socketio.emit('c_toggle_bookmark',cur_tower_id);
+          socketio.emit('c_toggle_bookmark',{tower_id: cur_tower_id,
+                                             user_token: window.tower_parameters.user_token});
           this.bookmarked = !this.bookmarked;
       },
 	},

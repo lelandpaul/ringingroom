@@ -326,10 +326,19 @@ def on_report(json):
 
 # The user toggled bookmark status for a tower
 @socketio.on('c_toggle_bookmark')
-def on_toggle_bookmark(tower_id):
-    log('c_toggle_bookmark',current_user,tower_id)
-    tower = towers[tower_id]
-    current_user.toggle_bookmark(tower)
+def on_toggle_bookmark(json):
+
+    # We need to custom-load the user based on the jwt token passed up
+    user = None
+    try:
+        user_id = jwt.decode(json['user_token'],app.config['SECRET_KEY'],algorithms=['HS256'])['id']
+        user = load_user(user_id)
+    except:
+        pass # leave user set to None
+
+    log('c_toggle_bookmark',current_user,json['tower_id'])
+    tower = towers[json['tower_id']]
+    user.toggle_bookmark(tower)
 
 
 # The user removed a tower from their recent towers
