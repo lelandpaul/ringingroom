@@ -166,14 +166,18 @@ class TowerDB(db.Model):
 
     def created_by(self, user):
         # Expects a User object
-        # Just instantiating this is enough
-        UserTowerRelation(user=user, tower=self, creator=True, host=True)
+        # This should go through the user object, to avoid duplicating the relation
+        rel = user._get_relation_to_tower(self)
+        rel.creator = True
+        rel.host = True
         db.session.commit()
 
     @property
     def creator(self):
-        return UserTowerRelation.query.filter(UserTowerRelation.tower==self, 
-                                              UserTowerRelation.creator==True).first().user
+        rel = UserTowerRelation.query.filter(UserTowerRelation.tower==self, 
+                                             UserTowerRelation.creator==True).first()
+        return rel.user if rel else None
+
     # We need to be able to get this from the TowerDB object for the User Menu
     @property
     def url_safe_name(self):
