@@ -101,9 +101,22 @@ socketio.on('s_set_observers', function(msg, cb){
 // User was assigned to a bell
 socketio.on('s_assign_user', function(msg, cb){
     console.log('Received user assignment: ' + msg.bell + ' ' + msg.user);
-    bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
-    if (msg.user === window.tower_parameters.cur_user_name){
-        bell_circle.$refs.users.rotate_to_assignment();
+    try {
+        // This stochastically very error-prone: 
+        // Sometimes it sets the state before the bell is created
+        // As such: try it, but if it doesn't work wait a bit and try again.
+        bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
+        if (msg.user === window.tower_parameters.cur_user_name){
+            bell_circle.$refs.users.rotate_to_assignment();
+        }
+    } catch(err) {
+        console.log('caught error assign_user; trying again');
+        setTimeout(100, function(){
+            bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
+            if (msg.user === window.tower_parameters.cur_user_name){
+                bell_circle.$refs.users.rotate_to_assignment();
+            }
+        });
     }
 });
 
@@ -124,7 +137,17 @@ socketio.on('s_size_change', function(msg,cb){
 socketio.on('s_global_state',function(msg,cb){
 	var gstate = msg.global_bell_state;
 	for (var i = 0; i < gstate.length; i++){
-		bell_circle.$refs.bells[i].set_state_silently(gstate[i]);
+        try {
+            // This stochastically very error-prone: 
+            // Sometimes it sets the state before the bell is created
+            // As such: try it, but if it doesn't work wait a bit and try again.
+            bell_circle.$refs.bells[i].set_state_silently(gstate[i]);
+        } catch(err) {
+            console.log('caught error set_state; trying again');
+            setTimeout(100, function(){
+                bell_circle.$refs.bells[i].set_state_silently(gstate[i]);
+            });
+        }
 	};
 });
 
