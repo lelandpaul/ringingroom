@@ -111,6 +111,8 @@ def on_join(json):
         # Hack to fix a bug with the multiserver setup
         emit('s_size_change',{'size': tower.n_bells})
         emit('s_audio_change',{'new_audio':tower.audio})
+        emit('s_host_mode', {'tower_id': tower_id,
+                             'new_mode': tower.host_mode})
 
         emit('s_user_entered', { 'user_name': user.username },
              broadcast=True, include_self = True, room=json['tower_id'])
