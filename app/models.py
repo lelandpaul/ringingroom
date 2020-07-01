@@ -73,7 +73,7 @@ class User(UserMixin, db.Model):
         # Update the timestamp (and recent, if necessary)
         rel.recent = True
         rel.visited = datetime.now()
-        self._clean_recent_towers()
+        # self._clean_recent_towers() # no reason to do this now that the my_towers page exists
         db.session.commit()
 
     def remove_recent_tower(self,tower):
