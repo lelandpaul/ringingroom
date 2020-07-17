@@ -82,7 +82,7 @@ Vue.component("tower_row",{
             </span>
         </td>
         <td class="align-baseline">
-            <a :href="tower.tower_id + '/' + tower.tower_name">
+            <a :href="tower.tower_id + '/' + tower.tower_url">
                 [[tower.tower_name]]
             </a>
         </td>

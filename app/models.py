@@ -119,6 +119,7 @@ class User(UserMixin, db.Model):
         for rel in sorted(self.towers, key=lambda x: x.visited, reverse=True):
             tower_properties.append(dict(\
                                     {'tower_id': rel.tower.tower_id,
+                                     'tower_url': rel.tower.url_safe_name,
                                      'tower_name': rel.tower.tower_name}, **rel.relation_dict))
         return tower_properties
 
