@@ -703,7 +703,7 @@ Vue.component('help', {
 
 <p>The user list allows you to <i>assign ringers</i> to particular bells. To assign ringers, press the "Assign Bells" button to enter bell assignment mode. While in this mode, you may select any ringer from the user list by clicking on them, and then click on the box next to the bell you want to assign them to. Clicking the "x" by a user's name will unassign them from that bell. While in assignment mode, you can't ring any bells; when you're done assigning bells, click the "Stop Assigning" button to return to normal mode.</p>
 
-<p>Assigning a user to a bell will have the effect of automatically rotating that ringer's "perspective" on the tower so that the bell is placed in the bottom right position. This will allow it to be rung using the [SPACE] or [j] hotkeys. If a user is assigned to multiple bells, the lowest-numbered one will be placed in position; this means that if the user is assigned to exactly 2 bells, those bells we be ringable with [f] and [j].</p>
+<p>Assigning a user to a bell will have the effect of automatically rotating that ringer's "perspective" on the tower so that the bell is placed in the bottom right position. This will allow it to be rung using the [SPACE] or [j] hotkeys. If a user is assigned to multiple bells, the lowest-numbered one will be placed in position; this means that if the user is assigned to exactly 2 bells, those bells will be ringable with [f] and [j].</p>
 
 <p>You can make calls by using the hotkeys below.</p>
 
