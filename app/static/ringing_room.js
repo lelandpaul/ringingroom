@@ -22,12 +22,11 @@ var logger = function() {
 
     return pub;
 }();
+
 // logger.disableLogger()
 
 // Set up socketio instance
-
 var socketio = io(window.tower_parameters.server_ip);
-
 
 
 // Various Vue instances need this on creation
@@ -37,8 +36,8 @@ var cur_tower_id = parseInt(window.tower_parameters.id);
 // If they're not anonymous, get their username
 var cur_user_name = window.tower_parameters.cur_user_name;
 
-// Set up a handler for leaving, then register it *everywhere*
 
+// Set up a handler for leaving, then register it *everywhere*
 var leave_room = function() {
     socketio.emit('c_user_left', {
         user_name: window.tower_parameters.cur_user_name,
@@ -186,7 +185,6 @@ socketio.on('s_host_mode', function(msg, cb) {
 var bell_circle
 
 $(document).ready(function() {
-
     Vue.options.delimiters = ['[[', ']]']; // make sure vue doesn't interfere with jinja
 
     /* BELLS */
@@ -197,7 +195,6 @@ $(document).ready(function() {
     // stroke — boolean — is the bell currently at hand?
     // ring() — toggle the stroke, then
     Vue.component("bell_rope", {
-
         props: ["number", "position", "number_of_bells", "audio"],
 
         // data in props should be a function, to maintain scope
@@ -213,7 +210,6 @@ $(document).ready(function() {
         },
 
         computed: {
-
             image_prefix: function() {
                 return this.$root.$refs.controls.audio_type === 'Tower' ? 't-' : 'h-';
             },
@@ -254,12 +250,9 @@ $(document).ready(function() {
                     return true
                 };
             },
-
         },
 
         methods: {
-
-
             // emit a ringing event ot the server
             emit_ringing_event: function() {
                 if (window.tower_parameters.anonymous_user) {
@@ -302,14 +295,19 @@ $(document).ready(function() {
                 if (window.tower_parameters.anonymous_user) {
                     return
                 }; // don't ring if not logged in
+
                 if (this.assigned_user) {
                     return
                 }; // don't kick people off
+
                 const selected_user = this.$root.$refs.users.selected_user;
+
                 if (!this.assignment_mode) {
                     return
                 };
+
                 console.log('assigning user: ' + selected_user + ' to ' + this.number);
+
                 socketio.emit('c_assign_user', {
                     bell: this.number,
                     user: selected_user,
@@ -321,6 +319,7 @@ $(document).ready(function() {
                 if (window.tower_parameters.anonymous_user) {
                     return
                 }; // don't ring if not logged in
+
                 socketio.emit('c_assign_user', {
                     bell: this.number,
                     user: '',
@@ -439,7 +438,6 @@ $(document).ready(function() {
 
     // The call_display is where call messages are flashed
     Vue.component('call_display', {
-
         props: ["audio"],
 
         // data in components should be a function, to maintain scope
@@ -498,7 +496,6 @@ $(document).ready(function() {
 
     // The focus_display indicated when the window has lost focus
     Vue.component('focus_display', {
-
         // data in components should be a function, to maintain scope
         data: function() {
             return {
@@ -533,7 +530,6 @@ $(document).ready(function() {
 
     // tower_controls holds title, id, size buttons, audio toggle
     Vue.component('tower_controls', {
-
         // data in components should be a function, to maintain scope
         data: function() {
             return {
@@ -544,7 +540,6 @@ $(document).ready(function() {
         },
 
         computed: {
-
             number_of_bells: function() {
                 return this.$root.number_of_bells;
             },
@@ -552,11 +547,9 @@ $(document).ready(function() {
             lock_controls: function() {
                 return this.host_mode && !window.tower_parameters.host_permissions;
             }
-
         },
 
         watch: {
-
             audio_type: function() {
                 console.log('swapped audio type');
                 socketio.emit('c_audio_change', {
@@ -571,13 +564,10 @@ $(document).ready(function() {
                     new_mode: this.host_mode,
                     tower_id: cur_tower_id
                 });
-
             },
-
         },
 
         methods: {
-
             // the user clicked a tower-size button
             set_tower_size: function(size) {
                 if (window.tower_parameters.anonymous_user) {
@@ -721,7 +711,6 @@ $(document).ready(function() {
 
     // help holds help toggle
     Vue.component('help', {
-
         // data in components should be a function, to maintain scope
         data: function() {
             return {
@@ -730,7 +719,6 @@ $(document).ready(function() {
         },
 
         methods: {
-
             // the user clicked the audio toggle
             show_help: function() {
                 console.log('showing or hiding help');
@@ -784,7 +772,6 @@ You can read more on our <a href="/help">Help page</a>.
     }); // End help
 
     Vue.component('chatbox', {
-
         data: function() {
             return {
                 name: window.tower_parameters.cur_user_name,
@@ -796,7 +783,6 @@ You can read more on our <a href="/help">Help page</a>.
         props: ["unread_messages"],
 
         methods: {
-
             send_msg: function() {
                 console.log('send_msg');
                 socketio.emit('c_msg_sent', {
@@ -816,9 +802,7 @@ You can read more on our <a href="/help">Help page</a>.
             remove_all_unreads: function() {
                 bell_circle.unread_messages = 0;
             },
-
         },
-
 
         template: `
         <div class="card" id="chatbox">
@@ -886,13 +870,10 @@ You can read more on our <a href="/help">Help page</a>.
             </div>
         </div>
               `
-
-
     });
 
     // For silly CSS reasons, this needs to be it's own Vue instance
     var report_form = new Vue({
-
         el: '#report_box',
 
         data: {
@@ -901,7 +882,6 @@ You can read more on our <a href="/help">Help page</a>.
         },
 
         methods: {
-
             send_report: function() {
                 socketio.emit('c_report', {
                     time: new Date(),
@@ -918,7 +898,6 @@ You can read more on our <a href="/help">Help page</a>.
                     report_form.report_description = '';
                 }, 3000);
             },
-
         },
 
         template: `
@@ -963,9 +942,6 @@ You can read more on our <a href="/help">Help page</a>.
         </div>
     </div>
     `
-
-
-
     });
 
     Vue.component('volume_control', {
@@ -1003,7 +979,6 @@ You can read more on our <a href="/help">Help page</a>.
 
     // user_display holds functionality required for users
     Vue.component('user_display', {
-
         // data in components should be a function, to maintain scope
         data: function() {
             return {
@@ -1027,9 +1002,7 @@ You can read more on our <a href="/help">Help page</a>.
             }
         },
 
-
         methods: {
-
             toggle_assignment: function() {
                 if (window.tower_parameters.anonymous_user) {
                     return
@@ -1068,7 +1041,6 @@ You can read more on our <a href="/help">Help page</a>.
                 this.$root.rotate(rotate_to);
             },
 
-
             select_user: function(user) {
                 if (window.tower_parameters.anonymous_user) {
                     return
@@ -1092,8 +1064,6 @@ You can read more on our <a href="/help">Help page</a>.
                     this.user_names.splice(index, 1);
                 }
             },
-
-
         },
 
         template: `
@@ -1166,10 +1136,8 @@ You can read more on our <a href="/help">Help page</a>.
         `,
     }); // End user_display
 
-
     // The master Vue application
     bell_circle = new Vue({
-
         el: "#bell_circle",
 
         mounted: function() {
@@ -1180,7 +1148,6 @@ You can read more on our <a href="/help">Help page</a>.
 
             // set this separately so that the watcher fires
             this.number_of_bells = window.tower_parameters.size;
-
 
             // Join the tower
             socketio.emit('c_join', {
@@ -1304,7 +1271,6 @@ You can read more on our <a href="/help">Help page</a>.
                     }
                 });
             };
-
         },
 
         data: {
@@ -1348,14 +1314,11 @@ You can read more on our <a href="/help">Help page</a>.
         },
 
         methods: {
-
-
             // the server rang a bell; find the correct one and ring it
             ring_bell: function(bell) {
                 console.log("Ringing the " + bell)
                 this.$refs.bells[bell - 1].ring()
             },
-
 
             // Trigger a specific bell to emit a ringing event
             pull_rope: function(bell) {
@@ -1432,8 +1395,8 @@ You can read more on our <a href="/help">Help page</a>.
                 this.bells = this.bells.sort(
                     function(a, b) {
                         return a['position'] - b['position'];
-                    });
-
+                    }
+                );
             },
 
             toggle_controls: function() {
@@ -1452,7 +1415,6 @@ You can read more on our <a href="/help">Help page</a>.
             },
 
             copy_id: function() {
-
                 setTimeout(() => {
                     $('#id_clipboard_tooltip').tooltip('hide')
                 }, 1000);
@@ -1606,7 +1568,5 @@ You can read more on our <a href="/help">Help page</a>.
 
         </div>
     `
-
     }); // end Vue bell_circle
-
 }); // end document.ready
