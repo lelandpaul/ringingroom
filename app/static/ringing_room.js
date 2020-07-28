@@ -1199,7 +1199,6 @@ You can read more on our <a href="/help">Help page</a>.
                     // Do a special thing to prevent space and the arrow keys from hitting focused elements
                     if (e.which == 32 || e.which == 37 || e.which == 39) {
                         e.preventDefault();
-
                     }
 
                     // The numberkeys 1-0 ring those bells, with -, = ringing E, T
@@ -1227,7 +1226,6 @@ You can read more on our <a href="/help">Help page</a>.
                             bell_circle.rotate(12);
                         }
                     }
-
 
                     const n_b = bell_circle.number_of_bells;
                     // Space, j, and ArrowRight ring the bell in position n/2
