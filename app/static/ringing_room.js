@@ -1353,9 +1353,14 @@ You can read more on our <a href="/help">Help page</a>.
 
             // emit a call
             make_call: function(call) {
-                if (this.$root.$refs.users.cur_user_bells.length == 0 && this.$root.$refs.controls.lock_controls) {
+                if (this.$root.$refs.users.cur_user_bells.length == 0 
+                    && this.$root.$refs.controls.lock_controls
+                ) {
                     // user is not allowed to make calls
-                    this.$root.$refs.display.display_message('Only hosts may make calls when not assigned to a bell.');
+                    this.$root.$refs.display.display_message(
+                        'Only hosts may make calls when not assigned to a bell.'
+                    );
+
                     return
                 };
                 if (this.call_throttled) {
