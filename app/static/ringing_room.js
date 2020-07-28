@@ -1370,8 +1370,6 @@ You can read more on our <a href="/help">Help page</a>.
                     }
                 }
 
-                console.log(current_user_bells);
-
                 // Use these to decide which bells should be in the user's left and right hands
                 if (current_user_bells.length == 0) {
                     // If no bells are assigned, fall back to the behaviour of 'left' and 'right'
