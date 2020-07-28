@@ -1359,12 +1359,32 @@ You can read more on our <a href="/help">Help page</a>.
 
             // Pull the 'left' or 'right' hand bell
             pull_rope_by_hand: function(hand) {
-                if (hand == LEFT_HAND) {
-                    this.pull_rope_by_pos(2);
-                } else if (hand == RIGHT_HAND) {
-                    this.pull_rope_by_pos(1);
-                } else {
-                    console.warn("Unknown hand used: '" + hand + "'.");
+                // Collect the numbers of the bells that belong to the current user
+                let current_user_bells = [];
+
+                for (var i = 0; i < this.$refs.bells.length; i++) {
+                    const bell = this.$refs.bells[i];
+
+                    if (bell.assigned_user === window.tower_parameters.cur_user_name) {
+                        current_user_bells.push(bell.number);
+                    }
+                }
+
+                console.log(current_user_bells);
+
+                // Use these to decide which bells should be in the user's left and right hands
+                if (current_user_bells.length == 0) {
+                    // If no bells are assigned, fall back to the behaviour of 'left' and 'right'
+                    // being the two bells on the bottom of the screen
+                    if (hand == LEFT_HAND) {
+                        this.pull_rope_by_pos(2);
+                    } else if (hand == RIGHT_HAND) {
+                        this.pull_rope_by_pos(1);
+                    }
+                } else if (current_user_bells.length >= 2 && hand === LEFT_HAND) {
+                    this.pull_rope(current_user_bells[1]);
+                } else if (current_user_bells.length >= 1 && hand === RIGHT_HAND) {
+                    this.pull_rope(current_user_bells[0]);
                 }
             },
 
