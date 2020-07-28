@@ -2,6 +2,10 @@
 /* SETUP */
 ///////////
 
+// Constants
+const LEFT_HAND = "left";
+const RIGHT_HAND = "right";
+
 // Don't log unless needed
 var logger = function() {
     var oldConsoleLog = null;
@@ -1232,12 +1236,12 @@ You can read more on our <a href="/help">Help page</a>.
                     const n_b = bell_circle.number_of_bells;
                     // Space, j, and ArrowRight ring the bell in position n/2
                     if ([' ', 'j', 'J', 'ArrowRight'].includes(key)) {
-                        bell_circle.pull_rope_by_pos(1);
+                        bell_circle.pull_rope_by_hand(RIGHT_HAND);
                     }
 
                     // f and ArrowLeft ring the bell in position n/2 + 1
                     if (['f', 'F', 'ArrowLeft'].includes(key)) {
-                        bell_circle.pull_rope_by_pos(2);
+                        bell_circle.pull_rope_by_hand(LEFT_HAND);
                     }
 
                     // Calls are: g = go; h = stop; b = bob; n = single.
@@ -1350,6 +1354,17 @@ You can read more on our <a href="/help">Help page</a>.
                         this.pull_rope(this.bells[bell]['number']);
                         return true;
                     }
+                }
+            },
+
+            // Pull the 'left' or 'right' hand bell
+            pull_rope_by_hand: function(hand) {
+                if (hand == LEFT_HAND) {
+                    this.pull_rope_by_pos(2);
+                } else if (hand == RIGHT_HAND) {
+                    this.pull_rope_by_pos(1);
+                } else {
+                    console.warn("Unknown hand used: '" + hand + "'.");
                 }
             },
 
