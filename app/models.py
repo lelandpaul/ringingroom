@@ -1,6 +1,6 @@
 from app import db, log, login
 from config import Config
-from random import sample, randint
+from random import shuffle, sample, randint
 import re
 from datetime import datetime, timedelta, date
 from time import time
