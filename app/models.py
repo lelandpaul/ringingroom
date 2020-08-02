@@ -257,6 +257,8 @@ class Tower:
 
     # generate a random caters change, for use as uid
     def generate_random_change(self):
+        # Helper function to generate a potentially good change for a tower ID, given how
+        # much of the change it is required to shuffle.
         def generate_candidate(shuffle_length):
             # Generate rounds as a base change
             new_row = list(range(9))
