@@ -243,6 +243,7 @@ class Tower:
             self._id = self.generate_random_change()
         else:
             self._id = tower_id
+
         self._name = name
         self._n = 8
         self._bell_state = [True] * n
