@@ -1,6 +1,6 @@
 from app import db, log, login
 from config import Config
-from random import sample
+from random import sample, randint
 import re
 from datetime import datetime, timedelta, date
 from time import time
@@ -255,10 +255,33 @@ class Tower:
         self._host_mode_enabled = host_mode_enabled
         self._host_ids = self.to_TowerDB().host_ids
 
+    # generate a random caters change, for use as uid
     def generate_random_change(self):
-        # generate a random caters change, for use as uid
-        def generate_candidate():
-            return int(''.join(map(str, sample([i+1 for i in range(9)], k=9))))
+        def generate_candidate(shuffle_length):
+            # Generate rounds as a base change
+            new_row = list(range(9))
+
+            # Use backrounds as a base half the time
+            if randint(0, 1) == 0:
+                new_row = list(reversed(new_row))
+
+            # Rotate the change to a random amount, to produce a cyclic parthead or reverse parthead
+            cyclic_rotation_amount = randint(0, 9)
+            for _ in range(cyclic_rotation_amount):
+                new_row.append(new_row[0])
+                del new_row[0]
+
+            # Shuffle the first or last 4 digits of the row to preserve the longest run
+            if cyclic_rotation_amount <= 4:
+                start = new_row[-shuffle_length:]
+                shuffle(start)
+                new_row = start + new_row[:-shuffle_length]
+            else:
+                start = new_row[:shuffle_length]
+                shuffle(start)
+                new_row = new_row[shuffle_length:] + start
+
+            return int(''.join(map(str, [i+1 for i in new_row])))
 
         tmp_tower_id = generate_candidate()
         overlapping_tower_ids = TowerDB.query.filter_by(tower_id=tmp_tower_id)
