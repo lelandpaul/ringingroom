@@ -283,12 +283,19 @@ class Tower:
 
             return int(''.join(map(str, [i+1 for i in new_row])))
 
-        tmp_tower_id = generate_candidate()
+        attempted_ids = 0
+
+        # The formula as the argument to generate_candidate is there to ensure that if too many
+        # tower ID collisions are found, the changes get steadily more random to prevent
+        # unnecessary load on the database
+        tmp_tower_id = generate_candidate(4 + attempted_ids // 5)
         overlapping_tower_ids = TowerDB.query.filter_by(tower_id=tmp_tower_id)
 
         while not overlapping_tower_ids.count() == 0:
-            tmp_tower_id = generate_candidate()
+            tmp_tower_id = generate_candidate(4 + attempted_ids // 5)
             overlapping_tower_ids = TowerDB.query.filter_by(tower_id=tmp_tower_id)
+
+            attempted_ids += 1
 
         return tmp_tower_id
 
