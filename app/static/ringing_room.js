@@ -581,13 +581,7 @@ $(document).ready(function() {
             },
 
             set_bells_at_hand: function() {
-                if (window.tower_parameters.anonymous_user) {
-                    return
-                }; // don't do anything if not logged in
-                console.log('setting all bells at hand')
-                socketio.emit('c_set_bells', {
-                    tower_id: cur_tower_id
-                });
+                bell_circle.set_bells_at_hand();
             },
         },
 
@@ -1400,6 +1394,16 @@ You can read more on our <a href="/help">Help page</a>.
                         return a['position'] - b['position'];
                     }
                 );
+            },
+
+            set_bells_at_hand: function() {
+                if (window.tower_parameters.anonymous_user) {
+                    return
+                }; // don't do anything if not logged in
+                console.log('setting all bells at hand')
+                socketio.emit('c_set_bells', {
+                    tower_id: cur_tower_id
+                });
             },
 
             toggle_controls: function() {
