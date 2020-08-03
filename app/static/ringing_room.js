@@ -1195,6 +1195,11 @@ You can read more on our <a href="/help">Help page</a>.
                         e.preventDefault();
                     }
 
+                    // Shift-S will set the bells at hand
+                    if (e.shiftKey && e.which == 83) {
+                        bell_circle.set_bells_at_hand()
+                    }
+
                     // The numberkeys 1-0 ring those bells, with -, = ringing E, T
                     if (parseInt(key) - 1 in [...Array(9).keys()]) {
                         bell_circle.pull_rope(parseInt(key));
