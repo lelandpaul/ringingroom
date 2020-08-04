@@ -585,13 +585,7 @@ $(document).ready(function() {
             },
 
             set_bells_at_hand: function() {
-                if (window.tower_parameters.anonymous_user) {
-                    return
-                }; // don't do anything if not logged in
-                console.log('setting all bells at hand')
-                socketio.emit('c_set_bells', {
-                    tower_id: cur_tower_id
-                });
+                bell_circle.set_bells_at_hand();
             },
         },
 
@@ -746,7 +740,8 @@ $(document).ready(function() {
     <li><b>[LEFT] and [RIGHT] arrow keys:</b> Rings the left and right bottom-most bells.</li>
     <li><b>[f] and [j]:</b> same as [LEFT] and [RIGHT]</li>
     <li><b>[SHIFT]+[0-9]\\[0]\\[-]\\[=]:</b> Rotate the "perspective" of the ringing room to put that bell in the lower right corner so it may be rung by [SPACE] or [j].</li>
-    <li> <b>[1-9], [0], [-], [=]:</b> Rings bells 1 - 9, 10, 11, and 12</li>
+    <li><b>[1-9], [0], [-], [=]:</b> Rings bells 1 - 9, 10, 11, and 12</li>
+    <li><b>[SHIFT]+[S]:</b> Set the bells at handstroke</li>
 </ul>
 
 <p> The tower controls allow you to set the number of bells, change whether you're using towerbell or handbell images and sounds, and set all the bells at hand.</p>
@@ -1205,6 +1200,11 @@ You can read more on our <a href="/help">Help page</a>.
                         e.preventDefault();
                     }
 
+                    // Shift-S will set the bells at hand
+                    if (e.shiftKey && e.which == 83) {
+                        bell_circle.set_bells_at_hand()
+                    }
+
                     // The numberkeys 1-0 ring those bells, with -, = ringing E, T
                     if (parseInt(key) - 1 in [...Array(9).keys()]) {
                         bell_circle.pull_rope(parseInt(key));
@@ -1491,6 +1491,16 @@ You can read more on our <a href="/help">Help page</a>.
                         return a['position'] - b['position'];
                     }
                 );
+            },
+
+            set_bells_at_hand: function() {
+                if (window.tower_parameters.anonymous_user) {
+                    return
+                }; // don't do anything if not logged in
+                console.log('setting all bells at hand')
+                socketio.emit('c_set_bells', {
+                    tower_id: cur_tower_id
+                });
             },
 
             toggle_controls: function() {
