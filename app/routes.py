@@ -17,7 +17,8 @@ import os
 # across those servers. Otherwise, it will just direct everything to the current server.
 def get_server_ip(tower_id):
     servers = app.config['SOCKETIO_SERVER_ADDRESSES']
-    if not servers:
+    cur_server_name = app.config['RR_SERVER_NAME']
+    if not servers or cur_server_name != 'UK':
         return request.url_root
     else:
         return 'https://' + servers[tower_id % 10 % len(servers)]
