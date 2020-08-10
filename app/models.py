@@ -4,9 +4,11 @@ from random import sample
 import re
 from datetime import datetime, timedelta, date
 from time import time
-from flask_login import UserMixin, AnonymousUserMixin
+from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
+import base64
+import os
 
 
 class User(UserMixin, db.Model):
@@ -16,6 +18,27 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     towers = db.relationship("UserTowerRelation", back_populates="user")
     joined = db.Column(db.Date, default=date.today)
+    token = db.Column(db.String(32), index=True, unique=True)
+    token_expiration = db.Column(db.DateTime)
+
+    def get_token(self, expires_in=86400):
+        now = datetime.utcnow()
+        if self.token and self.token_expiration > now + timedelta(seconds=60):
+            return self.token
+        self.token = base64.b64encode(os.urandom(24)).decode('utf-8')
+        self.token_expiration = now + timedelta(seconds=expires_in)
+        db.session.add(self)
+        return self.token
+
+    def revoke_token(self):
+        self.token_expiration = datetime.utcnow() - timedelta(seconds=1)
+
+    @staticmethod
+    def check_token(token):
+        user = User.query.filter_by(token=token).first()
+        if user is None or user.token_expiration < datetime.utcnow():
+            return None
+        return user
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -26,7 +49,7 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def _clean_recent_towers(self,cutoff=10):
+    def _clean_recent_towers(self, cutoff=10):
         # delete all but the cuttoff most recent towers
         old_rels = sorted([tower for tower in self.towers if tower.recent],
                           key=lambda x: x.visited,
@@ -44,25 +67,26 @@ class User(UserMixin, db.Model):
         try:
             id = jwt.decode(token, Config.SECRET_KEY,
                             algorithms=['HS256'])['reset_password']
-        except:
+        except BaseException:
             return
         return User.query.get(id)
 
-    def _get_relation_to_tower(self,tower):
+    def _get_relation_to_tower(self, tower):
         # Helper function: returns a relation between the user and the tower.
         # Creates the relation if none existed before.
         if isinstance(tower, Tower):
             # cast to TowerDB
             tower = tower.to_TowerDB()
         # See if a relation already exists
-        rel = UserTowerRelation.query.filter(UserTowerRelation.user == self, 
-                                             UserTowerRelation.tower == tower).first()
+        rel = UserTowerRelation.query.filter(
+            UserTowerRelation.user == self,
+            UserTowerRelation.tower == tower).first()
         if not rel:
-            # Just creating this is enough to add it to the database with relevant relations
+            # Just creating this is enough to add it to the database with
+            # relevant relations
             rel = UserTowerRelation(user=self, tower=tower)
 
         return rel
-
 
     def clear_all_towers(self):
         for rel in self.towers:
@@ -73,63 +97,67 @@ class User(UserMixin, db.Model):
         # Update the timestamp (and recent, if necessary)
         rel.recent = True
         rel.visited = datetime.now()
-        # self._clean_recent_towers() # no reason to do this now that the my_towers page exists
+        # self._clean_recent_towers() # no reason to do this now that the
+        # my_towers page exists
         db.session.commit()
 
-    def remove_recent_tower(self,tower):
+    def remove_recent_tower(self, tower):
         rel = self._get_relation_to_tower(tower)
         rel.recent = False
         db.session.commit()
-
 
     def toggle_bookmark(self, tower):
         rel = self._get_relation_to_tower(tower)
         rel.bookmark = not rel.bookmark
         db.session.commit()
 
-   
     def recent_towers(self, n=0):
         # Allows you to limit to n items; returns all by default
-        # This returns a list of TowerDB objects — if we want to convert them to memory, that should
+        # This returns a list of TowerDB objects — if we want to convert them
+        # to memory, that should
         # happen by looking them up in the TowerDict instance
         n = n or len(self.towers)
-        return [rel.tower for rel \
+        return [rel.tower for rel
                 in sorted(self.towers, key=lambda r: r.visited, reverse=True)
                 if rel.recent][:n]
 
-    def bookmarked_towers(self,n=0):
+    def bookmarked_towers(self, n=0):
         # Allows you to limit to n items; returns all by default
-        # This returns a list of TowerDB objects — if we want to convert them to memory, that should
+        # This returns a list of TowerDB objects — if we want to convert them
+        # to memory, that should
         # happen by looking them up in the TowerDict instance
         n = n or len(self.towers)
-        return [rel.tower for rel \
-                in self.towers \
+        return [rel.tower for rel
+                in self.towers
                 if rel.bookmark][:n]
 
-    def bookmarked(self,tower_id):
+    def bookmarked(self, tower_id):
         # checks if a tower_id is bookmarked
-        return tower_id in [rel.tower.tower_id for rel in self.towers if rel.bookmark]
-
+        return tower_id in [
+            rel.tower.tower_id for rel in self.towers if rel.bookmark]
 
     @property
     def tower_properties(self):
-        # For the my_towers page, we need the tower relations as a list of dictionaries,
-        # which each include the tower info + the relation info
+        # For the my_towers page, we need the tower relations as a list of
+        # dictionaries, which each include the tower info + the relation info
         tower_properties = []
         for rel in sorted(self.towers, key=lambda x: x.visited, reverse=True):
-            tower_properties.append(dict(\
-                                    {'tower_id': rel.tower.tower_id,
-                                     'tower_url': rel.tower.url_safe_name,
-                                     'tower_name': rel.tower.tower_name}, **rel.relation_dict))
+            tower_properties.append(
+                dict(
+                    {'tower_id': rel.tower.tower_id,
+                     'tower_url': rel.tower.url_safe_name,
+                     'tower_name': rel.tower.tower_name},
+                    **rel.relation_dict))
         return tower_properties
 
     def check_permissions(self, tower_id, permission):
-        # Given a tower_id: check if the user has relevant permissions permissions
+        # Given a tower_id: check if the user has relevant permissions
         # 'creator': can edit settings
         # 'host': can manage practices in host mode
-        if permission not in ['creator','host']:
+        if permission not in ['creator', 'host']:
             raise KeyError('The requested permission type does not exist.')
-        return tower_id in [int(t.tower_id) for t in self.towers if getattr(t,permission)]
+        return tower_id in [int(t.tower_id)
+                            for t in self.towers if getattr(t, permission)]
 
     def make_host(self, tower):
         rel = self._get_relation_to_tower(tower)
@@ -143,6 +171,7 @@ class User(UserMixin, db.Model):
         tower.remove_host_id(self.id)
         db.session.commit()
 
+
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
@@ -151,11 +180,11 @@ def load_user(id):
 class TowerDB(db.Model):
     tower_id = db.Column(db.Integer, primary_key=True)
     tower_name = db.Column(db.String(32), index=True)
-    created_on = db.Column(db.Date,default=date.today)
-    last_access = db.Column(db.Date, 
-                              nullable=False,
-                              default=date.today,
-                              onupdate=date.today)
+    created_on = db.Column(db.Date, default=date.today)
+    last_access = db.Column(db.Date,
+                            nullable=False,
+                            default=date.today,
+                            onupdate=date.today)
     users = db.relationship("UserTowerRelation", back_populates="tower")
     host_mode_enabled = db.Column(db.Boolean, default=False)
 
@@ -163,11 +192,13 @@ class TowerDB(db.Model):
         return '<TowerDB {}: {}>'.format(self.tower_id, self.tower_name)
 
     def to_Tower(self):
-        return Tower(self.tower_name, tower_id=self.tower_id, host_mode_enabled=self.host_mode_enabled)
+        return Tower(self.tower_name, tower_id=self.tower_id,
+                     host_mode_enabled=self.host_mode_enabled)
 
     def created_by(self, user):
         # Expects a User object
-        # This should go through the user object, to avoid duplicating the relation
+        # This should go through the user object, to avoid duplicating the
+        # relation
         rel = user._get_relation_to_tower(self)
         rel.creator = True
         rel.host = True
@@ -175,8 +206,9 @@ class TowerDB(db.Model):
 
     @property
     def creator(self):
-        rel = UserTowerRelation.query.filter(UserTowerRelation.tower==self, 
-                                             UserTowerRelation.creator==True).first()
+        rel = UserTowerRelation.query.filter(
+            UserTowerRelation.tower == self,
+            UserTowerRelation.creator is True).first()
         return rel.user if rel else None
 
     # We need to be able to get this from the TowerDB object for the User Menu
@@ -188,34 +220,42 @@ class TowerDB(db.Model):
 
     @property
     def hosts(self):
-        return [rel.user for rel in \
-                UserTowerRelation.query.filter(UserTowerRelation.tower==self,
-                                               UserTowerRelation.host==True).all()]
+        return [rel.user for rel in UserTowerRelation.query.filter(
+            UserTowerRelation.tower == self,
+            UserTowerRelation.host is True).all()]
 
     @property
     def host_ids(self):
-        return [rel.user.id for rel in \
-                UserTowerRelation.query.filter(UserTowerRelation.tower==self,
-                                               UserTowerRelation.host==True).all()]
-
-
-
+        return [rel.user.id for rel in UserTowerRelation.query.filter(
+            UserTowerRelation.tower == self,
+            UserTowerRelation.host is True).all()]
 
 
 class UserTowerRelation(db.Model):
-    user_id = db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key = True)
-    tower_id = db.Column('tower_id',db.Integer, db.ForeignKey('towerDB.tower_id'), primary_key = True)
+    user_id = db.Column(
+        'user_id',
+        db.Integer,
+        db.ForeignKey('user.id'),
+        primary_key=True)
+    tower_id = db.Column(
+        'tower_id',
+        db.Integer,
+        db.ForeignKey('towerDB.tower_id'),
+        primary_key=True)
     user = db.relationship("User", back_populates="towers")
-    tower = db.relationship("TowerDB",back_populates="users")
+    tower = db.relationship("TowerDB", back_populates="users")
 
     # Most recent visit to tower
-    visited = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+    visited = db.Column(
+        db.DateTime,
+        default=datetime.now,
+        onupdate=datetime.now)
 
     # Boolean columns for relationship types; also
-    recent = db.Column('recent',db.Boolean, default=False)
-    creator = db.Column('creator',db.Boolean,default=False)
-    bookmark = db.Column('bookmark',db.Boolean,default=False)
-    host = db.Column('host',db.Boolean,default=False)
+    recent = db.Column('recent', db.Boolean, default=False)
+    creator = db.Column('creator', db.Boolean, default=False)
+    bookmark = db.Column('bookmark', db.Boolean, default=False)
+    host = db.Column('host', db.Boolean, default=False)
 
     def __repr__(self):
         return '<Relationship: {} --- {} {}>'.format(self.user.username,
@@ -237,6 +277,8 @@ class UserTowerRelation(db.Model):
             self.delete()
 
 # Keep track of towers
+
+
 class Tower:
     def __init__(self, name, tower_id=None, n=8, host_mode_enabled=False):
         if not tower_id:
@@ -256,21 +298,25 @@ class Tower:
 
     def generate_random_change(self):
         # generate a random caters change, for use as uid
-        tmp_tower_id = int(''.join(map(str, sample([i+1 for i in range(9)], k=9))))
+        tmp_tower_id = int(
+            ''.join(map(str, sample([i+1 for i in range(9)], k=9))))
         overlapping_tower_ids = TowerDB.query.filter_by(tower_id=tmp_tower_id)
 
         while not overlapping_tower_ids.count() == 0:
-            tmp_tower_id = int(''.join(map(str, sample([i + 1 for i in range(9)], k=9))))
-            overlapping_tower_ids = TowerDB.query.filter_by(tower_id=tmp_tower_id)
+            tmp_tower_id = int(
+                ''.join(map(str, sample([i + 1 for i in range(9)], k=9))))
+            overlapping_tower_ids = TowerDB.query.filter_by(
+                                                    tower_id=tmp_tower_id)
 
         return tmp_tower_id
 
     def to_TowerDB(self):
-        # Check if it's already there — we need this for checking whether a tower is already in a
-        # users related towers
-        tower_db = TowerDB.query.filter(TowerDB.tower_id==self.tower_id).first()
-        return tower_db or TowerDB(tower_id=self.tower_id, 
-                                   tower_name=self.name, 
+        # Check if it's already there — we need this for checking whether
+        # a tower is already in a users related towers
+        tower_db = TowerDB.query.filter(
+            TowerDB.tower_id == self.tower_id).first()
+        return tower_db or TowerDB(tower_id=self.tower_id,
+                                   tower_name=self.name,
                                    host_mode_enabled=self._host_mode_enabled)
 
     @property
@@ -301,11 +347,14 @@ class Tower:
             user_name = self.users[int(user_id)]
             for (bell, assignment) in self._assignments.items():
                 if assignment == user_name:
-                    self._assignments[bell] = '' # unassign the user from all bells
+                    # unassign the user from all bells
+                    self._assignments[bell] = ''
             del self._users[int(user_id)]
-        except ValueError: log('Value error when removing user from tower.')
-        except KeyError: log("Tried to remove user that wasn't there")
-    
+        except ValueError:
+            log('Value error when removing user from tower.')
+        except KeyError:
+            log("Tried to remove user that wasn't there")
+
     @property
     def user_names(self):
         return list(self._users.values())
@@ -317,7 +366,6 @@ class Tower:
     @host_mode.setter
     def host_mode(self, new_mode):
         self._host_mode = new_mode
-
 
     @property
     def assignments(self):
@@ -400,7 +448,6 @@ class Tower:
         self.to_TowerDB().host_mode_enabled = new_state
         db.session.commit()
 
-        
 
 class TowerDict(dict):
 
@@ -409,19 +456,18 @@ class TowerDict(dict):
         self._table = table
         self._garbage_collection_interval = timedelta(hours=12)
 
-
-    def garbage_collection(self, key = None):
+    def garbage_collection(self, key=None):
         # prepare garbage collection
         # don't collect the key we're currently looking up though
-        keys_to_delete = [k for k, (value, timestamp) in self.items() 
-                          if timestamp < datetime.now() - self._garbage_collection_interval
-                          and k != key ]
+        keys_to_delete = [
+            k for k, (value, timestamp) in self.items()
+            if timestamp < datetime.now() - self._garbage_collection_interval
+            and k != key]
         log('Garbage collection:', keys_to_delete)
 
         # run garbage collection
-        for deleted_key in keys_to_delete: 
+        for deleted_key in keys_to_delete:
             dict.__delitem__(self, deleted_key)
-
 
     def check_db_for_key(self, key):
 
@@ -431,7 +477,7 @@ class TowerDict(dict):
 
         tower = self._table.query.get(key)
         if tower:
-            log('Loading tower from db:',key)
+            log('Loading tower from db:', key)
             # load the thing back into memory
             dict.__setitem__(self, key, (tower.to_Tower(), datetime.now()))
             return True
@@ -448,7 +494,7 @@ class TowerDict(dict):
         if key in self.keys():
             raise KeyError('Key already in use.')
 
-        timestamp =  datetime.now()
+        timestamp = datetime.now()
 
         # add it to both memory and database
         dict.__setitem__(self, key, (value, timestamp))
