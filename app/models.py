@@ -55,7 +55,7 @@ class User(UserMixin, db.Model):
             # cast to TowerDB
             tower = tower.to_TowerDB()
         # See if a relation already exists
-        rel = UserTowerRelation.query.filter(UserTowerRelation.user == self, 
+        rel = UserTowerRelation.query.filter(UserTowerRelation.user == self,
                                              UserTowerRelation.tower == tower).first()
         if not rel:
             # Just creating this is enough to add it to the database with relevant relations
@@ -87,7 +87,7 @@ class User(UserMixin, db.Model):
         rel.bookmark = not rel.bookmark
         db.session.commit()
 
-   
+
     def recent_towers(self, n=0):
         # Allows you to limit to n items; returns all by default
         # This returns a list of TowerDB objects — if we want to convert them to memory, that should
@@ -152,12 +152,13 @@ class TowerDB(db.Model):
     tower_id = db.Column(db.Integer, primary_key=True)
     tower_name = db.Column(db.String(32), index=True)
     created_on = db.Column(db.Date,default=date.today)
-    last_access = db.Column(db.Date, 
+    last_access = db.Column(db.Date,
                               nullable=False,
                               default=date.today,
                               onupdate=date.today)
     users = db.relationship("UserTowerRelation", back_populates="tower")
     host_mode_enabled = db.Column(db.Boolean, default=False)
+    server = db.Column(db.String, default='UK', onupdate='UK')
 
     def __repr__(self):
         return '<TowerDB {}: {}>'.format(self.tower_id, self.tower_name)
@@ -175,7 +176,7 @@ class TowerDB(db.Model):
 
     @property
     def creator(self):
-        rel = UserTowerRelation.query.filter(UserTowerRelation.tower==self, 
+        rel = UserTowerRelation.query.filter(UserTowerRelation.tower==self,
                                              UserTowerRelation.creator==True).first()
         return rel.user if rel else None
 
@@ -197,9 +198,6 @@ class TowerDB(db.Model):
         return [rel.user.id for rel in \
                 UserTowerRelation.query.filter(UserTowerRelation.tower==self,
                                                UserTowerRelation.host==True).all()]
-
-
-
 
 
 class UserTowerRelation(db.Model):
@@ -269,8 +267,8 @@ class Tower:
         # Check if it's already there — we need this for checking whether a tower is already in a
         # users related towers
         tower_db = TowerDB.query.filter(TowerDB.tower_id==self.tower_id).first()
-        return tower_db or TowerDB(tower_id=self.tower_id, 
-                                   tower_name=self.name, 
+        return tower_db or TowerDB(tower_id=self.tower_id,
+                                   tower_name=self.name,
                                    host_mode_enabled=self._host_mode_enabled)
 
     @property
@@ -305,7 +303,7 @@ class Tower:
             del self._users[int(user_id)]
         except ValueError: log('Value error when removing user from tower.')
         except KeyError: log("Tried to remove user that wasn't there")
-    
+
     @property
     def user_names(self):
         return list(self._users.values())
@@ -400,7 +398,7 @@ class Tower:
         self.to_TowerDB().host_mode_enabled = new_state
         db.session.commit()
 
-        
+
 
 class TowerDict(dict):
 
@@ -413,13 +411,13 @@ class TowerDict(dict):
     def garbage_collection(self, key = None):
         # prepare garbage collection
         # don't collect the key we're currently looking up though
-        keys_to_delete = [k for k, (value, timestamp) in self.items() 
+        keys_to_delete = [k for k, (value, timestamp) in self.items()
                           if timestamp < datetime.now() - self._garbage_collection_interval
                           and k != key ]
         log('Garbage collection:', keys_to_delete)
 
         # run garbage collection
-        for deleted_key in keys_to_delete: 
+        for deleted_key in keys_to_delete:
             dict.__delitem__(self, deleted_key)
 
 

@@ -10,14 +10,13 @@ from flask_assets import Environment, Bundle
 from flask_login import LoginManager
 
 from config import Config
-import os
 
 app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 assets = Environment(app)
-socketio = SocketIO(app, 
+socketio = SocketIO(app,
                     logging=True,
                     cors_allowed_origins='*')
 login = LoginManager(app)
@@ -63,7 +62,7 @@ def log(*args):
 bundles = {
 
     'js_landing':   Bundle( 'landing.js',
-                            filters='jsmin', 
+                            filters='jsmin',
                             output='gen/landing.%(version)s.js'),
 
     'js_rr':        Bundle('ringing_room.js',
