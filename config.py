@@ -24,4 +24,4 @@ class Config(object):
     if SOCKETIO_SERVER_ADDRESSES:
         SOCKETIO_SERVER_ADDRESSES = SOCKETIO_SERVER_ADDRESSES.split(',')
 
-    SERVER_NAME = os.getenv('SERVER_NAME')
+    RR_SERVER_NAME = os.getenv('RR_SERVER_NAME') or 'UK'

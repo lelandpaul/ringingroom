@@ -164,7 +164,10 @@ class TowerDB(db.Model):
         return '<TowerDB {}: {}>'.format(self.tower_id, self.tower_name)
 
     def to_Tower(self):
-        return Tower(self.tower_name, tower_id=self.tower_id, host_mode_enabled=self.host_mode_enabled)
+        return Tower(self.tower_name,
+                     tower_id=self.tower_id,
+                     host_mode_enabled=self.host_mode_enabled,
+                     server=self.server)
 
     def created_by(self, user):
         # Expects a User object
@@ -236,7 +239,8 @@ class UserTowerRelation(db.Model):
 
 # Keep track of towers
 class Tower:
-    def __init__(self, name, tower_id=None, n=8, host_mode_enabled=False):
+    def __init__(self, name, tower_id=None, n=8, host_mode_enabled=False,
+                 server='UK'):
         if not tower_id:
             self._id = self.generate_random_change()
         else:
@@ -250,6 +254,7 @@ class Tower:
         self._observers = set()
         self._host_mode = False
         self._host_mode_enabled = host_mode_enabled
+        self._server = server
         self._host_ids = self.to_TowerDB().host_ids
 
     def generate_random_change(self):
@@ -269,7 +274,8 @@ class Tower:
         tower_db = TowerDB.query.filter(TowerDB.tower_id==self.tower_id).first()
         return tower_db or TowerDB(tower_id=self.tower_id,
                                    tower_name=self.name,
-                                   host_mode_enabled=self._host_mode_enabled)
+                                   host_mode_enabled=self._host_mode_enabled,
+                                   server=self._server)
 
     @property
     def tower_id(self):
@@ -428,8 +434,8 @@ class TowerDict(dict):
             return True
 
         tower = self._table.query.get(key)
-        if tower:
-            log('Loading tower from db:',key)
+        if tower and tower.server == Config.RR_SERVER_NAME:
+            log('Loading tower from db:', key)
             # load the thing back into memory
             dict.__setitem__(self, key, (tower.to_Tower(), datetime.now()))
             return True
