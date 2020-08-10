@@ -41,7 +41,11 @@ def load_toasts(modal):
 @app.route('/', methods=('GET', 'POST'))
 def index():
     form = LoginForm() if current_user.is_anonymous else None
-    return render_template('landing_page.html', 
+
+    server_name = app.config['RR_SERVER_NAME']
+    server_line = server_name if server_name != 'UK' else None
+    return render_template('landing_page.html',
+                           server_line=server_line,
                            toasts=load_toasts(modal=False),
                            modals=load_toasts(modal=True),
                            login_form=form)
@@ -71,6 +75,12 @@ def assign_user_id():
 @app.route('/<int:tower_id>')
 @app.route('/<int:tower_id>/<decorator>')
 def tower(tower_id, decorator=None):
+    # If the user isn't authorized on this server, just redirect them
+    # back to the landing
+    if not current_user.is_authorized_on_server:
+        return redirect(url_for('index'))
+
+
     try:
         towers.garbage_collection(tower_id)
         tower = towers[tower_id]

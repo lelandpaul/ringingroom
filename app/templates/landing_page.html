@@ -8,12 +8,20 @@
 <div class='title'>
     Welcome to
     <h1>Ringing Room</h1>
+    {% if server_line %}
+    {{server_line}} Server
+    {% else %}
     A virtual belltower
+    {% endif %}
 </div>
 
-{% if current_user.is_authenticated %}
+{% if current_user.is_authenticated and current_user.is_authorized_on_server %}
 
 <div id='tower_selector'></div>
+
+{% elif current_user.is_authenticated %}
+
+You don't have permission to ring on this server. Contact the server administrator to gain access.
 
 {% else %}
 
@@ -65,6 +73,8 @@
 
 
     </form>
+
+
 {% endif %}
 
 

@@ -16,6 +16,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     towers = db.relationship("UserTowerRelation", back_populates="user")
     joined = db.Column(db.Date, default=date.today)
+    _permitted_servers = db.Column(db.String(128), default='UK,NA,SG')
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -142,6 +143,22 @@ class User(UserMixin, db.Model):
         rel.host = False
         tower.remove_host_id(self.id)
         db.session.commit()
+
+    @property
+    def permitted_servers(self):
+        return self._permitted_servers.split(',')
+
+    def authorize_for_server(self, server_name):
+        self._permitted_servers += ',' + server_name
+        db.session.commit()
+
+    @property
+    def is_authorized_on_server(self):
+        if not Config.RR_PRIVATE_SERVER:
+            return True
+        return Config.RR_SERVER_NAME.lower() in map(lambda x: x.lower(),
+                                                    self.permitted_servers)
+
 
 @login.user_loader
 def load_user(id):
@@ -434,7 +451,7 @@ class TowerDict(dict):
             return True
 
         tower = self._table.query.get(key)
-        if tower and tower.server == Config.RR_SERVER_NAME:
+        if tower and tower.server.lower() == Config.RR_SERVER_NAME.lower():
             log('Loading tower from db:', key)
             # load the thing back into memory
             dict.__setitem__(self, key, (tower.to_Tower(), datetime.now()))

@@ -25,3 +25,5 @@ class Config(object):
         SOCKETIO_SERVER_ADDRESSES = SOCKETIO_SERVER_ADDRESSES.split(',')
 
     RR_SERVER_NAME = os.getenv('RR_SERVER_NAME') or 'UK'
+
+    RR_PRIVATE_SERVER = os.getenv('RR_PRIVATE_SERVER') or False
