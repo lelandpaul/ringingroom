@@ -166,7 +166,8 @@ def load_user(id):
 
 
 class TowerDB(db.Model):
-    tower_id = db.Column(db.Integer, primary_key=True)
+    pk = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    tower_id = db.Column(db.Integer, index=True)
     tower_name = db.Column(db.String(32), index=True)
     created_on = db.Column(db.Date,default=date.today)
     last_access = db.Column(db.Date,
@@ -175,7 +176,7 @@ class TowerDB(db.Model):
                               onupdate=date.today)
     users = db.relationship("UserTowerRelation", back_populates="tower")
     host_mode_enabled = db.Column(db.Boolean, default=False)
-    server = db.Column(db.String, default='UK', onupdate='UK')
+    server = db.Column(db.String, default='UK', onupdate='UK', primary_key=True)
 
     def __repr__(self):
         return '<TowerDB {}: {}>'.format(self.tower_id, self.tower_name)
@@ -222,7 +223,7 @@ class TowerDB(db.Model):
 
 class UserTowerRelation(db.Model):
     user_id = db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key = True)
-    tower_id = db.Column('tower_id',db.Integer, db.ForeignKey('towerDB.tower_id'), primary_key = True)
+    tower_id = db.Column('tower_id',db.Integer, db.ForeignKey('towerDB.pk'), primary_key = True)
     user = db.relationship("User", back_populates="towers")
     tower = db.relationship("TowerDB",back_populates="users")
 
@@ -273,11 +274,14 @@ class Tower:
         self._host_mode_enabled = host_mode_enabled
         self._server = server
         self._host_ids = self.to_TowerDB().host_ids
+        self._pk = self.to_TowerDB().pk
 
     def generate_random_change(self):
         # generate a random caters change, for use as uid
+        cur_server_name = Config.RR_SERVER_NAME
         tmp_tower_id = int(''.join(map(str, sample([i+1 for i in range(9)], k=9))))
-        overlapping_tower_ids = TowerDB.query.filter_by(tower_id=tmp_tower_id)
+        overlapping_tower_ids = TowerDB.query.filter_by(tower_id=tmp_tower_id,
+                                                        server=cur_server_name)
 
         while not overlapping_tower_ids.count() == 0:
             tmp_tower_id = int(''.join(map(str, sample([i + 1 for i in range(9)], k=9))))
@@ -289,10 +293,14 @@ class Tower:
         # Check if it's already there — we need this for checking whether a tower is already in a
         # users related towers
         tower_db = TowerDB.query.filter(TowerDB.tower_id==self.tower_id).first()
-        return tower_db or TowerDB(tower_id=self.tower_id,
-                                   tower_name=self.name,
-                                   host_mode_enabled=self._host_mode_enabled,
-                                   server=self._server)
+        if not tower_db:
+            tower_db = TowerDB(tower_id=self.tower_id,
+                               tower_name=self.name,
+                               host_mode_enabled=self._host_mode_enabled,
+                               server=self._server)
+            db.session.add(tower_db)
+            db.session.commit()
+        return tower_db
 
     @property
     def tower_id(self):
@@ -450,8 +458,10 @@ class TowerDict(dict):
             # It's already in memory, don't check the db
             return True
 
-        tower = self._table.query.get(key)
-        if tower and tower.server.lower() == Config.RR_SERVER_NAME.lower():
+        tower = self._table.query.filter_by(tower_id=key,
+                                            server=Config.RR_SERVER_NAME).first()
+        # tower = self._table.query.get(key)
+        if tower:
             log('Loading tower from db:', key)
             # load the thing back into memory
             dict.__setitem__(self, key, (tower.to_Tower(), datetime.now()))
@@ -466,7 +476,7 @@ class TowerDict(dict):
         self.check_db_for_key(key)
 
         # It's already in use
-        if key in self.keys():
+        if key in self.keys() and self.__getitem__(key)._pk != value._pk:
             raise KeyError('Key already in use.')
 
         timestamp =  datetime.now()
