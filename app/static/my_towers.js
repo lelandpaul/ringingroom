@@ -41,29 +41,6 @@ $(document).ready(function() {
 Vue.component("tower_row",{
     props:['tower','tab'],
 
-    computed: {
-
-        server: function(){
-            if (this.tower.tower_server === 'UK'){
-                return "";
-            }
-            else {
-                return this.tower.tower_server
-            }
-
-        },
-
-        tower_url: function() {
-            if (this.tower.tower_server === 'UK'){
-                return 'https://ringingroom.com/' + this.tower.tower_id + '/' + this.tower.tower_url
-            }
-            else {
-                return  'https://' + this.server.toLowerCase() + '.ringingroom.com/' + this.tower.tower_id + '/' + this.tower.tower_url
-            }
-        },
-
-    },
-
     methods: {
         toggle_bookmark: function(){
             socketio.emit('c_toggle_bookmark',this.tower.tower_id);
@@ -105,12 +82,9 @@ Vue.component("tower_row",{
             </span>
         </td>
         <td class="align-baseline">
-            <a :href="tower_url">
+            <a :href="tower.tower_id + '/' + tower.tower_url">
                 [[tower.tower_name]]
             </a>
-        </td>
-        <td class="text-right align-baseline">
-            [[server]]
         </td>
         <td class="align-text-bottom text-nowrap">
             [[tower.tower_id]]
@@ -252,7 +226,6 @@ my_towers = new Vue({
             <tr>
                 <th scope="col"></th>
                 <th scope="col">Name</th>
-                <th scope="col"></th>
                 <th scope="col">ID</th>
                 <th scope="col"></th>
                 <th scope="col"></th>
@@ -280,7 +253,6 @@ my_towers = new Vue({
             <tr>
                 <th scope="col"></th>
                 <th scope="col">Name</th>
-                <th scope="col"></th>
                 <th scope="col">ID</th>
                 <th scope="col"></th>
             </tr>
@@ -308,7 +280,6 @@ my_towers = new Vue({
             <tr>
                 <th scope="col"></th>
                 <th scope="col">Name</th>
-                <th scope="col"></th>
                 <th scope="col">ID</th>
                 <th scope="col"></th>
                 <th scope="col"></th>
@@ -334,7 +305,6 @@ my_towers = new Vue({
             <tr>
                 <th scope="col"></th>
                 <th scope="col">Name</th>
-                <th scope="col"></th>
                 <th scope="col">ID</th>
                 <th scope="col"></th>
                 <th scope="col"></th>
