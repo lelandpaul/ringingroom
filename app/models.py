@@ -121,7 +121,8 @@ class User(UserMixin, db.Model):
             tower_properties.append(dict(\
                                     {'tower_id': rel.tower.tower_id,
                                      'tower_url': rel.tower.url_safe_name,
-                                     'tower_name': rel.tower.tower_name}, **rel.relation_dict))
+                                     'tower_name': rel.tower.tower_name,
+                                     'tower_server': rel.tower.server}, **rel.relation_dict))
         return tower_properties
 
     def check_permissions(self, tower_id, permission):
