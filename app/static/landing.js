@@ -3,23 +3,22 @@
 ///////////
 
 // Don't log unless needed
-var logger = function()
-{
+var logger = function() {
     var oldConsoleLog = null;
     var pub = {};
 
-    pub.enableLogger =  function enableLogger() 
-                        {
-                            if(oldConsoleLog == null){ return;}
+    pub.enableLogger = function enableLogger() {
+        if (oldConsoleLog == null) {
+            return;
+        }
 
-                            window['console']['log'] = oldConsoleLog;
-                        };
+        window['console']['log'] = oldConsoleLog;
+    };
 
-    pub.disableLogger = function disableLogger()
-                        {
-                            oldConsoleLog = console.log;
-                            window['console']['log'] = function() {};
-                        };
+    pub.disableLogger = function disableLogger() {
+        oldConsoleLog = console.log;
+        window['console']['log'] = function() {};
+    };
 
     return pub;
 }();
@@ -35,22 +34,22 @@ var socketio = io()
 ////////////////////////
 
 // Redirection: The server is sending the client to a tower
-socketio.on('s_redirection', function(destination){
-	window.location.href = destination;
+socketio.on('s_redirection', function(destination) {
+    window.location.href = destination;
 });
 
 
 // The user has entered (but not submitted) a valid tower_id; display a message
-socketio.on('s_check_id_success', function(msg){
-	console.log('received success');
-	tower_selector.message = "Join tower: " + msg.tower_name + '.';
+socketio.on('s_check_id_success', function(msg) {
+    console.log('received success');
+    tower_selector.message = "Join tower: " + msg.tower_name + '.';
 });
 
 // The user has entered (but not submitted) an invalid tower_id; display a message
-socketio.on('s_check_id_failure', function(){
-	console.log('received failure');
-	tower_selector.message = "There is no tower with that code.";
-	tower_selector.button_disabled = true;
+socketio.on('s_check_id_failure', function() {
+    console.log('received failure');
+    tower_selector.message = "There is no tower with that code.";
+    tower_selector.button_disabled = true;
 });
 
 
@@ -63,89 +62,96 @@ Vue.options.delimiters = ['[[', ']]']; // make sure Vue doesn't interfere with j
 // all vue objects needs to be defined within this block, so that the jinja templates are rendered first
 $(document).ready(function() {
 
-// This is the application instance for the page
-tower_selector = new Vue({
+    // This is the application instance for the page
+    tower_selector = new Vue({
 
-	el: "#tower_selector",
+        el: "#tower_selector",
 
-	data: { input_field: '',
-			join_tower: false,
-			button_disabled: false,
+        data: {
+            input_field: '',
+            join_tower: false,
+            button_disabled: false,
             default_message: "To create a new tower, enter a name for that tower. To join a tower, enter the Tower ID number.",
-			message: "To create a new tower, enter a name for that tower. To join a tower, enter the Tower ID number."},
+            message: "To create a new tower, enter a name for that tower. To join a tower, enter the Tower ID number."
+        },
 
-    mounted: function() {
+        mounted: function() {
 
-        // if there's already something in the input field, check what it is
-        // (fixes a problem where the back button could land a user in a UID-named room
-        if (this.input_field){
-            this.send_tower_name();
-        }
+            // if there's already something in the input field, check what it is
+            // (fixes a problem where the back button could land a user in a UID-named room
+            if (this.input_field) {
+                this.send_tower_name();
+            }
 
-    },
+        },
 
-    computed: {
-        trimmed_input: function() {
-            return this.input_field.trim()
-        }
-    },
+        computed: {
+            trimmed_input: function() {
+                return this.input_field.trim()
+            }
+        },
 
-	methods: {
+        methods: {
 
-        // Send the tower (or id) to the tower to create (or join) it
-		send_tower_name: function(){
-			console.log('Sending name: ' + this.trimmed_input);
+            // Send the tower (or id) to the tower to create (or join) it
+            send_tower_name: function() {
+                console.log('Sending name: ' + this.trimmed_input);
 
-			if (this.join_tower){
-                // what we have is an ID; parse it as int, then join that tower
-				socketio.emit('c_join_tower_by_id',{tower_id: parseInt(this.trimmed_input)});
-			} else {
-                //what we have is a name; create that tower
-				socketio.emit('c_create_tower',{tower_name: this.trimmed_input});
-			}
-		},
+                if (this.join_tower) {
+                    // what we have is an ID; parse it as int, then join that tower
+                    socketio.emit('c_join_tower_by_id', {
+                        tower_id: parseInt(this.trimmed_input)
+                    });
+                } else {
+                    //what we have is a name; create that tower
+                    socketio.emit('c_create_tower', {
+                        tower_name: this.trimmed_input
+                    });
+                }
+            },
 
-        // Fires on each keypress in the input box: Is this a tower_id?
-		check_tower_id: function(){
-			console.log('checking, length is: ' + this.trimmed_input.length);
+            // Fires on each keypress in the input box: Is this a tower_id?
+            check_tower_id: function() {
+                console.log('checking, length is: ' + this.trimmed_input.length);
 
-			if (this.trimmed_input.length == 9) {
-                // It's a valid length
-				console.log('checking for integer');
-				console.log(parseInt(this.trimmed_input));
-				try {
-                    // it's an int, so it's a plausible tower_id
-					tower_id = parseInt(this.trimmed_input)
-				}
-				catch(error){
-                    // it's  not a plausible tower_id
-					console.log('not a valid tower_id')
-					tower_id = null
-				}
+                if (this.trimmed_input.length == 9) {
+                    // It's a valid length
+                    console.log('checking for integer');
+                    console.log(parseInt(this.trimmed_input));
+                    try {
+                        // it's an int, so it's a plausible tower_id
+                        tower_id = parseInt(this.trimmed_input)
+                    } catch (error) {
+                        // it's  not a plausible tower_id
+                        console.log('not a valid tower_id')
+                        tower_id = null
+                    }
 
-				if (tower_id){
-                    // we found a valid tower_id
-                    this.join_tower = true; //flag: on submit, try to join (rather than create)
-                    // Ask the server if it's a known tower_id
-					socketio.emit('c_check_tower_id',{tower_id: tower_id});
-				} else {
-                    // not a valid tower_id
-                    this.join_tower = false;//flag: on submit, try to create
-				}
-			} else {
-                // this doesn't look like a tower_id; make sure everything is back at default
-				this.button_disabled = false;
-				this.join_tower = false;
-				this.message = this.default_message;
-			}
-		},
-	},
+                    if (tower_id) {
+                        // we found a valid tower_id
+                        this.join_tower = true; //flag: on submit, try to join (rather than create)
+                        // Ask the server if it's a known tower_id
+                        socketio.emit('c_check_tower_id', {
+                            tower_id: tower_id
+                        });
+                    } else {
+                        // not a valid tower_id
+                        this.join_tower = false; //flag: on submit, try to create
+                    }
+                } else {
+                    // this doesn't look like a tower_id; make sure everything is back at default
+                    this.button_disabled = false;
+                    this.join_tower = false;
+                    this.message = this.default_message;
+                }
+            },
+        },
 
-    mounted: function() {
-        this.$refs.tower_input.focus()
-    },
+        mounted: function() {
+            this.$refs.tower_input.focus()
+        },
 
-	template: `<form class="form-group" v-on:submit.prevent="send_tower_name">
+        template: `<form class="form-group" v-on:submit.prevent="send_tower_name">
 
                     <div class="input-group">
 
@@ -176,7 +182,7 @@ tower_selector = new Vue({
 
 				</form>
 				`
-}); // end tower_selector
+    }); // end tower_selector
 
 
 }); // end document.ready

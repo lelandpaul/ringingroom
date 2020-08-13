@@ -3,23 +3,22 @@
 ///////////
 
 // Don't log unless needed
-var logger = function()
-{
+var logger = function() {
     var oldConsoleLog = null;
     var pub = {};
 
-    pub.enableLogger =  function enableLogger()
-                        {
-                            if(oldConsoleLog == null){ return;}
+    pub.enableLogger = function enableLogger() {
+        if (oldConsoleLog == null) {
+            return;
+        }
 
-                            window['console']['log'] = oldConsoleLog;
-                        };
+        window['console']['log'] = oldConsoleLog;
+    };
 
-    pub.disableLogger = function disableLogger()
-                        {
-                            oldConsoleLog = console.log;
-                            window['console']['log'] = function() {};
-                        };
+    pub.disableLogger = function disableLogger() {
+        oldConsoleLog = console.log;
+        window['console']['log'] = function() {};
+    };
 
     return pub;
 }();
@@ -38,34 +37,35 @@ Vue.options.delimiters = ['[[', ']]']; // make sure Vue doesn't interfere with j
 // all vue objects needs to be defined within this block, so that the jinja templates are rendered first
 $(document).ready(function() {
 
-Vue.component("tower_row",{
-    props:['tower','tab'],
+    Vue.component("tower_row", {
+        props: ['tower', 'tab'],
 
-    methods: {
-        toggle_bookmark: function(){
-            socketio.emit('c_toggle_bookmark',this.tower.tower_id);
-            this.tower.bookmark = !this.tower.bookmark;
-            $('[data-toggle="tooltip"]').tooltip('hide');
-        }, 
+        methods: {
+            toggle_bookmark: function() {
+                socketio.emit('c_toggle_bookmark', this.tower.tower_id);
+                this.tower.bookmark = !this.tower.bookmark;
+                $('[data-toggle="tooltip"]').tooltip('hide');
+            },
 
-        copy_id: function() {
+            copy_id: function() {
 
-            setTimeout(() => {$('.id_clipboard_tooltip').tooltip('hide')},1000);
+                setTimeout(() => {
+                    $('.id_clipboard_tooltip').tooltip('hide')
+                }, 1000);
                 var dummy = document.createElement("textarea");
                 document.body.appendChild(dummy);
                 dummy.value = this.tower.tower_id;
                 dummy.select();
                 document.execCommand("copy");
                 document.body.removeChild(dummy);
-        },
+            },
 
-        remove_recent: function(){
-            socketio.emit('c_remove_recent',this.tower.tower_id);
-            this.tower.recent=false;
-        }
-    },
-    template:
-    `
+            remove_recent: function() {
+                socketio.emit('c_remove_recent', this.tower.tower_id);
+                this.tower.recent = false;
+            }
+        },
+        template: `
     <tr>
         <td class="align-baseline">
             <span @click="toggle_bookmark" 
@@ -116,56 +116,55 @@ Vue.component("tower_row",{
         </td>
     </tr>
     `
-});
+    });
 
 
 
 
 
-my_towers = new Vue({
-    el: "#my_towers",
+    my_towers = new Vue({
+        el: "#my_towers",
 
-    data: {
+        data: {
 
-        towers: window.tower_rels,
+            towers: window.tower_rels,
 
-    },
-
-    computed: {
-
-        no_recent: function(){
-            return this.towers.reduce((acc, cur) => cur.recent ? ++acc : acc, 0);
         },
 
-        no_created: function(){
-            return this.towers.reduce((acc, cur) => cur.creator ? ++acc : acc, 0);
-        },
+        computed: {
 
-        no_bookmark: function(){
-            return this.towers.reduce((acc, cur) => cur.bookmark ? ++acc : acc, 0);
-        },
+            no_recent: function() {
+                return this.towers.reduce((acc, cur) => cur.recent ? ++acc : acc, 0);
+            },
 
-        no_host: function(){
-            return this.towers.reduce((acc, cur) => cur.host ? ++acc : acc, 0);
-        }
+            no_created: function() {
+                return this.towers.reduce((acc, cur) => cur.creator ? ++acc : acc, 0);
+            },
 
-    },
+            no_bookmark: function() {
+                return this.towers.reduce((acc, cur) => cur.bookmark ? ++acc : acc, 0);
+            },
 
-    mounted: function(){
-        this.$nextTick(function(){
-            // Javascript to enable link to tab
-            var url = document.location.toString();
-            if (url.match('#')) {
-                $('#' + url.split('#')[1] + '_tab').tab('show');
+            no_host: function() {
+                return this.towers.reduce((acc, cur) => cur.host ? ++acc : acc, 0);
             }
-            window.scrollTo(0, 0)
-            $('[data-toggle="tooltip"]').tooltip();
 
-        });
-    },
+        },
 
-    template:
-    `
+        mounted: function() {
+            this.$nextTick(function() {
+                // Javascript to enable link to tab
+                var url = document.location.toString();
+                if (url.match('#')) {
+                    $('#' + url.split('#')[1] + '_tab').tab('show');
+                }
+                window.scrollTo(0, 0)
+                $('[data-toggle="tooltip"]').tooltip();
+
+            });
+        },
+
+        template: `
 <div id="my_towers">
 <ul class="nav nav-tabs" id="tower_relation_nav" role="tablist">
     <li class="nav-item" role="presentation">
@@ -326,9 +325,7 @@ my_towers = new Vue({
 </div>
 </div>
 `
-});
+    });
 
 
 }); // end document.ready
-
-

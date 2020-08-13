@@ -3,32 +3,30 @@
 ///////////
 
 // Don't log unless needed
-var logger = function()
-{
+var logger = function() {
     var oldConsoleLog = null;
     var pub = {};
 
-    pub.enableLogger =  function enableLogger()
-                        {
-                            if(oldConsoleLog == null){ return;}
+    pub.enableLogger = function enableLogger() {
+        if (oldConsoleLog == null) {
+            return;
+        }
 
-                            window['console']['log'] = oldConsoleLog;
-                        };
+        window['console']['log'] = oldConsoleLog;
+    };
 
-    pub.disableLogger = function disableLogger()
-                        {
-                            oldConsoleLog = console.log;
-                            window['console']['log'] = function() {};
-                        };
+    pub.disableLogger = function disableLogger() {
+        oldConsoleLog = console.log;
+        window['console']['log'] = function() {};
+    };
 
     return pub;
 }();
+
 // logger.disableLogger()
 
 // Set up socketio instance
-
 var socketio = io(window.tower_parameters.server_ip);
-
 
 
 // Various Vue instances need this on creation
@@ -38,14 +36,15 @@ var cur_tower_id = parseInt(window.tower_parameters.id);
 // If they're not anonymous, get their username
 var cur_user_name = window.tower_parameters.cur_user_name;
 
-// Set up a handler for leaving, then register it *everywhere*
 
-var leave_room = function(){
-    socketio.emit('c_user_left',
-          {user_name: window.tower_parameters.cur_user_name,
-           user_token: window.tower_parameters.user_token,
-           anonymous_user: window.tower_parameters.anonymous_user,
-          tower_id: cur_tower_id});
+// Set up a handler for leaving, then register it *everywhere*
+var leave_room = function() {
+    socketio.emit('c_user_left', {
+        user_name: window.tower_parameters.cur_user_name,
+        user_token: window.tower_parameters.user_token,
+        anonymous_user: window.tower_parameters.anonymous_user,
+        tower_id: cur_tower_id
+    });
 };
 
 // set up disconnection at beforeunload
@@ -62,58 +61,57 @@ window.user_parameters = {
 ////////////////////////
 
 // A bell was rung
-socketio.on('s_bell_rung', function(msg,cb){
-	console.log('Received event: ' + msg.global_bell_state + msg.who_rang);
-	// if(msg.disagree) {}
-	bell_circle.ring_bell(msg.who_rang);
+socketio.on('s_bell_rung', function(msg, cb) {
+    console.log('Received event: ' + msg.global_bell_state + msg.who_rang);
+    // if(msg.disagree) {}
+    bell_circle.ring_bell(msg.who_rang);
 });
 
 // Userlist was set
-socketio.on('s_set_userlist', function(msg,cb){
+socketio.on('s_set_userlist', function(msg, cb) {
     console.log('s_set_userlist: ' + msg.user_list);
     bell_circle.$refs.users.user_names = msg.user_list;
 });
 
 // User entered the room
-socketio.on('s_user_entered', function(msg, cb){
+socketio.on('s_user_entered', function(msg, cb) {
     console.log(msg.user_name + ' entered')
     bell_circle.$refs.users.add_user(msg.user_name);
 });
 
 // User left the room
-socketio.on('s_user_left', function(msg, cb){
+socketio.on('s_user_left', function(msg, cb) {
     console.log(msg.user_name + ' left')
     bell_circle.$refs.users.remove_user(msg.user_name);
-    bell_circle.$refs.bells.forEach((bell,index)=>
-        {
-            if (bell.assigned_user === msg.user_name) {
-                bell.assigned_user = '';
-            }
-        });
+    bell_circle.$refs.bells.forEach((bell, index) => {
+        if (bell.assigned_user === msg.user_name) {
+            bell.assigned_user = '';
+        }
+    });
 });
 
 // Number of observers changed
-socketio.on('s_set_observers', function(msg, cb){
+socketio.on('s_set_observers', function(msg, cb) {
     console.log('observers: ' + msg.observers);
     bell_circle.$refs.users.observers = msg.observers;
 });
 
 // User was assigned to a bell
-socketio.on('s_assign_user', function(msg, cb){
+socketio.on('s_assign_user', function(msg, cb) {
     console.log('Received user assignment: ' + msg.bell + ' ' + msg.user);
     try {
         // This stochastically very error-prone: 
         // Sometimes it sets the state before the bell is created
         // As such: try it, but if it doesn't work wait a bit and try again.
         bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
-        if (msg.user === window.tower_parameters.cur_user_name){
+        if (msg.user === window.tower_parameters.cur_user_name) {
             bell_circle.$refs.users.rotate_to_assignment();
         }
-    } catch(err) {
+    } catch (err) {
         console.log('caught error assign_user; trying again');
-        setTimeout(100, function(){
+        setTimeout(100, function() {
             bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
-            if (msg.user === window.tower_parameters.cur_user_name){
+            if (msg.user === window.tower_parameters.cur_user_name) {
                 bell_circle.$refs.users.rotate_to_assignment();
             }
         });
@@ -121,58 +119,58 @@ socketio.on('s_assign_user', function(msg, cb){
 });
 
 // A call was made
-socketio.on('s_call',function(msg,cb){
-	console.log('Received call: ' + msg.call);
-	bell_circle.$refs.display.make_call(msg.call);
+socketio.on('s_call', function(msg, cb) {
+    console.log('Received call: ' + msg.call);
+    bell_circle.$refs.display.make_call(msg.call);
 });
 
 // The server told us the number of bells in the tower
-socketio.on('s_size_change', function(msg,cb){
-	var new_size = msg.size;
-	bell_circle.number_of_bells = new_size;
+socketio.on('s_size_change', function(msg, cb) {
+    var new_size = msg.size;
+    bell_circle.number_of_bells = new_size;
 });
 
 
 // The server sent us the global state; set all bells accordingly
-socketio.on('s_global_state',function(msg,cb){
-	var gstate = msg.global_bell_state;
-	for (var i = 0; i < gstate.length; i++){
+socketio.on('s_global_state', function(msg, cb) {
+    var gstate = msg.global_bell_state;
+    for (var i = 0; i < gstate.length; i++) {
         try {
             // This stochastically very error-prone: 
             // Sometimes it sets the state before the bell is created
             // As such: try it, but if it doesn't work wait a bit and try again.
             bell_circle.$refs.bells[i].set_state_silently(gstate[i]);
-        } catch(err) {
+        } catch (err) {
             console.log('caught error set_state; trying again');
-            setTimeout(100, function(){
+            setTimeout(100, function() {
                 bell_circle.$refs.bells[i].set_state_silently(gstate[i]);
             });
         }
-	};
+    };
 });
 
 // The server told us whether to use handbells or towerbells
-socketio.on('s_audio_change',function(msg,cb){
-  console.log('changing audio to: ' + msg.new_audio);
-  bell_circle.$refs.controls.audio_type = msg.new_audio;
-  bell_circle.audio = msg.new_audio == 'Tower' ? tower : hand;
-  // Make sure the volume is set consistently
-  bell_circle.audio._volume = window.user_parameters.bell_volume * 0.1;
+socketio.on('s_audio_change', function(msg, cb) {
+    console.log('changing audio to: ' + msg.new_audio);
+    bell_circle.$refs.controls.audio_type = msg.new_audio;
+    bell_circle.audio = msg.new_audio == 'Tower' ? tower : hand;
+    // Make sure the volume is set consistently
+    bell_circle.audio._volume = window.user_parameters.bell_volume * 0.1;
 });
 
 // A chat message was received
-socketio.on('s_msg_sent', function(msg,cb){
+socketio.on('s_msg_sent', function(msg, cb) {
     bell_circle.$refs.chatbox.messages.push(msg);
-    if(msg.email != window.tower_parameters.cur_user_email && !$('#chat_input_box').is(':focus')) {
+    if (msg.email != window.tower_parameters.cur_user_email && !$('#chat_input_box').is(':focus')) {
         bell_circle.unread_messages++;
     }
-    bell_circle.$nextTick(function(){
+    bell_circle.$nextTick(function() {
         $('#chat_messages').scrollTop($('#chat_messages')[0].scrollHeight);
     });
 });
 
 // Host mode was changed
-socketio.on('s_host_mode', function(msg,cb){
+socketio.on('s_host_mode', function(msg, cb) {
     bell_circle.$refs.controls.host_mode = msg.new_mode;
 });
 
@@ -187,120 +185,151 @@ socketio.on('s_host_mode', function(msg,cb){
 var bell_circle
 
 $(document).ready(function() {
+    Vue.options.delimiters = ['[[', ']]']; // make sure vue doesn't interfere with jinja
 
-Vue.options.delimiters = ['[[', ']]']; // make sure vue doesn't interfere with jinja
+    /* BELLS */
 
-/* BELLS */
+    // First, set up the bell component
+    // number — what bell
+    // poss — where in the tower (the css class)
+    // stroke — boolean — is the bell currently at hand?
+    // ring() — toggle the stroke, then
+    Vue.component("bell_rope", {
+        props: ["number", "position", "number_of_bells", "audio"],
 
-// First, set up the bell component
-// number — what bell
-// poss — where in the tower (the css class)
-// stroke — boolean — is the bell currently at hand?
-// ring() — toggle the stroke, then
-Vue.component("bell_rope", {
-
-	props: ["number", "position", "number_of_bells","audio"],
-
-    // data in props should be a function, to maintain scope
-	data: function() {
-	  return { stroke: true,
-			   circled_digits: ["①", "②", "③", "④", "⑤", "⑥",
-								"⑦", "⑧", "⑨", "⑩", "⑪","⑫"],
-			   images: ["handstroke", "backstroke"],
-               assigned_user: window.tower_parameters.assignments[this.number-1],
-	  };
-	},
-
-    computed: {
-
-        image_prefix: function(){
-            return this.$root.$refs.controls.audio_type === 'Tower' ? 't-' : 'h-';
+        // data in props should be a function, to maintain scope
+        data: function() {
+            return {
+                stroke: true,
+                circled_digits: ["①", "②", "③", "④", "⑤", "⑥",
+                    "⑦", "⑧", "⑨", "⑩", "⑪", "⑫"
+                ],
+                images: ["handstroke", "backstroke"],
+                assigned_user: window.tower_parameters.assignments[this.number - 1],
+            };
         },
 
-        assignment_mode: function(){
-            return this.$root.$refs.users.assignment_mode;
+        computed: {
+            image_prefix: function() {
+                return this.$root.$refs.controls.audio_type === 'Tower' ? 't-' : 'h-';
+            },
+
+            assignment_mode: function() {
+                return this.$root.$refs.users.assignment_mode;
+            },
+
+            cur_user: function() {
+                return this.$root.$refs.users.cur_user;
+
+            },
+
+            left_side: function() {
+                if (this.position == 1) {
+                    return false
+                };
+                if (this.position <= (this.number_of_bells / 2) + 1) {
+                    return true
+                };
+                return false;
+            },
+
+            top_side: function() {
+                if (this.number_of_bells === 4 && this.position >= 3) {
+                    return true
+                };
+                if (this.number_of_bells === 6 && (this.position === 4 || this.position === 5)) {
+                    return true
+                };
+                if (this.number_of_bells === 8 && this.position >= 4 && this.position !== 8) {
+                    return true
+                };
+                if (this.number_of_bells === 10 && this.position >= 5 && this.position < 9) {
+                    return true
+                };
+                if (this.number_of_bells === 12 && this.position >= 5 && this.position <= 10) {
+                    return true
+                };
+            },
         },
 
-        cur_user: function(){
-            return this.$root.$refs.users.cur_user;
+        methods: {
+            // emit a ringing event ot the server
+            emit_ringing_event: function() {
+                if (window.tower_parameters.anonymous_user) {
+                    return
+                }; // don't ring if not logged in
+                if (this.assignment_mode) {
+                    return
+                }; // disable while assigning
+                if (this.$root.$refs.controls.host_mode && this.assigned_user !== cur_user_name) {
+                    // user is not allowed to ring this bell
+                    bell_circle.$refs.display.display_message('You may only ring your assigned bells.');
+                    return
+                }
+                socketio.emit('c_bell_rung', {
+                    bell: this.number,
+                    stroke: this.stroke,
+                    tower_id: cur_tower_id
+                });
+                var report = "Bell " + this.number + " will ring a " + (this.stroke ? "handstroke" : "backstroke");
+                console.log(report);
+            },
+
+            // Ringing event received; now ring the bell
+            ring: function() {
+                this.stroke = !this.stroke;
+                const audio_type = this.$root.$refs.controls.audio_type;
+                console.log(audio_type + ' ' + this.number_of_bells);
+                this.audio.play(bell_mappings[audio_type][this.number_of_bells][this.number - 1]);
+                var report = "Bell " + this.number + " rang a " + (this.stroke ? "backstroke" : "handstroke");
+                console.log(report);
+            },
+
+            // global_state received; set the bell to the correct stroke
+            set_state_silently: function(new_state) {
+                console.log('Bell ' + this.number + ' set to ' + new_state)
+                this.stroke = new_state
+            },
+
+            assign_user: function() {
+                if (window.tower_parameters.anonymous_user) {
+                    return
+                }; // don't ring if not logged in
+
+                if (this.assigned_user) {
+                    return
+                }; // don't kick people off
+
+                const selected_user = this.$root.$refs.users.selected_user;
+
+                if (!this.assignment_mode) {
+                    return
+                };
+
+                console.log('assigning user: ' + selected_user + ' to ' + this.number);
+
+                socketio.emit('c_assign_user', {
+                    bell: this.number,
+                    user: selected_user,
+                    tower_id: cur_tower_id
+                });
+            },
+
+            unassign: function() {
+                if (window.tower_parameters.anonymous_user) {
+                    return
+                }; // don't ring if not logged in
+
+                socketio.emit('c_assign_user', {
+                    bell: this.number,
+                    user: '',
+                    tower_id: cur_tower_id
+                });
+            },
 
         },
 
-        left_side: function(){
-            if (this.position == 1) { return false };
-            if (this.position <= (this.number_of_bells/2)+1) { return true };
-            return false;
-        },
-
-        top_side: function(){
-            if (this.number_of_bells === 4 && this.position >=3) {return true};
-            if (this.number_of_bells === 6 && (this.position === 4 || this.position === 5))
-                {return true};
-            if (this.number_of_bells === 8 && this.position >= 4 && this.position !== 8)
-                {return true};
-            if (this.number_of_bells === 10 && this.position >= 5 && this.position < 9)
-                {return true};
-            if (this.number_of_bells === 12 && this.position >= 5 && this.position <= 10)
-                {return true};
-        },
-
-    },
-
-	methods: {
-
-
-      // emit a ringing event ot the server
-	  emit_ringing_event: function() {
-        if (window.tower_parameters.anonymous_user){ return }; // don't ring if not logged in
-        if (this.assignment_mode){ return }; // disable while assigning
-        if (this.$root.$refs.controls.host_mode && this.assigned_user !== cur_user_name){
-            // user is not allowed to ring this bell
-            bell_circle.$refs.display.display_message('You may only ring your assigned bells.');
-            return
-        }
-		socketio.emit('c_bell_rung',
-				{bell: this.number, stroke: this.stroke, tower_id: cur_tower_id});
-		var report = "Bell " + this.number + " will ring a " + (this.stroke ? "handstroke":"backstroke");
-		console.log(report);
-	  },
-
-      // Ringing event received; now ring the bell
-	  ring: function(){
-        this.stroke = !this.stroke;
-        const audio_type = this.$root.$refs.controls.audio_type;
-        console.log(audio_type + ' ' + this.number_of_bells);
-		this.audio.play(bell_mappings[audio_type][this.number_of_bells][this.number - 1]);
-		var report = "Bell " + this.number + " rang a " + (this.stroke ? "backstroke":"handstroke");
-		console.log(report);
-	  },
-
-      // global_state received; set the bell to the correct stroke
-	  set_state_silently: function(new_state){
-		  console.log('Bell ' + this.number + ' set to ' + new_state)
-		  this.stroke = new_state
-	  },
-
-      assign_user: function(){
-          if (window.tower_parameters.anonymous_user){ return }; // don't ring if not logged in
-          if (this.assigned_user){ return }; // don't kick people off
-          const selected_user = this.$root.$refs.users.selected_user;
-          if (!this.assignment_mode){ return };
-          console.log('assigning user: ' +  selected_user + ' to ' + this.number);
-          socketio.emit('c_assign_user', { bell: this.number,
-                                           user: selected_user,
-                                           tower_id: cur_tower_id });
-      },
-
-      unassign: function(){
-          if (window.tower_parameters.anonymous_user){ return }; // don't ring if not logged in
-          socketio.emit('c_assign_user', { bell: this.number,
-                                           user: '',
-                                           tower_id: cur_tower_id });
-      },
-
-    },
-
-	template:`
+        template: `
             <div class="bell unclickable_div"
                  :class="[left_side ? 'left_side' : '',
                           image_prefix === 'h-' ? 'handbell' : '',
@@ -405,148 +434,164 @@ Vue.component("bell_rope", {
             </div>
 		     `
 
-}); // End bell_rope component
+    }); // End bell_rope component
 
-// The call_display is where call messages are flashed
-Vue.component('call_display', {
+    // The call_display is where call messages are flashed
+    Vue.component('call_display', {
+        props: ["audio"],
 
-    props: ["audio"],
-
-    // data in components should be a function, to maintain scope
-	data: function(){
-		return { cur_call: '' };
-	},
-
-    computed: {
-
-        assignment_mode: function(){
-            return this.$root.$refs.users.assignment_mode;
+        // data in components should be a function, to maintain scope
+        data: function() {
+            return {
+                cur_call: ''
+            };
         },
 
+        computed: {
 
-    },
+            assignment_mode: function() {
+                return this.$root.$refs.users.assignment_mode;
+            },
 
-	methods: {
-
-        // Used to display temporary messages to users (typically when they do something they're
-        // not permitted to do in host-mode).
-        display_message: function(message){
-            console.log('display message: ', message);
-			this.cur_call = message;
-			var self = this;
-            // remove the call after 2 seconds
-			setTimeout(function() { self.cur_call = '';
-						console.log('changing cur_call back');}, 3000);
 
         },
 
-        // a call was received from the server; display it and play audio
-		make_call: function(call){
-			console.log('changing cur_call to: ' + call);
-			this.cur_call = call;
-			this.audio.play(call);
-			var self = this;
-            // remove the call after 2 seconds
-			setTimeout(function() { self.cur_call = '';
-						console.log('changing cur_call back');}, 2000);
-		}
-	},
+        methods: {
 
-	template: `<h2 id='call_display'
+            // Used to display temporary messages to users (typically when they do something they're
+            // not permitted to do in host-mode).
+            display_message: function(message) {
+                console.log('display message: ', message);
+                this.cur_call = message;
+                var self = this;
+                // remove the call after 2 seconds
+                setTimeout(function() {
+                    self.cur_call = '';
+                    console.log('changing cur_call back');
+                }, 3000);
+
+            },
+
+            // a call was received from the server; display it and play audio
+            make_call: function(call) {
+                console.log('changing cur_call to: ' + call);
+                this.cur_call = call;
+                this.audio.play(call);
+                var self = this;
+                // remove the call after 2 seconds
+                setTimeout(function() {
+                    self.cur_call = '';
+                    console.log('changing cur_call back');
+                }, 2000);
+            }
+        },
+
+        template: `<h2 id='call_display'
                    ref='display'>
                    [[ assignment_mode ? 'To resume ringing, press "Stop Assigning" on the control panel.' : cur_call ]]
                </h2>
               `
-}); // end call_display component
+    }); // end call_display component
 
 
-// The focus_display indicated when the window has lost focus
-Vue.component('focus_display', {
-
-    // data in components should be a function, to maintain scope
-	data: function(){
-		return { visible: true };
-	},
-
-    mounted: function() {
-        this.$nextTick(function() {
-            window.addEventListener('focus', this.hide)
-            window.addEventListener('blur', this.show)
-
-            document.hasFocus() ? this.hide() : this.show()
-        })
-    },
-
-    methods: {
-        show() {
-            this.visible = true;
+    // The focus_display indicated when the window has lost focus
+    Vue.component('focus_display', {
+        // data in components should be a function, to maintain scope
+        data: function() {
+            return {
+                visible: true
+            };
         },
-        hide() {
-            this.visible = false;
-        }
-    },
 
-	template: `<h2 v-show="visible" id='focus_display'>
+        mounted: function() {
+            this.$nextTick(function() {
+                window.addEventListener('focus', this.hide)
+                window.addEventListener('blur', this.show)
+
+                document.hasFocus() ? this.hide() : this.show()
+            })
+        },
+
+        methods: {
+            show() {
+                this.visible = true;
+            },
+            hide() {
+                this.visible = false;
+            }
+        },
+
+        template: `<h2 v-show="visible" id='focus_display'>
                    Click anywhere in Ringing Room to resume ringing.
                </h2>
               `
-}); // end focus_display component
+    }); // end focus_display component
 
 
-// tower_controls holds title, id, size buttons, audio toggle
-Vue.component('tower_controls', {
-
-    // data in components should be a function, to maintain scope
-	data: function(){
-		return {tower_sizes: [4,6,8,10,12],
+    // tower_controls holds title, id, size buttons, audio toggle
+    Vue.component('tower_controls', {
+        // data in components should be a function, to maintain scope
+        data: function() {
+            return {
+                tower_sizes: [4, 6, 8, 10, 12],
                 audio_type: window.tower_parameters.audio,
-                host_mode: window.tower_parameters.host_mode} },
-
-    computed: {
-
-        number_of_bells: function() {
-            return this.$root.number_of_bells;
+                host_mode: window.tower_parameters.host_mode
+            }
         },
 
-        lock_controls: function(){
-            return this.host_mode && !window.tower_parameters.host_permissions;
-        }
+        computed: {
+            number_of_bells: function() {
+                return this.$root.number_of_bells;
+            },
 
-    },
-
-    watch: {
-
-        audio_type: function(){
-            console.log('swapped audio type');
-              socketio.emit('c_audio_change',{new_audio: this.audio_type, tower_id: cur_tower_id});
+            lock_controls: function() {
+                return this.host_mode && !window.tower_parameters.host_permissions;
+            }
         },
 
-        host_mode: function(){
-            console.log('swapped host mode to: ' + this.host_mode);
-            socketio.emit('c_host_mode',{new_mode: this.host_mode, tower_id: cur_tower_id});
+        watch: {
+            audio_type: function() {
+                console.log('swapped audio type');
+                socketio.emit('c_audio_change', {
+                    new_audio: this.audio_type,
+                    tower_id: cur_tower_id
+                });
+            },
 
+            host_mode: function() {
+                console.log('swapped host mode to: ' + this.host_mode);
+                socketio.emit('c_host_mode', {
+                    new_mode: this.host_mode,
+                    tower_id: cur_tower_id
+                });
+            },
         },
 
-    },
+        methods: {
+            // the user clicked a tower-size button
+            set_tower_size: function(size) {
+                if (window.tower_parameters.anonymous_user) {
+                    return
+                }; // don't do anything if not logged in
+                console.log('setting tower size to ' + size);
+                socketio.emit('c_size_change', {
+                    new_size: size,
+                    tower_id: cur_tower_id
+                });
+            },
 
-	methods: {
-
-        // the user clicked a tower-size button
-		set_tower_size: function(size){
-            if (window.tower_parameters.anonymous_user){ return }; // don't do anything if not logged in
-			console.log('setting tower size to ' + size);
-			socketio.emit('c_size_change',{new_size: size, tower_id: cur_tower_id});
-		},
-
-        set_bells_at_hand: function(){
-            if (window.tower_parameters.anonymous_user){ return }; // don't do anything if not logged in
-            console.log('setting all bells at hand')
-            socketio.emit('c_set_bells', {tower_id: cur_tower_id});
+            set_bells_at_hand: function() {
+                if (window.tower_parameters.anonymous_user) {
+                    return
+                }; // don't do anything if not logged in
+                console.log('setting all bells at hand')
+                socketio.emit('c_set_bells', {
+                    tower_id: cur_tower_id
+                });
+            },
         },
-	},
 
-	template:
-    `
+        template: `
         <div class="tower_controls_inner"
              v-if="!window.tower_parameters.anonymous_user">
 
@@ -658,31 +703,32 @@ Vue.component('tower_controls', {
 
         </div> <!-- tower controls -->
     `,
-}); // End tower_controls
+    }); // End tower_controls
 
 
 
 
 
-// help holds help toggle
-Vue.component('help', {
-
-    // data in components should be a function, to maintain scope
-	data: function(){
-		return {help_showing: false} },
-
-	methods: {
-
-        // the user clicked the audio toggle
-        show_help: function(){
-          console.log('showing or hiding help');
-          this.help_showing = !this.help_showing
-
+    // help holds help toggle
+    Vue.component('help', {
+        // data in components should be a function, to maintain scope
+        data: function() {
+            return {
+                help_showing: false
+            }
         },
-	},
+
+        methods: {
+            // the user clicked the audio toggle
+            show_help: function() {
+                console.log('showing or hiding help');
+                this.help_showing = !this.help_showing
+
+            },
+        },
 
 
-	template: `
+        template: `
 <div class="row" v-if="!window.tower_parameters.observer">
 <div class="col">
 <div class="card text-justify">
@@ -723,43 +769,42 @@ You can read more on our <a href="/help">Help page</a>.
 </div>
 </div>
                `,
-}); // End help
+    }); // End help
 
-Vue.component('chatbox', {
-
-    data: function(){
-        return { name: window.tower_parameters.cur_user_name,
-                 cur_msg: '',
-                 messages: [],
-        }
-    },
-
-    props: ["unread_messages"],
-
-    methods: {
-
-        send_msg: function() {
-            console.log('send_msg');
-            socketio.emit('c_msg_sent', { user: this.name,
-                                          email: window.tower_parameters.cur_user_email,
-                                          msg: this.cur_msg,
-                                          time: new Date(),
-                                          tower_id: window.tower_parameters.id});
-            this.cur_msg = '';
+    Vue.component('chatbox', {
+        data: function() {
+            return {
+                name: window.tower_parameters.cur_user_name,
+                cur_msg: '',
+                messages: [],
+            }
         },
 
-        leave_tower: function() {
-            leave_room();
+        props: ["unread_messages"],
+
+        methods: {
+            send_msg: function() {
+                console.log('send_msg');
+                socketio.emit('c_msg_sent', {
+                    user: this.name,
+                    email: window.tower_parameters.cur_user_email,
+                    msg: this.cur_msg,
+                    time: new Date(),
+                    tower_id: window.tower_parameters.id
+                });
+                this.cur_msg = '';
+            },
+
+            leave_tower: function() {
+                leave_room();
+            },
+
+            remove_all_unreads: function() {
+                bell_circle.unread_messages = 0;
+            },
         },
 
-        remove_all_unreads: function(){
-            bell_circle.unread_messages = 0;
-        },
-
-    },
-
-
-    template: `
+        template: `
         <div class="card" id="chatbox">
             <div class="card-header">
                 <h2 style="display: inline; cursor: pointer;"
@@ -825,39 +870,37 @@ Vue.component('chatbox', {
             </div>
         </div>
               `
+    });
 
+    // For silly CSS reasons, this needs to be it's own Vue instance
+    var report_form = new Vue({
+        el: '#report_box',
 
-});
-
-// For silly CSS reasons, this needs to be it's own Vue instance
-var report_form = new Vue({
-
-    el: '#report_box',
-
-    data: { report_description: '',
-            unsubmitted: true,},
-
-    methods: {
-
-        send_report: function() {
-            socketio.emit('c_report',
-                            { time: new Date(),
-                              user: window.tower_parameters.cur_user_name,
-                              email: window.tower_parameters.cur_user_email,
-                              report_description: this.report_description,
-                              messages: bell_circle.$refs.chatbox.messages });
-            this.unsubmitted = false;
-
-            setTimeout( function(){
-                $('#report_box').modal('hide');
-                report_form.unsubmitted = true;
-                report_form.report_description = '';
-            }, 3000);
+        data: {
+            report_description: '',
+            unsubmitted: true,
         },
 
-    },
+        methods: {
+            send_report: function() {
+                socketio.emit('c_report', {
+                    time: new Date(),
+                    user: window.tower_parameters.cur_user_name,
+                    email: window.tower_parameters.cur_user_email,
+                    report_description: this.report_description,
+                    messages: bell_circle.$refs.chatbox.messages
+                });
+                this.unsubmitted = false;
 
-    template: `
+                setTimeout(function() {
+                    $('#report_box').modal('hide');
+                    report_form.unsubmitted = true;
+                    report_form.report_description = '';
+                }, 3000);
+            },
+        },
+
+        template: `
     <div id="report_box"
          tabindex="-1"
          class="modal fade">
@@ -899,26 +942,23 @@ var report_form = new Vue({
         </div>
     </div>
     `
+    });
 
-
-
-});
-
-Vue.component('volume_control', {
-    data: function() {
-        return {
-            value: window.user_parameters.bell_volume,
-        }
-    },
-
-    watch: {
-        value: function(new_value) {
-            window.user_parameters.bell_volume = new_value;
-            bell_circle.audio._volume = window.user_parameters.bell_volume * 0.1;
+    Vue.component('volume_control', {
+        data: function() {
+            return {
+                value: window.user_parameters.bell_volume,
+            }
         },
-    },
 
-    template: `
+        watch: {
+            value: function(new_value) {
+                window.user_parameters.bell_volume = new_value;
+                bell_circle.audio._volume = window.user_parameters.bell_volume * 0.1;
+            },
+        },
+
+        template: `
     <div class="row justify-content-between mt-n2">
         <!-- slider bar overlaps its own padding, so put it in a div to make it line up with the edges-->
         <div class="col-2 pl-4">
@@ -934,94 +974,99 @@ Vue.component('volume_control', {
         </div>
     </div>
 `
-});
+    });
 
 
-// user_display holds functionality required for users
-Vue.component('user_display', {
+    // user_display holds functionality required for users
+    Vue.component('user_display', {
+        // data in components should be a function, to maintain scope
+        data: function() {
+            return {
+                user_names: [],
+                assignment_mode: false,
+                selected_user: '',
+                cur_user: window.tower_parameters.cur_user_name,
+                observers: parseInt(window.tower_parameters.observers),
+            }
+        },
 
-    // data in components should be a function, to maintain scope
-	data: function(){
-		return { user_names: [],
-                 assignment_mode: false,
-                 selected_user: '',
-                 cur_user: window.tower_parameters.cur_user_name,
-                 observers: parseInt(window.tower_parameters.observers),
-        } },
-
-    computed: {
-            cur_user_bells: function(){
+        computed: {
+            cur_user_bells: function() {
                 var bell_list = []
-                this.$root.$refs.bells.forEach((bell,index) =>
-                    {if (bell.assigned_user === this.cur_user){
-                        bell_list.push(index+1);
+                this.$root.$refs.bells.forEach((bell, index) => {
+                    if (bell.assigned_user === this.cur_user) {
+                        bell_list.push(index + 1);
                     }
                 });
                 return bell_list;
             }
-    },
-
-
-    methods: {
-
-        toggle_assignment: function(){
-            if (window.tower_parameters.anonymous_user){ return }; // don't do anything if not logged in
-            $('#user_display_body').collapse('show');
-            this.assignment_mode = !this.assignment_mode;
-            if (this.assignment_mode){
-                this.selected_user = this.cur_user;
-            } else {
-                this.rotate_to_assignment();
-            }
         },
 
-        rotate_to_assignment: function(){
-            if (window.tower_parameters.anonymous_user){ return }; // don't do anything if not logged in
-            console.log('rotating to assignment')
-            // Don't rotate while assigning bells
-            if (this.assignment_mode){ return };
+        methods: {
+            toggle_assignment: function() {
+                if (window.tower_parameters.anonymous_user) {
+                    return
+                }; // don't do anything if not logged in
+                $('#user_display_body').collapse('show');
+                this.assignment_mode = !this.assignment_mode;
+                if (this.assignment_mode) {
+                    this.selected_user = this.cur_user;
+                } else {
+                    this.rotate_to_assignment();
+                }
+            },
 
-            // Don't rotate if the user has no name yet
-            if (!this.cur_user){ return };
+            rotate_to_assignment: function() {
+                if (window.tower_parameters.anonymous_user) {
+                    return
+                }; // don't do anything if not logged in
+                console.log('rotating to assignment')
+                // Don't rotate while assigning bells
+                if (this.assignment_mode) {
+                    return
+                };
 
-            console.log(this.cur_user_bells);
-            // the user has no bells; don't screw with rotation
-            if (this.cur_user_bells === []){
-                console.log('skipping — no assigned bells');
-                return;
-            };
-            const rotate_to = Math.min(...this.cur_user_bells);
-            this.$root.rotate(rotate_to);
+                // Don't rotate if the user has no name yet
+                if (!this.cur_user) {
+                    return
+                };
+
+                console.log(this.cur_user_bells);
+                // the user has no bells; don't screw with rotation
+                if (this.cur_user_bells === []) {
+                    console.log('skipping — no assigned bells');
+                    return;
+                };
+                const rotate_to = Math.min(...this.cur_user_bells);
+                this.$root.rotate(rotate_to);
+            },
+
+            select_user: function(user) {
+                if (window.tower_parameters.anonymous_user) {
+                    return
+                }; // don't do anything if not logged in
+                if (this.$root.$refs.controls.lock_controls) {
+                    return
+                };
+                this.selected_user = user;
+            },
+
+            add_user: function(user) {
+                if (!this.user_names.includes(user)) {
+                    this.user_names.push(user);
+                }
+            },
+
+            remove_user: function(user) {
+                console.log('removing user: ' + user);
+                const index = this.user_names.indexOf(user);
+                if (index > -1) {
+                    this.user_names.splice(index, 1);
+                }
+            },
         },
 
-
-        select_user: function(user){
-            if (window.tower_parameters.anonymous_user){ return }; // don't do anything if not logged in
-            if (this.$root.$refs.controls.lock_controls){
-                return
-            };
-            this.selected_user = user;
-        },
-
-        add_user: function(user){
-            if (!this.user_names.includes(user)){
-                this.user_names.push(user);
-            }
-        },
-
-        remove_user: function(user){
-            console.log('removing user: ' + user);
-            const index = this.user_names.indexOf(user);
-            if (index > -1) {
-              this.user_names.splice(index, 1);
-            }
-        },
-
-
-    },
-
-	template:
-    `
+        template: `
          <div class="card mb-3">
              <div class="card-header"
                   v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link"
@@ -1089,291 +1134,311 @@ Vue.component('user_display', {
                  </ul>
             </div>
         `,
-}); // End user_display
+    }); // End user_display
+
+    // The master Vue application
+    bell_circle = new Vue({
+        el: "#bell_circle",
+
+        mounted: function() {
+
+            /////////////////
+            /* Tower setup */
+            /////////////////
+
+            // set this separately so that the watcher fires
+            this.number_of_bells = window.tower_parameters.size;
+
+            // Join the tower
+            socketio.emit('c_join', {
+                tower_id: cur_tower_id,
+                user_token: window.tower_parameters.user_token,
+                anonymous_user: window.tower_parameters.anonymous_user
+            })
+
+            this.$nextTick(function() {
+                this.$refs.users.rotate_to_assignment();
+            });
+
+            if (!window.tower_parameters.anonymous_user) {
+                console.log('turning on keypress listening')
+
+                // Do a special thing to prevent space from pressing focused buttons
+                window.addEventListener('keyup', (e) => {
+                    this.keys_down.splice(this.keys_down.indexOf(e.key), 1)
+                    if (e.which == 32 && !$('#chat_input_box').is(':focus')) {
+                        e.preventDefault();
+                    }
+                });
+
+                $('[data-toggle="tooltip"]').tooltip();
+
+                window.addEventListener('keydown', (e) => {
+                    e = e || window.event;
+                    const key = e.key; // this wil be the character generated by the keypress
+                    // Shift+1 produces code "Digit1"; this gets the digit itself
+                    const code = e.code[e.code.length - 1];
+
+                    if ($("#chat_input_box").is(":focus")) {
+                        if (key == 'Escape') {
+                            $('#chat_input_box').blur();
+                        } else return; // disable hotkeys when typing
+                    }
+
+                    if ($('#report_box').hasClass('show')) {
+                        return; // disable hotkeys when the report is active
+                    }
 
 
-// The master Vue application
-bell_circle = new Vue({
-
-	el: "#bell_circle",
-
-    mounted: function() {
-
-        /////////////////
-        /* Tower setup */
-        /////////////////
-
-        // set this separately so that the watcher fires
-        this.number_of_bells = window.tower_parameters.size;
+                    if (bell_circle.keys_down.includes(key)) {
+                        return
+                    };
+                    bell_circle.keys_down.push(key);
 
 
-        // Join the tower
-        socketio.emit('c_join',{tower_id: cur_tower_id,
-                                user_token: window.tower_parameters.user_token,
-                                anonymous_user: window.tower_parameters.anonymous_user})
+                    // Do a special thing to prevent space and the arrow keys from hitting focused elements
+                    if (e.which == 32 || e.which == 37 || e.which == 39) {
+                        e.preventDefault();
+                    }
 
-        this.$nextTick(function(){
-            this.$refs.users.rotate_to_assignment();
-        });
+                    // The numberkeys 1-0 ring those bells, with -, = ringing E, T
+                    if (parseInt(key) - 1 in [...Array(9).keys()]) {
+                        bell_circle.pull_rope(parseInt(key));
+                    } else if (parseInt(key) == 0) {
+                        bell_circle.pull_rope(10);
+                    } else if (['-'].includes(key)) {
+                        bell_circle.pull_rope(11);
+                    } else if (['='].includes(key)) {
+                        bell_circle.pull_rope(12);
+                    }
 
-        if (!window.tower_parameters.anonymous_user){
-			console.log('turning on keypress listening')
+                    // Shift+numkey rotates the circle so that that bell is in position 4
+                    // This is done in a slightly roundabout way to work on both US & UK keyboards
+                    if (e.shiftKey) {
+                        console.log(key);
+                        if (parseInt(code) - 1 in [...Array(9).keys()]) {
+                            bell_circle.rotate(parseInt(code));
+                        } else if (parseInt(code) == 0) {
+                            bell_circle.rotate(10);
+                        } else if (['_'].includes(key)) {
+                            bell_circle.rotate(11);
+                        } else if (['+'].includes(key)) {
+                            bell_circle.rotate(12);
+                        }
+                    }
 
-            // Do a special thing to prevent space from pressing focused buttons
-            window.addEventListener('keyup', (e) => {
-                this.keys_down.splice(this.keys_down.indexOf(e.key),1)
-                if (e.which == 32 && !$('#chat_input_box').is(':focus')) {
-                    e.preventDefault();
+                    const n_b = bell_circle.number_of_bells;
+                    // Space, j, and ArrowRight ring the bell in position n/2
+                    if ([' ', 'j', 'J', 'ArrowRight'].includes(key)) {
+                        bell_circle.pull_rope_by_pos(1);
+                    }
+
+                    // f and ArrowLeft ring the bell in position n/2 + 1
+                    if (['f', 'F', 'ArrowLeft'].includes(key)) {
+                        bell_circle.pull_rope_by_pos(2);
+                    }
+
+                    // Calls are: g = go; h = stop; b = bob; n = single.
+                    if (['b', 'B'].includes(key)) {
+                        console.log('calling bob');
+                        bell_circle.make_call('Bob');
+                    }
+                    if (['n', 'N'].includes(key)) {
+                        console.log('calling single');
+                        bell_circle.make_call('Single');
+                    }
+
+                    if (['g', 'G'].includes(key)) {
+                        console.log('calling go');
+                        bell_circle.make_call('Go');
+                    }
+
+                    if (['h', 'H'].includes(key)) {
+                        console.log('calling stop');
+                        bell_circle.make_call("That's all");
+                    }
+
+                    if (['t', 'T'].includes(key)) {
+                        console.log('calling stand');
+                        bell_circle.make_call("Stand next");
+                    }
+
+                    if (['l', 'L'].includes(key)) {
+                        console.log('calling look-to');
+                        bell_circle.make_call("Look to");
+                    }
+                });
+            };
+        },
+
+        data: {
+            number_of_bells: 0,
+            bells: [],
+            rang_bell_recently: [],
+            audio: window.tower_parameters.audio == 'Tower' ? tower : hand,
+            call_throttled: false,
+            tower_name: window.tower_parameters.name,
+            tower_id: parseInt(window.tower_parameters.id),
+            hidden_sidebar: true,
+            hidden_help: true,
+            keys_down: [],
+            unread_messages: 0,
+            host_mode: window.tower_parameters.host_mode,
+            bookmarked: window.tower_parameters.bookmarked,
+        },
+
+        watch: {
+            // Change the list of bells to track the current number
+            number_of_bells: function(new_count) {
+                console.log('changing number of bells to ' + new_count)
+                const new_bells = [];
+                for (var i = 1; i <= new_count; i++) {
+                    console.log('pushing bell: ' + i);
+                    new_bells.push({
+                        number: i,
+                        position: i
+                    });
+                    console.log(new_bells);
                 }
-            });
-
-            $('[data-toggle="tooltip"]').tooltip();
-
-			window.addEventListener('keydown', (e) => {
-			e = e || window.event;
-			const key = e.key; // this wil be the character generated by the keypress
-			// Shift+1 produces code "Digit1"; this gets the digit itself
-			const code = e.code[e.code.length - 1];
-
-            if ($("#chat_input_box").is(":focus")){
-                if (key == 'Escape') {
-                    $('#chat_input_box').blur();
-                } else return; // disable hotkeys when typing
-            }
-
-            if ($('#report_box').hasClass('show')) {
-                return; // disable hotkeys when the report is active
-            }
-
-
-            if (bell_circle.keys_down.includes(key)){ return };
-            bell_circle.keys_down.push(key);
-
-
-            // Do a special thing to prevent space and the arrow keys from hitting focused elements
-            if (e.which == 32 || e.which == 37 || e.which == 39) {
-                e.preventDefault();
-
-            }
-
-			// The numberkeys 1-0 ring those bells, with -, = ringing E, T
-			if (parseInt(key)-1 in [...Array(9).keys()]){
-				bell_circle.pull_rope(parseInt(key));
-			} else if (parseInt(key) == 0){
-				bell_circle.pull_rope(10);
-			} else if (['-'].includes(key)){
-				bell_circle.pull_rope(11);
-			} else if (['='].includes(key)) {
-				bell_circle.pull_rope(12);
-			}
-
-			// Shift+numkey rotates the circle so that that bell is in position 4
-			// This is done in a slightly roundabout way to work on both US & UK keyboards
-			if (e.shiftKey) {
-				console.log(key);
-				if (parseInt(code)-1 in [...Array(9).keys()]){
-					bell_circle.rotate(parseInt(code));
-				} else if (parseInt(code) == 0){
-						bell_circle.rotate(10);
-				} else if (['_'].includes(key)){
-					bell_circle.rotate(11);
-				} else if (['+'].includes(key)) {
-					bell_circle.rotate(12);
-				}
-			}
-
-
-			const n_b = bell_circle.number_of_bells;
-			// Space, j, and ArrowRight ring the bell in position n/2
-			if ([' ','j','J','ArrowRight'].includes(key)){
-				bell_circle.pull_rope_by_pos(1);
-			}
-
-			// f and ArrowLeft ring the bell in position n/2 + 1
-			if (['f','F','ArrowLeft'].includes(key)){
-				bell_circle.pull_rope_by_pos(2);
-			}
-
-			// Calls are: g = go; h = stop; b = bob; n = single.
-			if (['b','B'].includes(key)){
-				console.log('calling bob');
-				bell_circle.make_call('Bob');
-			}
-			if (['n','N'].includes(key)){
-				console.log('calling single');
-				bell_circle.make_call('Single');
-			}
-
-			if(['g','G'].includes(key)){
-				console.log('calling go');
-				bell_circle.make_call('Go');
-			}
-
-			if (['h','H'].includes(key)){
-				console.log('calling stop');
-				bell_circle.make_call("That's all");
-			}
-
-			if (['t','T'].includes(key)){
-				console.log('calling stand');
-				bell_circle.make_call("Stand next");
-			}
-
-			if (['l','L'].includes(key)){
-				console.log('calling look-to');
-				bell_circle.make_call("Look to");
-			}
-            });
-        };
-
-    },
-
-	data: {
-		number_of_bells: 0,
-		bells: [],
-        rang_bell_recently: [],
-        audio: window.tower_parameters.audio == 'Tower' ? tower : hand,
-        call_throttled: false,
-        tower_name: window.tower_parameters.name,
-        tower_id: parseInt(window.tower_parameters.id),
-        hidden_sidebar: true,
-        hidden_help: true,
-        keys_down: [],
-        unread_messages: 0,
-        host_mode: window.tower_parameters.host_mode,
-        bookmarked: window.tower_parameters.bookmarked,
-	},
-
-	watch: {
-        // Change the list of bells to track the current number
-		number_of_bells: function(new_count){
-            console.log('changing number of bells to ' + new_count)
-			const new_bells = [];
-			for (var i=1; i <= new_count; i++){
-                console.log('pushing bell: ' + i);
-				new_bells.push({number: i, position: i});
                 console.log(new_bells);
-			}
-            console.log(new_bells);
-			this.bells = new_bells;
-			this.rang_bell_recently = new Array(new_count).fill(false);
-            // Request the global state from the server
-            socketio.emit('c_request_global_state', {tower_id: cur_tower_id});
-		},
+                this.bells = new_bells;
+                this.rang_bell_recently = new Array(new_count).fill(false);
+                // Request the global state from the server
+                socketio.emit('c_request_global_state', {
+                    tower_id: cur_tower_id
+                });
+            },
 
-	},
+        },
 
-	methods: {
+        methods: {
+            // the server rang a bell; find the correct one and ring it
+            ring_bell: function(bell) {
+                console.log("Ringing the " + bell)
+                this.$refs.bells[bell - 1].ring()
+            },
 
+            // Trigger a specific bell to emit a ringing event
+            pull_rope: function(bell) {
+                if (this.rang_bell_recently[bell - 1]) {
+                    return;
+                }
+                console.log("Pulling the " + bell);
+                this.$refs.bells[bell - 1].emit_ringing_event();
+                this.rang_bell_recently[bell - 1] = true;
+                setTimeout(() => {
+                    this.rang_bell_recently[bell - 1] = false;
+                }, 250);
+            },
 
-      // the server rang a bell; find the correct one and ring it
-	  ring_bell: function(bell) {
-		console.log("Ringing the " + bell)
-		this.$refs.bells[bell-1].ring()
-	  },
+            // Like ring_bell, but calculated by the position in the circle (respecting rotation)
+            ring_bell_by_pos: function(pos) {
+                for (bell in this.bells) {
+                    if (this.bells[bell]['position'] == pos) {
+                        this.ring_bell(this.bells[bell]['number']);
+                        return true;
+                    }
+                }
+            },
 
+            // Like pull_rope, but calculated by the position in the circle (respecting rotation)
+            pull_rope_by_pos: function(pos) {
+                for (var bell in this.bells) {
+                    if (this.bells[bell]['position'] == pos) {
+                        this.pull_rope(this.bells[bell]['number']);
+                        return true;
+                    }
+                }
+            },
 
-      // Trigger a specific bell to emit a ringing event
-	  pull_rope: function(bell) {
-        if (this.rang_bell_recently[bell-1]) { return; }
-        console.log("Pulling the " + bell);
-        this.$refs.bells[bell-1].emit_ringing_event();
-        this.rang_bell_recently[bell-1] = true;
-        setTimeout(()=>{this.rang_bell_recently[bell-1] = false;}, 250);
-	  },
+            // emit a call
+            make_call: function(call) {
+                if (this.$root.$refs.users.cur_user_bells.length == 0 
+                    && this.$root.$refs.controls.lock_controls
+                ) {
+                    // user is not allowed to make calls
+                    this.$root.$refs.display.display_message(
+                        'Only hosts may make calls when not assigned to a bell.'
+                    );
 
-      // Like ring_bell, but calculated by the position in the circle (respecting rotation)
-	  ring_bell_by_pos: function(pos){
-			for (bell in this.bells){
-				if (this.bells[bell]['position'] == pos){
-					this.ring_bell(this.bells[bell]['number']);
-					return true;
-					}
-				}
-		},
+                    return
+                };
+                if (this.call_throttled) {
+                    return
+                };
+                socketio.emit('c_call', {
+                    call: call,
+                    tower_id: cur_tower_id
+                });
+                this.call_throttled = true;
+                setTimeout(() => {
+                    this.call_throttled = false
+                }, 500);
+            },
 
-      // Like pull_rope, but calculated by the position in the circle (respecting rotation)
-	  pull_rope_by_pos: function(pos){
-			for (var bell in this.bells){
-				if (this.bells[bell]['position'] == pos){
-					this.pull_rope(this.bells[bell]['number']);
-					return true;
-					}
-				}
-		},
+            // rotate the view of the circle
+            rotate: function(newposs) {
+                if (newposs > this.number_of_bells) {
+                    // the user tried to rotate to a bell that doesn't exist
+                    return false;
+                }
 
-      // emit a call
-	  make_call: function(call){
-        if (this.$root.$refs.users.cur_user_bells.length == 0 && this.$root.$refs.controls.lock_controls){
-            // user is not allowed to make calls
-            this.$root.$refs.display.display_message('Only hosts may make calls when not assigned to a bell.');
-            return
-        };
-        if (this.call_throttled){ return };
-        socketio.emit('c_call',{call: call,tower_id: cur_tower_id});
-        this.call_throttled = true;
-        setTimeout(()=>{this.call_throttled = false}, 500);
-	  },
+                // how many positions to rotate?
+                var offset = this.number_of_bells - newposs;
+                var oldposs = 0;
+                var n_b = this.number_of_bells
 
-      // rotate the view of the circle
-	  rotate: function(newposs){
-		  if (newposs > this.number_of_bells) {
-              // the user tried to rotate to a bell that doesn't exist
-			  return false;
-		  }
+                for (var bell in this.bells) {
+                    // change the position of each bell
+                    var number = this.bells[bell]['number'];
+                    this.bells[bell]['position'] = (number + offset) % n_b + 1;
+                };
 
-          // how many positions to rotate?
-		  var offset = this.number_of_bells - newposs;
-		  var oldposs = 0;
-		  var n_b = this.number_of_bells
+                // We need the Vue's list to be sorted by position
+                this.bells = this.bells.sort(
+                    function(a, b) {
+                        return a['position'] - b['position'];
+                    }
+                );
+            },
 
-		  for (var bell in this.bells){
-              // change the position of each bell
-			  var number = this.bells[bell]['number'];
-			  this.bells[bell]['position'] = (number + offset)%n_b + 1;
-		  };
+            toggle_controls: function() {
+                $('#help').collapse('hide');
+                this.hidden_help = true;
+                this.hidden_sidebar = !this.hidden_sidebar;
+            },
 
-          // We need the Vue's list to be sorted by position
-		  this.bells = this.bells.sort(
-			  function(a,b){
-				  return a['position'] - b['position'];
-			  });
+            toggle_help: function() {
+                if (window.tower_parameters.observer) {
+                    return
+                } // don't do anything if in listener mode
+                $('#tower_controls').collapse('hide');
+                this.hidden_sidebar = true;
+                this.hidden_help = !this.hidden_help;
+            },
 
-	  },
+            copy_id: function() {
+                setTimeout(() => {
+                    $('#id_clipboard_tooltip').tooltip('hide')
+                }, 1000);
+                var dummy = document.createElement("textarea");
+                document.body.appendChild(dummy);
+                dummy.value = cur_tower_id;
+                dummy.select();
+                document.execCommand("copy");
+                document.body.removeChild(dummy);
+            },
 
-      toggle_controls: function() {
-          $('#help').collapse('hide');
-          this.hidden_help = true;
-          this.hidden_sidebar = !this.hidden_sidebar;
-      },
+            toggle_bookmark: function() {
+                socketio.emit('c_toggle_bookmark', {
+                    tower_id: cur_tower_id,
+                    user_token: window.tower_parameters.user_token
+                });
+                this.bookmarked = !this.bookmarked;
+            },
+        },
 
-      toggle_help: function() {
-          if (window.tower_parameters.observer){ return } // don't do anything if in listener mode
-          $('#tower_controls').collapse('hide');
-          this.hidden_sidebar = true;
-          this.hidden_help = !this.hidden_help;
-      },
-
-      copy_id: function() {
-
-          setTimeout(() => {$('#id_clipboard_tooltip').tooltip('hide')},1000);
-              var dummy = document.createElement("textarea");
-              document.body.appendChild(dummy);
-              dummy.value = cur_tower_id;
-              dummy.select();
-              document.execCommand("copy");
-              document.body.removeChild(dummy);
-      },
-
-      toggle_bookmark: function(){
-          socketio.emit('c_toggle_bookmark',{tower_id: cur_tower_id,
-                                             user_token: window.tower_parameters.user_token});
-          this.bookmarked = !this.bookmarked;
-      },
-	},
-
-	template:
-    `
+        template: `
         <div id="bell_circle_wrapper">
 
         <div class="row flex-lg-nowrap" id="sidebar_col_row">
@@ -1506,8 +1571,5 @@ bell_circle = new Vue({
 
         </div>
     `
-
-}); // end Vue bell_circle
-
+    }); // end Vue bell_circle
 }); // end document.ready
-
