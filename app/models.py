@@ -14,9 +14,14 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-    towers = db.relationship("UserTowerRelation", back_populates="user")
+    _towers = db.relationship("UserTowerRelation", back_populates="user")
     joined = db.Column(db.Date, default=date.today)
     _permitted_servers = db.Column(db.String(128), default='UK,NA,SG')
+
+    @property
+    def towers(self):
+        return [r for r in self._towers
+                if r.tower.server == Config.RR_SERVER_NAME]
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -224,7 +229,7 @@ class TowerDB(db.Model):
 class UserTowerRelation(db.Model):
     user_id = db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key = True)
     tower_id = db.Column('tower_id',db.Integer, db.ForeignKey('towerDB.pk'), primary_key = True)
-    user = db.relationship("User", back_populates="towers")
+    user = db.relationship("User", back_populates="_towers")
     tower = db.relationship("TowerDB",back_populates="users")
 
     # Most recent visit to tower
