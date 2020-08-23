@@ -1557,7 +1557,7 @@ $(document).ready(function() {
         <div class="col-12 col-lg-8 bell_circle_col">
             <!-- bell circle col -->
             <div class="bell_circle"
-                 v-bind:class="[number_of_bells == 4 ? 'four'    : '',
+                 v-bind:class="[number_of_bells == 4  ? 'four'   : '',
                                 number_of_bells == 6  ? 'six'    : '',
                                 number_of_bells == 8  ? 'eight'  : '',
                                 number_of_bells == 10 ? 'ten'    : '',
