@@ -386,7 +386,7 @@ $(document).ready(function() {
                                           assigned_user == cur_user ? 'cur_user' : '']"
                                   style="cursor: inherit;"
                                   >
-                                <span class="number"> [[number]] </number>
+                                <span class="number"> [[number]] </span>
                              </button>
                         </div>
                     </template>
@@ -431,7 +431,6 @@ $(document).ready(function() {
                     </div>
                     </div>
                 </div>
-            </div>
 		     `
 
     }); // End bell_rope component
@@ -699,8 +698,6 @@ $(document).ready(function() {
                 </div>
              </div>
 
-             <user
-
         </div> <!-- tower controls -->
     `,
     }); // End tower_controls
@@ -763,7 +760,6 @@ $(document).ready(function() {
 </ul>
 
 You can read more on our <a href="/help">Help page</a>.
-</div>
 </div>
 </div>
 </div>
@@ -840,14 +836,14 @@ You can read more on our <a href="/help">Help page</a>.
                            placeholder=""
                            v-model="cur_msg"
                            @focus="remove_all_unreads"
-                           ></input>
+                           />
                     <div class="input-group-append">
                         <input class="btn btn-outline-primary"
                                 type="submit"
-                                value="Send"></input>
+                                value="Send" />
                     </div>
-                </form>
                 </div>
+                </form>
                 </div>
                 <div class="row my-n1 p-0">
                 <div class="col mb-n2 pb-0">
@@ -857,7 +853,7 @@ You can read more on our <a href="/help">Help page</a>.
                            data-target="#code_of_conduct"
                             >
                             Code of Conduct
-                        </a> &#8226
+                        </a> &#8226;
                         <a href="#"
                         data-toggle="modal"
                         data-target="#report_box"
@@ -869,6 +865,7 @@ You can read more on our <a href="/help">Help page</a>.
                 </div>
             </div>
         </div>
+    </div>
               `
     });
 
@@ -965,12 +962,10 @@ You can read more on our <a href="/help">Help page</a>.
         <i class="fas fa-volume-down volume_icon align-middle"></i>
         </div>
         <div class="col-8 px-0 align-middle">
-            <input type="range" v-model="value" min=0 max=10 id="volumeSlider" class="volume_control_slider custom-range align-middle">
-            </input>
+            <input type="range" v-model="value" min=0 max=10 id="volumeSlider" class="volume_control_slider custom-range align-middle" />
         </div>
         <div class="col-2">
         <i class="fas fa-volume-up volume_icon align-middle"></i>
-        </div>
         </div>
     </div>
 `
@@ -1570,6 +1565,7 @@ You can read more on our <a href="/help">Help page</a>.
         </div> <!-- row -->
 
         </div>
+    </div>
     `
     }); // end Vue bell_circle
 }); // end document.ready
