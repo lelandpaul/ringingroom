@@ -100,7 +100,7 @@ socketio.on('s_set_observers', function(msg, cb) {
 socketio.on('s_assign_user', function(msg, cb) {
     console.log('Received user assignment: ' + msg.bell + ' ' + msg.user);
     try {
-        // This stochastically very error-prone: 
+        // This stochastically very error-prone:
         // Sometimes it sets the state before the bell is created
         // As such: try it, but if it doesn't work wait a bit and try again.
         bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
@@ -136,7 +136,7 @@ socketio.on('s_global_state', function(msg, cb) {
     var gstate = msg.global_bell_state;
     for (var i = 0; i < gstate.length; i++) {
         try {
-            // This stochastically very error-prone: 
+            // This stochastically very error-prone:
             // Sometimes it sets the state before the bell is created
             // As such: try it, but if it doesn't work wait a bit and try again.
             bell_circle.$refs.bells[i].set_state_silently(gstate[i]);
@@ -341,9 +341,9 @@ $(document).ready(function() {
         <img @click='emit_ringing_event'
              class="bell_img clickable"
              :class="[assignment_mode ? 'assignment_mode' : '']"
-             :src="'static/images/' + 
-                   image_prefix + 
-                   (stroke ? images[0] : images[1]) + 
+             :src="'static/images/' +
+                   image_prefix +
+                   (stroke ? images[0] : images[1]) +
                    (number == 1 && stroke ? '-treble' : '') +
                    '.png'"
              />
@@ -645,7 +645,7 @@ $(document).ready(function() {
         <div class="col">
             <div class="btn-group btn-block btn-group-toggle">
                 <label class="btn btn-outline-primary"
-                       :class="{active: audio_type == 'Tower', 
+                       :class="{active: audio_type == 'Tower',
                                 disabled: lock_controls}">
                     <input type="radio"
                            name="audio"
@@ -731,7 +731,7 @@ $(document).ready(function() {
                     </li>
                 </ul>
                 <p> The tower controls allow you to set the number of bells, change whether you're using towerbell or handbell images and sounds, and set all the bells at hand.</p>
-                <p>The user list allows you to 
+                <p>The user list allows you to
                     <i>assign ringers</i> to particular bells. To assign ringers, press the "Assign Bells" button to enter bell assignment mode. While in this mode, you may select any ringer from the user list by clicking on them, and then click on the box next to the bell you want to assign them to. Clicking the "x" by a user's name will unassign them from that bell. While in assignment mode, you can't ring any bells; when you're done assigning bells, click the "Stop Assigning" button to return to normal mode.
                 </p>
                 <p>Assigning a user to a bell will have the effect of automatically rotating that ringer's "perspective" on the tower so that the bell is placed in the bottom right position. This will allow it to be rung using the [SPACE] or [j] hotkeys. If a user is assigned to multiple bells, the lowest-numbered one will be placed in position; this means that if the user is assigned to exactly 2 bells, those bells will be ringable with [f] and [j].</p>
@@ -805,7 +805,7 @@ $(document).ready(function() {
                    data-toggle="collapse"
                    data-target="#chat_body"
                    >
-            Chat 
+            Chat
             <span class="badge badge-dark" v-if="unread_messages > 0"> [[ unread_messages ]] </span>
             <span class="sr-only" v-if="unread_messages > 0">unread messages</span>
             <span class="float-right w-50" @click="leave_tower">
@@ -859,7 +859,7 @@ $(document).ready(function() {
                            >
                             Code of Conduct
                         </a> &#8226;
-                        
+
                         <a href="#"
                            data-toggle="modal"
                            data-target="#report_box"
@@ -1359,7 +1359,7 @@ $(document).ready(function() {
 
             // emit a call
             make_call: function(call) {
-                if (this.$root.$refs.users.cur_user_bells.length == 0 
+                if (this.$root.$refs.users.cur_user_bells.length == 0
                     && this.$root.$refs.controls.lock_controls
                 ) {
                     // user is not allowed to make calls
@@ -1501,7 +1501,7 @@ $(document).ready(function() {
                                         @click="toggle_controls"
                                         >
                                     Controls
-                         
+
                                     <span class="badge badge-dark"
                                           v-if="hidden_sidebar
                                              && unread_messages > 0
@@ -1534,7 +1534,7 @@ $(document).ready(function() {
                  >
                 <volume_control ref="volume"></volume_control>
                 <tower_controls ref="controls"></tower_controls>
-                <template v-if="!window.tower_parameters.anonymous_user 
+                <template v-if="!window.tower_parameters.anonymous_user
                              && !window.tower_parameters.listen_link">
                     <div class="row pb-0 flex-grow-1">
                         <div class="col flex-grow-1">
