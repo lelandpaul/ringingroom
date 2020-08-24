@@ -100,7 +100,7 @@ socketio.on('s_set_observers', function(msg, cb) {
 socketio.on('s_assign_user', function(msg, cb) {
     console.log('Received user assignment: ' + msg.bell + ' ' + msg.user);
     try {
-        // This stochastically very error-prone: 
+        // This stochastically very error-prone:
         // Sometimes it sets the state before the bell is created
         // As such: try it, but if it doesn't work wait a bit and try again.
         bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
@@ -136,7 +136,7 @@ socketio.on('s_global_state', function(msg, cb) {
     var gstate = msg.global_bell_state;
     for (var i = 0; i < gstate.length; i++) {
         try {
-            // This stochastically very error-prone: 
+            // This stochastically very error-prone:
             // Sometimes it sets the state before the bell is created
             // As such: try it, but if it doesn't work wait a bit and try again.
             bell_circle.$refs.bells[i].set_state_silently(gstate[i]);
@@ -330,110 +330,99 @@ $(document).ready(function() {
         },
 
         template: `
-            <div class="bell unclickable_div"
-                 :class="[left_side ? 'left_side' : '',
-                          image_prefix === 'h-' ? 'handbell' : '',
-                          top_side ? 'top_side' : '',
-                          window.tower_parameters.anonymous_user ? 'no_ring' : '']">
-                <div class="row unclickable_div"
-                    :class="[left_side ? 'flex-row-reverse' :  '',
-                             top_side ? 'align-items-start' : 'align-items-end']">
-
-                     <img @click='emit_ringing_event'
-                           class="bell_img clickable"
-                          :class="[assignment_mode ? 'assignment_mode' : '']"
-                          :src="'static/images/' + 
-                                    image_prefix + 
-                                    (stroke ? images[0] : images[1]) + 
-                                    (number == 1 && stroke ? '-treble' : '') +
-                                    '.png'"
-                          />
-
-
-                    <div class="bell_metadata clickable">
-
-
-                    <template v-if="left_side">
-                        <div class="btn-group user_cartouche">
-                            <button class="btn btn-sm btn_unassign"
-                                   :class="[number == 1 ? 'treble' : '',
-                                            number == 1 ? 'btn-primary' : 'btn-outline-secondary']"
-                                v-if="assignment_mode && assigned_user &&
-                                !(assigned_user!==cur_user && $root.$refs.controls.lock_controls)"
-                                @click="unassign">
-                                <span class="unassign"><i class="fas fa-window-close"></i></span>
-                            </button>
-
-                            <button class="btn btn-small btn_assigned_user"
-                                   :class="[number == 1 ? 'treble' : '',
-                                            number == 1 ? 'btn-primary' : 'btn-outline-secondary',
-                                            assigned_user ? 'disabled' : '',
-                                            assigned_user==cur_user ? 'cur_user' :'',
-                                            assignment_mode ? '' : 'disabled']"
-                                   @click="assign_user"
-                                   v-if="assignment_mode || assigned_user"
-                                  >
-                                  <span class="assigned_user">
-                                    [[ (assignment_mode) ?
-                                        ((assigned_user) ? assigned_user : '(none)')
-                                        : assigned_user ]]
-                                  </span>
-                             </button>
-
-                             <button class='btn btn-sm btn_number'
-                                 :class="[number == 1 ? 'treble' : 'active',
-                                            number == 1 ? 'btn-primary' : 'btn-outline-secondary',
-                                          assigned_user == cur_user ? 'cur_user' : '']"
-                                  style="cursor: inherit;"
-                                  >
-                                <span class="number"> [[number]] </number>
-                             </button>
-                        </div>
-                    </template>
-                    <template v-else>
-                        <div class="btn-group user_cartouche">
-                             <button class='btn btn-sm btn_number'
-                                 :class="[number == 1 ? 'treble' : 'active',
-                                            number == 1 ? 'btn-primary' : 'btn-outline-secondary',
-                                          assigned_user == cur_user ? 'cur_user' : '']"
-                                  style="cursor: inherit;"
-                                  >
-                                <span class="number">[[number]]</span>
-                             </button>
-
-                             <button class="btn btn-small btn_assigned_user"
-                                   :class="[number == 1 ? 'treble' : '',
-                                            number == 1 ? 'btn-primary' : 'btn-outline-secondary',
-                                            assigned_user==cur_user ? 'cur_user' :'',
-                                            assigned_user ? 'disabled' : '',
-                                            assignment_mode ? '' : 'disabled']"
-                                  @click="assign_user"
-                                  v-if="assignment_mode || assigned_user"
-                                   >
-                                  <span class="assigned_user_name">
-                                     [[ (assignment_mode) ?
-                                         ((assigned_user) ? assigned_user : '(none)')
-                                         : assigned_user ]]
-                                  </span>
-                              </button>
-
-                             <button class="btn btn-sm btn_unassign"
-                                   :class="[number == 1 ? 'treble' : '',
-                                            number == 1 ? 'btn-primary' : 'btn-outline-secondary']"
-                                    v-if="assignment_mode && assigned_user &&
-                                !(assigned_user!==cur_user && $root.$refs.controls.lock_controls)"
-                                    @click="unassign">
-                                 <span class="unassign"><i class="fas fa-window-close"></i></span>
-                             </button>
-                        </div>
-                    </template>
-
-                    </div>
-                    </div>
+<div class="bell unclickable_div"
+     :class="[left_side ? 'left_side' : '',
+              image_prefix === 'h-' ? 'handbell' : '',
+              top_side ? 'top_side' : '',
+              window.tower_parameters.anonymous_user ? 'no_ring' : '']">
+    <div class="row unclickable_div"
+         :class="[left_side ? 'flex-row-reverse' :  '',
+                 top_side ? 'align-items-start' : 'align-items-end']">
+        <img @click='emit_ringing_event'
+             class="bell_img clickable"
+             :class="[assignment_mode ? 'assignment_mode' : '']"
+             :src="'static/images/' +
+                   image_prefix +
+                   (stroke ? images[0] : images[1]) +
+                   (number == 1 && stroke ? '-treble' : '') +
+                   '.png'"
+             />
+        <div class="bell_metadata clickable">
+            <template v-if="left_side">
+                <div class="btn-group user_cartouche">
+                    <button class="btn btn-sm btn_unassign"
+                            :class="[number == 1 ? 'treble' : '',
+                                     number == 1 ? 'btn-primary' : 'btn-outline-secondary']"
+                            v-if="assignment_mode && assigned_user &&
+                            !(assigned_user!==cur_user && $root.$refs.controls.lock_controls)"
+                            @click="unassign">
+                        <span class="unassign">
+                            <i class="fas fa-window-close"></i>
+                        </span>
+                    </button>
+                    <button class="btn btn-small btn_assigned_user"
+                            :class="[number == 1 ? 'treble' : '',
+                                     number == 1 ? 'btn-primary' : 'btn-outline-secondary',
+                                     assigned_user ? 'disabled' : '',
+                                     assigned_user==cur_user ? 'cur_user' :'',
+                                     assignment_mode ? '' : 'disabled']"
+                            @click="assign_user"
+                            v-if="assignment_mode || assigned_user">
+                        <span class="assigned_user">
+                            [[ (assignment_mode) ?
+                                ((assigned_user) ? assigned_user : '(none)')
+                                : assigned_user ]]
+                        </span>
+                    </button>
+                    <button class='btn btn-sm btn_number'
+                            :class="[number == 1 ? 'treble' : 'active',
+                                     number == 1 ? 'btn-primary' : 'btn-outline-secondary',
+                                     assigned_user == cur_user ? 'cur_user' : '']"
+                            style="cursor: inherit;">
+                        <span class="number"> [[number]] </span>
+                    </button>
                 </div>
-            </div>
-		     `
-
+            </template>
+            <template v-else>
+                <div class="btn-group user_cartouche">
+                    <button class='btn btn-sm btn_number'
+                            :class="[number == 1 ? 'treble' : 'active',
+                                     number == 1 ? 'btn-primary' : 'btn-outline-secondary',
+                                     assigned_user == cur_user ? 'cur_user' : '']"
+                            style="cursor: inherit;">
+                        <span class="number">[[number]]</span>
+                    </button>
+                    <button class="btn btn-small btn_assigned_user"
+                            :class="[number == 1 ? 'treble' : '',
+                                     number == 1 ? 'btn-primary' : 'btn-outline-secondary',
+                                     assigned_user==cur_user ? 'cur_user' :'',
+                                     assigned_user ? 'disabled' : '',
+                                     assignment_mode ? '' : 'disabled']"
+                            @click="assign_user"
+                            v-if="assignment_mode || assigned_user"
+                            >
+                        <span class="assigned_user_name">
+                            [[ (assignment_mode) ?
+                               ((assigned_user) ? assigned_user : '(none)')
+                               : assigned_user ]]
+                        </span>
+                    </button>
+                    <button class="btn btn-sm btn_unassign"
+                            :class="[number == 1 ? 'treble' : '',
+                                     number == 1 ? 'btn-primary' : 'btn-outline-secondary']"
+                            v-if="assignment_mode && assigned_user &&
+                                  !(assigned_user!==cur_user && $root.$refs.controls.lock_controls)"
+                                  @click="unassign">
+                        <span class="unassign">
+                            <i class="fas fa-window-close"></i>
+                        </span>
+                    </button>
+                </div>
+            </template>
+        </div>
+    </div>
+</div>
+`
     }); // End bell_rope component
 
     // The call_display is where call messages are flashed
@@ -486,11 +475,11 @@ $(document).ready(function() {
             }
         },
 
-        template: `<h2 id='call_display'
-                   ref='display'>
-                   [[ assignment_mode ? 'To resume ringing, press "Stop Assigning" on the control panel.' : cur_call ]]
-               </h2>
-              `
+        template: `
+<h2 id='call_display' ref='display'>
+    [[ assignment_mode ? 'To resume ringing, press "Stop Assigning" on the control panel.' : cur_call ]]
+</h2>
+`
     }); // end call_display component
 
 
@@ -521,10 +510,11 @@ $(document).ready(function() {
             }
         },
 
-        template: `<h2 v-show="visible" id='focus_display'>
-                   Click anywhere in Ringing Room to resume ringing.
-               </h2>
-              `
+        template: `
+<h2 v-show="visible" id='focus_display'>
+    Click anywhere in Ringing Room to resume ringing.
+</h2>
+`
     }); // end focus_display component
 
 
@@ -592,117 +582,105 @@ $(document).ready(function() {
         },
 
         template: `
-        <div class="tower_controls_inner"
-             v-if="!window.tower_parameters.anonymous_user">
-
-             <div class="row justify-content-between"
-                  v-if="window.tower_parameters.host_permissions && window.tower_parameters.host_mode_permitted">
-
-                  <div class="col">
-                    <h4 class="mb-0 pt-1">Host Mode:</h4>
-                  </div>
-
-                 <div class="col">
-                      <div class="btn-group btn-block btn-group-toggle align-bottom">
-                        <label class="btn btn-outline-primary"
-                               :class="{active: !host_mode}">
-                        <input type="radio"
-                               name="host_mode"
-                               id="host_false"
-                               :value="false"
-                               v-model="host_mode"
-                               />
-                               Off
-                        </label>
-
-                        <label class="btn btn-outline-primary"
-                               :class="{active: host_mode}">
-                        <input type="radio"
-                               name="host_mode"
-                               id="host_true"
-                               :value="true"
-                               v-model="host_mode"
-                               />
-                               On
-                        </label>
-                       </div>
-                 </div>
-             </div>
-
-             <div v-if="lock_controls" class="row">
-                <div class="col">
-                    <small class="text-muted">
-                        Host mode is enabled. Only hosts can change tower settings or assign bells.
-                    </small>
-                </div>
-             </div>
-
-             <div class="row between-xs">
-             <div class="col">
-                <div class="btn-group btn-block btn-group-toggle">
-                    <label v-for="size in tower_sizes"
-                           :size="size"
-                           class="btn btn-outline-primary"
-                           :class="{active: size === number_of_bells,
-                                    disabled: lock_controls}"
-                           @click="set_tower_size(size)"
-                           >
-                           <input type="radio"
-                                  name="size"
-                                  :value="size"
-                                  />
-                                  [[ size ]]
-                      </label>
-                </div>
+<div class="tower_controls_inner"
+     v-if="!window.tower_parameters.anonymous_user">
+    <div class="row justify-content-between"
+         v-if="window.tower_parameters.host_permissions
+            && window.tower_parameters.host_mode_permitted">
+        <div class="col">
+            <h4 class="mb-0 pt-1">Host Mode:</h4>
+        </div>
+        <div class="col">
+            <div class="btn-group btn-block btn-group-toggle align-bottom">
+                <label class="btn btn-outline-primary"
+                       :class="{active: !host_mode}">
+                    <input type="radio"
+                           name="host_mode"
+                           id="host_false"
+                           :value="false"
+                           v-model="host_mode"
+                           />
+                    Off
+                </label>
+                <label class="btn btn-outline-primary"
+                       :class="{active: host_mode}">
+                    <input type="radio"
+                           name="host_mode"
+                           id="host_true"
+                           :value="true"
+                           v-model="host_mode"
+                           />
+                    On
+                </label>
             </div>
+        </div>
+    </div>
+    <div v-if="lock_controls" class="row">
+        <div class="col">
+            <small class="text-muted">
+                Host mode is enabled. Only hosts can change tower settings or assign bells.
+            </small>
+        </div>
+    </div>
+    <div class="row between-xs">
+        <div class="col">
+            <div class="btn-group btn-block btn-group-toggle">
+                <label v-for="size in tower_sizes"
+                       :size="size"
+                       class="btn btn-outline-primary"
+                       :class="{active: size === number_of_bells,
+                       disabled: lock_controls}"
+                       @click="set_tower_size(size)"
+                       >
+                    <input type="radio"
+                           name="size"
+                           :value="size"
+                           />
+                    [[ size ]]
+                </label>
             </div>
-
-
-             <div class="row justify-content-between">
-
-                 <div class="col">
-                      <div class="btn-group btn-block btn-group-toggle">
-                        <label class="btn btn-outline-primary"
-                               :class="{active: audio_type == 'Tower',
-                                    disabled: lock_controls}">
-                        <input type="radio"
-                               name="audio"
-                               id="audio_tower"
-                               value="Tower"
-                               v-model="audio_type"
-                               />
-                               Tower
-                        </label>
-
-                        <label class="btn btn-outline-primary"
-                               :class="{active: audio_type == 'Hand',
-                               disabled: lock_controls}"
-                               >
-                        <input type="radio"
-                               name="audio"
-                               id="audio_hand"
-                               value="Hand"
-                               v-model="audio_type"
-                               />
-                               Hand
-                        </label>
-                       </div>
-                 </div>
-
-                 <div class="col">
-                     <button class="set_at_hand btn btn-outline-primary btn-block"
-                           :class="{disabled: lock_controls}"
-                           @click="set_bells_at_hand"
-                           >
-                         Set at hand
-                     </button>
-                </div>
-             </div>
-
-             <user
-
-        </div> <!-- tower controls -->
-    `,
+        </div>
+    </div>
+    <div class="row justify-content-between">
+        <div class="col">
+            <div class="btn-group btn-block btn-group-toggle">
+                <label class="btn btn-outline-primary"
+                       :class="{active: audio_type == 'Tower',
+                                disabled: lock_controls}">
+                    <input type="radio"
+                           name="audio"
+                           id="audio_tower"
+                           value="Tower"
+                           v-model="audio_type"
+                           />
+                    Tower
+                </label>
+                <label class="btn btn-outline-primary"
+                       :class="{active: audio_type == 'Hand',
+                       disabled: lock_controls}"
+                       >
+                    <input type="radio"
+                           name="audio"
+                           id="audio_hand"
+                           value="Hand"
+                           v-model="audio_type"
+                           />
+                    Hand
+                </label>
+            </div>
+        </div>
+        <div class="col">
+            <button class="set_at_hand btn btn-outline-primary btn-block"
+                    :class="{disabled: lock_controls}"
+                    @click="set_bells_at_hand"
+                    >
+                Set at hand
+            </button>
+        </div>
+    </div>
+</div>
+<!-- tower controls -->
+`,
     }); // End tower_controls
 
 
@@ -730,45 +708,60 @@ $(document).ready(function() {
 
         template: `
 <div class="row" v-if="!window.tower_parameters.observer">
-<div class="col">
-<div class="card text-justify">
-<div class="card-body">
-<h5 class="card-title">How to use Ringing Room</h5>
-
-<p>To ring, you may either click on the ropes or use the following hot-keys:</p>
-
-<ul>
-    <li><b>[SPACE]:</b> Rings the bell in the lower right corner.</li>
-    <li><b>[LEFT] and [RIGHT] arrow keys:</b> Rings the left and right bottom-most bells.</li>
-    <li><b>[f] and [j]:</b> same as [LEFT] and [RIGHT]</li>
-    <li><b>[SHIFT]+[0-9]\\[0]\\[-]\\[=]:</b> Rotate the "perspective" of the ringing room to put that bell in the lower right corner so it may be rung by [SPACE] or [j].</li>
-    <li> <b>[1-9], [0], [-], [=]:</b> Rings bells 1 - 9, 10, 11, and 12</li>
-</ul>
-
-<p> The tower controls allow you to set the number of bells, change whether you're using towerbell or handbell images and sounds, and set all the bells at hand.</p>
-
-<p>The user list allows you to <i>assign ringers</i> to particular bells. To assign ringers, press the "Assign Bells" button to enter bell assignment mode. While in this mode, you may select any ringer from the user list by clicking on them, and then click on the box next to the bell you want to assign them to. Clicking the "x" by a user's name will unassign them from that bell. While in assignment mode, you can't ring any bells; when you're done assigning bells, click the "Stop Assigning" button to return to normal mode.</p>
-
-<p>Assigning a user to a bell will have the effect of automatically rotating that ringer's "perspective" on the tower so that the bell is placed in the bottom right position. This will allow it to be rung using the [SPACE] or [j] hotkeys. If a user is assigned to multiple bells, the lowest-numbered one will be placed in position; this means that if the user is assigned to exactly 2 bells, those bells will be ringable with [f] and [j].</p>
-
-<p>You can make calls by using the hotkeys below.</p>
-
-<ul>
-    <li><b>[l]</b>ook to...</li>
-    <li><b>[g]</b>o next time</li>
-    <li><b>[b]</b>ob</li>
-    <li>si<b>[n]</b>gle</li>
-    <li>t<b>[h]</b>at's all</li>
-    <li>s<b>[t]</b>and next</li>
-</ul>
-
-You can read more on our <a href="/help">Help page</a>.
+    <div class="col">
+        <div class="card text-justify">
+            <div class="card-body">
+                <h5 class="card-title">How to use Ringing Room</h5>
+                <p>To ring, you may either click on the ropes or use the following hot-keys:</p>
+                <ul>
+                    <li>
+                        <b>[SPACE]:</b> Rings the bell in the lower right corner.
+                    </li>
+                    <li>
+                        <b>[LEFT] and [RIGHT] arrow keys:</b> Rings the left and right bottom-most bells.
+                    </li>
+                    <li>
+                        <b>[f] and [j]:</b> same as [LEFT] and [RIGHT]
+                    </li>
+                    <li>
+                        <b>[SHIFT]+[0-9]\\[0]\\[-]\\[=]:</b> Rotate the "perspective" of the ringing room to put that bell in the lower right corner so it may be rung by [SPACE] or [j].
+                    </li>
+                    <li>
+                        <b>[1-9], [0], [-], [=]:</b> Rings bells 1 - 9, 10, 11, and 12
+                    </li>
+                </ul>
+                <p> The tower controls allow you to set the number of bells, change whether you're using towerbell or handbell images and sounds, and set all the bells at hand.</p>
+                <p>The user list allows you to
+                    <i>assign ringers</i> to particular bells. To assign ringers, press the "Assign Bells" button to enter bell assignment mode. While in this mode, you may select any ringer from the user list by clicking on them, and then click on the box next to the bell you want to assign them to. Clicking the "x" by a user's name will unassign them from that bell. While in assignment mode, you can't ring any bells; when you're done assigning bells, click the "Stop Assigning" button to return to normal mode.
+                </p>
+                <p>Assigning a user to a bell will have the effect of automatically rotating that ringer's "perspective" on the tower so that the bell is placed in the bottom right position. This will allow it to be rung using the [SPACE] or [j] hotkeys. If a user is assigned to multiple bells, the lowest-numbered one will be placed in position; this means that if the user is assigned to exactly 2 bells, those bells will be ringable with [f] and [j].</p>
+                <p>You can make calls by using the hotkeys below.</p>
+                <ul>
+                    <li>
+                        <b>[l]</b>ook to...
+                    </li>
+                    <li>
+                        <b>[g]</b>o next time
+                    </li>
+                    <li>
+                        <b>[b]</b>ob
+                    </li>
+                    <li>si
+                        <b>[n]</b>gle
+                    </li>
+                    <li>t
+                        <b>[h]</b>at's all
+                    </li>
+                    <li>s
+                        <b>[t]</b>and next
+                    </li>
+                </ul>
+                You can read more on our <a href="/help">Help page</a>.
+            </div>
+        </div>
+    </div>
 </div>
-</div>
-</div>
-</div>
-</div>
-               `,
+`,
     }); // End help
 
     Vue.component('chatbox', {
@@ -805,71 +798,80 @@ You can read more on our <a href="/help">Help page</a>.
         },
 
         template: `
-        <div class="card" id="chatbox">
-            <div class="card-header">
-                <h2 style="display: inline; cursor: pointer;"
-                    id="chat_header"
-                    data-toggle="collapse"
-                    data-target="#chat_body"
-                    >
-                    Chat <span class="badge badge-dark" v-if="unread_messages > 0"> [[ unread_messages ]] </span><span class="sr-only" v-if="unread_messages > 0">unread messages</span>
-                     <span class="float-right w-50"
-                           @click="leave_tower">
-                        <a role="button" id="leave_tower_link_button" class="btn btn-outline-primary w-100" href='/my_towers'>Leave Tower</a>
-                     </span>
-                </h2>
+<div class="card" id="chatbox">
+    <div class="card-header">
+        <h2 style="display: inline; cursor: pointer;"
+                   id="chat_header"
+                   data-toggle="collapse"
+                   data-target="#chat_body"
+                   >
+            Chat
+            <span class="badge badge-dark" v-if="unread_messages > 0"> [[ unread_messages ]] </span>
+            <span class="sr-only" v-if="unread_messages > 0">unread messages</span>
+            <span class="float-right w-50" @click="leave_tower">
+                <a role="button"
+                   id="leave_tower_link_button"
+                   class="btn btn-outline-primary w-100"
+                   href='/my_towers'
+                   >
+                    Leave Tower
+                </a>
+            </span>
+        </h2>
+    </div>
+    <div class="card-body collapse show"
+                id="chat_body"
+                >
+        <div class="row no-gutters p-0" id="chat_messages">
+            <div class="col p-0">
+                <div class="message" v-for="msg in messages">
+                    <span class="msg_username">[[msg.user]]:</span>
+                    <span class="msg_msg">[[msg.msg]]</span>
+                </div>
             </div>
-            <div class="card-body collapse show"
-                 id="chat_body"
-                 >
-                <div class="row no-gutters p-0" id="chat_messages">
-                    <div class="col p-0">
-                        <div class="message" v-for="msg in messages">
-                            <span class="msg_username">[[msg.user]]:</span>
-                            <span class="msg_msg">[[msg.msg]]</span>
+        </div>
+        <div class="row no-gutters p-0" id="chat_input">
+            <div class="col p-o">
+                <form action="" @submit.prevent="send_msg">
+                    <div class="input-group">
+                        <input type="text"
+                               id="chat_input_box"
+                               class="form-control"
+                               placeholder=""
+                               v-model="cur_msg"
+                               @focus="remove_all_unreads"
+                               />
+                        <div class="input-group-append">
+                            <input class="btn btn-outline-primary"
+                                   type="submit"
+                                   value="Send"
+                                   />
                         </div>
                     </div>
-                </div>
-                <div class="row no-gutters p-0" id="chat_input">
-                <div class="col p-o">
-                <form action="" @submit.prevent="send_msg">
-                <div class="input-group">
-                    <input type="text"
-                           id="chat_input_box"
-                           class="form-control"
-                           placeholder=""
-                           v-model="cur_msg"
-                           @focus="remove_all_unreads"
-                           ></input>
-                    <div class="input-group-append">
-                        <input class="btn btn-outline-primary"
-                                type="submit"
-                                value="Send"></input>
-                    </div>
                 </form>
-                </div>
-                </div>
-                <div class="row my-n1 p-0">
+            </div>
+            <div class="row my-n1 p-0">
                 <div class="col mb-n2 pb-0">
                     <small style="font-size: 1rem;">
                         <a href="#"
                            data-toggle="modal"
                            data-target="#code_of_conduct"
-                            >
+                           >
                             Code of Conduct
-                        </a> &#8226
+                        </a> &#8226;
                         <a href="#"
-                        data-toggle="modal"
-                        data-target="#report_box"
-                            >
+                           data-toggle="modal"
+                           data-target="#report_box"
+                           >
                             Report behavior
                         </a>
                     </small>
                 </div>
-                </div>
             </div>
         </div>
-              `
+    </div>
+</div>
+`
     });
 
     // For silly CSS reasons, this needs to be it's own Vue instance
@@ -901,15 +903,15 @@ You can read more on our <a href="/help">Help page</a>.
         },
 
         template: `
-    <div id="report_box"
+<div id="report_box"
          tabindex="-1"
          class="modal fade">
-         <div class="modal-dialog">
-            <div class="modal-content">
+    <div class="modal-dialog">
+        <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Report inappropriate behavior</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
+                    <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
@@ -918,30 +920,29 @@ You can read more on our <a href="/help">Help page</a>.
                               class="form-control"
                               rows="4"
                               v-model="report_description"
-                              placeholder="Please describe the behavior you would like to report.">
-                    </textarea>
+                              placeholder="Please describe the behavior you would like to report."></textarea>
                 </div>
                 <div v-else>
-                    <p> Thank you — your report and a log of the chat has been submitted to the developers.</p>
+                    <p>Thank you — your report and a log of the chat has been submitted to the developers.</p>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button"
                         class="btn btn-secondary" data-dismiss="modal">
-                        [[ unsubmitted ? 'Cancel' : 'Close' ]]
+                    [[ unsubmitted ? 'Cancel' : 'Close' ]]
                 </button>
                 <button type="button"
                         v-if="unsubmitted"
                         class="btn btn-primary"
                         @click="send_report"
                         >
-                        Send report
+                    Send report
                 </button>
-            </div>
             </div>
         </div>
     </div>
-    `
+</div>
+`
     });
 
     Vue.component('volume_control', {
@@ -959,20 +960,24 @@ You can read more on our <a href="/help">Help page</a>.
         },
 
         template: `
-    <div class="row justify-content-between mt-n2">
-        <!-- slider bar overlaps its own padding, so put it in a div to make it line up with the edges-->
-        <div class="col-2 pl-4">
+<div class="row justify-content-between mt-n2">
+    <!-- slider bar overlaps its own padding, so put it in a div to make it line up with the edges-->
+    <div class="col-2 pl-4">
         <i class="fas fa-volume-down volume_icon align-middle"></i>
-        </div>
-        <div class="col-8 px-0 align-middle">
-            <input type="range" v-model="value" min=0 max=10 id="volumeSlider" class="volume_control_slider custom-range align-middle">
-            </input>
-        </div>
-        <div class="col-2">
-        <i class="fas fa-volume-up volume_icon align-middle"></i>
-        </div>
-        </div>
     </div>
+    <div class="col-8 px-0 align-middle">
+        <input type="range"
+               v-model="value"
+               min=0
+               max=10
+               id="volumeSlider"
+               class="volume_control_slider custom-range align-middle"
+               />
+    </div>
+    <div class="col-2">
+        <i class="fas fa-volume-up volume_icon align-middle"></i>
+    </div>
+</div>
 `
     });
 
@@ -1067,73 +1072,73 @@ You can read more on our <a href="/help">Help page</a>.
         },
 
         template: `
-         <div class="card mb-3">
-             <div class="card-header"
-                  v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link"
-                  >
-                <h2 style="display: inline; cursor: pointer;"
-                    id="user_display_header"
-                    data-toggle="collapse"
-                    data-target="#user_display_body">
-                        Users
-                </h2>
-                <span class="float-right w-50">
-                <button class="btn btn-outline-primary w-100"
-                        :class="{active: assignment_mode}"
-                        @click="toggle_assignment"
-                        >
-                   [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
-                 </button>
-                 </span>
-             </div>
-             <div class="card-header"
-                  v-else
-                  >
-                <h2 style="display: inline;">
-                        Users
-                </h2>
-             </div>
-             <ul class="list-group list-group-flush show"
-                 id="user_display_body"
-                 :class="{collapse: (!window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link)}"
-                 >
-                <li class="list-group-item cur_user d-inline-flex align-items-center"
-                     :class="{assignment_active: assignment_mode,
-                              active: cur_user == selected_user && assignment_mode}"
-                     v-if="window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link"
-                     >
-                     <span class="mr-auto">Log in to ring</span>
-                     <span class="float-right">
-                     <a class="btn btn-outline-primary btn-sm"
-                        :href="'/authenticate?next=' + window.location.pathname">Log In</a>
-                     </span>
-                </li>
-                <li class="list-group-item list-group-item-action cur_user d-inline-flex align-items-center"
-                     :class="{assignment_active: assignment_mode,
-                              active: cur_user == selected_user && assignment_mode}"
-                     v-if="!window.tower_parameters.anonymous_user"
-                     @click="select_user(cur_user)"
-                     >
-                     <span class="user_list_cur_user_name mr-auto">[[ cur_user ]]</span>
-                 </li>
-                 <li v-if="$root.$refs.controls.lock_controls"
-                     class="list-group-item">
-                     <small class="text-muted">In host mode, you may catch hold, but not assign others.</small>
-                 </li>
-                <li v-for="user in user_names"
-                    class="list-group-item list-group-item-action"
-                    v-if="user != cur_user"
-                     :class="{cur_user: user == cur_user,
-                              disabled: !assignment_mode || $root.$refs.controls.lock_controls,
-                              assignment_active: assignment_mode,
-                              active: user == selected_user && assignment_mode}"
+<div class="card mb-3">
+    <div class="card-header"
+         v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link"
+         >
+        <h2 style="display: inline; cursor: pointer;"
+                   id="user_display_header"
+                   data-toggle="collapse"
+                   data-target="#user_display_body">
+            Users
+        </h2>
+        <span class="float-right w-50">
+            <button class="btn btn-outline-primary w-100"
+                    :class="{active: assignment_mode}"
+                    @click="toggle_assignment"
+                    >
+                [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
+            </button>
+        </span>
+    </div>
+    <div class="card-header"
+                v-else
+                >
+        <h2 style="display: inline;">
+            Users
+        </h2>
+    </div>
+    <ul class="list-group list-group-flush show"
+        id="user_display_body"
+        :class="{collapse: (!window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link)}"
+        >
+        <li class="list-group-item cur_user d-inline-flex align-items-center"
+            :class="{assignment_active: assignment_mode,
+                     active: cur_user == selected_user && assignment_mode}"
+            v-if="window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link"
+            >
+            <span class="mr-auto">Log in to ring</span>
+            <span class="float-right">
+                <a class="btn btn-outline-primary btn-sm"
+                   :href="'/authenticate?next=' + window.location.pathname">Log In</a>
+            </span>
+        </li>
+        <li class="list-group-item list-group-item-action cur_user d-inline-flex align-items-center"
+                   :class="{assignment_active: assignment_mode,
+                            active: cur_user == selected_user && assignment_mode}"
+                   v-if="!window.tower_parameters.anonymous_user"
+                   @click="select_user(cur_user)"
+                   >
+            <span class="user_list_cur_user_name mr-auto">[[ cur_user ]]</span>
+        </li>
+        <li v-if="$root.$refs.controls.lock_controls"
+            class="list-group-item">
+            <small class="text-muted">In host mode, you may catch hold, but not assign others.</small>
+        </li>
+        <li v-for="user in user_names"
+            class="list-group-item list-group-item-action"
+            v-if="user != cur_user"
+            :class="{cur_user: user == cur_user,
+                     disabled: !assignment_mode || $root.$refs.controls.lock_controls,
+                     assignment_active: assignment_mode,
+                     active: user == selected_user && assignment_mode}"
                      @click="select_user(user)"
-                 >
-                            [[ user ]]
-                 </li>
-                 </ul>
-            </div>
-        `,
+            >
+            [[ user ]]
+        </li>
+    </ul>
+</div>
+`,
     }); // End user_display
 
     // The master Vue application
@@ -1353,7 +1358,7 @@ You can read more on our <a href="/help">Help page</a>.
 
             // emit a call
             make_call: function(call) {
-                if (this.$root.$refs.users.cur_user_bells.length == 0 
+                if (this.$root.$refs.users.cur_user_bells.length == 0
                     && this.$root.$refs.controls.lock_controls
                 ) {
                     // user is not allowed to make calls
@@ -1439,137 +1444,139 @@ You can read more on our <a href="/help">Help page</a>.
         },
 
         template: `
-        <div id="bell_circle_wrapper">
-
-        <div class="row flex-lg-nowrap" id="sidebar_col_row">
-
-        <div class="col-12 col-lg-4 sidebar_col"> <!-- sidebar col -->
-
-        <div class="tower_header">
-        <div class="row">
-             <div class="col text-nowrap">
-                 <i class="fa-bookmark align-text-top fa-fw"
-                    :class="[bookmarked ? 'fas' : 'far']"
-                    style="cursor:pointer"
-                    @click="toggle_bookmark"
-                 ></i>
-                 <h1 id="tower_name" class="d-inline d-lg-none text-wrap"> [[ tower_name ]] </h1>
-                 <h1 id="tower_name" class="d-none d-lg-inline"> [[ tower_name ]] </h1>
-             </div>
-         </div>
-
-         <div class="row">
-             <div class="col">
-                 <div class="row justify-content-between">
-                     <div class="col-auto mb-3 mb-sm-0">
-
-                     <div class="tower_id input-group" style="flex-wrap:nowrap">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">[[tower_id]]</span>
+<div id="bell_circle_wrapper">
+    <div class="row flex-lg-nowrap" id="sidebar_col_row">
+        <div class="col-12 col-lg-4 sidebar_col">
+            <!-- sidebar col -->
+            <div class="tower_header">
+                <div class="row">
+                    <div class="col text-nowrap">
+                        <i class="fa-bookmark align-text-top fa-fw"
+                           :class="[bookmarked ? 'fas' : 'far']"
+                           style="cursor:pointer"
+                           @click="toggle_bookmark"
+                        ></i>
+                        <h1 id="tower_name" class="d-inline d-lg-none text-wrap"> [[ tower_name ]] </h1>
+                        <h1 id="tower_name" class="d-none d-lg-inline"> [[ tower_name ]] </h1>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="row justify-content-between">
+                            <div class="col-auto mb-3 mb-sm-0">
+                                <div class="tower_id input-group" style="flex-wrap:nowrap">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">[[tower_id]]</span>
+                                    </div>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-primary"
+                                                data-toggle="tooltip"
+                                                data-placement="bottom"
+                                                data-container="body"
+                                                data-trigger="click"
+                                                id="id_clipboard_tooltip"
+                                                @click="copy_id"
+                                                title="Copied to clipboard">
+                                            <i class="far fa-clipboard fa-fw"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-100 d-block d-sm-none"></div>
+                            <div class="col-auto mb-3 mb-sm-0">
+                                <button class="toggle_help btn btn-outline-primary"
+                                        data-toggle="collapse"
+                                        data-target="#help"
+                                        v-if="!window.tower_parameters.listen_link"
+                                        @click="toggle_help"
+                                        >
+                                    Help [[ hidden_help ? '▸' : '▾' ]]
+                                </button>
+                            </div>
+                            <div class="col-auto toggle_controls d-lg-none">
+                                <button class="toggle_controls btn btn-outline-primary"
+                                        data-toggle="collapse"
+                                        data-target="#tower_controls"
+                                        @click="toggle_controls"
+                                        >
+                                    Controls
+                                    <span class="badge badge-dark"
+                                          v-if="hidden_sidebar
+                                             && unread_messages > 0
+                                             && !window.tower_parameters.listen_link
+                                             && !window.tower_parameters.anonymous_user"
+                                          >
+                                        [[ unread_messages ]]
+                                    </span>
+                                    <span class="sr-only"
+                                          v-if="hidden_sidebar
+                                             && unread_messages > 0
+                                             && !window.tower_parameters.listen_link
+                                             && !window.tower_parameters.anonymous_user"
+                                          >
+                                        unread messages
+                                    </span>
+                                    [[ hidden_sidebar ? '▸' : '▾' ]]
+                                </button>
+                            </div>
                         </div>
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-primary"
-                               data-toggle="tooltip"
-                               data-placement="bottom"
-                               data-container="body"
-                               data-trigger="click"
-                               id="id_clipboard_tooltip"
-                               @click="copy_id"
-                               title="Copied to clipboard">
-                                   <i class="far fa-clipboard fa-fw"></i>
-                            </button>
+                    </div>
+                </div>
+            </div>
+            <!-- tower header -->
+            <div class="help collapse" id="help">
+                <help ref="help"></help>
+            </div>
+            <div class="tower_controls collapse"
+                 id="tower_controls"
+                 >
+                <volume_control ref="volume"></volume_control>
+                <tower_controls ref="controls"></tower_controls>
+                <template v-if="!window.tower_parameters.anonymous_user
+                             && !window.tower_parameters.listen_link">
+                    <div class="row pb-0 flex-grow-1">
+                        <div class="col flex-grow-1">
+                            <user_display ref="users"></user_display>
+                            <chatbox ref="chatbox" v-bind:unread_messages="unread_messages"></chatbox>
                         </div>
-                     </div>
-                     </div>
-                     <div class="w-100 d-block d-sm-none"></div>
-                     <div class="col-auto mb-3 mb-sm-0">
-                        <button class="toggle_help btn btn-outline-primary"
-                                data-toggle="collapse"
-                                data-target="#help"
-                                v-if="!window.tower_parameters.listen_link"
-                                @click="toggle_help"
-                                >
-                                Help [[ hidden_help ? '▸' : '▾' ]]
-                            </button>
-                     </div>
-                     <div class="col-auto toggle_controls d-lg-none">
-                         <button class="toggle_controls btn btn-outline-primary"
-                                 data-toggle="collapse"
-                                 data-target="#tower_controls"
-                                 @click="toggle_controls"
-                                >
-                         Controls
-                         <span class="badge badge-dark" v-if="hidden_sidebar && unread_messages > 0 && !window.tower_parameters.listen_link && !window.tower_parameters.anonymous_user"> [[ unread_messages ]] </span>
-                         <span class="sr-only" v-if="hidden_sidebar && unread_messages > 0 && !window.tower_parameters.listen_link && !window.tower_parameters.anonymous_user">unread messages</span>
-                         [[ hidden_sidebar ? '▸' : '▾' ]]
-                         </button>
-                     </div>
-                 </div>
+                    </div>
+                </template>
+                <template v-else>
+                    <div class="row pb-0 flex-grow-1">
+                        <div class="col flex-grow-1">
+                            <user_display ref="users"></user_display>
+                        </div>
+                    </div>
+                </template>
             </div>
+            <!-- hidden sidebar -->
         </div>
-        </div> <!-- tower header -->
-
-        <div class="help collapse" id="help">
-
-             <help ref="help"></help>
-         </div>
-
-        <div class="tower_controls collapse"
-             id="tower_controls"
-             >
-
-        <volume_control ref="volume"></volume_control>
-
-
-        <tower_controls ref="controls"></tower_controls>
-
-        <template v-if="!window.tower_parameters.anonymous_user && !window.tower_parameters.listen_link">
-            <div class="row pb-0 flex-grow-1">
-            <div class="col flex-grow-1">
-            <user_display ref="users"></user_display>
-            <chatbox ref="chatbox" v-bind:unread_messages="unread_messages"></chatbox>
+        <!-- sidebar col -->
+        <div class="col-12 col-lg-8 bell_circle_col">
+            <!-- bell circle col -->
+            <div class="bell_circle"
+                 v-bind:class="[number_of_bells == 4  ? 'four'   : '',
+                                number_of_bells == 6  ? 'six'    : '',
+                                number_of_bells == 8  ? 'eight'  : '',
+                                number_of_bells == 10 ? 'ten'    : '',
+                                number_of_bells == 12 ? 'twelve' : '']">
+                <call_display v-bind:audio="audio" ref="display"></call_display>
+                <focus_display ref="focus"></focus_display>
+                <bell_rope v-for="bell in bells"
+                           v-bind:key="bell.number"
+                           v-bind:number="bell.number"
+                           v-bind:position="bell.position"
+                           v-bind:number_of_bells="number_of_bells"
+                           v-bind:audio="audio"
+                           v-bind:id="bell.number"
+                           ref="bells"
+                           ></bell_rope>
             </div>
-            </div>
-        </template>
-        <template v-else>
-            <div class="row pb-0 flex-grow-1">
-            <div class="col flex-grow-1">
-            <user_display ref="users"></user_display>
-            </div>
-            </div>
-        </template>
-
-
-
-
-        </div> <!-- hidden sidebar -->
-
-        </div> <!-- sidebar col -->
-
-
-        <div class="col-12 col-lg-8 bell_circle_col"> <!-- bell circle col -->
-
-        <div class="bell_circle"
-             v-bind:class="[number_of_bells == 4 ? 'four'    : '',
-                            number_of_bells == 6  ? 'six'    : '',
-                            number_of_bells == 8  ? 'eight'  : '',
-                            number_of_bells == 10 ? 'ten'    : '',
-                            number_of_bells == 12 ? 'twelve' : '']">
-            <call_display v-bind:audio="audio" ref="display"></call_display>
-            <focus_display ref="focus"></focus_display>
-              <bell_rope v-for="bell in bells"
-                         v-bind:key="bell.number"
-                         v-bind:number="bell.number"
-                         v-bind:position="bell.position"
-                         v-bind:number_of_bells="number_of_bells"
-                         v-bind:audio="audio"
-                         v-bind:id="bell.number"
-                         ref="bells"
-                         ></bell_rope>
-        </div> <!-- bell_circle -->
-        </div> <!-- row -->
-
+            <!-- bell_circle -->
         </div>
-    `
+        <!-- row -->
+    </div>
+</div>
+`
     }); // end Vue bell_circle
 }); // end document.ready
