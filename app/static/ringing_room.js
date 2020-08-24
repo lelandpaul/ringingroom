@@ -38,7 +38,12 @@ var cur_user_name = window.tower_parameters.cur_user_name;
 
 
 // Set up a handler for leaving, then register it *everywhere*
+var has_left_room = false;
 var leave_room = function() {
+    if (has_left_room) {
+        return;
+    }
+    has_left_room = true;
     socketio.emit('c_user_left', {
         user_name: window.tower_parameters.cur_user_name,
         user_token: window.tower_parameters.user_token,
