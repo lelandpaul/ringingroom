@@ -372,7 +372,7 @@ $(document).ready(function() {
                             [[ (assignment_mode) ?
                                 ((assigned_user) ? assigned_user : '(none)')
                                 : assigned_user ]]
-                          </span>
+                        </span>
                     </button>
                     <button class='btn btn-sm btn_number'
                             :class="[number == 1 ? 'treble' : 'active',
@@ -402,7 +402,7 @@ $(document).ready(function() {
                             v-if="assignment_mode || assigned_user"
                             >
                         <span class="assigned_user_name">
-                           [[ (assignment_mode) ?
+                            [[ (assignment_mode) ?
                                ((assigned_user) ? assigned_user : '(none)')
                                : assigned_user ]]
                         </span>
@@ -814,7 +814,7 @@ $(document).ready(function() {
                    class="btn btn-outline-primary w-100"
                    href='/my_towers'
                    >
-                   Leave Tower
+                    Leave Tower
                 </a>
             </span>
         </h2>
@@ -859,7 +859,6 @@ $(document).ready(function() {
                            >
                             Code of Conduct
                         </a> &#8226;
-
                         <a href="#"
                            data-toggle="modal"
                            data-target="#report_box"
@@ -930,7 +929,7 @@ $(document).ready(function() {
             <div class="modal-footer">
                 <button type="button"
                         class="btn btn-secondary" data-dismiss="modal">
-                        [[ unsubmitted ? 'Cancel' : 'Close' ]]
+                    [[ unsubmitted ? 'Cancel' : 'Close' ]]
                 </button>
                 <button type="button"
                         v-if="unsubmitted"
@@ -1089,7 +1088,7 @@ $(document).ready(function() {
                     @click="toggle_assignment"
                     >
                 [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
-             </button>
+            </button>
         </span>
     </div>
     <div class="card-header"
@@ -1501,7 +1500,6 @@ $(document).ready(function() {
                                         @click="toggle_controls"
                                         >
                                     Controls
-
                                     <span class="badge badge-dark"
                                           v-if="hidden_sidebar
                                              && unread_messages > 0
