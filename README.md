@@ -102,3 +102,34 @@ Currently, the following events are defined:
   broadcast a bell stroke. Disagree indicates that the server & client disagreed
 - **{c/s}_call, {call: Str, tower_id: Int}**:
   report & broadcast a call made
+
+# API
+
+This API is currently in alpha state and might change at any time.
+
+
+## Login Tokens
+
+Authentication is done through tokens. To log in, `POST` to `/api/tokens` with the standard Basic Authorization header:
+
+```
+    Authorization: Basic <credentials>
+```
+
+Where `<credentials>` is the Base64 encoding of `<username>:<password>`.
+
+The response will be a JSON object with data `token`. Tokens are good for 24 hours.
+
+## Using tokens
+
+When accessing any page that is login protected, send the `Authorization` header `Bearer <token>`.
+
+## Revoking tokens
+
+If you send a `DELETE` request to `/api/tokens`, the current token will be revoked.
+
+## API Endpoints
+
+At the moment, only one other API endpoint is implemented: A `GET` request to `/api/user/` (note the trailing `/`) with an authorized token will return user details for that user.
+
+
