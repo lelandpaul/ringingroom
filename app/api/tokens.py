@@ -11,9 +11,6 @@ def get_token():
     db.session.commit()
     return jsonify({'token': token})
 
-def get_token():
-    pass
-
 def revoke_token():
     pass
 

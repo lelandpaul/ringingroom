@@ -22,13 +22,16 @@ class User(UserMixin, db.Model):
     token_expiration = db.Column(db.DateTime)
 
 
-    def to_dict(self):
+    def to_dict(self, include_email=False):
         data = {
             'id': self.id,
             'username': self.username,
-            'email': self.email,
-            'joined': self.joined
+            'joined': self.joined,
+            'towers': {r.tower_id: r.to_dict() for r in self.towers},
         }
+        if include_email:
+            data['email'] = self.email
+        print(data)
         return data
 
 
@@ -280,6 +283,15 @@ class UserTowerRelation(db.Model):
                 'creator': int(self.creator or False),
                 'bookmark': int(self.bookmark or False),
                 'host': int(self.host or False)}
+
+    def to_dict(self):
+        data = {
+            'user_id': self.user_id,
+            'tower_id': self.tower_id,
+            'visited': str(self.visited),
+        }
+        data.update(self.relation_dict)
+        return data
 
     def clean_up(self):
         # Call this whenever you change a boolean column from True to False
