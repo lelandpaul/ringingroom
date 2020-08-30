@@ -35,6 +35,6 @@ bundles = {
 
 assets.register(bundles)
 
-
 def log(*args):
-    current_app.logger.info(' '.join([str(l) for l in args]))
+    from app import app
+    app.logger.info(' '.join([str(l) for l in args]))
