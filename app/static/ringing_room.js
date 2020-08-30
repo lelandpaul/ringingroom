@@ -1568,6 +1568,22 @@ $(document).ready(function() {
                         ></i>
                         <h1 id="tower_name" class="d-inline d-lg-none text-wrap"> [[ tower_name ]] </h1>
                         <h1 id="tower_name" class="d-none d-lg-inline"> [[ tower_name ]] </h1>
+                        <span class="badge badge-dark"
+                            v-if="hidden_sidebar
+                               && unread_messages > 0
+                               && !window.tower_parameters.listen_link
+                               && !window.tower_parameters.anonymous_user"
+                            >
+                            New chat!
+                        </span>
+                        <span class="sr-only"
+                            v-if="hidden_sidebar
+                               && unread_messages > 0
+                               && !window.tower_parameters.listen_link
+                               && !window.tower_parameters.anonymous_user"
+                            >
+                            unread messages
+                        </span>
                     </div>
                 </div>
                 <div class="row">
