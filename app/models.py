@@ -288,7 +288,7 @@ class UserTowerRelation(db.Model):
         data = {
             'user_id': self.user_id,
             'tower_id': self.tower_id,
-            'visited': str(self.visited),
+            'visited': self.visited,
         }
         data.update(self.relation_dict)
         return data
