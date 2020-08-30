@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import logging
+import mimetypes
 from logging.handlers import RotatingFileHandler
 from flask import Flask, has_request_context, request, session
 from flask_sqlalchemy import SQLAlchemy
@@ -17,7 +18,7 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 assets = Environment(app)
-socketio = SocketIO(app, 
+socketio = SocketIO(app,
                     logging=True,
                     cors_allowed_origins='*')
 login = LoginManager(app)
@@ -50,8 +51,8 @@ formatter = RequestFormatter(
 
 file_handler = RotatingFileHandler('logs/ringingroom.log','a', 1 * 1024 * 1024, 10)
 file_handler.setFormatter(formatter)
-app.logger.setLevel(logging.INFO)
-file_handler.setLevel(logging.INFO)
+app.logger.setLevel(logging.ERROR)
+file_handler.setLevel(logging.ERROR)
 app.logger.addHandler(file_handler)
 app.logger.info('Ringing Room startup')
 
@@ -63,7 +64,7 @@ def log(*args):
 bundles = {
 
     'js_landing':   Bundle( 'landing.js',
-                            filters='jsmin', 
+                            filters='jsmin',
                             output='gen/landing.%(version)s.js'),
 
     'js_rr':        Bundle('ringing_room.js',
@@ -80,6 +81,8 @@ bundles = {
                          output='gen/rr.%(version)s.css'),
 
 }
+mimetypes.add_type('text/css', '.css')
+mimetypes.add_type('application/javascript', '.js')
 
 assets.register(bundles)
 

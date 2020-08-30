@@ -1,6 +1,6 @@
 from app import db, log, login
 from config import Config
-from random import sample
+from random import shuffle, sample, randint
 import re
 from datetime import datetime, timedelta, date
 from time import time
@@ -285,6 +285,7 @@ class Tower:
             self._id = self.generate_random_change()
         else:
             self._id = tower_id
+
         self._name = name
         self._n = 8
         self._bell_state = [True] * n
@@ -296,17 +297,49 @@ class Tower:
         self._host_mode_enabled = host_mode_enabled
         self._host_ids = self.to_TowerDB().host_ids
 
+    # generate a random caters change, for use as uid
     def generate_random_change(self):
-        # generate a random caters change, for use as uid
-        tmp_tower_id = int(
-            ''.join(map(str, sample([i+1 for i in range(9)], k=9))))
+        # Helper function to generate a potentially good change for a tower ID, given how
+        # much of the change it is required to shuffle.
+        def generate_candidate(shuffle_length):
+            # Generate rounds as a base change
+            new_row = list(range(9))
+
+            # Use backrounds as a base half the time
+            if randint(0, 1) == 0:
+                new_row = list(reversed(new_row))
+
+            # Rotate the change to a random amount, to produce a cyclic parthead or reverse parthead
+            cyclic_rotation_amount = randint(0, 9)
+            for _ in range(cyclic_rotation_amount):
+                new_row.append(new_row[0])
+                del new_row[0]
+
+            # Shuffle the first or last 4 digits of the row to preserve the longest run
+            if cyclic_rotation_amount <= 4:
+                start = new_row[-shuffle_length:]
+                shuffle(start)
+                new_row = start + new_row[:-shuffle_length]
+            else:
+                start = new_row[:shuffle_length]
+                shuffle(start)
+                new_row = new_row[shuffle_length:] + start
+
+            return int(''.join(map(str, [i+1 for i in new_row])))
+
+        attempted_ids = 0
+
+        # The formula as the argument to generate_candidate is there to ensure that if too many
+        # tower ID collisions are found, the changes get steadily more random to prevent
+        # unnecessary load on the database
+        tmp_tower_id = generate_candidate(4 + attempted_ids // 5)
         overlapping_tower_ids = TowerDB.query.filter_by(tower_id=tmp_tower_id)
 
         while not overlapping_tower_ids.count() == 0:
-            tmp_tower_id = int(
-                ''.join(map(str, sample([i + 1 for i in range(9)], k=9))))
-            overlapping_tower_ids = TowerDB.query.filter_by(
-                                                    tower_id=tmp_tower_id)
+            tmp_tower_id = generate_candidate(4 + attempted_ids // 5)
+            overlapping_tower_ids = TowerDB.query.filter_by(tower_id=tmp_tower_id)
+
+            attempted_ids += 1
 
         return tmp_tower_id
 
