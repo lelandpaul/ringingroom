@@ -190,6 +190,16 @@ class User(UserMixin, db.Model):
 def load_user(id):
     return User.query.get(int(id))
 
+@login.request_loader
+def load_user_from_request(request):
+    token = request.headers.get('Authorization')
+    if token:
+        token = token.replace('Bearer ', '', 1)
+        user = User.query.filter_by(token=token).first()
+        if user:
+            return user
+    return None
+
 
 class TowerDB(db.Model):
     tower_id = db.Column(db.Integer, primary_key=True)
