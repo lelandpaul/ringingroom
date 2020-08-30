@@ -376,7 +376,6 @@ class Tower:
             for k in range(new_size + 1, self._n + 1):
                 self._assignments.pop(k)
         else: # add new keys for new assignments
-            print("new tower is bigger")
             for k in range(self._n + 1, new_size + 1):
                 self._assignments[k] = ''
 
