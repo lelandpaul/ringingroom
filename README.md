@@ -126,10 +126,10 @@ When accessing any page that is login protected, send the `Authorization` header
 
 ## Revoking tokens
 
-If you send a `DELETE` request to `/api/tokens`, the current token will be revoked.
+If you send a `DELETE` request to `/api/tokens` with an authorized token, that token will be revoked.
 
 ## API Endpoints
 
-At the moment, only one other API endpoint is implemented: A `GET` request to `/api/user/` (note the trailing `/`) with an authorized token will return user details for that user.
+At the moment, only one other API endpoint is implemented: A `GET` request to `/api/user/` (note the trailing `/`) with an authorized token will return user details for that user in JSON format, including related towers.
 
 
