@@ -1208,7 +1208,7 @@ $(document).ready(function() {
 
 
                     // Do a special thing to prevent space and the arrow keys from hitting focused elements
-                    if (e.which == 32 || e.which == 37 || e.which == 39) {
+                    if (e.which == 32 || e.which == 37 || e.which == 38 || e.which == 39 || e.which == 40) {
                         e.preventDefault();
                     }
 
