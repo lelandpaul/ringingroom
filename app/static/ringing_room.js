@@ -1308,6 +1308,7 @@ $(document).ready(function() {
             number_of_bells: function(new_count) {
                 console.log('changing number of bells to ' + new_count)
                 const new_bells = [];
+                //const new_users = [];
                 for (var i = 1; i <= new_count; i++) {
                     console.log('pushing bell: ' + i);
                     new_bells.push({
@@ -1317,6 +1318,7 @@ $(document).ready(function() {
                     console.log(new_bells);
                 }
                 console.log(new_bells);
+
                 this.bells = new_bells;
                 this.rang_bell_recently = new Array(new_count).fill(false);
                 // Request the global state from the server
@@ -1451,7 +1453,7 @@ $(document).ready(function() {
                     } else {
                         this.pull_rope(current_user_bells[0]);
                     }
-                } 
+                }
             },
 
             // emit a call
