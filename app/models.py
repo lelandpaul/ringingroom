@@ -1,4 +1,4 @@
-from app import db, log, login
+from app.extensions import db, login, log
 from config import Config
 from random import shuffle, sample, randint
 import re

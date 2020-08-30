@@ -1,5 +1,4 @@
 from flask import render_template
-from app import app
 
 # using SendGrid's Python Library
 # https://github.com/sendgrid/sendgrid-python

@@ -1,13 +1,14 @@
 # coding: utf-8
 
-from app import app, socketio, db, towers
+from app import app, towers
+from app.extensions import socketio, db
 from app.models import TowerDB, Tower, User, UserTowerRelation
 
 
 @app.shell_context_processor
 def make_shell_context():
-    return {'db': db, 
-            'TowerDB': TowerDB, 
+    return {'db': db,
+            'TowerDB': TowerDB,
             'towers': towers,
             'Tower': Tower,
             'User': User,

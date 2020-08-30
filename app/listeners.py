@@ -1,7 +1,8 @@
 from flask_socketio import emit, join_room
 from flask import session, request
 from flask_login import current_user
-from app import socketio, towers, log, app
+from app import towers, app
+from app.extensions import socketio, log
 from app.models import Tower, load_user
 from app.email import send_email
 import random
@@ -100,7 +101,7 @@ def on_join(json):
         if user.username in tower.users.keys():
             log('SETUP User already present')
             tower.remove_user(user.id)
-            emit('s_user_left', {'user_name': user.username}, 
+            emit('s_user_left', {'user_name': user.username},
                                 broadcast = True,
                                 include_self = True,
                                 room = tower_id)
@@ -141,7 +142,7 @@ def send_assignments(tower_id):
     for (bell, user_name) in tower.assignments.items():
         log('s_assign_user', {'bell': bell, 'user': user_name})
         emit('s_assign_user', {'bell': bell, 'user': user_name})
-             
+
 
 
 # A user left a room (and the event actually fired)
@@ -352,6 +353,6 @@ def on_remove_recent(tower_id):
     current_user.remove_recent_tower(tower)
 
 
-    
+
 
 
