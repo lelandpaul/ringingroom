@@ -21,6 +21,17 @@ class User(UserMixin, db.Model):
     token = db.Column(db.String(32), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
 
+
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'joined': self.joined
+        }
+        return data
+
+
     def get_token(self, expires_in=86400):
         now = datetime.utcnow()
         if self.token and self.token_expiration > now + timedelta(seconds=60):
