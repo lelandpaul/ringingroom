@@ -732,6 +732,9 @@ $(document).ready(function() {
                     <li>
                         <b>[1-9], [0], [-], [=]:</b> Rings bells 1 - 9, 10, 11, and 12
                     </li>
+                    <li>
+                        <b>[SHIFT]+[s]:</b> Set all bells at hand.</b>
+                    </li>
                 </ul>
                 <p> The tower controls allow you to set the number of bells, change whether you're using towerbell or handbell images and sounds, and set all the bells at hand.</p>
                 <p>The user list allows you to
