@@ -13,8 +13,6 @@ from flask_login import LoginManager
 from config import Config
 import os
 
-app = Flask(__name__)
-app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 assets = Environment(app)
@@ -22,6 +20,13 @@ socketio = SocketIO(app,
                     logging=True,
                     cors_allowed_origins='*')
 login = LoginManager(app)
+
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
+
+    from app.api import bp as api_bp
+    app.register_blueprint(api_bp, url_prefix='/api')
 
 
 # Set up logging
