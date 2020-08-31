@@ -96,7 +96,7 @@ All other endpoints (except `POST /api/user` for registering new users) require 
 
 `GET /api/tower/<tower_id>`: Gets connection information for the tower. Response JSON includes `tower_id`, `tower_name`, and `server_address`.
 
-`POST /api/tower`: Creates a new tower. Reqeust JSON should include `tower_name`. Responds as per `GET /api/tower/<tower_id>`.
+`POST /api/tower`: Creates a new tower. Request JSON should include `tower_name`. Responds as per `GET /api/tower/<tower_id>`.
 
 `DELETE /api/tower/<tower_id>`: Deletes the tower, if the current user has permission to do so.
 

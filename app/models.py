@@ -291,7 +291,6 @@ class UserTowerRelation(db.Model):
 
     def to_dict(self):
         data = {
-            'user_id': self.user_id,
             'tower_id': self.tower_id,
             'tower_name': self.tower.tower_name,
             'visited': self.visited,

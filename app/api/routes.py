@@ -120,7 +120,7 @@ def change_tower_settings(tower_id):
     response.status_code = 200
     return response
 
-@bp.route('/tower/<int:tower_id>/hosts', methods=['PUT'])
+@bp.route('/tower/<int:tower_id>/hosts', methods=['POST'])
 @token_auth.login_required
 def add_hosts(tower_id):
     if not current_user.check_permissions(tower_id, 'creator'):
@@ -144,7 +144,7 @@ def remove_hosts(tower_id):
     tower = TowerDB.query.get_or_404(tower_id)
     users = [User.query.filter_by(email=u).first() for u in data['hosts']]
     for u in users:
-        if u:
+        if u and u.id != current_user.id:
             u.remove_host(tower)
     response = jsonify(tower.to_dict())
     response.status_code = 200
@@ -161,7 +161,6 @@ def get_tower(tower_id):
         'tower_id': tower_id,
         'tower_name': tower.tower_name,
         'server_address': get_server_ip(tower_id),
-        'host_permissions': current_user.check_permissions(tower_id, 'host')
     }
     return jsonify(data)
 
@@ -169,7 +168,10 @@ def get_tower(tower_id):
 @token_auth.login_required
 def create_tower():
     data = request.get_json() or {}
-    tower = Tower(name = data['tower_name'])
+    try:
+        tower = Tower(name = data['tower_name'])
+    except KeyError:
+        return bad_request('You must supply a tower name.')
     tower_db = tower.to_TowerDB()
     tower_db.created_by(current_user)
     db.session.add(tower_db)
@@ -178,7 +180,6 @@ def create_tower():
         'tower_id': tower_db.tower_id,
         'tower_name': tower_db.tower_name,
         'server_address': get_server_ip(tower_db.tower_id),
-        'host_permissions': current_user.check_permissions(tower_db.tower_id, 'host')
     }
     return jsonify(data)
 
