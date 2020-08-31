@@ -75,11 +75,4 @@ app.logger.info('Ringing Room startup')
 mimetypes.add_type('text/css', '.css')
 mimetypes.add_type('application/javascript', '.js')
 
-
-from app.models import TowerDict
-
-# make the tower dict
-towers = TowerDict()
-
-
-from app import routes, models, listeners
+from app import routes, models, listeners, models

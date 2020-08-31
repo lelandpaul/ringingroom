@@ -171,13 +171,20 @@ class User(UserMixin, db.Model):
     def make_host(self, tower):
         rel = self._get_relation_to_tower(tower)
         rel.host = True
+        if not isinstance(tower, Tower):
+            tower = tower.to_Tower()
         tower.add_host_id(self.id)
         db.session.commit()
 
     def remove_host(self, tower):
         rel = self._get_relation_to_tower(tower)
         rel.host = False
-        tower.remove_host_id(self.id)
+        if not isinstance(tower, Tower):
+            tower = tower.to_Tower()
+        try:
+            tower.remove_host_id(self.id)
+        except ValueError:
+            pass
         db.session.commit()
 
 
@@ -194,6 +201,15 @@ class TowerDB(db.Model):
 
     def __repr__(self):
         return '<TowerDB {}: {}>'.format(self.tower_id, self.tower_name)
+
+    def to_dict(self):
+        data = {
+            'tower_id': self.tower_id,
+            'tower_name': self.tower_name,
+            'host_mode_enabled': self.host_mode_enabled,
+            'hosts': [u.to_dict() for u in self.hosts],
+        }
+        return data
 
     def to_Tower(self):
         return Tower(self.tower_name, tower_id=self.tower_id,
@@ -563,6 +579,10 @@ class TowerDict(dict):
 
         return value
 
+
+# make the TowerDict that we'll be using elsewhere
+towers = TowerDict()
+
 # Helper function to get a server IP, with load balancing
 # If there is a list of IPs set in SOCKETIO_SERVER_ADDRESSES, this will automatically balance rooms
 # across those servers. Otherwise, it will just direct everything to the current server.
@@ -572,4 +592,5 @@ def get_server_ip(tower_id):
         return request.url_root
     else:
         return 'https://' + servers[tower_id % 10 % len(servers)]
+
 

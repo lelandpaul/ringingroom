@@ -1,9 +1,9 @@
 from flask_socketio import emit, join_room
 from flask import session, request
 from flask_login import current_user
-from app import towers, app
+from app import app
 from app.extensions import socketio, log
-from app.models import Tower
+from app.models import Tower, towers
 from app.auth import token_login
 from app.email import send_email
 import random
