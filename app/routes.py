@@ -10,7 +10,6 @@ from urllib.parse import urlparse
 import string
 import random
 from app.email import send_password_reset_email
-import jwt
 import os
 
 # Helper function to get a server IP, with load balancing
@@ -79,12 +78,10 @@ def tower(tower_id, decorator=None):
         log('Bad tower_id')
         abort(404)
 
-    # Generate a jwt token to pass user_id
-    # This allows us to pass user_id securely through the client html,
-    # which in turn allows backup servers to get the current user without cross-domain cookies
-    user_token = '' if current_user.is_anonymous \
-                    else jwt.encode({'id': current_user.get_id()}, app.config['SECRET_KEY'],
-                                    algorithm='HS256').decode('utf-8')
+    # Make sure the Bearer token for the current user is not expired and pass it to the client html
+    # This is how the client will be automatically logged in w/o cross-domain cookies
+    user_token = '' if current_user.is_anonymous\
+                    else current_user.get_token()
 
     # Pass in both the tower and the user_name
     return render_template('ringing_room.html',

@@ -1,4 +1,4 @@
-from app.extensions import db, login, log
+from app.extensions import db, log
 from config import Config
 from random import shuffle, sample, randint
 import re
@@ -184,21 +184,6 @@ class User(UserMixin, db.Model):
         rel.host = False
         tower.remove_host_id(self.id)
         db.session.commit()
-
-
-@login.user_loader
-def load_user(id):
-    return User.query.get(int(id))
-
-@login.request_loader
-def load_user_from_request(request):
-    token = request.headers.get('Authorization')
-    if token:
-        token = token.replace('Bearer ', '', 1)
-        user = User.query.filter_by(token=token).first()
-        if user:
-            return user
-    return None
 
 
 class TowerDB(db.Model):
