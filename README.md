@@ -116,8 +116,9 @@ All communication between the API consumer and an individual tower should take p
 1. Establish a connection with the `server_address` returned by `GET /api/tower/<tower_id>`.
 2. Emit `c_join` with a JSON payload containing `tower_id`, `user_token` (the Bearer token), and `anonymous_user`. **At present, our API doesn't support anonymous users, so this should always have the value `false`.**
 3. Listen for `s_set_userlist`, `s_size_change`, `s_audio_change`, `s_host_mode`, `s_user_entered`, and `s_assign_user` to set up the tower.
-4. Ring!
-5. Emit `c_user_left` when leaving.
+4. Once you've set up the rope circle, emit `c_request_global_state` and listen for `s_global_state` to set the bells at back/hand.
+5. Ring!
+6. Emit `c_user_left` when leaving.
 
 
 ### Events
@@ -125,35 +126,35 @@ All communication between the API consumer and an individual tower should take p
 Communication between client & server is handled by Socket.IO events.
 
 Events are prefixed by *origin*:
-- "c_" for client
-- "s_" for server
+- `c_` for client
+- `s_` for server
 
 What follows is a incomplete list of events — these should be only the events relevant to an API consumer (i.e. where functionality is not duplicated elsewhere).
 
 | Event                    | Payload                                                                  | Description                        |
 | ---                      | ---                                                                      | ---                                |
+| `c_join`                 | `{tower_id: Int, user_token: Str, anonymous_user: Bool}`                 | User joined a tower.               |
+| `s_user_entered`         | `{user_name: Str}`                                                       | Server relayed user entering.      |
 | `c_user_left`            | `{user_name: Str, user_token: Str, anonymous_user: Bool, tower_id: Int}` | User left a tower.                 |
+| `s_user_left`            | `{user_name: Str}`                                                       | Server relayed user leaving.       |
+| `c_request_global_state` | `{tower_id: Int}`                                                        | Client requested tower state.      |
+| `s_global_state`         | `{global_bell_state: [Bool]}`                                            | Server sent current tower state.   |
+| `s_set_userlist`         | `{user_list: [Str]}`                                                     | Server set list of users in tower. |
 | `c_bell_rung`            | `{bell: Int, stroke: Bool, tower_id: Int}`                               | User rang a bell.                  |
+| `s_bell_rung`            | `{global_bell_state: [Bool], who_rang: Int, disagreement: Bool}`         | Server relayed bell ringing.       |
 | `c_assign_user`          | `{bell: Int, user: Str, tower_id: Int}`                                  | User assigned someone to a bell.   |
+| `s_assign_user`          | `{bell: Int, user: Str}`                                                 | Server sent bell assignment.       |
 | `c_audio_change`         | `{new_audio: ("Tower"\|"Hand"), tower_id: Int}`                          | User changed audio type.           |
+| `s_audio_change`         | `{new_audio: ("Tower"\|"Hand")}`                                         | Server sent audio state.           |
 | `c_host_mode`            | `{new_mode: Bool, tower_id: Int}`                                        | User toggled host mode.            |
+| `s_host_mode`            | `{tower_id: Int, new_mode: Bool}`                                        | Server sent host mode.             |
 | `c_size_change`          | `{new_size: Int, tower_id: Int}`                                         | User changed tower size.           |
+| `s_size_change`          | `{size: Int}`                                                            | Server sent tower size.            |
 | `c_msg_sent`             | `{user: Str, email: Str, msg: Str, time: Date, tower_id: Int}`           | User sent a chat.                  |
 | `s_msg_sent`             | `{user: Str, email: Str, msg: Str, time: Date, tower_id: Int}`           | Server relayed chat.               |
-| `c_join`                 | `{tower_id: Int, user_token: Str, anonymous_user: Bool}`                 | User joined a tower.               |
-| `c_request_global_state` | `{tower_id: Int}`                                                        | Client requested tower state.      |
 | `c_call`                 | `{call: Str, tower_id: Int}`                                             | User made a call.                  |
-| `c_set_bells`            | `{tower_id: Int}`                                                        | User set all bells at hand.        |
-| `s_set_userlist`         | `{user_list: [Str]}`                                                     | Server set list of users in tower. |
-| `s_user_left`            | `{user_name: Str}`                                                       | Server relayed user leaving.       |
-| `s_size_change`          | `{size: Int}`                                                            | Server sent tower size.            |
-| `s_audio_change`         | `{new_audio: ("Tower"\|"Hand")}`                                         | Server sent audio state.           |
-| `s_host_mode`            | `{tower_id: Int, new_mode: Bool}`                                        | Server sent host mode.             |
-| `s_user_entered`         | `{user_name: Str}`                                                       | Server relayed user entering.      |
-| `s_assign_user`          | `{bell: Int, user: Str}`                                                 | Server sent bell assignment.       |
-| `s_bell_rung`            | `{global_bell_state: [Bool], who_rang: Int, disagreement: Bool}`         | Server relayed bell ringing.       |
 | `s_call`                 | `{call: Str, tower_id: Int}`                                             | Server relayed user call.          |
-| `s_global_state`         | `{global_bell_state: [Bool]}`                                            | Server sent current tower state.   |
+| `c_set_bells`            | `{tower_id: Int}`                                                        | User set all bells at hand.        |
 
 
 
