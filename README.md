@@ -18,7 +18,109 @@ You are now ready to run the server:
  - This will give you a local address where you can access the app 
 
 
-## Events
+
+## API
+
+Ringing Room supplies a basic API for use in 3rd-party apps.
+
+### Summary of Endpoints & Methods
+
+| Endpoint                         | Method   | Description                            |
+| ---                              | ---      | ---                                    |
+| `/api/tokens`                    | `POST`   | Get bearer token                       |
+| `/api/tokens`                    | `DELETE` | Revoke bearer token                    |
+| `/api/user`                      | `GET`    | Get current user details               |
+| `/api/user`                      | `POST`   | Register new user                      |
+| `/api/user`                      | `PUT`    | Modify user settings                   |
+| `/api/user`                      | `DELETE` | Delete user account                    |
+| `/api/my_towers`                 | `GET`    | Get all towers related to current user |
+| `/api/my_towers/<tower_id>`      | `PUT`    | Toggle bookmark for `tower_id`         |
+| `/api/my_towers/<tower_id>`      | `DELETE` | Remove `tower_id` from recent towers   |
+| `/api/tower/<tower_id>/settings` | `GET`    | Get tower settings (if permitted)      |
+| `/api/tower/<tower_id>/settings` | `PUT`    | Modify tower settings (if permitted)   |
+| `/api/tower/<tower_id>/hosts`    | `POST`   | Add hosts (if permitted)               |
+| `/api/tower/<tower_id>/hosts`    | `DELETE` | Remove hosts (if permitted)            |
+| `/api/tower/<tower_id>`          | `GET`    | Get connection details for `tower_id`  |
+| `/api/tower`                     | `POST`   | Create new tower                       |
+| `/api/tower/<tower_id>`          | `DELETE` | Delete tower (if permitted)            |
+
+### Authorization
+
+Initial authorization uses HTTP Basic Auth: `POST` to `/api/tokens` with the header `Authorization: Basic <credentials>`, where `<credentials>` is a base-64-encoded `email:password`. The response will include a bearer token valid for 24 hours.
+
+All other endpoints (except `POST /api/user` for registering new users) require the header `Authorization: Bearer <token>`.
+
+### User
+
+`GET /api/user`: Gets user details. Responds with a JSON including the fields `username` & `email`.
+
+`POST /api/user`: Registers new user. Request must include a JSON with fields `username`, `email`, & `password`. Responds as per `GET /api/user`. (Does not require Bearer token.)
+
+`PUT /api/user`: Modifies user details Request JSON may include `new_username`, `new_email`, `new_password`. Responds as per `GET /api/user`.
+
+`DELETE /api/user`:  Deletes user.
+
+### My_Towers
+
+`GET /api/my_towers`: Gets all related towers:
+
+```
+{
+    "928134567": {
+        "bookmark": 0,
+        "creator": 1,
+        "host": 1,
+        "recent": 1,
+        "tower_id": 928134567,
+        "tower_name": "Advent",
+        "visited": "Mon, 31 Aug 2020 15:45:54 GMT"
+    },
+    "987654321": {
+        "bookmark": 0,
+        "creator": 0,
+        "host": 0,
+        "recent": 1,
+        "tower_id": 987654321,
+        "tower_name": "Old North",
+        "visited": "Mon, 31 Aug 2020 15:44:40 GMT"
+    }
+}
+```
+
+`PUT /my_towers/<tower_id>`: Toggles the `bookmark` value for that tower. Responds as per `GET /api/my_towers` but with only the details for the requested tower.
+
+`DELETE /my_towers/tower_id>`: Removes the tower from the current user's recent towers. Responds as per `GET /api/my_towers` but with only the details for the requested tower.
+
+
+### Tower
+
+`GET /api/tower/<tower_id>`: Gets connection information for the tower. Response JSON includes `tower_id`, `tower_name`, and `server_address`.
+
+`POST /api/tower`: Creates a new tower. Reqeust JSON should include `tower_name`. Responds as per `GET /api/tower/<tower_id>`.
+
+`DELETE /api/tower/<tower_id>`: Deletes the tower, if the current user has permission to do so.
+
+`GET /api/tower/<tower_id>/settings`: Gets tower settings, if the current user has permission to modify them. Response JSON includes `host_mode_enabled`, `tower_id`, `tower_name`, and `hosts`, a list of objects containing `email` & `username`.
+
+`PUT /api/tower/<tower_id>/settings`: Modifies tower settings, if the current user has permission to do so. Request JSON may include `tower_name`, `permit_host_mode`. Responds as per `GET /api/tower/<tower_id>/settings`.
+
+`POST /api/tower/<tower_id>/hosts`: Adds new hosts, if the current user has permission to do so. Request JSON must include `new_hosts`, a list of email addresses. Responds as per `GET /api/tower/<tower_id>/settings`.
+
+`DELETE /api/tower/<tower_id>/hosts`: Remove hosts, if the current user has permission to do so. Request JSON must include `hosts`, a list of email addresses. Responds as per `GET /api/tower/<tower_id>/settings`.
+
+
+### Connecting to a Tower
+
+All communication between the API consumer and an individual tower should take place through SocketIO. The basic workflow for setting up communication is:
+
+1. Establish a connection with the `server_address` returned by `GET /api/tower/<tower_id>`.
+2. Emit `c_join` with a JSON payload containing `tower_id`, `user_token` (the Bearer token), and `anonymous_user`. **At present, our API doesn't support anonymous users, so this should always have the value `false`.**
+3. Listen for `s_set_userlist`, `s_size_change`, `s_audio_change`, `s_host_mode`, `s_user_entered`, and `s_assign_user` to set up the tower.
+4. Ring!
+5. Emit `c_user_left` when leaving.
+
+
+### Events
 
 Communication between client & server is handled by Socket.IO events.
 
@@ -26,33 +128,38 @@ Events are prefixed by *origin*:
 - "c_" for client
 - "s_" for server
 
-# API
+What follows is a incomplete list of events — these should be only the events relevant to an API consumer (i.e. where functionality is not duplicated elsewhere).
 
-This API is currently in alpha state and might change at any time.
+| Event                    | Payload                                                                  | Description                        |
+| ---                      | ---                                                                      | ---                                |
+| `c_user_left`            | `{user_name: Str, user_token: Str, anonymous_user: Bool, tower_id: Int}` | User left a tower.                 |
+| `c_bell_rung`            | `{bell: Int, stroke: Bool, tower_id: Int}`                               | User rang a bell.                  |
+| `c_assign_user`          | `{bell: Int, user: Str, tower_id: Int}`                                  | User assigned someone to a bell.   |
+| `c_audio_change`         | `{new_audio: ("Tower"|"Hand"), tower_id: Int}`                           | User changed audio type.           |
+| `c_host_mode`            | `{new_mode: Bool, tower_id: Int}`                                        | User toggled host mode.            |
+| `c_size_change`          | `{new_size: Int, tower_id: Int}`                                         | User changed tower size.           |
+| `c_msg_sent`             | `{user: Str, email: Str, msg: Str, time: Date, tower_id: Int}`           | User sent a chat.                  |
+| `s_msg_sent`             | `{user: Str, email: Str, msg: Str, time: Date, tower_id: Int}`           | Server relayed chat.               |
+| `c_join`                 | `{tower_id: Int, user_token: Str, anonymous_user: Bool}`                 | User joined a tower.               |
+| `c_request_global_state` | `{tower_id: Int}`                                                        | Client requested tower state.      |
+| `c_call`                 | `{call: Str, tower_id: Int}`                                             | User made a call.                  |
+| `c_set_bells`            | `{tower_id: Int}`                                                        | User set all bells at hand.        |
+| `s_set_userlist`         | `{user_list: [Str]}`                                                     | Server set list of users in tower. |
+| `s_user_left`            | `{user_name: Str}`                                                       | Server relayed user leaving.       |
+| `s_size_change`          | `{size: Int}`                                                            | Server sent tower size.            |
+| `s_audio_change`         | `{new_audio: (Tower| Hand)}`                                             | Server sent audio state.           |
+| `s_host_mode`            | `{tower_id: Int, new_mode: Bool}`                                        | Server sent host mode.             |
+| `s_user_entered`         | `{user_name: Str}`                                                       | Server relayed user entering.      |
+| `s_assign_user`          | `{bell: Int, user: Str}`                                                 | Server sent bell assignment.       |
+| `s_bell_rung`            | `{global_bell_state: [Bool], who_rang: Int, disagreement: Bool}`         | Server relayed bell ringing.       |
+| `s_call`                 | `{call: Str, tower_id: Int}`                                             | Server relayed user call.          |
+| `s_global_state`         | `{global_bell_state: [Bool]}`                                            | Server sent current tower state.   |
 
 
-## Login Tokens
 
-Authentication is done through tokens. To log in, `POST` to `/api/tokens` with the standard Basic Authorization header:
 
-```
-    Authorization: Basic <credentials>
-```
 
-Where `<credentials>` is the Base64 encoding of `<username>:<password>`.
 
-The response will be a JSON object with data `token`. Tokens are good for 24 hours.
 
-## Using tokens
-
-When accessing any page that is login protected, send the `Authorization` header `Bearer <token>`.
-
-## Revoking tokens
-
-If you send a `DELETE` request to `/api/tokens` with an authorized token, that token will be revoked.
-
-## API Endpoints
-
-At the moment, only one other API endpoint is implemented: A `GET` request to `/api/user/` (note the trailing `/`) with an authorized token will return user details for that user in JSON format, including related towers.
 
 
