@@ -159,6 +159,7 @@ What follows is a incomplete list of events — these should be only the events 
 
 ### Directory structure (abbreviated...)
 
+```
 .
 ├── LICENSE
 ├── README.md
@@ -273,3 +274,4 @@ What follows is a incomplete list of events — these should be only the events 
 │   └── versions
 ├── requirements.txt
 └── ringingroom.py
+```
