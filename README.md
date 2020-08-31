@@ -157,10 +157,119 @@ What follows is a incomplete list of events — these should be only the events 
 | `c_set_bells`            | `{tower_id: Int}`                                                        | User set all bells at hand.        |
 
 
+### Directory structure (abbreviated...)
 
-
-
-
-
-
-
+.
+├── LICENSE
+├── README.md
+├── __pycache__
+├── app
+│   ├── __init__.py
+│   ├── __pycache__
+│   ├── api
+│   ├── email.py
+│   ├── forms.py
+│   ├── listeners.py
+│   ├── models.py
+│   ├── routes.py
+│   ├── static
+│   │   ├── audio
+│   │   │   ├── hand.ac3
+│   │   │   ├── hand.json
+│   │   │   ├── hand.m4a
+│   │   │   ├── hand.mp3
+│   │   │   ├── hand.ogg
+│   │   │   ├── processed_audio
+│   │   │   ├── raw_audio
+│   │   │   ├── tower.ac3
+│   │   │   ├── tower.json
+│   │   │   ├── tower.m4a
+│   │   │   ├── tower.mp3
+│   │   │   └── tower.ogg
+│   │   ├── audio.js
+│   │   ├── bootstrap
+│   │   │   ├── js
+│   │   │   └── scss
+│   │   ├── css
+│   │   │   ├── circle.css
+│   │   │   ├── circle.css.map
+│   │   │   ├── global_design.css
+│   │   │   ├── global_design.css.map
+│   │   │   ├── ringing_room.css
+│   │   │   ├── ringing_room.css.map
+│   │   │   ├── static.css
+│   │   │   ├── static.css.map
+│   │   │   └── static.scss.css
+│   │   ├── dark-mode-switch
+│   │   │   ├── LICENSE
+│   │   │   ├── README.md
+│   │   │   ├── dark-mode-switch.js
+│   │   │   ├── dark-mode-switch.min.js
+│   │   │   ├── dark-mode.css
+│   │   │   ├── index.html
+│   │   │   └── package.json
+│   │   ├── downloads
+│   │   ├── gen
+│   │   ├── howler.core.min.js
+│   │   ├── images
+│   │   │   ├── dncb.png
+│   │   │   ├── favicon
+│   │   │   ├── h-backstroke.png
+│   │   │   ├── h-handstroke-treble.png
+│   │   │   ├── h-handstroke.png
+│   │   │   ├── logo.png
+│   │   │   ├── t-backstroke.png
+│   │   │   ├── t-handstroke-treble.png
+│   │   │   ├── t-handstroke.png
+│   │   │   └── test-email.py
+│   │   ├── landing.js
+│   │   ├── my_towers.js
+│   │   ├── ringing_room.js
+│   │   └── sass
+│   │       ├── circle.scss
+│   │       ├── global_design.scss
+│   │       ├── ringing_room.css
+│   │       ├── ringing_room.css.map
+│   │       ├── ringing_room.scss
+│   │       ├── static.css
+│   │       ├── static.css.map
+│   │       └── static.scss
+│   └── templates
+│       ├── _code_of_conduct.html
+│       ├── _news_toast.html
+│       ├── _privacy_policy.html
+│       ├── _user_menu.html
+│       ├── about.html
+│       ├── authenticate.html
+│       ├── base.html
+│       ├── blog.html
+│       ├── code_of_conduct.html
+│       ├── contact.html
+│       ├── donate.html
+│       ├── email
+│       │   ├── reset_password.html
+│       │   └── reset_password.txt
+│       ├── help.html
+│       ├── landing_page.html
+│       ├── my_towers.html
+│       ├── news
+│       ├── reset_password.html
+│       ├── reset_password_request.html
+│       ├── ringing_room.html
+│       ├── tower_settings.html
+│       └── user_settings.html
+├── app.db
+├── config.py
+├── env
+├── flask_session
+├── logs
+├── migrations
+│   ├── README
+│   ├── __pycache__
+│   │   └── env.cpython-37.pyc
+│   ├── alembic.ini
+│   ├── env.py
+│   ├── script.py.mako
+│   └── versions
+├── requirements.txt
+└── ringingroom.py
