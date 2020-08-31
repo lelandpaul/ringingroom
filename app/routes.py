@@ -1,7 +1,8 @@
 from flask import render_template, send_from_directory, abort, flash, redirect, url_for, session, request
 from flask_login import login_user, logout_user, current_user, login_required
-from app import app, towers, log, db
-from app.models import User, UserTowerRelation
+from app import app
+from app.extensions import db, log
+from app.models import User, UserTowerRelation, get_server_ip, towers
 from flask_login import current_user, login_user, logout_user, login_required
 from app.forms import *
 
@@ -9,18 +10,7 @@ from urllib.parse import urlparse
 import string
 import random
 from app.email import send_password_reset_email
-import jwt
 import os
-
-# Helper function to get a server IP, with load balancing
-# If there is a list of IPs set in SOCKETIO_SERVER_ADDRESSES, this will automatically balance rooms
-# across those servers. Otherwise, it will just direct everything to the current server.
-def get_server_ip(tower_id):
-    servers = app.config['SOCKETIO_SERVER_ADDRESSES']
-    if not servers:
-        return request.url_root
-    else:
-        return 'https://' + servers[tower_id % 10 % len(servers)]
 
 # redirect for static files on subdomains
 
@@ -41,7 +31,7 @@ def load_toasts(modal):
 @app.route('/', methods=('GET', 'POST'))
 def index():
     form = LoginForm() if current_user.is_anonymous else None
-    return render_template('landing_page.html', 
+    return render_template('landing_page.html',
                            toasts=load_toasts(modal=False),
                            modals=load_toasts(modal=True),
                            login_form=form)
@@ -78,12 +68,10 @@ def tower(tower_id, decorator=None):
         log('Bad tower_id')
         abort(404)
 
-    # Generate a jwt token to pass user_id
-    # This allows us to pass user_id securely through the client html,
-    # which in turn allows backup servers to get the current user without cross-domain cookies
-    user_token = '' if current_user.is_anonymous \
-                    else jwt.encode({'id': current_user.get_id()}, app.config['SECRET_KEY'],
-                                    algorithm='HS256').decode('utf-8')
+    # Make sure the Bearer token for the current user is not expired and pass it to the client html
+    # This is how the client will be automatically logged in w/o cross-domain cookies
+    user_token = '' if current_user.is_anonymous\
+                    else current_user.get_token()
 
     # Pass in both the tower and the user_name
     return render_template('ringing_room.html',
