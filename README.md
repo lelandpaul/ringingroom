@@ -135,7 +135,7 @@ What follows is a incomplete list of events — these should be only the events 
 | `c_user_left`            | `{user_name: Str, user_token: Str, anonymous_user: Bool, tower_id: Int}` | User left a tower.                 |
 | `c_bell_rung`            | `{bell: Int, stroke: Bool, tower_id: Int}`                               | User rang a bell.                  |
 | `c_assign_user`          | `{bell: Int, user: Str, tower_id: Int}`                                  | User assigned someone to a bell.   |
-| `c_audio_change`         | `{new_audio: ("Tower"|"Hand"), tower_id: Int}`                           | User changed audio type.           |
+| `c_audio_change`         | `{new_audio: ("Tower"\|"Hand"), tower_id: Int}`                          | User changed audio type.           |
 | `c_host_mode`            | `{new_mode: Bool, tower_id: Int}`                                        | User toggled host mode.            |
 | `c_size_change`          | `{new_size: Int, tower_id: Int}`                                         | User changed tower size.           |
 | `c_msg_sent`             | `{user: Str, email: Str, msg: Str, time: Date, tower_id: Int}`           | User sent a chat.                  |
@@ -147,7 +147,7 @@ What follows is a incomplete list of events — these should be only the events 
 | `s_set_userlist`         | `{user_list: [Str]}`                                                     | Server set list of users in tower. |
 | `s_user_left`            | `{user_name: Str}`                                                       | Server relayed user leaving.       |
 | `s_size_change`          | `{size: Int}`                                                            | Server sent tower size.            |
-| `s_audio_change`         | `{new_audio: (Tower| Hand)}`                                             | Server sent audio state.           |
+| `s_audio_change`         | `{new_audio: ("Tower"\|"Hand")}`                                         | Server sent audio state.           |
 | `s_host_mode`            | `{tower_id: Int, new_mode: Bool}`                                        | Server sent host mode.             |
 | `s_user_entered`         | `{user_name: Str}`                                                       | Server relayed user entering.      |
 | `s_assign_user`          | `{bell: Int, user: Str}`                                                 | Server sent bell assignment.       |
