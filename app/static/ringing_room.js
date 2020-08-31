@@ -1208,7 +1208,7 @@ $(document).ready(function() {
 
 
                     // Do a special thing to prevent space and the arrow keys from hitting focused elements
-                    if (e.which == 32 || e.which == 37 || e.which == 39) {
+                    if (e.which == 32 || e.which == 37 || e.which == 38 || e.which == 39 || e.which == 40) {
                         e.preventDefault();
                     }
 
@@ -1308,6 +1308,7 @@ $(document).ready(function() {
             number_of_bells: function(new_count) {
                 console.log('changing number of bells to ' + new_count)
                 const new_bells = [];
+                //const new_users = [];
                 for (var i = 1; i <= new_count; i++) {
                     console.log('pushing bell: ' + i);
                     new_bells.push({
@@ -1317,6 +1318,7 @@ $(document).ready(function() {
                     console.log(new_bells);
                 }
                 console.log(new_bells);
+
                 this.bells = new_bells;
                 this.rang_bell_recently = new Array(new_count).fill(false);
                 // Request the global state from the server
@@ -1451,7 +1453,7 @@ $(document).ready(function() {
                     } else {
                         this.pull_rope(current_user_bells[0]);
                     }
-                } 
+                }
             },
 
             // emit a call
@@ -1566,6 +1568,22 @@ $(document).ready(function() {
                         ></i>
                         <h1 id="tower_name" class="d-inline d-lg-none text-wrap"> [[ tower_name ]] </h1>
                         <h1 id="tower_name" class="d-none d-lg-inline"> [[ tower_name ]] </h1>
+                        <span class="badge badge-dark"
+                            v-if="hidden_sidebar
+                               && unread_messages > 0
+                               && !window.tower_parameters.listen_link
+                               && !window.tower_parameters.anonymous_user"
+                            >
+                            New chat!
+                        </span>
+                        <span class="sr-only"
+                            v-if="hidden_sidebar
+                               && unread_messages > 0
+                               && !window.tower_parameters.listen_link
+                               && !window.tower_parameters.anonymous_user"
+                            >
+                            unread messages
+                        </span>
                     </div>
                 </div>
                 <div class="row">

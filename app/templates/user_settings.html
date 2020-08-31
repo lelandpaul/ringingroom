@@ -18,7 +18,7 @@
     <div class="col-3">
         <div class="btn-group btn-block btn-group-toggle align-bottom">
             <label class="btn btn-outline-primary" id="dark_false_label">
-            <input type="radio" 
+            <input type="radio"
                    name="dark_mode"
                    id="dark_false"
                    onclick="$('#darkSwitch').click(); window.toggle_dark_switch()"
@@ -27,7 +27,7 @@
             </label>
 
             <label class="btn btn-outline-primary" id="dark_true_label">
-            <input type="radio" 
+            <input type="radio"
                    name="dark_mode"
                    id="dark_true"
                    onclick="$('#darkSwitch').click(); window.toggle_dark_switch()"
@@ -47,7 +47,7 @@
         $('#dark_false_label').toggleClass('active');
     };
     $(document).ready(function(){
-        if ( localStorage.getItem('darkSwitch') !== null && 
+        if ( localStorage.getItem('darkSwitch') !== null &&
              localStorage.getItem('darkSwitch') === 'dark'){
             $('#dark_true_label').addClass('active');
         } else {
@@ -92,6 +92,7 @@
         <span style="color: red;">{{ error }}</span>
         {% endfor %}
     </small>
+
     <small class="form-text col-6 mt-n2">
         Current email: {{current_user.email}}<br>
         {% for error in form.new_email.errors %}

@@ -92,9 +92,8 @@ class User(UserMixin, db.Model):
             # cast to TowerDB
             tower = tower.to_TowerDB()
         # See if a relation already exists
-        rel = UserTowerRelation.query.filter(
-            UserTowerRelation.user == self,
-            UserTowerRelation.tower == tower).first()
+        rel = UserTowerRelation.query.filter(UserTowerRelation.user == self,
+                                             UserTowerRelation.tower == tower).first()
         if not rel:
             # Just creating this is enough to add it to the database with
             # relevant relations
@@ -124,6 +123,7 @@ class User(UserMixin, db.Model):
         rel = self._get_relation_to_tower(tower)
         rel.bookmark = not rel.bookmark
         db.session.commit()
+
 
     def recent_towers(self, n=0):
         # Allows you to limit to n items; returns all by default
@@ -204,11 +204,11 @@ def load_user_from_request(request):
 class TowerDB(db.Model):
     tower_id = db.Column(db.Integer, primary_key=True)
     tower_name = db.Column(db.String(32), index=True)
-    created_on = db.Column(db.Date, default=date.today)
+    created_on = db.Column(db.Date,default=date.today)
     last_access = db.Column(db.Date,
-                            nullable=False,
-                            default=date.today,
-                            onupdate=date.today)
+                              nullable=False,
+                              default=date.today,
+                              onupdate=date.today)
     users = db.relationship("UserTowerRelation", back_populates="tower")
     host_mode_enabled = db.Column(db.Boolean, default=False)
 
@@ -230,9 +230,8 @@ class TowerDB(db.Model):
 
     @property
     def creator(self):
-        rel = UserTowerRelation.query.filter(
-            UserTowerRelation.tower == self,
-            UserTowerRelation.creator is True).first()
+        rel = UserTowerRelation.query.filter(UserTowerRelation.tower==self,
+                                             UserTowerRelation.creator==True).first()
         return rel.user if rel else None
 
     # We need to be able to get this from the TowerDB object for the User Menu
@@ -377,10 +376,9 @@ class Tower:
         return tmp_tower_id
 
     def to_TowerDB(self):
-        # Check if it's already there — we need this for checking whether
-        # a tower is already in a users related towers
-        tower_db = TowerDB.query.filter(
-            TowerDB.tower_id == self.tower_id).first()
+        # Check if it's already there — we need this for checking whether a tower is already in a
+        # users related towers
+        tower_db = TowerDB.query.filter(TowerDB.tower_id==self.tower_id).first()
         return tower_db or TowerDB(tower_id=self.tower_id,
                                    tower_name=self.name,
                                    host_mode_enabled=self._host_mode_enabled)
@@ -416,10 +414,8 @@ class Tower:
                     # unassign the user from all bells
                     self._assignments[bell] = ''
             del self._users[int(user_id)]
-        except ValueError:
-            log('Value error when removing user from tower.')
-        except KeyError:
-            log("Tried to remove user that wasn't there")
+        except ValueError: log('Value error when removing user from tower.')
+        except KeyError: log("Tried to remove user that wasn't there")
 
     @property
     def user_names(self):
@@ -449,9 +445,17 @@ class Tower:
 
     @n_bells.setter
     def n_bells(self, new_size):
+        # don't de-assign everyone on re-size
+        if new_size < self._n: # new tower is smaller than old tower, remove old assignments
+            for k in range(new_size + 1, self._n + 1):
+                self._assignments.pop(k)
+        else: # add new keys for new assignments
+            for k in range(self._n + 1, new_size + 1):
+                self._assignments[k] = ''
+
         self._n = new_size
         self._bell_state = [True] * new_size
-        self._assignments = {i+1: '' for i in range(new_size)}
+
 
     @property
     def bell_state(self):
@@ -525,10 +529,9 @@ class TowerDict(dict):
     def garbage_collection(self, key=None):
         # prepare garbage collection
         # don't collect the key we're currently looking up though
-        keys_to_delete = [
-            k for k, (value, timestamp) in self.items()
-            if timestamp < datetime.now() - self._garbage_collection_interval
-            and k != key]
+        keys_to_delete = [k for k, (value, timestamp) in self.items()
+                          if timestamp < datetime.now() - self._garbage_collection_interval
+                          and k != key ]
         log('Garbage collection:', keys_to_delete)
 
         # run garbage collection
