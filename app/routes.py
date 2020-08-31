@@ -2,7 +2,7 @@ from flask import render_template, send_from_directory, abort, flash, redirect, 
 from flask_login import login_user, logout_user, current_user, login_required
 from app import app, towers
 from app.extensions import db, log
-from app.models import User, UserTowerRelation
+from app.models import User, UserTowerRelation, get_server_ip
 from flask_login import current_user, login_user, logout_user, login_required
 from app.forms import *
 
@@ -11,16 +11,6 @@ import string
 import random
 from app.email import send_password_reset_email
 import os
-
-# Helper function to get a server IP, with load balancing
-# If there is a list of IPs set in SOCKETIO_SERVER_ADDRESSES, this will automatically balance rooms
-# across those servers. Otherwise, it will just direct everything to the current server.
-def get_server_ip(tower_id):
-    servers = app.config['SOCKETIO_SERVER_ADDRESSES']
-    if not servers:
-        return request.url_root
-    else:
-        return 'https://' + servers[tower_id % 10 % len(servers)]
 
 # redirect for static files on subdomains
 

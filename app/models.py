@@ -1,3 +1,4 @@
+from flask import request
 from app.extensions import db, log
 from config import Config
 from random import shuffle, sample, randint
@@ -22,18 +23,13 @@ class User(UserMixin, db.Model):
     token_expiration = db.Column(db.DateTime)
 
 
-    def to_dict(self, include_email=False):
+    def to_dict(self):
         data = {
-            'id': self.id,
             'username': self.username,
+            'email': self.email,
             'joined': self.joined,
-            'towers': {r.tower_id: r.to_dict() for r in self.towers},
         }
-        if include_email:
-            data['email'] = self.email
-        print(data)
         return data
-
 
     def get_token(self, expires_in=86400):
         now = datetime.utcnow()
@@ -282,6 +278,7 @@ class UserTowerRelation(db.Model):
         data = {
             'user_id': self.user_id,
             'tower_id': self.tower_id,
+            'tower_name': self.tower.tower_name,
             'visited': self.visited,
         }
         data.update(self.relation_dict)
@@ -566,3 +563,14 @@ class TowerDict(dict):
         dict.__setitem__(self, key, (value, timestamp))
 
         return value
+
+# Helper function to get a server IP, with load balancing
+# If there is a list of IPs set in SOCKETIO_SERVER_ADDRESSES, this will automatically balance rooms
+# across those servers. Otherwise, it will just direct everything to the current server.
+def get_server_ip(tower_id):
+    servers = Config.SOCKETIO_SERVER_ADDRESSES
+    if not servers:
+        return request.url_root
+    else:
+        return 'https://' + servers[tower_id % 10 % len(servers)]
+
