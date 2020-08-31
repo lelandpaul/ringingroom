@@ -27,7 +27,6 @@ class User(UserMixin, db.Model):
         data = {
             'username': self.username,
             'email': self.email,
-            'joined': self.joined,
         }
         return data
 
@@ -225,14 +224,14 @@ class TowerDB(db.Model):
     @property
     def hosts(self):
         return [rel.user for rel in UserTowerRelation.query.filter(
-            UserTowerRelation.tower == self,
-            UserTowerRelation.host is True).all()]
+            UserTowerRelation.tower==self,
+            UserTowerRelation.host==True).all()]
 
     @property
     def host_ids(self):
         return [rel.user.id for rel in UserTowerRelation.query.filter(
             UserTowerRelation.tower == self,
-            UserTowerRelation.host is True).all()]
+            UserTowerRelation.host==True).all()]
 
 
 class UserTowerRelation(db.Model):
