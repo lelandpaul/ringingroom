@@ -66,8 +66,6 @@ def delete_user():
     return response
 
 
-
-
 # my_towers endpoints
 
 @bp.route('/my_towers', methods=['GET'])
@@ -76,7 +74,7 @@ def get_my_towers():
     data = {r.tower_id: r.to_dict() for r in current_user.towers}
     return jsonify(data)
 
-@bp.route('/my_towers/bookmarks/<int:tower_id>', methods=['PUT'])
+@bp.route('/my_towers/<int:tower_id>', methods=['PUT'])
 @token_auth.login_required
 def toggle_bookmark(tower_id):
     tower = TowerDB.query.get_or_404(tower_id)
@@ -86,7 +84,7 @@ def toggle_bookmark(tower_id):
     response.status_code = 200
     return response
 
-@bp.route('/my_towers/recent/<int:tower_id>', methods=['DELETE'])
+@bp.route('/my_towers/<int:tower_id>', methods=['DELETE'])
 def remove_recent_tower(tower_id):
     tower = TowerDB.query.get_or_404(tower_id)
     current_user.remove_recent_tower(tower)
