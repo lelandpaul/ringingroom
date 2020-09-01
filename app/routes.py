@@ -72,6 +72,7 @@ def tower(tower_id, decorator=None):
     # This is how the client will be automatically logged in w/o cross-domain cookies
     user_token = '' if current_user.is_anonymous\
                     else current_user.get_token()
+    db.session.commit()
 
     # Pass in both the tower and the user_name
     return render_template('ringing_room.html',
