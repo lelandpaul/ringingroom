@@ -25,6 +25,7 @@ def token_login(func):
         token = data.get('user_token')
         if token:
             user = User.check_token(token)
-            login_user(user)
+            if user:
+                login_user(user)
         func(data)
     return wrapper_listener
