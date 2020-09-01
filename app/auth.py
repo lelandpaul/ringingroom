@@ -1,6 +1,8 @@
-from app.models import User
+from app.models import User, towers
 from app.extensions import login
+from flask_socketio import emit
 from flask_login import login_user
+from flask import url_for
 
 @login.user_loader
 def load_user(id):
@@ -27,5 +29,9 @@ def token_login(func):
             user = User.check_token(token)
             if user:
                 login_user(user)
+            else:
+                tower = towers[data['tower_id']]
+                url = str(tower.tower_id) + '/' + tower.url_safe_name
+                emit('s_redirection', url_for('authenticate', next=url))
         func(data)
     return wrapper_listener

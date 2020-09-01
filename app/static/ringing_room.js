@@ -178,9 +178,17 @@ socketio.on('s_msg_sent', function(msg, cb) {
     });
 });
 
+
 // Host mode was changed
 socketio.on('s_host_mode', function(msg, cb) {
     bell_circle.$refs.controls.host_mode = msg.new_mode;
+});
+
+// The server redirected us
+// This can happen if the user arrived here with an invalid Bearer token
+// In which case they get redirected to log in
+socketio.on('s_redirection', function(destination) {
+    window.location.href = destination;
 });
 
 /////////
