@@ -1,4 +1,4 @@
-# virtual-ringing-room
+# ringingroom
 
 A space where socially-distanced ringers can practice together.
 
