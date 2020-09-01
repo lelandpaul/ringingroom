@@ -30,8 +30,11 @@ def token_login(func):
             if user:
                 login_user(user)
             else:
+                # The user showed up with an invalid token
+                # Assume that they're logged out and redirect them to the authentication page
                 tower = towers[data['tower_id']]
                 url = str(tower.tower_id) + '/' + tower.url_safe_name
                 emit('s_redirection', url_for('authenticate', next=url))
+                return # don't continue executing
         func(data)
     return wrapper_listener
