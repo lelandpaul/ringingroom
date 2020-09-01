@@ -89,7 +89,7 @@ All other endpoints (except `POST /api/user` for registering new users) require 
 
 `PUT /my_towers/<tower_id>`: Toggles the `bookmark` value for that tower. Responds as per `GET /api/my_towers` but with only the details for the requested tower.
 
-`DELETE /my_towers/tower_id>`: Removes the tower from the current user's recent towers. Responds as per `GET /api/my_towers` but with only the details for the requested tower.
+`DELETE /my_towers/<tower_id>`: Removes the tower from the current user's recent towers. Responds as per `GET /api/my_towers` but with only the details for the requested tower.
 
 
 ### Tower
