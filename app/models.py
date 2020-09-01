@@ -36,7 +36,7 @@ class User(UserMixin, db.Model):
             return self.token
         self.token = base64.b64encode(os.urandom(24)).decode('utf-8')
         self.token_expiration = now + timedelta(seconds=expires_in)
-        db.session.add(self)
+        db.session.commit()
         return self.token
 
     def revoke_token(self):
