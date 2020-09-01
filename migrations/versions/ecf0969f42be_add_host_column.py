@@ -7,7 +7,7 @@ Create Date: 2020-06-11 08:39:47.620975
 """
 from alembic import op
 import sqlalchemy as sa
-from app import db
+from app.extensions import db
 from app.models import UserTowerRelation
 
 
