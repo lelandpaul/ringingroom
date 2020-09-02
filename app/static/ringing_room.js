@@ -1104,7 +1104,7 @@ $(document).ready(function() {
                     >
                 [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
             </button>
-            <button class="btn btn-outline-primary w-100"
+            <button class="btn btn-outline-primary w-100 mt-2 mb-n1"
                     v-if="assignment_mode"
                     @click="unassign_all"
                     >
