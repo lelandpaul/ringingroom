@@ -1035,6 +1035,15 @@ $(document).ready(function() {
                 }
             },
 
+            unassign_all: function() {
+                if (window.tower_parameters.anonymous_user) {
+                    return
+                }; // don't do anything if not logged in
+                for (const bell of bell_circle.$refs.bells){
+                    bell.unassign();
+                }
+            },
+
             rotate_to_assignment: function() {
                 if (window.tower_parameters.anonymous_user) {
                     return
@@ -1102,6 +1111,12 @@ $(document).ready(function() {
                     @click="toggle_assignment"
                     >
                 [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
+            </button>
+            <button class="btn btn-outline-primary w-100 mt-2 mb-n1"
+                    v-if="assignment_mode"
+                    @click="unassign_all"
+                    >
+                Unassign all
             </button>
         </span>
     </div>
