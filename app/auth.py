@@ -31,6 +31,8 @@ def token_login(func):
                 login_user(user)
             else:
                 # The user showed up with an invalid token
+                # Send an error message in case the user isn't a browser
+                emit('s_bad_token', data)
                 # Assume that they're logged out and redirect them to the authentication page
                 tower = towers[data['tower_id']]
                 url = str(tower.tower_id) + '/' + tower.url_safe_name
