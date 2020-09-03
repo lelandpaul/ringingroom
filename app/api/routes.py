@@ -35,14 +35,17 @@ def create_user():
 @token_auth.login_required
 def modify_user():
     data = request.get_json() or {}
-    if (new_username := data.get('new_username')) and new_username != current_user.username:
+    new_username = data.get('new_username')
+    new_email = data.get('new_email')
+    new_password = data.get('new_password')
+    if new_username and new_username != current_user.username:
         current_user.username = new_username
-    if (new_email := data.get('new_email')) and new_email != current_user.email:
+    if new_email and new_email != current_user.email:
         conflicts = User.query.filter_by(email=new_email).all()
         if len(conflicts):
             return bad_request('There is already an account registered withat email address.')
         current_user.email = new_email
-    if (new_password := data.get('new_password')):
+    if new_password:
         current_user.set_password(new_password)
     db.session.commit()
     response = jsonify(current_user.to_dict())
@@ -111,9 +114,11 @@ def change_tower_settings(tower_id):
         return error_response(403)
     data = request.get_json() or {}
     tower = TowerDB.query.get_or_404(tower_id)
-    if (new_name := data.get('tower_name')) and new_name != tower.tower_name:
+    new_name = data.get('tower_name')
+    new_permit_host = data.get('permit_host_mode')
+    if new_name and new_name != tower.tower_name:
         tower.tower_name = new_name
-    if (new_permit_host := data.get('permit_host_mode')) and new_permit_host != tower.permit_host_mode:
+    if new_permit_host and new_permit_host != tower.permit_host_mode:
         tower.permit_host_mode = new_permit_host
     db.session.commit()
     response = jsonify(tower.to_dict())
