@@ -1034,10 +1034,25 @@ $(document).ready(function() {
                 this.assigned_bells = []
             },
 
+            select_user: function() {
+                console.log('select user triggered')
+                if (window.tower_parameters.anonymous_user) {
+                    return
+                }; // don't do anything if not logged in
+                if (this.$root.$refs.controls.lock_controls) {
+                    return
+                };
+                this.$root.$refs.users.selected_user = this.user_id;
+            },
+
+
         },
 
         template: `
 <li class="list-group-item list-group-item-action"
+    :class="{assignment_active: selected,
+             active: selected}"
+    @click="select_user"
     >
     [[ username ]]
 </li>
@@ -1128,22 +1143,11 @@ $(document).ready(function() {
                 this.$root.rotate(rotate_to);
             },
 
-            select_user: function(user) {
-                if (window.tower_parameters.anonymous_user) {
-                    return
-                }; // don't do anything if not logged in
-                if (this.$root.$refs.controls.lock_controls) {
-                    return
-                };
-                this.selected_user = user;
-            },
-
             add_user: function(user) {
+                console.log('adding user: ', user)
                 if (!this.users.includes(user)) {
                     this.users.push(user);
                 }
-                console.log('current users list: ', this.users);
-                console.log('cur_user is: ', this.cur_user);
             },
 
             remove_user: function(user) {
@@ -1213,7 +1217,6 @@ $(document).ready(function() {
                    :username="cur_user_name"
                    :selected="selected_user === cur_user && assignment_mode"
                    v-if="!window.tower_parameters.anonymous_user"
-                   @click="select_user(cur_user)"
                    class="cur_user"
                    ></user_data>
         <li v-if="$root.$refs.controls.lock_controls"
@@ -1225,7 +1228,6 @@ $(document).ready(function() {
               :user_id="u.user_id"
               :username="u.username"
               :selected="selected_user === u.user_id && assignment_mode"
-              @click="select_user(u)"
               ></user_data>
     </ul>
 </div>
