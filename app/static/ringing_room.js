@@ -242,6 +242,11 @@ $(document).ready(function() {
             cur_user: function() {
                 return this.$root.$refs.users.cur_user;
 
+
+            },
+
+            assigned_user_name: function() {
+                return this.$root.$refs.users.get_user_name(this.assigned_user);
             },
 
             left_side: function() {
@@ -391,8 +396,8 @@ $(document).ready(function() {
                             v-if="assignment_mode || assigned_user">
                         <span class="assigned_user">
                             [[ (assignment_mode) ?
-                                ((assigned_user) ? assigned_user : '(none)')
-                                : assigned_user ]]
+                                ((assigned_user) ? assigned_user_name : '(none)')
+                                : assigned_user_name ]]
                         </span>
                     </button>
                     <button class='btn btn-sm btn_number'
@@ -424,8 +429,8 @@ $(document).ready(function() {
                             >
                         <span class="assigned_user_name">
                             [[ (assignment_mode) ?
-                               ((assigned_user) ? assigned_user : '(none)')
-                               : assigned_user ]]
+                               ((assigned_user) ? assigned_user_name : '(none)')
+                               : assigned_user_name ]]
                         </span>
                     </button>
                     <button class="btn btn-sm btn_unassign"
@@ -1153,15 +1158,26 @@ $(document).ready(function() {
             remove_user: function(user) {
                 console.log('removing user: ', user);
 
-                var user_index
+                var user_index = -1
                 this.users.forEach((u,index) => {
                     if (u.user_id === user.user_id) {
                         user_index = index;
                         return;
                     }
                 });
-                this.users.splice(user_index,1);
+                if (user_index !== -1) {
+                    this.users.splice(user_index,1);
+                    }
+            },
 
+            get_user_name: function(user_id) {
+                var username
+                this.users.forEach((u,index) => {
+                    if (u.user_id === user_id){
+                        username = u.username;
+                    };
+                });
+                return username;
             },
         },
 
