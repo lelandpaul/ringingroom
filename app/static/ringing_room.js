@@ -26,7 +26,6 @@ var logger = function() {
 
     return pub;
 }();
-
 // logger.disableLogger()
 
 // Set up socketio instance
@@ -993,6 +992,45 @@ $(document).ready(function() {
     </div>
 </div>
 `
+    });
+
+    // user holds individual user data
+    Vue.component('user', {
+
+        props: ['user_id', 'username'],
+
+        data: function(){
+            return {
+                assigned_bells: [],
+            }
+        },
+
+        methods: {
+
+            assign_bell: function(bell) {
+                this.assigned_bells.push(bell);
+                this.$root.$refs.bells[bell].assigned_user = this.user_id;
+            },
+
+            unassign_bell: function(bell){
+                const bell_index = this.assigned_bells.indexOf(bell);
+                if (bell_index === -1) {
+                    console.log('Tried to unassign ' + self.username + ' from bell ' + bell);
+                    return
+                }
+                this.assigned_bells.splice(index, 1)
+                this.$root.$refs.bells[bell].assigned_user = null
+            },
+
+            unassign_all: function(bell){
+                this.assigned_bells.forEach((bell, index) => {
+                    this.$root.$refs.bells[bell].assigned_user = null
+                });
+                this.assigned_bells = []
+            },
+
+        },
+
     });
 
 
