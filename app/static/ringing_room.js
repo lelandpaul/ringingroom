@@ -1146,12 +1146,12 @@ $(document).ready(function() {
                 console.log('cur_user is: ', this.cur_user);
             },
 
-            remove_user: function(user_id) {
-                console.log('removing user: ' + user_id);
+            remove_user: function(user) {
+                console.log('removing user: ', user);
 
                 var user_index
                 this.users.forEach((u,index) => {
-                    if (u.user_id === user_id) {
+                    if (u.user_id === user.user_id) {
                         user_index = index;
                         return;
                     }
