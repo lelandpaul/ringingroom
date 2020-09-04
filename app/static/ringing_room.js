@@ -1113,7 +1113,7 @@ $(document).ready(function() {
                 [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
             </button>
             <button class="btn btn-outline-primary w-100 mt-2 mb-n1"
-                    v-if="assignment_mode"
+                    v-if="assignment_mode && !$root.$refs.controls.lock_controls"
                     @click="unassign_all"
                     >
                 Unassign all
