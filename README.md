@@ -134,12 +134,12 @@ What follows is a incomplete list of events — these should be only the events 
 | Event                    | Payload                                                                  | Description                                                                           |
 | ---                      | ---                                                                      | ---                                                                                   |
 | `c_join`                 | `{tower_id: Int, user_token: Str, anonymous_user: Bool}`                 | User joined a tower.                                                                  |
-| `s_user_entered`         | `{user_name: Str}`                                                       | Server relayed user entering.                                                         |
+| `s_user_entered`         | `{user_id: Int, username: Str}`                                          | Server relayed user entering.                                                         |
 | `c_user_left`            | `{user_name: Str, user_token: Str, anonymous_user: Bool, tower_id: Int}` | User left a tower.                                                                    |
-| `s_user_left`            | `{user_name: Str}`                                                       | Server relayed user leaving.                                                          |
+| `s_user_left`            | `{user_id: Int, username: Str}`                                          | Server relayed user leaving.                                                          |
 | `c_request_global_state` | `{tower_id: Int}`                                                        | Client requested tower state.                                                         |
 | `s_global_state`         | `{global_bell_state: [Bool]}`                                            | Server sent current tower state.                                                      |
-| `s_set_userlist`         | `{user_list: [Str]}`                                                     | Server set list of users in tower.                                                    |
+| `s_set_userlist`         | `{user_list: [{user_id: Int, username: Str}]}`                           | Server set list of users in tower.                                                    |
 | `c_bell_rung`            | `{bell: Int, stroke: Bool, tower_id: Int}`                               | User rang a bell.                                                                     |
 | `s_bell_rung`            | `{global_bell_state: [Bool], who_rang: Int, disagreement: Bool}`         | Server relayed bell ringing.                                                          |
 | `c_assign_user`          | `{bell: Int, user: Str, tower_id: Int}`                                  | User assigned someone to a bell.                                                      |
