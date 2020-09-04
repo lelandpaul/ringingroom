@@ -38,6 +38,7 @@ var cur_tower_id = parseInt(window.tower_parameters.id);
 
 // If they're not anonymous, get their username
 var cur_user_name = window.tower_parameters.cur_user_name;
+const cur_user_id = window.tower_parameters.cur_user_id;
 
 
 // Set up a handler for leaving, then register it *everywhere*
@@ -84,16 +85,16 @@ socketio.on('s_set_userlist', function(msg, cb) {
 // User entered the room
 socketio.on('s_user_entered', function(msg, cb) {
     console.log(msg.user_name + ' entered')
-    bell_circle.$refs.users.add_user(msg.user_name);
+    bell_circle.$refs.users.add_user(msg);
 });
 
 // User left the room
 socketio.on('s_user_left', function(msg, cb) {
     console.log(msg.user_name + ' left')
-    bell_circle.$refs.users.remove_user(msg.user_name);
+    bell_circle.$refs.users.remove_user(msg);
     bell_circle.$refs.bells.forEach((bell, index) => {
-        if (bell.assigned_user === msg.user_name) {
-            bell.assigned_user = '';
+        if (bell.assigned_user === msg.user_id) {
+            bell.assigned_user = null;
         }
     });
 });
@@ -112,14 +113,14 @@ socketio.on('s_assign_user', function(msg, cb) {
         // Sometimes it sets the state before the bell is created
         // As such: try it, but if it doesn't work wait a bit and try again.
         bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
-        if (msg.user === window.tower_parameters.cur_user_name) {
+        if (msg.user_id === window.tower_parameters.cur_user_id) {
             bell_circle.$refs.users.rotate_to_assignment();
         }
     } catch (err) {
         console.log('caught error assign_user; trying again');
         setTimeout(100, function() {
             bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
-            if (msg.user === window.tower_parameters.cur_user_name) {
+            if (msg.user_id === window.tower_parameters.cur_user_id) {
                 bell_circle.$refs.users.rotate_to_assignment();
             }
         });
@@ -277,7 +278,7 @@ $(document).ready(function() {
                 if (this.assignment_mode) {
                     return
                 }; // disable while assigning
-                if (this.$root.$refs.controls.host_mode && this.assigned_user !== cur_user_name) {
+                if (this.$root.$refs.controls.host_mode && this.assigned_user !== cur_user_id) {
                     // user is not allowed to ring this bell
                     bell_circle.$refs.display.display_message('You may only ring your assigned bells.');
                     return
@@ -995,9 +996,9 @@ $(document).ready(function() {
     });
 
     // user holds individual user data
-    Vue.component('user', {
+    Vue.component('user_data', {
 
-        props: ['user_id', 'username'],
+        props: ['user_id', 'username', 'selected'],
 
         data: function(){
             return {
@@ -1031,6 +1032,12 @@ $(document).ready(function() {
 
         },
 
+        template: `
+<li class="list-group-item list-group-item-action"
+    >
+    [[ username ]]
+</li>
+`,
     });
 
 
@@ -1039,10 +1046,10 @@ $(document).ready(function() {
         // data in components should be a function, to maintain scope
         data: function() {
             return {
-                user_names: [],
+                users: [], // list of {user_id: Int, user_name: Str}
                 assignment_mode: false,
-                selected_user: '',
-                cur_user: window.tower_parameters.cur_user_name,
+                selected_user: null, // user_id
+                cur_user: parseInt(window.tower_parameters.cur_user_id),
                 observers: parseInt(window.tower_parameters.observers),
             }
         },
@@ -1056,7 +1063,17 @@ $(document).ready(function() {
                     }
                 });
                 return bell_list;
-            }
+            },
+            
+            cur_user_name: function() {
+                var cur_username
+                this.users.forEach((user,index) => {
+                    if (user.user_id === this.cur_user){
+                        cur_username = user.username;
+                    }
+                });
+                return cur_username
+            },
         },
 
         methods: {
@@ -1118,16 +1135,18 @@ $(document).ready(function() {
             },
 
             add_user: function(user) {
-                if (!this.user_names.includes(user)) {
-                    this.user_names.push(user);
+                if (!this.users.includes(user)) {
+                    this.users.push(user);
                 }
+                console.log('current users list: ', this.users);
+                console.log('cur_user is: ', this.cur_user);
             },
 
             remove_user: function(user) {
                 console.log('removing user: ' + user);
-                const index = this.user_names.indexOf(user);
+                const index = this.users.indexOf(user);
                 if (index > -1) {
-                    this.user_names.splice(index, 1);
+                    this.users.splice(index, 1);
                 }
             },
         },
@@ -1180,29 +1199,24 @@ $(document).ready(function() {
                    :href="'/authenticate?next=' + window.location.pathname">Log In</a>
             </span>
         </li>
-        <li class="list-group-item list-group-item-action cur_user d-inline-flex align-items-center"
-                   :class="{assignment_active: assignment_mode,
-                            active: cur_user == selected_user && assignment_mode}"
+        <user_data :user_id="cur_user"
+                   :username="cur_user_name"
+                   :selected="selected_user === cur_user && assignment_mode"
                    v-if="!window.tower_parameters.anonymous_user"
                    @click="select_user(cur_user)"
-                   >
-            <span class="user_list_cur_user_name mr-auto">[[ cur_user ]]</span>
-        </li>
+                   class="cur_user"
+                   ></user_data>
         <li v-if="$root.$refs.controls.lock_controls"
             class="list-group-item">
             <small class="text-muted">In host mode, you may catch hold, but not assign others.</small>
         </li>
-        <li v-for="user in user_names"
-            class="list-group-item list-group-item-action"
-            v-if="user != cur_user"
-            :class="{cur_user: user == cur_user,
-                     disabled: !assignment_mode || $root.$refs.controls.lock_controls,
-                     assignment_active: assignment_mode,
-                     active: user == selected_user && assignment_mode}"
-                     @click="select_user(user)"
-            >
-            [[ user ]]
-        </li>
+        <user_data v-for="u in users"
+              v-if="u.user_id != cur_user"
+              :user_id="u.user_id"
+              :username="u.username"
+              :selected="selected_user === u.user_id && assignment_mode"
+              @click="select_user(u)"
+              ></user_data>
     </ul>
 </div>
 `,
@@ -1445,7 +1459,7 @@ $(document).ready(function() {
                 for (var i = 0; i < this.$refs.bells.length; i++) {
                     const bell = this.$refs.bells[i];
 
-                    if (bell.assigned_user === window.tower_parameters.cur_user_name) {
+                    if (bell.assigned_user === window.tower_parameters.cur_user_id) {
                         current_user_bells.push(bell.number);
                     }
                 }
