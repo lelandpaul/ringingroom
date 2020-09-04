@@ -1040,7 +1040,6 @@ $(document).ready(function() {
             },
 
             select_user: function() {
-                console.log('select user triggered')
                 if (window.tower_parameters.anonymous_user) {
                     return
                 }; // don't do anything if not logged in
