@@ -80,6 +80,10 @@ socketio.on('s_bell_rung', function(msg, cb) {
 socketio.on('s_set_userlist', function(msg, cb) {
     console.log('s_set_userlist: ' + msg.user_list);
     bell_circle.$refs.users.user_names = msg.user_list;
+    msg.user_list.forEach((user,index) => {
+        bell_circle.$refs.users.add_user({user_id: parseInt(user.user_id),
+                                          username: user.username});
+    });
 });
 
 // User entered the room
@@ -1142,12 +1146,18 @@ $(document).ready(function() {
                 console.log('cur_user is: ', this.cur_user);
             },
 
-            remove_user: function(user) {
-                console.log('removing user: ' + user);
-                const index = this.users.indexOf(user);
-                if (index > -1) {
-                    this.users.splice(index, 1);
-                }
+            remove_user: function(user_id) {
+                console.log('removing user: ' + user_id);
+
+                var user_index
+                this.users.forEach((u,index) => {
+                    if (u.user_id === user_id) {
+                        user_index = index;
+                        return;
+                    }
+                });
+                this.users.splice(user_index,1);
+
             },
         },
 
