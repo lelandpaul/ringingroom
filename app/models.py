@@ -417,6 +417,11 @@ class Tower:
     def user_names(self):
         return list(self._users.values())
 
+    @property 
+    def user_json(self):
+        # Returns an object appropriate for sending with s_set_userlist
+        return [{'user_id': id, 'username': username} for id, username in self._users.items()]
+
     @property
     def host_mode(self):
         return self._host_mode

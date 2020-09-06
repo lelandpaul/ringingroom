@@ -26,7 +26,6 @@ var logger = function() {
 
     return pub;
 }();
-
 // logger.disableLogger()
 
 // Set up socketio instance
@@ -39,6 +38,7 @@ var cur_tower_id = parseInt(window.tower_parameters.id);
 
 // If they're not anonymous, get their username
 var cur_user_name = window.tower_parameters.cur_user_name;
+const cur_user_id = window.tower_parameters.cur_user_id;
 
 
 // Set up a handler for leaving, then register it *everywhere*
@@ -80,21 +80,25 @@ socketio.on('s_bell_rung', function(msg, cb) {
 socketio.on('s_set_userlist', function(msg, cb) {
     console.log('s_set_userlist: ' + msg.user_list);
     bell_circle.$refs.users.user_names = msg.user_list;
+    msg.user_list.forEach((user,index) => {
+        bell_circle.$refs.users.add_user({user_id: parseInt(user.user_id),
+                                          username: user.username});
+    });
 });
 
 // User entered the room
 socketio.on('s_user_entered', function(msg, cb) {
     console.log(msg.user_name + ' entered')
-    bell_circle.$refs.users.add_user(msg.user_name);
+    bell_circle.$refs.users.add_user(msg);
 });
 
 // User left the room
 socketio.on('s_user_left', function(msg, cb) {
     console.log(msg.user_name + ' left')
-    bell_circle.$refs.users.remove_user(msg.user_name);
+    bell_circle.$refs.users.remove_user(msg);
     bell_circle.$refs.bells.forEach((bell, index) => {
-        if (bell.assigned_user === msg.user_name) {
-            bell.assigned_user = '';
+        if (bell.assigned_user === msg.user_id) {
+            bell.assigned_user = null;
         }
     });
 });
@@ -113,14 +117,14 @@ socketio.on('s_assign_user', function(msg, cb) {
         // Sometimes it sets the state before the bell is created
         // As such: try it, but if it doesn't work wait a bit and try again.
         bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
-        if (msg.user === window.tower_parameters.cur_user_name) {
+        if (msg.user_id === window.tower_parameters.cur_user_id) {
             bell_circle.$refs.users.rotate_to_assignment();
         }
     } catch (err) {
         console.log('caught error assign_user; trying again');
         setTimeout(100, function() {
             bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
-            if (msg.user === window.tower_parameters.cur_user_name) {
+            if (msg.user_id === window.tower_parameters.cur_user_id) {
                 bell_circle.$refs.users.rotate_to_assignment();
             }
         });
@@ -238,6 +242,11 @@ $(document).ready(function() {
             cur_user: function() {
                 return this.$root.$refs.users.cur_user;
 
+
+            },
+
+            assigned_user_name: function() {
+                return this.$root.$refs.users.get_user_name(this.assigned_user);
             },
 
             left_side: function() {
@@ -278,7 +287,7 @@ $(document).ready(function() {
                 if (this.assignment_mode) {
                     return
                 }; // disable while assigning
-                if (this.$root.$refs.controls.host_mode && this.assigned_user !== cur_user_name) {
+                if (this.$root.$refs.controls.host_mode && this.assigned_user !== cur_user_id) {
                     // user is not allowed to ring this bell
                     bell_circle.$refs.display.display_message('You may only ring your assigned bells.');
                     return
@@ -387,8 +396,8 @@ $(document).ready(function() {
                             v-if="assignment_mode || assigned_user">
                         <span class="assigned_user">
                             [[ (assignment_mode) ?
-                                ((assigned_user) ? assigned_user : '(none)')
-                                : assigned_user ]]
+                                ((assigned_user) ? assigned_user_name : '(none)')
+                                : assigned_user_name ]]
                         </span>
                     </button>
                     <button class='btn btn-sm btn_number'
@@ -420,8 +429,8 @@ $(document).ready(function() {
                             >
                         <span class="assigned_user_name">
                             [[ (assignment_mode) ?
-                               ((assigned_user) ? assigned_user : '(none)')
-                               : assigned_user ]]
+                               ((assigned_user) ? assigned_user_name : '(none)')
+                               : assigned_user_name ]]
                         </span>
                     </button>
                     <button class="btn btn-sm btn_unassign"
@@ -995,16 +1004,75 @@ $(document).ready(function() {
 `
     });
 
+    // user holds individual user data
+    Vue.component('user_data', {
+
+        props: ['user_id', 'username', 'selected'],
+
+        data: function(){
+            return {
+                assigned_bells: [],
+            }
+        },
+
+        methods: {
+
+            assign_bell: function(bell) {
+                this.assigned_bells.push(bell);
+                this.$root.$refs.bells[bell].assigned_user = this.user_id;
+            },
+
+            unassign_bell: function(bell){
+                const bell_index = this.assigned_bells.indexOf(bell);
+                if (bell_index === -1) {
+                    console.log('Tried to unassign ' + self.username + ' from bell ' + bell);
+                    return
+                }
+                this.assigned_bells.splice(index, 1)
+                this.$root.$refs.bells[bell].assigned_user = null
+            },
+
+            unassign_all: function(bell){
+                this.assigned_bells.forEach((bell, index) => {
+                    this.$root.$refs.bells[bell].assigned_user = null
+                });
+                this.assigned_bells = []
+            },
+
+            select_user: function() {
+                if (window.tower_parameters.anonymous_user) {
+                    return
+                }; // don't do anything if not logged in
+                if (this.$root.$refs.controls.lock_controls) {
+                    return
+                };
+                this.$root.$refs.users.selected_user = this.user_id;
+            },
+
+
+        },
+
+        template: `
+<li class="list-group-item list-group-item-action"
+    :class="{assignment_active: selected,
+             active: selected}"
+    @click="select_user"
+    >
+    [[ username ]]
+</li>
+`,
+    });
+
 
     // user_display holds functionality required for users
     Vue.component('user_display', {
         // data in components should be a function, to maintain scope
         data: function() {
             return {
-                user_names: [],
+                users: [], // list of {user_id: Int, user_name: Str}
                 assignment_mode: false,
-                selected_user: '',
-                cur_user: window.tower_parameters.cur_user_name,
+                selected_user: null, // user_id
+                cur_user: parseInt(window.tower_parameters.cur_user_id),
                 observers: parseInt(window.tower_parameters.observers),
             }
         },
@@ -1018,7 +1086,17 @@ $(document).ready(function() {
                     }
                 });
                 return bell_list;
-            }
+            },
+            
+            cur_user_name: function() {
+                var cur_username
+                this.users.forEach((user,index) => {
+                    if (user.user_id === this.cur_user){
+                        cur_username = user.username;
+                    }
+                });
+                return cur_username
+            },
         },
 
         methods: {
@@ -1069,28 +1147,36 @@ $(document).ready(function() {
                 this.$root.rotate(rotate_to);
             },
 
-            select_user: function(user) {
-                if (window.tower_parameters.anonymous_user) {
-                    return
-                }; // don't do anything if not logged in
-                if (this.$root.$refs.controls.lock_controls) {
-                    return
-                };
-                this.selected_user = user;
-            },
-
             add_user: function(user) {
-                if (!this.user_names.includes(user)) {
-                    this.user_names.push(user);
+                console.log('adding user: ', user)
+                if (!this.users.includes(user)) {
+                    this.users.push(user);
                 }
             },
 
             remove_user: function(user) {
-                console.log('removing user: ' + user);
-                const index = this.user_names.indexOf(user);
-                if (index > -1) {
-                    this.user_names.splice(index, 1);
-                }
+                console.log('removing user: ', user);
+
+                var user_index = -1
+                this.users.forEach((u,index) => {
+                    if (u.user_id === user.user_id) {
+                        user_index = index;
+                        return;
+                    }
+                });
+                if (user_index !== -1) {
+                    this.users.splice(user_index,1);
+                    }
+            },
+
+            get_user_name: function(user_id) {
+                var username
+                this.users.forEach((u,index) => {
+                    if (u.user_id === user_id){
+                        username = u.username;
+                    };
+                });
+                return username;
             },
         },
 
@@ -1142,29 +1228,22 @@ $(document).ready(function() {
                    :href="'/authenticate?next=' + window.location.pathname">Log In</a>
             </span>
         </li>
-        <li class="list-group-item list-group-item-action cur_user d-inline-flex align-items-center"
-                   :class="{assignment_active: assignment_mode,
-                            active: cur_user == selected_user && assignment_mode}"
+        <user_data :user_id="cur_user"
+                   :username="cur_user_name"
+                   :selected="selected_user === cur_user && assignment_mode"
                    v-if="!window.tower_parameters.anonymous_user"
-                   @click="select_user(cur_user)"
-                   >
-            <span class="user_list_cur_user_name mr-auto">[[ cur_user ]]</span>
-        </li>
+                   class="cur_user"
+                   ></user_data>
         <li v-if="$root.$refs.controls.lock_controls"
             class="list-group-item">
             <small class="text-muted">In host mode, you may catch hold, but not assign others.</small>
         </li>
-        <li v-for="user in user_names"
-            class="list-group-item list-group-item-action"
-            v-if="user != cur_user"
-            :class="{cur_user: user == cur_user,
-                     disabled: !assignment_mode || $root.$refs.controls.lock_controls,
-                     assignment_active: assignment_mode,
-                     active: user == selected_user && assignment_mode}"
-                     @click="select_user(user)"
-            >
-            [[ user ]]
-        </li>
+        <user_data v-for="u in users"
+              v-if="u.user_id != cur_user"
+              :user_id="u.user_id"
+              :username="u.username"
+              :selected="selected_user === u.user_id && assignment_mode"
+              ></user_data>
     </ul>
 </div>
 `,
@@ -1407,7 +1486,7 @@ $(document).ready(function() {
                 for (var i = 0; i < this.$refs.bells.length; i++) {
                     const bell = this.$refs.bells[i];
 
-                    if (bell.assigned_user === window.tower_parameters.cur_user_name) {
+                    if (bell.assigned_user === window.tower_parameters.cur_user_id) {
                         current_user_bells.push(bell.number);
                     }
                 }
