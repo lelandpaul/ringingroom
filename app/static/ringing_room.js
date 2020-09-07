@@ -88,13 +88,13 @@ socketio.on('s_set_userlist', function(msg, cb) {
 
 // User entered the room
 socketio.on('s_user_entered', function(msg, cb) {
-    console.log(msg.user_name + ' entered')
+    console.log(msg.username + ' entered')
     bell_circle.$refs.users.add_user(msg);
 });
 
 // User left the room
 socketio.on('s_user_left', function(msg, cb) {
-    console.log(msg.user_name + ' left')
+    console.log(msg.username + ' left')
     bell_circle.$refs.users.remove_user(msg);
     bell_circle.$refs.bells.forEach((bell, index) => {
         if (bell.assigned_user === msg.user_id) {
