@@ -1039,6 +1039,12 @@ $(document).ready(function() {
                 if (window.tower_parameters.anonymous_user) {
                     return
                 }; // don't do anything if not logged in
+                if (this.$root.$refs.controls.lock_controls) {
+                    return
+                };
+                if (window.tower_parameters.anonymous_user) {
+                    return
+                }; // don't do anything if not logged in
                 for (const bell of bell_circle.$refs.bells){
                     bell.unassign();
                 }
