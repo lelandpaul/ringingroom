@@ -93,7 +93,7 @@ def on_join(json):
         if current_user.username in tower.users.keys():
             log('SETUP User already present')
             tower.remove_user(current_user.id)
-            emit('s_user_left', {'user_id': current_user.id},
+            emit('s_user_left', {'user_id': current_user.id,
                                  'username': current_user.username},
                                 broadcast = True,
                                 include_self = True,
