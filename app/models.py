@@ -475,6 +475,10 @@ class Tower:
         return(list(self._assignments.values()))
 
     def assign_bell(self, bell, user):
+        # Tell Wheatley if he's been assigned a bell
+        if user == app.wheatley.USER_ID:
+            self.wheatley.on_assigned_bell()
+
         self.assignments[bell] = user
 
     @property

@@ -3,6 +3,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from app import app
 from app.extensions import db, log
 from app.models import User, UserTowerRelation, get_server_ip, towers
+from app.listeners import socketio
 from flask_login import current_user, login_user, logout_user, login_required
 from app.forms import *
 
@@ -11,6 +12,7 @@ import string
 import random
 from app.email import send_password_reset_email
 import os
+
 
 # redirect for static files on subdomains
 
@@ -204,7 +206,21 @@ def tower_settings(tower_id):
         # If the enabledness of Wheatley has changed either way, broadcast that to the users of
         # that tower
         if tower.wheatley.enabled != wheatley_enabled:
+            socketio.emit('s_set_wheatley_enabledness', {'enabled': wheatley_enabled},
+                          broadcast=True, room=tower.tower_id)
             tower.wheatley.set_enabledness(wheatley_enabled)
+            if wheatley_enabled:
+                # If Wheatley is being *enabled*, then update the setting in the tower and tell the
+                # clients that Wheatley has arrived
+                socketio.emit('s_user_entered', {'user_name': "Wheatley"},
+                               broadcast=True, include_self=True, room=tower.tower_id)
+                socketio.emit('s_wheatley_setting', tower.wheatley.settings)
+                socketio.emit('s_wheatley_row_gen', tower.wheatley.row_gen)
+            else:
+                # If Wheatley is being *disabled*, then update the setting in the tower and tell the
+                # clients that Wheatley has left
+                socketio.emit('s_user_left', {'user_name': "Wheatley"},
+                               broadcast=True, include_self=True, room=tower.tower_id)
 
         if form.tower_name.data:
             tower.name = form.tower_name.data
