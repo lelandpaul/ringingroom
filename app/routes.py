@@ -196,6 +196,16 @@ def tower_settings(tower_id):
     if form.validate_on_submit():
         # Set host-mode
         tower.host_mode_enabled = form.host_mode_enabled.data
+
+        # ===== DEAL WITH WHEATLEY POTENTIALLY BEING ENABLED OR DISABLED =====
+        wheatley_enabled = form.wheatley_enabled.data
+        # Add this setting to the database's representation of the tower
+        tower_db.wheatley_enabled = wheatley_enabled
+        # If the enabledness of Wheatley has changed either way, broadcast that to the users of
+        # that tower
+        if tower.wheatley.enabled != wheatley_enabled:
+            tower.wheatley.set_enabledness(wheatley_enabled)
+
         if form.tower_name.data:
             tower.name = form.tower_name.data
             tower_db.tower_name = form.tower_name.data
@@ -227,6 +237,7 @@ def tower_settings(tower_id):
         flash('Tower ' + str(tower_id) + ' deleted.')
         return redirect(url_for('my_towers'))
     form.host_mode_enabled.data = tower.host_mode_enabled
+    form.wheatley_enabled.data = tower.wheatley.enabled
     return render_template('tower_settings.html',
                            form=form,
                            delete_form=delete_form,

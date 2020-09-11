@@ -104,7 +104,46 @@
 
 </div>
 
-<hr>
+
+<hr />
+
+{{ form.wheatley_enabled(class="d-none",id="wheatley_toggle") }}
+
+<h3>Wheatley</h3>
+<div class="form-row mt-4">
+    <div class="col-12 col-md-6 pr-2">
+        <div class="form-row my-2">
+            <div class="col-6 pt-1">
+                <h4>Enable Wheatley:</h4>
+            </div>
+            <div class="col-6">
+                <div class="btn-group btn-block btn-group-toggle align-bottom">
+                    <label class="btn btn-outline-primary {{ 'active' if not form.wheatley_enabled.data }}">
+                    <input type="radio" 
+                           name="wheatley"
+                           id="wheatley_false"
+                           onclick="$('#wheatley_toggle').prop('checked',false); 
+                                    $('#submit_name_change').click()"
+                           />
+                        No
+                    </label>
+
+                    <label class="btn btn-outline-primary {{ 'active' if form.wheatley_enabled.data }}">
+                    <input type="radio" 
+                           name="wheatley"
+                           id="wheatley_true"
+                           onclick="$('#wheatley_toggle').prop('checked',true); 
+                                    $('#submit_name_change').click()"
+                           />
+                        Yes
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
 {{ form.host_mode_enabled(class="d-none",id="host_mode_toggle") }}
 
 
