@@ -201,12 +201,14 @@ def tower_settings(tower_id):
             tower_db.tower_name = form.tower_name.data
             form.tower_name.data = ''
             flash('Tower name changed.')
+
         if form.add_host.data:
             new_host = User.query.filter_by(email=form.add_host.data).first()
             if new_host.check_permissions(tower_id, permission='host'):
                 form.add_host.errors.append('User is already a host.')
             new_host.make_host(tower)
             form.add_host.data = ''
+
         if form.remove_host.data:
             host = User.query.filter_by(email=form.remove_host.data).first()
             if host == tower_db.creator:

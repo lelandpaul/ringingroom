@@ -45,8 +45,7 @@ def on_create_tower(data):
         new_tower.to_TowerDB().created_by(current_user)
         new_tower.add_host_id(current_user.id)
 
-    emit('s_redirection',
-         str(new_tower.tower_id) + '/' + new_tower.url_safe_name)
+    emit('s_redirection', str(new_tower.tower_id) + '/' + new_tower.url_safe_name)
 
 # Helper function to generate a random string for use as a uid
 def assign_user_id():
@@ -97,27 +96,25 @@ def on_join(json):
                                 broadcast = True,
                                 include_self = True,
                                 room = tower_id)
+
         # For now: Keeping the "id/username" split in the tower model
         # Eventually, this will allow us to have display names different
         # from the username
         tower.add_user(current_user.id, current_user.username)
 
         # Hack to fix a bug with the multiserver setup
-        emit('s_size_change',{'size': tower.n_bells})
-        emit('s_audio_change',{'new_audio':tower.audio})
-        emit('s_host_mode', {'tower_id': tower_id,
-                             'new_mode': tower.host_mode})
+        emit('s_size_change', {'size': tower.n_bells})
+        emit('s_audio_change', {'new_audio': tower.audio})
+        emit('s_host_mode', {'tower_id': tower_id, 'new_mode': tower.host_mode})
 
-        emit('s_user_entered', {'user_id': current_user.id,
-                                'username': current_user.username },
+        emit('s_user_entered', {'user_id': current_user.id, 'username': current_user.username },
              broadcast=True, include_self = True, room=json['tower_id'])
 
     # Check if there are any hosts in the room, and if not, make sure that
     # the tower is not in host mode.
     if not tower.host_present():
         tower.host_mode = False
-        emit('s_host_mode',{'tower_id': tower_id,
-                            'new_mode': False},
+        emit('s_host_mode', {'tower_id': tower_id, 'new_mode': False},
              broadcast=True, include_self=True, room=tower_id)
 
 
@@ -205,8 +202,7 @@ def on_assign_user(json):
     log('c_assign_user',json)
     tower = towers[json['tower_id']]
     tower.assign_bell(json['bell'], json['user'])
-    emit('s_assign_user', json,
-         broadcast=True, include_self=True, room=json['tower_id'])
+    emit('s_assign_user', json, broadcast=True, include_self=True, room=json['tower_id'])
 
 
 # A rope was pulled; ring the bell
@@ -234,12 +230,8 @@ def on_bell_rung(event_dict):
 # A call was made
 @socketio.on('c_call')
 def on_call(call_dict):
-    tower_id = call_dict['tower_id']
-    tower = towers[tower_id]
     log('c_call', call_dict)
-    tower_id = call_dict['tower_id']
-    emit('s_call', call_dict, broadcast=True,
-         include_self=True, room=tower_id)
+    emit('s_call', call_dict, broadcast=True, include_self=True, room=call_dict['tower_id'])
 
 
 # Tower size was changed
@@ -257,8 +249,10 @@ def on_size_change(size):
 @socketio.on('c_request_global_state')
 def on_request_global_state(json):
     log('c_request_global_state', json)
+
     tower_id = json['tower_id']
     tower = towers[tower_id]
+
     state = tower.bell_state
     emit('s_global_state', {'global_bell_state': state})
 
@@ -299,6 +293,7 @@ def on_host_mode(json):
 @socketio.on('c_msg_sent')
 def on_msg(json):
     emit('s_msg_sent', json, broadcast=True, include_self=True, room=json['tower_id'])
+    
 
 # We got a report of inappropriate behavior
 @socketio.on('c_report')

@@ -1382,7 +1382,6 @@ $(document).ready(function() {
                         }
                     }
 
-                    const n_b = bell_circle.number_of_bells;
                     // Space, j, and ArrowRight ring the bell in position n/2
                     if ([' ', 'j', 'J', 'ArrowRight'].includes(key)) {
                         bell_circle.pull_rope_by_hand(RIGHT_HAND);
@@ -1629,7 +1628,6 @@ $(document).ready(function() {
 
                 // how many positions to rotate?
                 var offset = this.number_of_bells - newposs;
-                var oldposs = 0;
                 var n_b = this.number_of_bells
 
                 for (var bell in this.bells) {

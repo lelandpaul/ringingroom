@@ -61,8 +61,8 @@ class User(UserMixin, db.Model):
     def _clean_recent_towers(self, cutoff=10):
         # delete all but the cuttoff most recent towers
         old_rels = sorted([tower for tower in self.towers if tower.recent],
-                          key=lambda x: x.visited,
-                          reverse=True)[cutoff:]
+                           key=lambda x: x.visited,
+                           reverse=True)[cutoff:]
         for rel in old_rels:
             db.session.delete(rel)
 
@@ -192,10 +192,10 @@ class TowerDB(db.Model):
     tower_id = db.Column(db.Integer, primary_key=True)
     tower_name = db.Column(db.String(32), index=True)
     created_on = db.Column(db.Date,default=date.today)
-    last_access = db.Column(db.Date,
-                              nullable=False,
-                              default=date.today,
-                              onupdate=date.today)
+    last_access = db.Column(db.Date, 
+                            nullable=False,
+                            default=date.today,
+                            onupdate=date.today)
     users = db.relationship("UserTowerRelation", back_populates="tower")
     host_mode_enabled = db.Column(db.Boolean, default=False)
 
@@ -324,7 +324,7 @@ class Tower:
         self._bell_state = [True] * n
         self._audio = True
         self._users = {}
-        self._assignments = {i+1: UNASSIGNED_BELL for i in range(n)}
+        self._assignments = {i + 1: '' for i in range(n)}
         self._observers = set()
         self._host_mode = False
         self._host_mode_enabled = host_mode_enabled
