@@ -968,6 +968,11 @@ $(document).ready(function() {
                     $.getJSON(
                         'https://rsw.me.uk/blueline/methods/search.json?q=' + partial_method_name,
                         function (data) {
+                            // Early return if the queries get reordered in the ether and the user
+                            // has changed the input box since this was sent
+                            if (_this.method_name !== data.query.q) {
+                                return;
+                            }
                             // For the time being, filter only the methods that are allowed on this
                             // stage.  Once Bob Wallis implements this in `rsw.me/methods/blueline`
                             // we'll use that to make sure we get plenty of results.
