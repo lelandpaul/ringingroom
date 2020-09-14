@@ -15,7 +15,7 @@ import requests
 from app.extensions import log
 
 
-USER_ID = 0
+USER_ID = -1
 USER_NAME = "Wheatley"
 
 
