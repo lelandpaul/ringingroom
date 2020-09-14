@@ -1167,12 +1167,7 @@ $(document).ready(function() {
             </div>
 
             <div id="wheatley_row_gen_box_inner"
-                 style="padding: 5px; 
-                        border: 1px solid white;
-                        border-top: none;
-                        border-bottom-right-radius: 0.25rem;
-                        border-bottom-left-radius: 0.25rem;
-                        margin-bottom: 1.2rem;">
+                 style="margin-bottom: 1.2rem;">
                 <!-- Wheatley method tab -->
                 <div v-show="row_gen_panel == 'method'">
                     <div>
@@ -1186,22 +1181,11 @@ $(document).ready(function() {
                                    autocomplete="off"
                                    />
                         </form>
-                        <div style="position: absolute;
-                                    display: inline-block;
-                                    z-index: 1;
-                                    width: 100%;
-                                    background-color: #666;
-                                    border-radius: 0.25rem;
-                                    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);">
+                        <div id="wheatley_method_suggestion_box">
                             <a v-for="(suggestion, index) in autocomplete_options"
                                href="#"
                                @click.prevent="send_next_method(suggestion)"
-                               :style="{ 'border-top': index == 0 ? 'none' : '1px solid #999' }"
-                               style="display: block;
-                                      overflow-x: hidden;
-                                      font-size: 0.8em;
-                                      margin: 0.1em 0.3em 0 0.3em;
-                                      background-color: #666 !important;">
+                               style="background-color: transparent !important;">
                                 [[ index == selected_option ? '> ' : '' ]][[ suggestion.title ]]
                             </a>
                         </div>
@@ -1244,7 +1228,7 @@ $(document).ready(function() {
 
         <!-- WHEATLEY SETTINGS SECTION -->
 
-        <!-- Sensitivity -->
+        <!-- Sensitivity (currently not implemented in Wheatley) -->
         <!--
         <p style="margin-bottom: 0;">Sensitivity:</p>
         <input type="range"

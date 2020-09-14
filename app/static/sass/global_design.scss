@@ -160,6 +160,20 @@ $input-color: #454955;
     color: #eee !important;
 }
 
+/* Wheatley dark theming */
+
+[data-theme="dark"] #wheatley_row_gen_box_inner {
+    border-color: #48e0f1;
+}
+
+[data-theme="dark"] #wheatley_method_suggestion_box {
+    background-color: #555;
+
+    a:not(:first-child) {
+        border-color: #bbb;
+    }
+}
+
 /* Import bootstrap */
 @import "../bootstrap/scss/bootstrap";
 

@@ -316,6 +316,36 @@ input[type=range]::slider-thumb {
     min-width: 20rem;
 }
 
+#wheatley_row_gen_box_inner {
+    padding: 5px; 
+    border: 1px solid;
+    border-top: none;
+    border-bottom-right-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+}
+
+#wheatley_method_suggestion_box {
+    position: absolute;
+    display: inline-block;
+    z-index: 1;
+    width: 100%;
+    background-color: #ddd;
+    border-radius: 0.25rem;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+
+    a {
+        display: block;
+        overflow-x: hidden;
+        font-size: 0.8em;
+        margin: 0.1em 0.3em 0 0.3em;
+    }
+
+    a:not(:first-child) {
+        border-top: 1px solid #888;
+        padding-top: 0.25em;
+    }
+}
+
 #user_display_header.collapsed::after,
 #wheatley_header.collapsed::after,
 #chat_header.collapsed::after{
