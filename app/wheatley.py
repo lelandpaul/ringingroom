@@ -83,7 +83,7 @@ class Wheatley:
         self._enabled = value
         # Add or remove 'Wheatley' to the tower's user list
         if self._enabled:
-            self._tower.add_user(USER_ID, "Wheatley")
+            self._tower.add_user(USER_ID, USER_NAME)
         else:
             self._tower.remove_user(USER_ID)
 
@@ -141,7 +141,7 @@ class Wheatley:
         self._make_active()
 
     def on_call(self, call_name):
-        if call_name == "Look to" and USER_NAME in self._tower.assignments.values():
+        if call_name == "Look to" and USER_ID in self._tower.assignments.values():
             self._make_active(True)
 
     def on_size_change(self):
