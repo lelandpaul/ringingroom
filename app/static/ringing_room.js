@@ -1035,6 +1035,14 @@ $(document).ready(function() {
                 });
                 return bell_list
 
+            },
+
+            assigned_bell_string: function(){
+                var output = ''
+                this.bells_assigned_to_user.forEach((bell, index) => {
+                    output += this.circled_digits[bell-1]
+                });
+                return output
             }
 
         },
@@ -1059,7 +1067,10 @@ $(document).ready(function() {
              active: selected}"
     @click="select_user"
     >
-    [[ username ]] [[bells_assigned_to_user]]
+    [[ username ]] 
+        <span class="float-right">
+              [[assigned_bell_string]]
+        </span>
 </li>
 `,
     });
