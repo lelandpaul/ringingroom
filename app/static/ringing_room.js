@@ -143,6 +143,7 @@ socketio.on('s_size_change', function(msg, cb) {
     bell_circle.number_of_bells = new_size;
     // The user may already be assigned to something, so rotate
     bell_circle.$refs.users.rotate_to_assignment();
+    bell_circle.$refs.wheatley.update_number_of_bells();
 });
 
 
