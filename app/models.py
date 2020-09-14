@@ -307,6 +307,11 @@ class UserTowerRelation(db.Model):
 # Keep track of towers
 
 
+# Constant to hold the value that Ringing Room uses to denote a bell not being assigned to any user.
+# `0` is therefore a reserved user ID and cannot be taken by any user, even Wheatley (who is user `-1`)
+UNASSIGNED_BELL = 0
+
+
 class Tower:
     def __init__(self, name, tower_id=None, n=8, host_mode_enabled=False):
         if not tower_id:
@@ -319,7 +324,7 @@ class Tower:
         self._bell_state = [True] * n
         self._audio = True
         self._users = {}
-        self._assignments = {i+1: '' for i in range(n)}
+        self._assignments = {i+1: UNASSIGNED_BELL for i in range(n)}
         self._observers = set()
         self._host_mode = False
         self._host_mode_enabled = host_mode_enabled
@@ -408,7 +413,7 @@ class Tower:
             for (bell, assignment) in self._assignments.items():
                 if assignment == user_name:
                     # unassign the user from all bells
-                    self._assignments[bell] = ''
+                    self._assignments[bell] = UNASSIGNED_BELL
             del self._users[int(user_id)]
         except ValueError: log('Value error when removing user from tower.')
         except KeyError: log("Tried to remove user that wasn't there")
@@ -452,7 +457,7 @@ class Tower:
                 self._assignments.pop(k)
         else: # add new keys for new assignments
             for k in range(self._n + 1, new_size + 1):
-                self._assignments[k] = ''
+                self._assignments[k] = UNASSIGNED_BELL
 
         self._n = new_size
         self._bell_state = [True] * new_size

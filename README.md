@@ -142,10 +142,10 @@ What follows is a incomplete list of events — these should be only the events 
 | `s_set_userlist`         | `{user_list: [{user_id: Int, username: Str}]}`                           | Server set list of users in tower.                                                    |
 | `c_bell_rung`            | `{bell: Int, stroke: Bool, tower_id: Int}`                               | User rang a bell.                                                                     |
 | `s_bell_rung`            | `{global_bell_state: [Bool], who_rang: Int, disagreement: Bool}`         | Server relayed bell ringing.                                                          |
-| `c_assign_user`          | `{bell: Int, user: Str, tower_id: Int}`                                  | User assigned someone to a bell.                                                      |
-| `s_assign_user`          | `{bell: Int, user: Str}`                                                 | Server sent bell assignment.                                                          |
-| `c_audio_change`         | `{new_audio: ("Tower"\| "Hand"), tower_id: Int}`                         | User changed audio type.                                                              |
-| `s_audio_change`         | `{new_audio: ("Tower"\| "Hand")}`                                        | Server sent audio state.                                                              |
+| `c_assign_user`          | `{bell: Int, user: Int, tower_id: Int}`                                  | User assigned someone to a bell.                                                      |
+| `s_assign_user`          | `{bell: Int, user: Int}`                                                 | Server sent bell assignment.                                                          |
+| `c_audio_change`         | `{new_audio: ("Tower" \| "Hand"), tower_id: Int}`                         | User changed audio type.                                                              |
+| `s_audio_change`         | `{new_audio: ("Tower" \| "Hand")}`                                        | Server sent audio state.                                                              |
 | `c_host_mode`            | `{new_mode: Bool, tower_id: Int}`                                        | User toggled host mode.                                                               |
 | `s_host_mode`            | `{tower_id: Int, new_mode: Bool}`                                        | Server sent host mode.                                                                |
 | `c_size_change`          | `{new_size: Int, tower_id: Int}`                                         | User changed tower size.                                                              |
