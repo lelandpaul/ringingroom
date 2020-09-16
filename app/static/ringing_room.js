@@ -965,21 +965,19 @@ $(document).ready(function() {
                 if (partial_method_name === "") {
                     this.autocomplete_options = [];
                 } else {
+                    const query_url = 'https://rsw.me.uk/blueline/methods/search.json?q=' + partial_method_name
+                            + '&stage=' + (bell_circle.number_of_bells - 1)
+                            + ',' + (bell_circle.number_of_bells);
                     $.getJSON(
-                        'https://rsw.me.uk/blueline/methods/search.json?q=' + partial_method_name,
+                        query_url,
                         function (data) {
                             // Early return if the queries get reordered in the ether and the user
                             // has changed the input box since this was sent
                             if (_this.method_name !== data.query.q) {
                                 return;
                             }
-                            // For the time being, filter only the methods that are allowed on this
-                            // stage.  Once Bob Wallis implements this in `rsw.me/methods/blueline`
-                            // we'll use that to make sure we get plenty of results.
-                            _this.autocomplete_options = data.results.filter(
-                                x => x.stage === bell_circle.number_of_bells
-                                  || x.stage === bell_circle.number_of_bells - 1
-                            ).slice(0, 5); // Only show the first 5 methods from this query
+                            // Only show the first 5 methods from this query
+                            _this.autocomplete_options = data.results.slice(0, 5);
                         }
                     );
                 }
