@@ -17,6 +17,11 @@ You are now ready to run the server:
  - In the project root, run `flask run`
  - This will give you a local address where you can access the app 
 
+### Environment Variables / Feature Flags
+
+- `$RR_ENABLE_WHEATLEY`: If set to `1` Wheatley will be enabled, otherwise Wheatley will be disabled.
+- `$RR_WHEATLEY_PATH`: Sets the path to the Wheatley executable.  If unset, will use the 'wheatley' command.
+
 
 
 ## API

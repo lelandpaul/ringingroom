@@ -29,6 +29,11 @@ def _get_stage_name(num_bells):
     }[num_bells]
 
 
+def feature_flag() -> bool:
+    """ Determines if the Wheatley feature flag is set. """
+    return os.environ.get('RR_ENABLE_WHEATLEY') == '1'
+
+
 # Class to store the interface with an instance of Wheatley
 class Wheatley:
     """

@@ -1,5 +1,6 @@
 from flask import render_template, send_from_directory, abort, flash, redirect, url_for, session, request
 from flask_login import login_user, logout_user, current_user, login_required
+import app.wheatley as wheatley
 from app import app
 from app.extensions import db, log
 from app.models import User, UserTowerRelation, get_server_ip, towers
@@ -257,7 +258,8 @@ def tower_settings(tower_id):
     return render_template('tower_settings.html',
                            form=form,
                            delete_form=delete_form,
-                           tower=tower_db)
+                           tower=tower_db,
+                           wheatley_flag=wheatley.feature_flag())
 
 
 

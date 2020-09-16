@@ -241,7 +241,8 @@ class TowerDB(db.Model):
             db.session.commit()
 
         return Tower(self.tower_name, tower_id=self.tower_id, host_mode_enabled=self.host_mode_enabled,
-                     wheatley_enabled=self.wheatley_enabled,
+                     # Force wheatley_enabled to be False if the Wheatley feature flag is not set
+                     wheatley_enabled=self.wheatley_enabled and app.wheatley.feature_flag(),
                      wheatley_db_settings=wheatley_settings)
 
     def created_by(self, user):

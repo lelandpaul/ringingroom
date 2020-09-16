@@ -107,6 +107,8 @@
 
 <hr />
 
+{% if wheatley_flag %}
+
 {{ form.wheatley_enabled(class="d-none",id="wheatley_toggle") }}
 
 <h3>Wheatley</h3>
@@ -144,6 +146,9 @@
 </div>
 
 <hr />
+
+{% endif %}
+
 {{ form.host_mode_enabled(class="d-none",id="host_mode_toggle") }}
 
 
