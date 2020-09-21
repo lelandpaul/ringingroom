@@ -1082,7 +1082,7 @@ $(document).ready(function() {
     @click="select_user"
     >
     [[ username ]] 
-        <span class="float-right pt-1" style="font-size: smaller;">
+        <span v-show="false" class="float-right pt-1" style="font-size: smaller;">
               [[assigned_bell_string]]
         </span>
 </li>
