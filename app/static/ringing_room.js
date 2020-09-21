@@ -1218,12 +1218,6 @@ $(document).ready(function() {
                     >
                 [[ assignment_mode ? 'Stop assigning' : 'Assign bells' ]]
             </button>
-            <button class="btn btn-outline-primary w-100 mt-2 mb-n1"
-                    v-if="assignment_mode && !$root.$refs.controls.lock_controls"
-                    @click="unassign_all"
-                    >
-                Unassign all
-            </button>
         </span>
     </div>
     <div class="card-header"
@@ -1247,6 +1241,12 @@ $(document).ready(function() {
                 <a class="btn btn-outline-primary btn-sm"
                    :href="'/authenticate?next=' + window.location.pathname">Log In</a>
             </span>
+        </li>
+        <li class="list-group-item btn btn-outline-primary"
+                v-if="assignment_mode && !$root.$refs.controls.lock_controls"
+                @click="unassign_all"
+                >
+            Unassign all
         </li>
         <user_data :user_id="cur_user"
                    :username="cur_user_name"
