@@ -65,8 +65,8 @@ app = create_app()
 
 file_handler = RotatingFileHandler('logs/ringingroom.log','a', 1 * 1024 * 1024, 10)
 file_handler.setFormatter(formatter)
-app.logger.setLevel(logging.ERROR)
-file_handler.setLevel(logging.ERROR)
+app.logger.setLevel(logging.INFO)
+file_handler.setLevel(logging.INFO)
 app.logger.addHandler(file_handler)
 app.logger.info('Ringing Room startup')
 

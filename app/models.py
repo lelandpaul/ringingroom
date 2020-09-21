@@ -409,9 +409,8 @@ class Tower:
 
     def remove_user(self, user_id):
         try:
-            user_name = self.users[int(user_id)]
             for (bell, assignment) in self._assignments.items():
-                if assignment == user_name:
+                if assignment == user_id:
                     # unassign the user from all bells
                     self._assignments[bell] = UNASSIGNED_BELL
             del self._users[int(user_id)]
