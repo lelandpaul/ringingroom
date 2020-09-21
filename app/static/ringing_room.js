@@ -141,6 +141,8 @@ socketio.on('s_call', function(msg, cb) {
 socketio.on('s_size_change', function(msg, cb) {
     var new_size = msg.size;
     bell_circle.number_of_bells = new_size;
+    // The user may already be assigned to something, so rotate
+    bell_circle.$refs.users.rotate_to_assignment();
 });
 
 
@@ -1028,11 +1030,24 @@ $(document).ready(function() {
 
             bells_assigned_to_user: function() {
                 var bell_list = []
-                this.$root.$refs.bells.forEach((bell, index) => {
-                    if (bell.assigned_user == this.user_id) {
-                        bell_list.push(index + 1);
-                    }
-                });
+                try {
+                    // Sometimes this fails because the bells haven't been created yet
+                    // In that case, wait and try again
+                    this.$root.$refs.bells.forEach((bell, index) => {
+                        if (bell.assigned_user == this.user_id) {
+                            bell_list.push(index + 1);
+                        }
+                    });
+                }
+                catch (err) {
+                    setTimeout(100, function(){
+                        this.$root.$refs.bells.forEach((bell, index) => {
+                            if (bell.assigned_user == this.user_id) {
+                                bell_list.push(index + 1);
+                            }
+                        });
+                    });
+                }
                 return bell_list
 
             },
