@@ -42,7 +42,7 @@ $(document).ready(function() {
 
         methods: {
             toggle_bookmark: function() {
-                socketio.emit('c_toggle_bookmark', this.tower.tower_id);
+                socketio.emit('c_toggle_bookmark', {'tower_id': this.tower.tower_id});
                 this.tower.bookmark = !this.tower.bookmark;
                 $('[data-toggle="tooltip"]').tooltip('hide');
             },
