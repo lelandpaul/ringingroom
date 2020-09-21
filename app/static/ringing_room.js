@@ -1049,7 +1049,6 @@ $(document).ready(function() {
                     });
                 }
                 return bell_list
-
             },
 
             assigned_bell_string: function(){
@@ -1263,10 +1262,11 @@ $(document).ready(function() {
                 >
             Unassign all
         </li>
-        <user_data :user_id="cur_user"
+        <user_data v-for="u in users"
+                   v-if="u.user_id === cur_user && !window.tower_parameters.anonymous_user"
+                   :user_id="cur_user"
                    :username="cur_user_name"
                    :selected="selected_user === cur_user && assignment_mode"
-                   v-if="!window.tower_parameters.anonymous_user"
                    class="cur_user"
                    ref="cur_user_data"
                    ></user_data>
