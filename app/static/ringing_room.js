@@ -1011,33 +1011,43 @@ $(document).ready(function() {
 
         data: function(){
             return {
-                assigned_bells: [],
+                circled_digits: ["①", "②", "③", "④", "⑤", "⑥",
+                    "⑦", "⑧", "⑨", "⑩", "⑪", "⑫"
+                ],
             }
         },
 
-        methods: {
+        watch: {
 
-            assign_bell: function(bell) {
-                this.assigned_bells.push(bell);
-                this.$root.$refs.bells[bell].assigned_user = this.user_id;
-            },
+            assigned_bells: function() {
+                console.log('User ' + this.user_id + ' assigned bells:', this.bells_assigned_to_user);
+            }
+        },
 
-            unassign_bell: function(bell){
-                const bell_index = this.assigned_bells.indexOf(bell);
-                if (bell_index === -1) {
-                    console.log('Tried to unassign ' + self.username + ' from bell ' + bell);
-                    return
-                }
-                this.assigned_bells.splice(index, 1)
-                this.$root.$refs.bells[bell].assigned_user = null
-            },
+        computed: {
 
-            unassign_all: function(bell){
-                this.assigned_bells.forEach((bell, index) => {
-                    this.$root.$refs.bells[bell].assigned_user = null
+            bells_assigned_to_user: function() {
+                var bell_list = []
+                this.$root.$refs.bells.forEach((bell, index) => {
+                    if (bell.assigned_user == this.user_id) {
+                        bell_list.push(index + 1);
+                    }
                 });
-                this.assigned_bells = []
+                return bell_list
+
             },
+
+            assigned_bell_string: function(){
+                var output = ''
+                this.bells_assigned_to_user.forEach((bell, index) => {
+                    output += this.circled_digits[bell-1]
+                });
+                return output
+            }
+
+        },
+
+        methods: {
 
             select_user: function() {
                 if (window.tower_parameters.anonymous_user) {
@@ -1049,7 +1059,6 @@ $(document).ready(function() {
                 this.$root.$refs.users.selected_user = this.user_id;
             },
 
-
         },
 
         template: `
@@ -1058,7 +1067,10 @@ $(document).ready(function() {
              active: selected}"
     @click="select_user"
     >
-    [[ username ]]
+    [[ username ]] 
+        <span class="float-right">
+              [[assigned_bell_string]]
+        </span>
 </li>
 `,
     });
@@ -1100,6 +1112,7 @@ $(document).ready(function() {
         },
 
         methods: {
+
             toggle_assignment: function() {
                 if (window.tower_parameters.anonymous_user) {
                     return
@@ -1112,6 +1125,7 @@ $(document).ready(function() {
                     this.rotate_to_assignment();
                 }
             },
+
 
             unassign_all: function() {
                 if (window.tower_parameters.anonymous_user) {
@@ -1239,6 +1253,7 @@ $(document).ready(function() {
                    :selected="selected_user === cur_user && assignment_mode"
                    v-if="!window.tower_parameters.anonymous_user"
                    class="cur_user"
+                   ref="cur_user_data"
                    ></user_data>
         <li v-if="$root.$refs.controls.lock_controls"
             class="list-group-item">
@@ -1249,6 +1264,8 @@ $(document).ready(function() {
               :user_id="u.user_id"
               :username="u.username"
               :selected="selected_user === u.user_id && assignment_mode"
+              ref="user_data"
+              :id="cur_user"
               ></user_data>
     </ul>
 </div>

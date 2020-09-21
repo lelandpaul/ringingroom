@@ -11,7 +11,6 @@ import string
 
 # SocketIO Handlers
 
-
 # The user entered a tower code on the landing page; check it
 @socketio.on('c_check_tower_id')
 def on_check_tower_id(json):
