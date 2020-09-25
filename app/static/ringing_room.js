@@ -1523,7 +1523,7 @@ $(document).ready(function() {
                 for (var i = 0; i < this.$refs.bells.length; i++) {
                     const bell = this.$refs.bells[i];
 
-                    if (bell.assigned_user === window.tower_parameters.cur_user_id) {
+                    if (bell.assigned_user == window.tower_parameters.cur_user_id) {
                         current_user_bells.push(bell.number);
                     }
                 }
