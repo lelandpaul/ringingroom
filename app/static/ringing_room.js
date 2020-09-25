@@ -117,14 +117,14 @@ socketio.on('s_assign_user', function(msg, cb) {
         // Sometimes it sets the state before the bell is created
         // As such: try it, but if it doesn't work wait a bit and try again.
         bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
-        if (msg.user_id === window.tower_parameters.cur_user_id) {
+        if (msg.user === window.tower_parameters.cur_user_id) {
             bell_circle.$refs.users.rotate_to_assignment();
         }
     } catch (err) {
         console.log('caught error assign_user; trying again');
         setTimeout(100, function() {
             bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
-            if (msg.user_id === window.tower_parameters.cur_user_id) {
+            if (msg.user === window.tower_parameters.cur_user_id) {
                 bell_circle.$refs.users.rotate_to_assignment();
             }
         });
@@ -354,7 +354,6 @@ $(document).ready(function() {
                     tower_id: cur_tower_id
                 });
             },
-
         },
 
         template: `
@@ -1524,7 +1523,7 @@ $(document).ready(function() {
                 for (var i = 0; i < this.$refs.bells.length; i++) {
                     const bell = this.$refs.bells[i];
 
-                    if (bell.assigned_user === window.tower_parameters.cur_user_id) {
+                    if (bell.assigned_user == window.tower_parameters.cur_user_id) {
                         current_user_bells.push(bell.number);
                     }
                 }
