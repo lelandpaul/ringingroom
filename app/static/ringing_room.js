@@ -38,7 +38,7 @@ var cur_tower_id = parseInt(window.tower_parameters.id);
 
 // If they're not anonymous, get their username
 var cur_user_name = window.tower_parameters.cur_user_name;
-const cur_user_id = window.tower_parameters.cur_user_id;
+const cur_user_id = parseInt(window.tower_parameters.cur_user_id);
 
 
 // Set up a handler for leaving, then register it *everywhere*
@@ -117,14 +117,14 @@ socketio.on('s_assign_user', function(msg, cb) {
         // Sometimes it sets the state before the bell is created
         // As such: try it, but if it doesn't work wait a bit and try again.
         bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
-        if (msg.user === window.tower_parameters.cur_user_id) {
+        if (msg.user === cur_user_id) {
             bell_circle.$refs.users.rotate_to_assignment();
         }
     } catch (err) {
         console.log('caught error assign_user; trying again');
         setTimeout(100, function() {
             bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
-            if (msg.user === window.tower_parameters.cur_user_id) {
+            if (msg.user === cur_user_id) {
                 bell_circle.$refs.users.rotate_to_assignment();
             }
         });
