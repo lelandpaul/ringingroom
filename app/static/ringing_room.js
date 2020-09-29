@@ -1118,7 +1118,8 @@ $(document).ready(function() {
             id="wheatley_header"
             data-toggle="collapse"
             data-target="#wheatley_body"
-            >
+            title="A computer ringer for Ringing Room, designed as a 'ninja helper with no ego'."
+        >
             Wheatley
         </h2>
     </div>
@@ -1133,7 +1134,9 @@ $(document).ready(function() {
         <div v-if="is_ringing">
             <button class="btn btn-outline-primary btn-block"
                     :class="{disabled: settings_panel_disabled}"
-                    @click="on_stop_touch">
+                    @click="on_stop_touch"
+                    title="Makes Wheatley stand his bells regardless of what the ringing is doing."
+            >
                 Stop Touch
             </button>
             
@@ -1255,7 +1258,9 @@ $(document).ready(function() {
                name="up_down_in"
                :disabled="settings_panel_disabled"
                />
-        <label for="up_down_in">Ring up-down-in</label>
+        <label for="up_down_in" title="If checked, Wheatley will go into changes after two rounds.">
+            Ring up-down-in
+        </label>
         <br/>
 
         <!-- Stop at Rounds -->
@@ -1266,7 +1271,12 @@ $(document).ready(function() {
                name="stop_at_rounds"
                :disabled="settings_panel_disabled"
                />
-        <label style="margin-bottom: 0;" for="stop_at_rounds">Stop at rounds</label>
+        <label style="margin-bottom: 0;"
+               for="stop_at_rounds"
+               title="If checked, Wheatley will stand his bells when rounds occurs when ringing method."
+        >
+            Stop at rounds
+        </label>
         
         <hr/>
 
@@ -1274,7 +1284,9 @@ $(document).ready(function() {
         <button class="btn btn-outline-primary btn-block"
                 style="margin-top: 1rem"
                 :class="{disabled: settings_panel_disabled}"
-                @click="reset_wheatley">
+                @click="reset_wheatley"
+                title="If Wheatley is playing up, pressing this will completely reset Wheatley."
+        >
             Reset Wheatley
         </button>
     </div>
