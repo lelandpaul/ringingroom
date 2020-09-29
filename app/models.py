@@ -329,9 +329,10 @@ class Tower:
         self._observers = set()
         self._host_mode = False
         self._host_mode_enabled = host_mode_enabled
-        self._towerdb = self.to_TowerDB()
-        self._host_ids = self._towerdb.host_ids
-        self._additional_sizes_enabled = self._towerdb.additional_sizes_enabled
+
+        towerdb = self.to_TowerDB()
+        self._host_ids = towerdb.host_ids
+        self._additional_sizes_enabled = towerdb.additional_sizes_enabled
 
     # generate a random caters change, for use as uid
     def generate_random_change(self):
@@ -524,6 +525,16 @@ class Tower:
     def host_mode_enabled(self, new_state):
         self._host_mode_enabled = new_state
         self.to_TowerDB().host_mode_enabled = new_state
+        db.session.commit()
+
+    @property
+    def additional_sizes_enabled(self):
+        return self._additional_sizes_enabled
+
+    @additional_sizes_enabled.setter
+    def additional_sizes_enabled(self, new_state):
+        self._additional_sizes_enabled = new_state
+        self.to_TowerDB().additional_sizes_enabled = new_state
         db.session.commit()
 
     @property

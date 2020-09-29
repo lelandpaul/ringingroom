@@ -105,6 +105,50 @@
 </div>
 
 <hr>
+{{ form.additional_sizes_enabled(class="d-none",id="additional_sizes_toggle") }}
+
+<div class="form-row my3 justify-content-between">
+    <div class="col-12 col-md-6 pr-2">
+        <div class="form-row my-2">
+
+            <div class="col-6 pt-1">
+                <h4>Additional Sizes:</h4>
+            </div>
+            <div class="col-6">
+
+                <div class="btn-group btn-block btn-group-toggle align-bottom">
+                    <label class="btn btn-outline-primary {{ 'active' if not form.additional_sizes_enabled.data }}">
+                    <input type="radio" 
+                        name="additional_sizes"
+                        id="additional_sizes_false"
+                        onclick="$('#additional_sizes_toggle').prop('checked',false); 
+                                    $('#submit_name_change').click()"
+                        />
+                        No
+                    </label>
+
+                    <label class="btn btn-outline-primary {{ 'active' if form.additional_sizes_enabled.data }}">
+                    <input type="radio" 
+                        name="additional_sizes"
+                        id="additional_sizes_true"
+                        onclick="$('#additional_sizes_toggle').prop('checked',true); 
+                                    $('#submit_name_change').click()"
+                        />
+                        Yes
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 pr-2">
+        <small class="form-text pl-3 pr-0" style="text-align:justify;">
+            <p>If set to 'Yes', this tower will have modes for 5, 14, & 16 bells in addition to the usual 4, 6, 8, 10, & 12.</p>
+        </small>
+    </div>
+
+</div>
+
+<hr>
 {{ form.host_mode_enabled(class="d-none",id="host_mode_toggle") }}
 
 

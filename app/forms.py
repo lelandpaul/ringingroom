@@ -90,6 +90,7 @@ class TowerSettingsForm(FlaskForm):
     add_host = StringField('Add host by email', validators=[Optional(),Email()])
     remove_host = StringField('Remove host', validators=[Optional(),Email()])
     host_mode_enabled = BooleanField('Host Mode Enabled', validators=[Optional()])
+    additional_sizes_enabled = BooleanField('Additional Sizes Enabled', validators=[Optional()])
     submit = SubmitField('Save Changes')
 
     def validate_add_host(self, new_host_email):
