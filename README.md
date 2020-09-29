@@ -27,6 +27,7 @@ Ringing Room supplies a basic API for use in 3rd-party apps.
 
 | Endpoint                         | Method   | Description                            |
 | ---                              | ---      | ---                                    |
+| `/api/version`                   | `GET`    | Get API version information            |
 | `/api/tokens`                    | `POST`   | Get bearer token                       |
 | `/api/tokens`                    | `DELETE` | Revoke bearer token                    |
 | `/api/user`                      | `GET`    | Get current user details               |
@@ -43,6 +44,14 @@ Ringing Room supplies a basic API for use in 3rd-party apps.
 | `/api/tower/<tower_id>`          | `GET`    | Get connection details for `tower_id`  |
 | `/api/tower`                     | `POST`   | Create new tower                       |
 | `/api/tower/<tower_id>`          | `DELETE` | Delete tower (if permitted)            |
+
+### Version
+
+`GET /api/version`: Gets version information. Responds with the fields:
+
+- `version`: the overall RR version (which takes the form `YY.WW`, for year and week of release)
+- `api-version`: the api version, which is semantically versioned
+- `socketio-version`: the socketio version, which is semantically versioned
 
 ### Authorization
 
