@@ -550,7 +550,7 @@ $(document).ready(function() {
         // data in components should be a function, to maintain scope
         data: function() {
             return {
-                tower_sizes: [4, 6, 8, 10, 12],
+                tower_sizes: window.tower_parameters.sizes_available,
                 audio_type: window.tower_parameters.audio,
                 host_mode: window.tower_parameters.host_mode
             }

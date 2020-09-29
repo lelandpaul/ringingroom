@@ -198,6 +198,7 @@ class TowerDB(db.Model):
                               onupdate=date.today)
     users = db.relationship("UserTowerRelation", back_populates="tower")
     host_mode_enabled = db.Column(db.Boolean, default=False)
+    additional_sizes_enabled = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return '<TowerDB {}: {}>'.format(self.tower_id, self.tower_name)
@@ -328,7 +329,9 @@ class Tower:
         self._observers = set()
         self._host_mode = False
         self._host_mode_enabled = host_mode_enabled
-        self._host_ids = self.to_TowerDB().host_ids
+        self._towerdb = self.to_TowerDB()
+        self._host_ids = self._towerdb.host_ids
+        self._additional_sizes_enabled = self._towerdb.additional_sizes_enabled
 
     # generate a random caters change, for use as uid
     def generate_random_change(self):
@@ -522,6 +525,13 @@ class Tower:
         self._host_mode_enabled = new_state
         self.to_TowerDB().host_mode_enabled = new_state
         db.session.commit()
+
+    @property
+    def sizes_available(self):
+        if self._additional_sizes_enabled:
+            return [4,5,6,8,10,12,14,16]
+        else:
+            return [4,6,8,10,12]
 
 
 class TowerDict(dict):
