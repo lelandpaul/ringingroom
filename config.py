@@ -8,6 +8,12 @@ load_dotenv(os.path.join(basedir,'.env'))
 
 class Config(object):
 
+    RR_VERSION = "20.39"
+
+    RR_API_VERSION = "1.0"
+
+    RR_SOCKETIO_VERSION = "1.0"
+
     SECRET_KEY = os.getenv('SECRET_KEY') or 's7WUt93.ir_bFya7'
 
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL') or \
