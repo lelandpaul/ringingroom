@@ -29,17 +29,22 @@ class EmailIf(Email):
         super(EmailIf, self).__call__(form,field)
 
 class LoginForm(FlaskForm):
-    username = StringField('Email Address', validators=[DataRequired(),Email(message="Please use your email address to log in, not your username.")])
+    username = StringField('Email Address', validators=[
+        DataRequired(),
+        Email(message="Please use your email address to log in, not your username.")
+    ])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Keep me logged in')
     submit = SubmitField('Log In')
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email(message='Please log in with your email address (not your username).')])
+    email = StringField('Email', validators=[
+        DataRequired(),
+        Email(message='Please log in with your email address (not your username).')
+    ])
     password = PasswordField('Password', validators=[DataRequired()])
-    password2 = PasswordField(
-        'Repeat Password', validators = [DataRequired(), EqualTo('password')])
+    password2 = PasswordField('Repeat Password', validators = [DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
     accept_privacy = BooleanField('I have read and accept the Privacy Policy', \
                   validators=[DataRequired(message='Please accept our Privacy Policy to continue.')])
@@ -90,6 +95,7 @@ class TowerSettingsForm(FlaskForm):
     add_host = StringField('Add host by email', validators=[Optional(),Email()])
     remove_host = StringField('Remove host', validators=[Optional(),Email()])
     host_mode_enabled = BooleanField('Host Mode Enabled', validators=[Optional()])
+    wheatley_enabled = BooleanField('Wheatley Enabled', validators=[Optional()])
     submit = SubmitField('Save Changes')
 
     def validate_add_host(self, new_host_email):

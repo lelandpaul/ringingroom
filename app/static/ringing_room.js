@@ -143,6 +143,7 @@ socketio.on('s_size_change', function(msg, cb) {
     bell_circle.number_of_bells = new_size;
     // The user may already be assigned to something, so rotate
     bell_circle.$refs.users.rotate_to_assignment();
+    bell_circle.$refs.wheatley.update_number_of_bells();
 });
 
 
@@ -184,6 +185,29 @@ socketio.on('s_msg_sent', function(msg, cb) {
     });
 });
 
+// Wheatley has been enabled or disabled
+socketio.on('s_set_wheatley_enabledness', function (data) {
+    console.log("Setting Wheatley's enabledness to " + data.enabled);
+    bell_circle.$refs.wheatley.enabled = data.enabled;
+});
+
+// A Wheatley setting has been changed
+socketio.on('s_wheatley_setting', function (msg) {
+    console.log("Received Wheatley setting(s):", msg);
+    bell_circle.$refs.wheatley.update_settings(msg);
+});
+
+// Wheatley's row gen has been changed
+socketio.on('s_wheatley_row_gen', function (msg) {
+    console.log("Received Wheatley row gen:", msg);
+    bell_circle.$refs.wheatley.update_row_gen(msg);
+});
+
+// Wheatley has updated whether or not he thinks a touch is in progress
+socketio.on('s_wheatley_is_ringing', function (msg) {
+    console.log("Received Wheatley is-ringing:", msg);
+    bell_circle.$refs.wheatley.update_is_ringing(msg);
+});
 
 // Host mode was changed
 socketio.on('s_host_mode', function(msg, cb) {
@@ -788,6 +812,488 @@ $(document).ready(function() {
 `,
     }); // End help
 
+    Vue.component('wheatley', {
+        data: function () {
+            return {
+                enabled: false,
+                sensitivity: 0.6,
+                use_up_down_in: true,
+                stop_at_rounds: true,
+
+                row_gen: {
+                    type: "method",
+                    title: "Double Norwich Court Bob Major",
+                    url: "Double_Norwich_Court_Bob_Major",
+                },
+
+                is_ringing: false,
+
+                row_gen_panel: "method",
+
+                method_name: "",
+                autocomplete_options: [],
+                selected_option: 0,
+
+                complib_id: "",
+                current_complib_comp: undefined,
+                complib_error: ""
+            };
+        },
+
+        computed: {
+            display_text: function () {
+                if (this.autocomplete_options.length == 0) {
+                    return "NOWT";
+                }
+
+                return this.autocomplete_options.map(x => x.title).join(", ");
+            },
+            touch_link: function () {
+                let row_gen = this.row_gen;
+
+                if (row_gen) {
+                    if (row_gen.type == "method") {
+                        return "https://rsw.me.uk/blueline/methods/view/" + 
+                            (row_gen.url || "Grandsire_Major");
+                    } else if (row_gen.type == "composition") {
+                        return row_gen.url || "";
+                    } else {
+                        return "";
+                    }
+                } else {
+                    return "";
+                }
+            },
+            touch_text: function () {
+                let row_gen = this.row_gen;
+
+                if (row_gen) {
+                    if (row_gen.type == "method") {
+                        return row_gen.title || "No Method Title";
+                    } else if (row_gen.type == "composition") {
+                        return row_gen.title || "No Composition Title";
+                    } else {
+                        return "<unknown row_gen type " + row_gen.type + ">";
+                    }
+                } else {
+                    return "<no row gen>";
+                }
+            },
+            row_gen_panel_disabled: function () {
+                return bell_circle.lock_controls || this.is_ringing;
+            },
+            settings_panel_disabled: function () {
+                return bell_circle.lock_controls;
+            }
+        },
+
+        watch: {
+            method_name: function (next_value) {
+                this.update_method_suggestions(next_value);
+            },
+            complib_id: function (next_value) {
+                this.update_comp_suggestions(next_value);
+            }
+        },
+
+        methods: {
+            /* METHODS CALLED WHEN THE USER CHANGES SOME CONTROLS */
+            on_change_sensitivity: function () {
+                socketio.emit('c_wheatley_setting', {
+                    tower_id: cur_tower_id,
+                    settings: {
+                        sensitivity: this.sensitivity
+                    }
+                });
+            },
+            on_change_use_up_down_in: function () {
+                socketio.emit('c_wheatley_setting', {
+                    tower_id: cur_tower_id,
+                    settings: {
+                        use_up_down_in: this.use_up_down_in
+                    }
+                });
+            },
+            on_change_stop_at_rounds: function () {
+                socketio.emit('c_wheatley_setting', {
+                    tower_id: cur_tower_id,
+                    settings: {
+                        stop_at_rounds: this.stop_at_rounds
+                    }
+                });
+            },
+            reset_wheatley: function () {
+                socketio.emit('c_reset_wheatley', {tower_id: cur_tower_id});
+            },
+
+            /* CALLBACKS CALLED FROM RECEIVING A SOCKETIO SIGNAL */
+            update_settings: function (new_settings) {
+                for (const key in new_settings) {
+                    if (key == 'sensitivity') {
+                        this.sensitivity = new_settings[key];
+                    }
+                    if (key == 'use_up_down_in') {
+                        this.use_up_down_in = new_settings[key];
+                    }
+                    if (key == 'stop_at_rounds') {
+                        this.stop_at_rounds = new_settings[key];
+                    }
+                }
+            },
+            update_row_gen: function (new_row_gen) {
+                if (new_row_gen) {
+                    this.row_gen = new_row_gen;
+                }
+            },
+            update_is_ringing: function (new_value) {
+                this.is_ringing = new_value;
+            },
+            update_number_of_bells: function () {
+                this.update_method_suggestions(this.method_name);
+                this.update_comp_suggestions(this.complib_id);
+            },
+
+            /* METHODS RELATED TO THE USER UPDATING THE ROW_GEN CONTROLS */
+            on_stop_touch: function () {
+                socketio.emit("c_wheatley_stop_touch", {tower_id: window.tower_parameters.id});
+            },
+            update_method_suggestions: function (partial_method_name) {
+                // Store a reference to 'this' (the vue model) as a local variable, so that it can
+                // be used in the JSON get callback to set the autocomplete results.
+                var _this = this;
+
+                if (partial_method_name === "") {
+                    this.autocomplete_options = [];
+                } else {
+                    const query_url = 'https://rsw.me.uk/blueline/methods/search.json?q=' + partial_method_name
+                            + '&stage=' + (bell_circle.number_of_bells - 1)
+                            + ',' + (bell_circle.number_of_bells);
+                    $.getJSON(
+                        query_url,
+                        function (data) {
+                            // Early return if the queries get reordered in the ether and the user
+                            // has changed the input box since this was sent
+                            if (_this.method_name !== data.query.q) {
+                                return;
+                            }
+                            // Only show the first 5 methods from this query
+                            _this.autocomplete_options = data.results.slice(0, 5);
+                        }
+                    );
+                }
+            },
+            on_method_box_enter: function() {
+                if (this.autocomplete_options.length > 0) {
+                    this.send_next_method(this.autocomplete_options[0]);
+                }
+            },
+            send_next_method: function (method) {
+                // Return early if there aren't any methods
+                if (this.autocomplete_options === []) {
+                    console.warning("No results to send to Wheatley!");
+                    return;
+                }
+
+                // A helper function to convert a call from Bob Wallis' data structure:
+                // {
+                //    cover: int,       // The number of rows covered by the call
+                //    every: int,       // Every how many rows the call can be called
+                //    from: int,        // The offset of calls from the lead end (e.g. for Stedman calls
+                //                         `every` = 6 and `from` = -3 or 3)
+                //    notation: string, // The place notation of the call
+                //    symbol: string    // The symbol of the call (is '-' for bobs and 's' for singles)
+                // }
+                // into what Wheatley expects (a map of indices to place notations)
+                var convert_call = function (call) {
+                    if (call === undefined) {
+                        return {};
+                    }
+                    let converted_call = {};
+                    for (let i = 0; i < method.lengthOfLead / call.every; i++) {
+                        converted_call[call.from + i * call.every] = call.notation;
+                    }
+                    return converted_call;
+                };
+
+                // Log what we're sending Wheatley for ease of debugging
+                console.log("Setting Wheatley method to " + method.title);
+
+                // Emit the socketio signal to tell Wheatley what to ring
+                socketio.emit(
+                    "c_wheatley_row_gen",
+                    {
+                        tower_id: window.tower_parameters.id,
+                        row_gen: {
+                            type: "method",
+                            title: method.title,
+                            stage: method.stage,
+                            notation: method.notation,
+                            url: method.url,
+                            bob: method.calls ? convert_call(method.calls["Bob"]) : {},
+                            single: method.calls ? convert_call(method.calls["Single"]) : {}
+                        }
+                    }
+                );
+
+                // Clear the method name box
+                this.method_name = "";
+            },
+
+            update_comp_suggestions: function (partial_comp_name) {
+                if (partial_comp_name == "") {
+                    this.current_complib_comp = undefined;
+                    this.complib_error = "Start typing a comp ID...";
+
+                    return;
+                }
+
+                if (!/^\d+$/.test(partial_comp_name)) {
+                    this.current_complib_comp = undefined;
+                    this.complib_error = "Please enter a valid number";
+
+                    return;
+                }
+
+                // Keep a reference to the correct 'this'
+                let _this = this;
+
+                let api_url = 'https://api.complib.org/composition/' + partial_comp_name;
+                let standard_url = 'https://complib.org/composition/' + partial_comp_name;
+                $.getJSON(api_url)
+                    .fail(function (_evt, _jqxhr, state) {
+                        _this.current_complib_comp = undefined;
+
+                        if (state == "Bad Request") {
+                            _this.complib_error = "Bad request.";
+                        } else if (state == "Not Found") {
+                            _this.complib_error = "#" + partial_comp_name + " doesn't exist.";
+                        } else if (state == "Unauthorized") {
+                            _this.complib_error = "#" + partial_comp_name + " is private.";
+                        } else {
+                            console.warn("Unknown error: " + state);
+                        }
+                    })
+                    .done(function (data) {
+                        if (data.stage == bell_circle.number_of_bells
+                         || data.stage == bell_circle.number_of_bells - 1
+                        ) {
+                            _this.current_complib_comp = {
+                                url: standard_url,
+                                title: data.derivedTitle
+                            };
+                        } else {
+                            _this.current_complib_comp = undefined;
+                            let required_tower_size = data.stage % 2 == 0 ? data.stage : data.stage + 1;
+                            _this.complib_error = "Comp needs " + required_tower_size + " bells, not "
+                                                + bell_circle.number_of_bells;
+                        }
+                    });
+            },
+            send_next_comp: function () {
+                if (!this.current_complib_comp) {
+                    return;
+                }
+
+                console.log("Setting Wheatley composition to " + this.current_complib_comp);
+
+                socketio.emit(
+                    "c_wheatley_row_gen",
+                    {
+                        tower_id: window.tower_parameters.id,
+                        row_gen: {
+                            type: "composition",
+                            url: this.current_complib_comp.url,
+                            title: this.current_complib_comp.title
+                        }
+                    }
+                );
+            },
+        },
+
+        template: `
+<div class="card mb-3" id="wheatley" v-if="enabled">
+    <!-- Wheatley header -->
+    <div class="card-header">
+        <h2 style="display: inline; cursor: pointer;"
+            id="wheatley_header"
+            data-toggle="collapse"
+            data-target="#wheatley_body"
+            title="A computer ringer for Ringing Room, designed as a 'ninja helper with no ego'."
+        >
+            Wheatley
+        </h2>
+    </div>
+    <div class="card-body collapse show"
+         id="wheatley_body"
+         >
+        <!-- WHEATLEY ROW GEN SECTION -->
+        <p>[[ is_ringing ? "Currently ringing " : "Wheatley will ring " ]]
+            <a :href="touch_link" target="_blank">[[ touch_text ]]</a>.
+        </p>
+
+        <div v-if="is_ringing">
+            <button class="btn btn-outline-primary btn-block"
+                    :class="{disabled: settings_panel_disabled}"
+                    @click="on_stop_touch"
+                    title="Makes Wheatley stand his bells regardless of what the ringing is doing."
+            >
+                Stop Touch
+            </button>
+            
+            <br/>
+        </div>
+
+        <div id="wheatley_row_gen_box">
+            <!-- Wheatley row gen type toggle -->
+            <div class="btn-group btn-block btn-group-toggle">
+                <label class="btn btn-outline-primary"
+                       style="border-bottom-left-radius: 0;"
+                       :class="{active: row_gen_panel == 'method',
+                                disabled: row_gen_panel_disabled}">
+                    <input type="radio"
+                           name="row_gen_type"
+                           id="row_gen_type_method"
+                           value="method"
+                           v-model="row_gen_panel"
+                           />
+                    Method
+                </label>
+                <label class="btn btn-outline-primary"
+                       style="border-bottom-right-radius: 0;"
+                       :class="{active: row_gen_panel == 'composition',
+                                disabled: row_gen_panel_disabled}">
+                    <input type="radio"
+                           name="row_gen_type"
+                           id="row_gen_type_composition"
+                           value="composition"
+                           v-model="row_gen_panel"
+                           />
+                    Composition
+                </label>
+            </div>
+
+            <div id="wheatley_row_gen_box_inner"
+                 style="margin-bottom: 1.2rem;">
+                <!-- Wheatley method tab -->
+                <div v-show="row_gen_panel == 'method'">
+                    <div>
+                        <form action="" @submit.prevent="on_method_box_enter">
+                            <input type="text"
+                                   id="wheatley_method_name_box"
+                                   class="form-control"
+                                   v-model="method_name"
+                                   placeholder="Start typing method name..."
+                                   :disabled="row_gen_panel_disabled"
+                                   autocomplete="off"
+                                   />
+                        </form>
+                        <div id="wheatley_method_suggestion_box">
+                            <a v-for="(suggestion, index) in autocomplete_options"
+                               href="#"
+                               @click.prevent="send_next_method(suggestion)"
+                               style="background-color: transparent !important;">
+                                [[ index == selected_option ? '> ' : '' ]][[ suggestion.title ]]
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wheatley composition tab -->
+                <div v-show="row_gen_panel == 'composition'">
+                    <form action="" @submit.prevent="send_next_comp">
+                        <div class="input-group">
+                            <input type="text"
+                                   id="wheatley_comp_id_box"
+                                   class="form-control"
+                                   v-model="complib_id"
+                                   :disabled="row_gen_panel_disabled"
+                                   placeholder="Public CompLib ID"
+                                   autocomplete="off"
+                                   />
+                            <div class="input-group-append">
+                                <input class="btn btn-outline-primary"
+                                       type="submit"
+                                       :class="{disabled: row_gen_panel_disabled}"
+                                       :disabled="row_gen_panel_disabled || !current_complib_comp"
+                                       value="Load"
+                                       />
+                            </div>
+                        </div>
+                        <div>
+                            <p style="margin-bottom: 0;
+                                      text-align: center;">
+                                [[ current_complib_comp ? current_complib_comp.title : complib_error ]]
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <hr/>
+
+        <!-- WHEATLEY SETTINGS SECTION -->
+
+        <!-- Sensitivity (currently not implemented in Wheatley) -->
+        <!--
+        <p style="margin-bottom: 0;">Sensitivity:</p>
+        <input type="range"
+               v-model="sensitivity"
+               v-on:change="on_change_sensitivity"
+               min=0
+               max=1
+               step=0.05
+               id="wheatley_sensitivity_slider"
+               class="volume_control_slider custom-range align-middle"
+               :disabled="settings_panel_disabled"
+               />
+        <br/>
+        -->
+
+        <!-- Up Down In -->
+        <input type="checkbox"
+               v-model="use_up_down_in"
+               v-on:change="on_change_use_up_down_in"
+               id="wheatley_up_down_in"
+               name="up_down_in"
+               :disabled="settings_panel_disabled"
+               />
+        <label for="up_down_in" title="If checked, Wheatley will go into changes after two rounds.">
+            Ring up-down-in
+        </label>
+        <br/>
+
+        <!-- Stop at Rounds -->
+        <input type="checkbox"
+               v-model="stop_at_rounds"
+               v-on:change="on_change_stop_at_rounds"
+               id="wheatley_stop_at_rounds"
+               name="stop_at_rounds"
+               :disabled="settings_panel_disabled"
+               />
+        <label style="margin-bottom: 0;"
+               for="stop_at_rounds"
+               title="If checked, Wheatley will stand his bells when rounds occurs when ringing method."
+        >
+            Stop at rounds
+        </label>
+        
+        <hr/>
+
+        <!-- Reset Wheatley -->
+        <button class="btn btn-outline-primary btn-block"
+                style="margin-top: 1rem"
+                :class="{disabled: settings_panel_disabled}"
+                @click="reset_wheatley"
+                title="If Wheatley is playing up, pressing this will completely reset Wheatley."
+        >
+            Reset Wheatley
+        </button>
+    </div>
+</div>
+`
+    }); // End Wheatley box
+
     Vue.component('chatbox', {
         data: function() {
             return {
@@ -1335,6 +1841,13 @@ $(document).ready(function() {
                         } else return; // disable hotkeys when typing
                     }
 
+                    if ($("#wheatley_setting_name_box").is(":focus")
+                     || $("#wheatley_setting_value_box").is(":focus")
+                     || $("#wheatley_comp_id_box").is(":focus")
+                     || $("#wheatley_method_name_box").is(":focus")) {
+                        return;
+                    }
+
                     if ($('#report_box').hasClass('show')) {
                         return; // disable hotkeys when the report is active
                     }
@@ -1382,7 +1895,6 @@ $(document).ready(function() {
                         }
                     }
 
-                    const n_b = bell_circle.number_of_bells;
                     // Space, j, and ArrowRight ring the bell in position n/2
                     if ([' ', 'j', 'J', 'ArrowRight'].includes(key)) {
                         bell_circle.pull_rope_by_hand(RIGHT_HAND);
@@ -1629,7 +2141,6 @@ $(document).ready(function() {
 
                 // how many positions to rotate?
                 var offset = this.number_of_bells - newposs;
-                var oldposs = 0;
                 var n_b = this.number_of_bells
 
                 for (var bell in this.bells) {
@@ -1802,6 +2313,7 @@ $(document).ready(function() {
                     <div class="row pb-0 flex-grow-1">
                         <div class="col flex-grow-1">
                             <user_display ref="users"></user_display>
+                            <wheatley ref="wheatley"></wheatley>
                             <chatbox ref="chatbox" v-bind:unread_messages="unread_messages"></chatbox>
                         </div>
                     </div>

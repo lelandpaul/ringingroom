@@ -1,7 +1,9 @@
 from flask import request
 from app.extensions import db, log
+import app.wheatley
 from config import Config
 from random import shuffle, sample, randint
+import json
 import re
 from datetime import datetime, timedelta, date
 from time import time
@@ -61,8 +63,8 @@ class User(UserMixin, db.Model):
     def _clean_recent_towers(self, cutoff=10):
         # delete all but the cuttoff most recent towers
         old_rels = sorted([tower for tower in self.towers if tower.recent],
-                          key=lambda x: x.visited,
-                          reverse=True)[cutoff:]
+                           key=lambda x: x.visited,
+                           reverse=True)[cutoff:]
         for rel in old_rels:
             db.session.delete(rel)
 
@@ -192,12 +194,14 @@ class TowerDB(db.Model):
     tower_id = db.Column(db.Integer, primary_key=True)
     tower_name = db.Column(db.String(32), index=True)
     created_on = db.Column(db.Date,default=date.today)
-    last_access = db.Column(db.Date,
-                              nullable=False,
-                              default=date.today,
-                              onupdate=date.today)
+    last_access = db.Column(db.Date, 
+                            nullable=False,
+                            default=date.today,
+                            onupdate=date.today)
     users = db.relationship("UserTowerRelation", back_populates="tower")
     host_mode_enabled = db.Column(db.Boolean, default=False)
+    wheatley_enabled = db.Column(db.Boolean, default=False)
+    wheatley_settings_json = db.Column(db.String(), default="{}")
 
     def __repr__(self):
         return '<TowerDB {}: {}>'.format(self.tower_id, self.tower_name)
@@ -212,8 +216,34 @@ class TowerDB(db.Model):
         return data
 
     def to_Tower(self):
-        return Tower(self.tower_name, tower_id=self.tower_id,
-                     host_mode_enabled=self.host_mode_enabled)
+        has_changed_db = False
+
+        # Parse Wheatley's settings from JSON (and initialise with '{}' if invalid or non-existent)
+        wheatley_settings = None
+        while wheatley_settings is None:
+            try:
+                wheatley_settings = json.loads(self.wheatley_settings_json)
+            except TypeError:
+                self.wheatley_settings_json = "{}"
+                has_changed_db = True
+            except Exception as e:
+                self.log(f"Invalid Wheatley settings JSON {self.wheatley_settings_json}: {e}")
+                self.wheatley_settings_json = "{}"
+                has_changed_db = True
+
+        # Read Wheatley's enabledness from the database, and initialise it if it's null
+        if self.wheatley_enabled is None:
+            self.wheatley_enabled = False
+            has_changed_db = True
+
+        # Commit the changes to the database if they've been made
+        if has_changed_db:
+            db.session.commit()
+
+        return Tower(self.tower_name, tower_id=self.tower_id, host_mode_enabled=self.host_mode_enabled,
+                     # Force wheatley_enabled to be False if the Wheatley feature flag is not set
+                     wheatley_enabled=self.wheatley_enabled and app.wheatley.feature_flag(),
+                     wheatley_db_settings=wheatley_settings)
 
     def created_by(self, user):
         # Expects a User object
@@ -313,7 +343,8 @@ UNASSIGNED_BELL = 0
 
 
 class Tower:
-    def __init__(self, name, tower_id=None, n=8, host_mode_enabled=False):
+    def __init__(self, name, tower_id=None, n=8, host_mode_enabled=False, wheatley_enabled=False,
+                 wheatley_db_settings={}):
         if not tower_id:
             self._id = self.generate_random_change()
         else:
@@ -324,11 +355,13 @@ class Tower:
         self._bell_state = [True] * n
         self._audio = True
         self._users = {}
-        self._assignments = {i+1: UNASSIGNED_BELL for i in range(n)}
+        self._assignments = {i + 1: '' for i in range(n)}
         self._observers = set()
         self._host_mode = False
         self._host_mode_enabled = host_mode_enabled
         self._host_ids = self.to_TowerDB().host_ids
+
+        self.wheatley = app.wheatley.Wheatley(self, wheatley_enabled, wheatley_db_settings)
 
     # generate a random caters change, for use as uid
     def generate_random_change(self):
@@ -380,9 +413,10 @@ class Tower:
         # Check if it's already there — we need this for checking whether a tower is already in a
         # users related towers
         tower_db = TowerDB.query.filter(TowerDB.tower_id==self.tower_id).first()
-        return tower_db or TowerDB(tower_id=self.tower_id,
-                                   tower_name=self.name,
-                                   host_mode_enabled=self._host_mode_enabled)
+        return tower_db or TowerDB(tower_id=self.tower_id, 
+                                   tower_name=self.name, 
+                                   host_mode_enabled=self._host_mode_enabled,
+                                   wheatley_enabled=self.wheatley.enabled)
 
     @property
     def tower_id(self):
@@ -442,6 +476,10 @@ class Tower:
         return(list(self._assignments.values()))
 
     def assign_bell(self, bell, user):
+        # Tell Wheatley if he's been assigned a bell
+        if user == app.wheatley.USER_ID:
+            self.wheatley.on_assigned_bell()
+
         self.assignments[bell] = user
 
     @property
