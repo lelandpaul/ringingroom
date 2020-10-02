@@ -130,7 +130,8 @@
     .handbell .bell_img{
         width: 3rem;
     }
-    .fourteen .bell_img, .sixteen .bell_img {
+    .fourteen .bell:not(.handbell) .bell_img, 
+    .sixteen .bell:not(.handbell) .bell_img {
         width: 1.5rem;
     }
 }
@@ -159,15 +160,16 @@
     .handbell .bell_img{
         width: 4.5rem;
     }
-    .fourteen .bell_img, .sixteen .bell_img{
+    .fourteen .bell:not(.handbell) .bell_img, 
+    .sixteen .bell:not(.handbell) .bell_img {
         width: 2rem;
     }
 }
 
 @include media-breakpoint-up(lg) {
-    @include bell_circle(30rem,32vw,50vh);
+    @include bell_circle(28rem,32vw,50vh);
     @supports (width: max(5px,5px)){
-        @include bell_circle(30rem,32vw, max(24rem,50vh));
+        @include bell_circle(28rem,32vw, max(24rem,50vh));
     }
     .twelve .bell_img {
         width: 2.5rem;
@@ -202,7 +204,8 @@
     .handbell .bell_img{
         width: 4rem;
     }
-    .fourteen .bell_img, .sixteen .bell_img{
+    .fourteen .bell:not(.handbell) .bell_img, 
+    .sixteen .bell:not(.handbell) .bell_img {
         width: 2.5rem;
     }
 }
