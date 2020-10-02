@@ -1820,11 +1820,14 @@ $(document).ready(function() {
         <div class="col-12 col-lg-8 bell_circle_col">
             <!-- bell circle col -->
             <div class="bell_circle"
-                 v-bind:class="[number_of_bells == 4  ? 'four'   : '',
-                                number_of_bells == 6  ? 'six'    : '',
-                                number_of_bells == 8  ? 'eight'  : '',
-                                number_of_bells == 10 ? 'ten'    : '',
-                                number_of_bells == 12 ? 'twelve' : '']">
+                 v-bind:class="[number_of_bells == 4  ? 'four'     : '',
+                                number_of_bells == 5  ? 'five'     : '',
+                                number_of_bells == 6  ? 'six'      : '',
+                                number_of_bells == 8  ? 'eight'    : '',
+                                number_of_bells == 10 ? 'ten'      : '',
+                                number_of_bells == 12 ? 'twelve'   : '',
+                                number_of_bells == 14 ? 'fourteen' : '',
+                                number_of_bells == 16 ? 'sixteen'  : '']">
                 <call_display v-bind:audio="audio" ref="display"></call_display>
                 <focus_display ref="focus"></focus_display>
                 <bell_rope v-for="bell in bells"
