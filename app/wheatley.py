@@ -248,7 +248,8 @@ class Wheatley:
             ] + (['--look-to-time', str(time.time())] if has_called_look_to else []),
             # Capture both stdout and stderr (almost all of the logging goes to stderr)
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
+            stderr=subprocess.PIPE,
+            shell=True
         )
         self.log("Spawned process")
         self._is_active = True
