@@ -176,21 +176,18 @@ The changes to Wheatley have added a number of extra SocketIO signals, used for 
 with the rest of Ringing Room.  Some of these signals have custom types (`RowGen` and `Signals`,
 which are described in detail below the table.
 
-| Event                    | Payload                                                                  | Description                                                                           |
-| `s_set_wheatley_enabledness` | `{enabled: Bool}` | Emitted by the server to the current users of a tower whenever the "Wheatley enabled" switch is changed in the tower settings
-| `c_wheatley_setting` | `{tower_id: Int, settings: Settings}` | (from a client) tells Wheatley to change one of its settings
-| `s_wheatley_setting` | `Settings` | (from the server) tells Wheatley to change one of its settings, and for all the clients to update
-their views of that setting.  This signal will **not** be sent to the client that emitted the
-`c_wheatley_setting` signal that triggered it to prevent rubber banding of controls.
-| `c_wheatley_row_gen` | `{tower_id: Int, row_gen: RowGen}` | (from a client) tells Wheatley to use different Row Generation settings next time a `Look to` is called.
-| `s_wheatley_row_gen` | `RowGen` | (from the server) tells Wheatley to use a new Row Generator, and for all the clients to update their views of that setting.
-| `c_wheatley_is_ringing` | `{tower_id: Int, is_ringing: Bool}` | sent from Wheatley to inform the other clients whether or not Wheatley thinks that people are ringing.
-  This also locks or unlocks the row gen box.
-| `s_wheatley_is_ringing` | `Bool` | broadcast from the server after Wheatley sends `c_wheatley_is_ringing`
-| `c_wheatley_stop_touch` | `{tower_id: Int}` | tells the server to broadcast **s_wheatley_stop_touch**
-| `s_wheatley_stop_touch` | `{}` | broadcast by the server to tell Wheatley to stop ringing
-| `c_reset_wheatley` | `{tower_id: Int}` | tells the server to kill the current Wheatley instance.
-Used as a last-ditch way to reset Wheatley if he gets his knickers in a twist. |
+| Event | Payload | Description |
+| --- | --- | --- |
+| `s_set_wheatley_enabledness` | `{enabled: Bool}` | Emitted by the server to the current users of a tower whenever the "Wheatley enabled" switch is changed in the tower settings |
+| `c_wheatley_setting` | `{tower_id: Int, settings: Settings}` | (from a client) tells Wheatley to change one of its settings |
+| `s_wheatley_setting` | `Settings` | (from the server) tells Wheatley to change one of its settings, and for all the clients to update their views of that setting.  This signal will **not** be sent to the client that emitted the `c_wheatley_setting` signal that triggered it to prevent rubber banding of controls. |
+| `c_wheatley_row_gen` | `{tower_id: Int, row_gen: RowGen}` | (from a client) tells Wheatley to use different Row Generation settings next time a `Look to` is called. |
+| `s_wheatley_row_gen` | `RowGen` | (from the server) tells Wheatley to use a new Row Generator, and for all the clients to update their views of that setting. |
+| `c_wheatley_is_ringing` | `{tower_id: Int, is_ringing: Bool}` | sent from Wheatley to inform the other clients whether or not Wheatley thinks that people are ringing.  This also locks or unlocks the row gen box. |
+| `s_wheatley_is_ringing` | `Bool` | broadcast from the server after Wheatley sends `c_wheatley_is_ringing` |
+| `c_wheatley_stop_touch` | `{tower_id: Int}` | tells the server to broadcast **s_wheatley_stop_touch** |
+| `s_wheatley_stop_touch` | `{}` | broadcast by the server to tell Wheatley to stop ringing |
+| `c_reset_wheatley` | `{tower_id: Int}` | tells the server to kill the current Wheatley instance.  Used as a last-ditch way to reset Wheatley if he gets his knickers in a twist. |
 
   #### The 'Settings' type
   The _Settings_ type is an object with 0 or more of the following properties:
