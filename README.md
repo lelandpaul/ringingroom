@@ -19,8 +19,37 @@ You are now ready to run the server:
 
 ### Environment Variables / Feature Flags
 
-- `$RR_ENABLE_WHEATLEY`: If set to `1` Wheatley will be enabled, otherwise Wheatley will be disabled.
-- `$RR_WHEATLEY_PATH`: Sets the path to the Wheatley executable.  If unset, will use the 'wheatley' command.
+To set an environment variable, run `export <name>=<value>` before starting the Ringing Room server.
+If you want to set an environment variable every time the server loads, then add it as a line to
+[.flaskenv](https://github.com/lelandpaul/ringingroom/blob/trunk/.flaskenv) so that flask will always have it enabled.
+
+A **feature flag** is an environment variable used to enable or disable features at runtime.
+They enable the a given feature if they are set to `1`.
+If they are not set or set to anything other than `1`, the feature will be disabled.
+This allows for slowly rolling out new features rather than irreversibly enabling them on all the servers
+and then discovering potential issues.
+
+For example, suppose you want to enable Wheatley for testing.
+For this you want to set `RR_ENABLE_WHEATLEY` to `1`, so instead of just running `flask run` you'd instead run
+```
+export RR_ENABLE_WHEATLEY=1
+flask run
+```
+
+#### Feature Flags
+- **RR_ENABLE_WHEATLEY**
+
+  If set to `1` Wheatley will be enabled, otherwise Wheatley will be disabled.
+
+#### Other Enviroment Variables
+- **RR_WHEATLEY_PATH**
+
+  Set this if you want to run a version of Wheatley that isn't the latest stable version.
+  For example, to run Wheatley from a file at `/path/to/wheatley/run-wheatley`, run
+  ```
+  export RR_WHEATLEY_PATH=/path/to/wheatley/run-wheatley
+  flask run
+  ```
 
 
 
