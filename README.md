@@ -41,6 +41,10 @@ If they are not set or set to anything other than `1`, the feature will be disab
   flask run
   ```
 
+- **RR_SOCKETIO_PORT**
+
+    Currently used only by Wheatley; defaults to 5000 (the same as Flask), but should be set to
+    8080 for a production server.
 
 
 ## API

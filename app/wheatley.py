@@ -13,6 +13,7 @@ from threading import Thread
 import requests
 
 from app.extensions import log
+from app import Config
 
 
 USER_ID = -1
@@ -245,7 +246,7 @@ class Wheatley:
                 wheatley_cmd,
                 "server-mode",
                 "--port",
-                "5000",
+                Config.RR_SOCKETIO_PORT,
                 str(self._tower.tower_id)
             ] + (['--look-to-time', str(time.time())] if has_called_look_to else []),
             # Capture both stdout and stderr (almost all of the logging goes to stderr)
