@@ -17,6 +17,11 @@ You are now ready to run the server:
  - In the project root, run `flask run`
  - This will give you a local address where you can access the app 
 
+### Environment Variables / Feature Flags
+
+- `$RR_ENABLE_WHEATLEY`: If set to `1` Wheatley will be enabled, otherwise Wheatley will be disabled.
+- `$RR_WHEATLEY_PATH`: Sets the path to the Wheatley executable.  If unset, will use the 'wheatley' command.
+
 
 
 ## API
@@ -27,6 +32,7 @@ Ringing Room supplies a basic API for use in 3rd-party apps.
 
 | Endpoint                         | Method   | Description                            |
 | ---                              | ---      | ---                                    |
+| `/api/version`                   | `GET`    | Get API version information            |
 | `/api/tokens`                    | `POST`   | Get bearer token                       |
 | `/api/tokens`                    | `DELETE` | Revoke bearer token                    |
 | `/api/user`                      | `GET`    | Get current user details               |
@@ -43,6 +49,14 @@ Ringing Room supplies a basic API for use in 3rd-party apps.
 | `/api/tower/<tower_id>`          | `GET`    | Get connection details for `tower_id`  |
 | `/api/tower`                     | `POST`   | Create new tower                       |
 | `/api/tower/<tower_id>`          | `DELETE` | Delete tower (if permitted)            |
+
+### Version
+
+`GET /api/version`: Gets version information. Responds with the fields:
+
+- `version`: the overall RR version (which takes the form `YY.WW`, for year and week of release)
+- `api-version`: the api version, which is semantically versioned
+- `socketio-version`: the socketio version, which is semantically versioned
 
 ### Authorization
 
@@ -156,6 +170,76 @@ What follows is a incomplete list of events — these should be only the events 
 | `s_call`                 | `{call: Str, tower_id: Int}`                                             | Server relayed user call.                                                             |
 | `c_set_bells`            | `{tower_id: Int}`                                                        | User set all bells at hand.                                                           |
 | `s_bad_token`            | (variable)                                                               | The user send a bad bearer token. (Payload repeats whatever triggered this response.) |
+
+### Wheatley
+The changes to Wheatley have added a number of extra SocketIO signals, used for keeping Wheatley in sync
+with the rest of Ringing Room.  Some of these signals have custom types (`RowGen` and `Signals`,
+which are described in detail below the table.
+
+| Event                    | Payload                                                                  | Description                                                                           |
+| `s_set_wheatley_enabledness` | `{enabled: Bool}` | Emitted by the server to the current users of a tower whenever the "Wheatley enabled" switch is changed in the tower settings
+| `c_wheatley_setting` | `{tower_id: Int, settings: Settings}` | (from a client) tells Wheatley to change one of its settings
+| `s_wheatley_setting` | `Settings` | (from the server) tells Wheatley to change one of its settings, and for all the clients to update
+their views of that setting.  This signal will **not** be sent to the client that emitted the
+`c_wheatley_setting` signal that triggered it to prevent rubber banding of controls.
+| `c_wheatley_row_gen` | `{tower_id: Int, row_gen: RowGen}` | (from a client) tells Wheatley to use different Row Generation settings next time a `Look to` is called.
+| `s_wheatley_row_gen` | `RowGen` | (from the server) tells Wheatley to use a new Row Generator, and for all the clients to update their views of that setting.
+| `c_wheatley_is_ringing` | `{tower_id: Int, is_ringing: Bool}` | sent from Wheatley to inform the other clients whether or not Wheatley thinks that people are ringing.
+  This also locks or unlocks the row gen box.
+| `s_wheatley_is_ringing` | `Bool` | broadcast from the server after Wheatley sends `c_wheatley_is_ringing`
+| `c_wheatley_stop_touch` | `{tower_id: Int}` | tells the server to broadcast **s_wheatley_stop_touch**
+| `s_wheatley_stop_touch` | `{}` | broadcast by the server to tell Wheatley to stop ringing
+| `c_reset_wheatley` | `{tower_id: Int}` | tells the server to kill the current Wheatley instance.
+Used as a last-ditch way to reset Wheatley if he gets his knickers in a twist. |
+
+  #### The 'Settings' type
+  The _Settings_ type is an object with 0 or more of the following properties:
+  ```
+  sensitivity   : 0 <= x <= 1
+  use_up_down_in: Bool
+  stop_at_rounds: Bool
+  ```
+
+  #### The 'RowGen' type
+  The _RowGen_ type is a JSON representation of the following structured enum
+  (it's either a `Method` with a `title`, a `stage`, etc.
+  or it's a `Composition` with a `url` and `title`):
+  ```rust
+  enum RowGen {
+      Method {
+          title: String,
+          stage: Int,
+          notation: String,
+          url: String,
+          bob: Map<Int, String>,
+          single: Map<Int, String>
+      },
+      Composition {
+          url: String,
+          title: String
+      }
+  }
+  ```
+  The `Int`s in the call maps correspond to indices within the lead, and the `String`s are the place notations
+  that should be made at that position.  In JSON, the `RowGen` type corresponds to one of the following
+  objects:
+  ```
+  {
+      type: "method",
+      title: String,
+      stage: Int,
+      notation: String,
+      url: String,
+      bob: {Int: String},
+      single: {Int: String}
+  }
+  /* or */
+  {
+      type: "composition",
+      url: String,
+      title: String
+  }
+  ```
 
 
 ### Directory structure (abbreviated...)

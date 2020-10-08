@@ -1,8 +1,11 @@
 from flask import render_template, send_from_directory, abort, flash, redirect, url_for, session, request
 from flask_login import login_user, logout_user, current_user, login_required
+import app.wheatley as wheatley
 from app import app
+from config import Config
 from app.extensions import db, log
 from app.models import User, UserTowerRelation, get_server_ip, towers
+from app.listeners import socketio
 from flask_login import current_user, login_user, logout_user, login_required
 from app.forms import *
 
@@ -11,6 +14,7 @@ import string
 import random
 from app.email import send_password_reset_email
 import os
+
 
 # redirect for static files on subdomains
 
@@ -92,7 +96,8 @@ def tower(tower_id, decorator=None):
 
 @app.route('/about')
 def about():
-    return render_template('about.html')
+    return render_template('about.html',
+                           version=Config.RR_VERSION)
 
 
 @app.route('/help')
@@ -198,19 +203,44 @@ def tower_settings(tower_id):
     if form.validate_on_submit():
         # Set host-mode
         tower.host_mode_enabled = form.host_mode_enabled.data
-        print('ADDITIONAL SIZES: ', form.additional_sizes_enabled.data)
         tower.additional_sizes_enabled = form.additional_sizes_enabled.data
+
+        # ===== DEAL WITH WHEATLEY POTENTIALLY BEING ENABLED OR DISABLED =====
+        wheatley_enabled = form.wheatley_enabled.data
+        # Add this setting to the database's representation of the tower
+        tower_db.wheatley_enabled = wheatley_enabled
+        # If the enabledness of Wheatley has changed either way, broadcast that to the users of
+        # that tower
+        if tower.wheatley.enabled != wheatley_enabled:
+            socketio.emit('s_set_wheatley_enabledness', {'enabled': wheatley_enabled},
+                          broadcast=True, room=tower.tower_id)
+            tower.wheatley.set_enabledness(wheatley_enabled)
+            if wheatley_enabled:
+                # If Wheatley is being *enabled*, then update the setting in the tower and tell the
+                # clients that Wheatley has arrived
+                socketio.emit('s_user_entered', {'user_name': "Wheatley"},
+                               broadcast=True, include_self=True, room=tower.tower_id)
+                socketio.emit('s_wheatley_setting', tower.wheatley.settings)
+                socketio.emit('s_wheatley_row_gen', tower.wheatley.row_gen)
+            else:
+                # If Wheatley is being *disabled*, then update the setting in the tower and tell the
+                # clients that Wheatley has left
+                socketio.emit('s_user_left', {'user_name': "Wheatley"},
+                               broadcast=True, include_self=True, room=tower.tower_id)
+
         if form.tower_name.data:
             tower.name = form.tower_name.data
             tower_db.tower_name = form.tower_name.data
             form.tower_name.data = ''
             flash('Tower name changed.')
+
         if form.add_host.data:
             new_host = User.query.filter_by(email=form.add_host.data).first()
             if new_host.check_permissions(tower_id, permission='host'):
                 form.add_host.errors.append('User is already a host.')
             new_host.make_host(tower)
             form.add_host.data = ''
+
         if form.remove_host.data:
             host = User.query.filter_by(email=form.remove_host.data).first()
             if host == tower_db.creator:
@@ -230,10 +260,12 @@ def tower_settings(tower_id):
         return redirect(url_for('my_towers'))
     form.host_mode_enabled.data = tower.host_mode_enabled
     form.additional_sizes_enabled.data = tower.additional_sizes_enabled
+    form.wheatley_enabled.data = tower.wheatley.enabled
     return render_template('tower_settings.html',
                            form=form,
                            delete_form=delete_form,
-                           tower=tower_db)
+                           tower=tower_db,
+                           wheatley_flag=wheatley.feature_flag())
 
 
 

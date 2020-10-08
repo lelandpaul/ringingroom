@@ -45,8 +45,7 @@ def on_create_tower(data):
         new_tower.to_TowerDB().created_by(current_user)
         new_tower.add_host_id(current_user.id)
 
-    emit('s_redirection',
-         str(new_tower.tower_id) + '/' + new_tower.url_safe_name)
+    emit('s_redirection', str(new_tower.tower_id) + '/' + new_tower.url_safe_name)
 
 # Helper function to generate a random string for use as a uid
 def assign_user_id():
@@ -70,8 +69,23 @@ def on_join(json):
     join_room(tower_id)
     log('SETUP Joined tower:',tower_id)
 
-    # Whether the user is anonymous or not, send them the list of current users
-    emit('s_set_userlist',{'user_list': tower.user_json})
+    # We need to custom-load the user based on the jwt token passed up
+    user = None
+    if not json['anonymous_user']:
+        try:
+            user_id = jwt.decode(json['user_token'],app.config['SECRET_KEY'],algorithms=['HS256'])['id']
+            user = load_user(user_id)
+        except:
+            pass # leave user set to None
+
+    # Whether the user is anonymous or not, send them the list of current users and the Wheatley settings
+    # (we send this to anonymous users because to the server, Wheatley is an anonymous user and we need to
+    # send Wheatley the initial settings as quickly as possible).
+    emit('s_set_wheatley_enabledness', {'enabled': tower.wheatley.enabled})
+    if tower.wheatley.enabled:
+        emit('s_wheatley_setting', tower.wheatley.settings)
+        emit('s_wheatley_row_gen', tower.wheatley.row_gen)
+    emit('s_set_userlist', {'user_list': tower.user_json})
 
     # If the user is anonymous, mark them as an observer and set some cookies
     if current_user.is_anonymous:
@@ -97,27 +111,25 @@ def on_join(json):
                                 broadcast = True,
                                 include_self = True,
                                 room = tower_id)
+
         # For now: Keeping the "id/username" split in the tower model
         # Eventually, this will allow us to have display names different
         # from the username
         tower.add_user(current_user.id, current_user.username)
 
         # Hack to fix a bug with the multiserver setup
-        emit('s_size_change',{'size': tower.n_bells})
-        emit('s_audio_change',{'new_audio':tower.audio})
-        emit('s_host_mode', {'tower_id': tower_id,
-                             'new_mode': tower.host_mode})
+        emit('s_size_change', {'size': tower.n_bells})
+        emit('s_audio_change', {'new_audio': tower.audio})
+        emit('s_host_mode', {'tower_id': tower_id, 'new_mode': tower.host_mode})
 
-        emit('s_user_entered', {'user_id': current_user.id,
-                                'username': current_user.username },
+        emit('s_user_entered', {'user_id': current_user.id, 'username': current_user.username },
              broadcast=True, include_self = True, room=json['tower_id'])
 
     # Check if there are any hosts in the room, and if not, make sure that
     # the tower is not in host mode.
     if not tower.host_present():
         tower.host_mode = False
-        emit('s_host_mode',{'tower_id': tower_id,
-                            'new_mode': False},
+        emit('s_host_mode', {'tower_id': tower_id, 'new_mode': False},
              broadcast=True, include_self=True, room=tower_id)
 
 
@@ -205,8 +217,7 @@ def on_assign_user(json):
     log('c_assign_user',json)
     tower = towers[json['tower_id']]
     tower.assign_bell(json['bell'], json['user'])
-    emit('s_assign_user', json,
-         broadcast=True, include_self=True, room=json['tower_id'])
+    emit('s_assign_user', json, broadcast=True, include_self=True, room=json['tower_id'])
 
 
 # A rope was pulled; ring the bell
@@ -231,34 +242,73 @@ def on_bell_rung(event_dict):
          broadcast=True, include_self=True, room=tower_id)
 
 
+@socketio.on('c_wheatley_setting')
+def on_wheatley_setting_change(json):
+    towers[json['tower_id']].wheatley.update_settings(json['settings'])
+    emit('s_wheatley_setting', json['settings'], broadcast=True, include_self=False, room=json['tower_id'])
+
+
+@socketio.on('c_wheatley_row_gen')
+def on_wheatley_row_gen_change(json):
+    towers[json['tower_id']].wheatley.row_gen = json['row_gen']
+    emit('s_wheatley_row_gen', json['row_gen'], broadcast=True, include_self=True, room=json['tower_id'])
+
+
+@socketio.on('c_wheatley_is_ringing')
+def on_wheatley_is_ringing_change(json):
+    emit('s_wheatley_is_ringing', json['is_ringing'], broadcast=True, room=json['tower_id'])
+
+
+@socketio.on('c_wheatley_stop_touch')
+def on_wheatley_stop_touch(json):
+    emit('s_wheatley_stop_touch', {}, broadcast=True, room=json['tower_id'])
+
+
+@socketio.on('c_reset_wheatley')
+def on_reset_wheatley(json):
+    towers[json['tower_id']].wheatley.kill_process()
+    emit('s_wheatley_is_ringing', False, broadcast=True, room=json['tower_id'])
+
+
 # A call was made
 @socketio.on('c_call')
 def on_call(call_dict):
-    tower_id = call_dict['tower_id']
-    tower = towers[tower_id]
     log('c_call', call_dict)
-    tower_id = call_dict['tower_id']
-    emit('s_call', call_dict, broadcast=True,
-         include_self=True, room=tower_id)
+    emit('s_call', call_dict, broadcast=True, include_self=True, room=call_dict['tower_id'])
+    towers[call_dict['tower_id']].wheatley.on_call(call_dict['call'])
 
 
 # Tower size was changed
 @socketio.on('c_size_change')
-def on_size_change(size):
-    log('c_size_change', size)
-    tower_id = size['tower_id']
-    size = size['new_size']
-    towers[tower_id].n_bells = size
-    towers[tower_id].set_at_hand()
-    emit('s_size_change', {'size': size},
-         broadcast=True, include_self=True, room=tower_id)
+def on_size_change(json):
+    log('c_size_change', json)
+    tower_id = json['tower_id']
+    size = json['new_size']
+    tower = towers[tower_id]
+    # There seems to be double-calling bug where `c_size_change` is emitted twice when the tower size is
+    # changed.  To that end, if the signal tells us that the new size should be the same as what we already
+    # have, we should just early return and ignore that request
+    if tower.n_bells == size:
+        log('No size change - ignoring')
+        return
+    tower.n_bells = size
+    tower.set_at_hand()
+    emit('s_size_change', {'size': size}, broadcast=True, include_self=True, room=tower_id)
+
+    # Update Wheatley's row_gen according to the new stage, and broadcast the new row generator
+    tower.wheatley.on_size_change()
+    emit('s_wheatley_row_gen', tower.wheatley.row_gen, broadcast=True, include_self=True,
+         room=tower_id)
+
 
 # The client finished resizing and is now ready to get the global state
 @socketio.on('c_request_global_state')
 def on_request_global_state(json):
     log('c_request_global_state', json)
+
     tower_id = json['tower_id']
     tower = towers[tower_id]
+
     state = tower.bell_state
     emit('s_global_state', {'global_bell_state': state})
 
@@ -299,6 +349,7 @@ def on_host_mode(json):
 @socketio.on('c_msg_sent')
 def on_msg(json):
     emit('s_msg_sent', json, broadcast=True, include_self=True, room=json['tower_id'])
+    
 
 # We got a report of inappropriate behavior
 @socketio.on('c_report')

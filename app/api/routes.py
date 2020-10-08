@@ -1,4 +1,5 @@
 from flask import jsonify, request, url_for
+from config import Config
 from app.models import User, TowerDB, UserTowerRelation, Tower, get_server_ip, towers
 from app.extensions import db
 from app.api import bp
@@ -6,6 +7,16 @@ from app.api.errors import error_response, bad_request
 from app.api.auth import token_auth
 from flask_login import current_user
 
+# version endpoint
+
+@bp.route('/version', methods=['GET'])
+def get_version():
+    data = {
+        "version": Config.RR_VERSION,
+        "api-version": Config.RR_API_VERSION,
+        "socketio-version": Config.RR_SOCKETIO_VERSION
+    }
+    return jsonify(data)
 
 # user endpoints
 
