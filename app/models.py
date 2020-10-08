@@ -360,12 +360,10 @@ class Tower:
         self._observers = set()
         self._host_mode = False
         self._host_mode_enabled = host_mode_enabled
-
+        self.wheatley = app.wheatley.Wheatley(self, wheatley_enabled, wheatley_db_settings)
         towerdb = self.to_TowerDB()
         self._host_ids = towerdb.host_ids
         self._additional_sizes_enabled = towerdb.additional_sizes_enabled
-
-        self.wheatley = app.wheatley.Wheatley(self, wheatley_enabled, wheatley_db_settings)
 
     # generate a random caters change, for use as uid
     def generate_random_change(self):
