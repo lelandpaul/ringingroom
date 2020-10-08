@@ -2252,8 +2252,8 @@ $(document).ready(function() {
                 </div>
                 <div class="row">
                     <div class="col">
-                        <div class="row justify-content-between">
-                            <div class="col-auto mb-3 mb-sm-0">
+                        <div class="row justify-content-between no-gutter">
+                            <div class="col-auto mb-3 mb-sm-0 pr-0">
                                 <div class="tower_id input-group" style="flex-wrap:nowrap">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">[[tower_id]]</span>
@@ -2272,8 +2272,7 @@ $(document).ready(function() {
                                     </div>
                                 </div>
                             </div>
-                            <div class="w-100 d-block d-sm-none"></div>
-                            <div @click="leave_tower" class="col-auto">
+                            <div @click="leave_tower" class="col-auto px-0">
                                 <a role="button"
                                 id="leave_tower_link_button"
                                 class="btn btn-outline-primary d-block"
@@ -2282,7 +2281,7 @@ $(document).ready(function() {
                                     Leave Tower
                                 </a>
                             </div>
-                            <div class="col-auto toggle_controls d-lg-none">
+                            <div class="col-auto toggle_controls d-lg-none pl-0">
                                 <button class="toggle_controls btn btn-outline-primary"
                                         data-toggle="collapse"
                                         data-target="#tower_controls"
