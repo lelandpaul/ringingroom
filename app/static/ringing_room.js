@@ -1587,7 +1587,7 @@ $(document).ready(function() {
     @click="select_user"
     >
     [[ username ]] 
-        <span class="float-right pt-1" style="font-size: smaller;">
+        <span id="user_assigned_bells" class="float-right pt-1" style="font-size: smaller;">
               [[assigned_bell_string]]
         </span>
 </li>

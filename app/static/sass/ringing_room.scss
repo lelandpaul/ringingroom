@@ -131,6 +131,13 @@ input[type=range]::slider-thumb {
   font-size: larger;
 }
 
+#user_assigned_bells {
+    max-width: 50%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .list-group-item {
     margin-top: 0;
 }
