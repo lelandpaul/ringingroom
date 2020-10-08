@@ -1524,16 +1524,16 @@ $(document).ready(function() {
             }
         },
 
-        watch: {
-
-            assigned_bells: function() {
-                console.log('User ' + this.user_id + ' assigned bells:', this.bells_assigned_to_user);
-            }
-        },
-
         computed: {
 
             bells_assigned_to_user: function() {
+                console.log('updating bells_assigned');
+                // Hack to get around Vue reactivity issues:
+                // Referencing $root.number_of_bells ensures that this
+                // is recalculated whenever the towersize changes —
+                // which in turn ensures that it is dependent on the newly-created
+                // bell components and reacts to assignment on them.
+                this.$root.number_of_bells;
                 var bell_list = []
                 try {
                     // Sometimes this fails because the bells haven't been created yet
@@ -1577,7 +1577,7 @@ $(document).ready(function() {
                 };
                 this.$root.$refs.users.selected_user = this.user_id;
             },
-
+            
         },
 
         template: `

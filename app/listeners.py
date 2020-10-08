@@ -291,9 +291,20 @@ def on_size_change(json):
     if tower.n_bells == size:
         log('No size change - ignoring')
         return
+    # If the new size is smaller than the old, we need to manually kick people
+    # off the back bells. This ensures that the assignment list in Users gets
+    # updated properly.
+    if tower.n_bells > size:
+        for i in range(size+1, tower.n_bells+1):
+            # unassigning them on this end is taken care of when the model
+            # changes, so just emit
+            emit('s_assign_user', {'bell': i, 'user': 0},
+                 broadcast=True, include_self=True, room=tower_id)
     tower.n_bells = size
     tower.set_at_hand()
     emit('s_size_change', {'size': size}, broadcast=True, include_self=True, room=tower_id)
+
+
 
     # Update Wheatley's row_gen according to the new stage, and broadcast the new row generator
     tower.wheatley.on_size_change()
@@ -349,7 +360,7 @@ def on_host_mode(json):
 @socketio.on('c_msg_sent')
 def on_msg(json):
     emit('s_msg_sent', json, broadcast=True, include_self=True, room=json['tower_id'])
-    
+
 
 # We got a report of inappropriate behavior
 @socketio.on('c_report')
