@@ -1318,10 +1318,6 @@ $(document).ready(function() {
                 this.cur_msg = '';
             },
 
-            leave_tower: function() {
-                leave_room();
-            },
-
             remove_all_unreads: function() {
                 bell_circle.unread_messages = 0;
             },
@@ -1338,15 +1334,6 @@ $(document).ready(function() {
             Chat
             <span class="badge badge-dark" v-if="unread_messages > 0"> [[ unread_messages ]] </span>
             <span class="sr-only" v-if="unread_messages > 0">unread messages</span>
-            <span class="float-right w-50" @click="leave_tower">
-                <a role="button"
-                   id="leave_tower_link_button"
-                   class="btn btn-outline-primary w-100"
-                   href='/my_towers'
-                   >
-                    Leave Tower
-                </a>
-            </span>
         </h2>
     </div>
     <div class="card-body collapse show"
@@ -1490,7 +1477,7 @@ $(document).ready(function() {
         },
 
         template: `
-<div class="row justify-content-between mt-n2">
+<div class="row justify-content-between mt-n2 px-0 pt-2">
     <!-- slider bar overlaps its own padding, so put it in a div to make it line up with the edges-->
     <div class="col-2 pl-4">
         <i class="fas fa-volume-down volume_icon align-middle"></i>
@@ -2224,6 +2211,10 @@ $(document).ready(function() {
                 });
                 this.bookmarked = !this.bookmarked;
             },
+
+            leave_tower: function() {
+                leave_room();
+            },
         },
 
         template: `
@@ -2282,15 +2273,14 @@ $(document).ready(function() {
                                 </div>
                             </div>
                             <div class="w-100 d-block d-sm-none"></div>
-                            <div class="col-auto mb-3 mb-sm-0">
-                                <button class="toggle_help btn btn-outline-primary"
-                                        data-toggle="collapse"
-                                        data-target="#help"
-                                        v-if="!window.tower_parameters.listen_link"
-                                        @click="toggle_help"
-                                        >
-                                    Help [[ hidden_help ? '▸' : '▾' ]]
-                                </button>
+                            <div @click="leave_tower" class="col-auto">
+                                <a role="button"
+                                id="leave_tower_link_button"
+                                class="btn btn-outline-primary d-block"
+                                href='/my_towers'
+                                >
+                                    Leave Tower
+                                </a>
                             </div>
                             <div class="col-auto toggle_controls d-lg-none">
                                 <button class="toggle_controls btn btn-outline-primary"
@@ -2329,7 +2319,21 @@ $(document).ready(function() {
             <div class="tower_controls collapse"
                  id="tower_controls"
                  >
-                <volume_control ref="volume"></volume_control>
+                <div class="row justify-content-between align-bottom">
+                    <div class="col-auto">
+                        <volume_control ref="volume"></volume_control>
+                    </div>
+                    <div class="col-auto mb-3 mb-sm-0">
+                        <button class="toggle_help btn btn-outline-primary"
+                                data-toggle="collapse"
+                                data-target="#help"
+                                v-if="!window.tower_parameters.listen_link"
+                                @click="toggle_help"
+                                >
+                            Help [[ hidden_help ? '▸' : '▾' ]]
+                        </button>
+                    </div>
+                </div>
                 <tower_controls ref="controls"></tower_controls>
                 <template v-if="!window.tower_parameters.anonymous_user
                              && !window.tower_parameters.listen_link">
