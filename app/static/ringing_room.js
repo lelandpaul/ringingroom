@@ -1688,7 +1688,14 @@ $(document).ready(function() {
 
             add_user: function(user) {
                 console.log('adding user: ', user)
-                if (!this.users.includes(user)) {
+                var flag = false
+                this.users.forEach((u)=>{
+                    if (u.user_id == user.user_id){
+                        flag = true
+                        return
+                    };
+                });
+                if (!flag) {
                     this.users.push(user);
                 }
             },
