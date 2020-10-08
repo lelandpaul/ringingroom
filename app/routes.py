@@ -77,6 +77,8 @@ def tower(tower_id, decorator=None):
     user_token = '' if current_user.is_anonymous\
                     else current_user.get_token()
 
+    print('TOWER SIZES: ', tower.sizes_available)
+
     # Pass in both the tower and the user_name
     return render_template('ringing_room.html',
                             tower = tower,
@@ -201,6 +203,7 @@ def tower_settings(tower_id):
     if form.validate_on_submit():
         # Set host-mode
         tower.host_mode_enabled = form.host_mode_enabled.data
+        tower.additional_sizes_enabled = form.additional_sizes_enabled.data
 
         # ===== DEAL WITH WHEATLEY POTENTIALLY BEING ENABLED OR DISABLED =====
         wheatley_enabled = form.wheatley_enabled.data
@@ -256,6 +259,7 @@ def tower_settings(tower_id):
         flash('Tower ' + str(tower_id) + ' deleted.')
         return redirect(url_for('my_towers'))
     form.host_mode_enabled.data = tower.host_mode_enabled
+    form.additional_sizes_enabled.data = tower.additional_sizes_enabled
     form.wheatley_enabled.data = tower.wheatley.enabled
     return render_template('tower_settings.html',
                            form=form,

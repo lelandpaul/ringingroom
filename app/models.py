@@ -194,12 +194,13 @@ class TowerDB(db.Model):
     tower_id = db.Column(db.Integer, primary_key=True)
     tower_name = db.Column(db.String(32), index=True)
     created_on = db.Column(db.Date,default=date.today)
-    last_access = db.Column(db.Date, 
+    last_access = db.Column(db.Date,
                             nullable=False,
                             default=date.today,
                             onupdate=date.today)
     users = db.relationship("UserTowerRelation", back_populates="tower")
     host_mode_enabled = db.Column(db.Boolean, default=False)
+    additional_sizes_enabled = db.Column(db.Boolean, default=False)
     wheatley_enabled = db.Column(db.Boolean, default=False)
     wheatley_settings_json = db.Column(db.String(), default="{}")
 
@@ -359,7 +360,10 @@ class Tower:
         self._observers = set()
         self._host_mode = False
         self._host_mode_enabled = host_mode_enabled
-        self._host_ids = self.to_TowerDB().host_ids
+
+        towerdb = self.to_TowerDB()
+        self._host_ids = towerdb.host_ids
+        self._additional_sizes_enabled = towerdb.additional_sizes_enabled
 
         self.wheatley = app.wheatley.Wheatley(self, wheatley_enabled, wheatley_db_settings)
 
@@ -413,8 +417,8 @@ class Tower:
         # Check if it's already there — we need this for checking whether a tower is already in a
         # users related towers
         tower_db = TowerDB.query.filter(TowerDB.tower_id==self.tower_id).first()
-        return tower_db or TowerDB(tower_id=self.tower_id, 
-                                   tower_name=self.name, 
+        return tower_db or TowerDB(tower_id=self.tower_id,
+                                   tower_name=self.name,
                                    host_mode_enabled=self._host_mode_enabled,
                                    wheatley_enabled=self.wheatley.enabled)
 
@@ -455,7 +459,7 @@ class Tower:
     def user_names(self):
         return list(self._users.values())
 
-    @property 
+    @property
     def user_json(self):
         # Returns an object appropriate for sending with s_set_userlist
         return [{'user_id': id, 'username': username} for id, username in self._users.items()]
@@ -560,6 +564,23 @@ class Tower:
         self._host_mode_enabled = new_state
         self.to_TowerDB().host_mode_enabled = new_state
         db.session.commit()
+
+    @property
+    def additional_sizes_enabled(self):
+        return self._additional_sizes_enabled
+
+    @additional_sizes_enabled.setter
+    def additional_sizes_enabled(self, new_state):
+        self._additional_sizes_enabled = new_state
+        self.to_TowerDB().additional_sizes_enabled = new_state
+        db.session.commit()
+
+    @property
+    def sizes_available(self):
+        if self._additional_sizes_enabled:
+            return [4,5,6,8,10,12,14,16]
+        else:
+            return [4,6,8,10,12]
 
 
 class TowerDict(dict):

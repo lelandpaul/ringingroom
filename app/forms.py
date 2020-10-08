@@ -95,6 +95,7 @@ class TowerSettingsForm(FlaskForm):
     add_host = StringField('Add host by email', validators=[Optional(),Email()])
     remove_host = StringField('Remove host', validators=[Optional(),Email()])
     host_mode_enabled = BooleanField('Host Mode Enabled', validators=[Optional()])
+    additional_sizes_enabled = BooleanField('Additional Sizes Enabled', validators=[Optional()])
     wheatley_enabled = BooleanField('Wheatley Enabled', validators=[Optional()])
     submit = SubmitField('Save Changes')
 
@@ -105,4 +106,4 @@ class TowerSettingsForm(FlaskForm):
 
 class TowerDeleteForm(FlaskForm):
     delete = SubmitField('Delete Tower')
-    
+

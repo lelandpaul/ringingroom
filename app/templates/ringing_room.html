@@ -34,6 +34,7 @@
             size: parseInt({{tower.n_bells}}),
             observers: parseInt({{tower.observers}}),
             assignments: {{tower.assignments_as_list() | safe }},
+            sizes_available: {{ tower.sizes_available }},
             cur_user_id: "{{user_id}}",
             cur_user_name: "{{user_name}}",
             cur_user_email: "{{user_email}}",

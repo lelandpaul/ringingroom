@@ -19,10 +19,13 @@
 	$rot: 0; // initialize for scope
 
     @if $item-count == 4 { $rot: 1*$angle/2; }
+    @if $item-count == 5 { $rot: 3*$angle/4; }
 	@if $item-count == 6 { $rot: 1*$angle; }
 	@if $item-count == 8 { $rot: 3*$angle/2; }
 	@if $item-count == 10 { $rot: 2*$angle; }
 	@if $item-count == 12 { $rot: 5*$angle/2; }
+    @if $item-count == 14 { $rot: 3*$angle; }
+    @if $item-count == 16 { $rot: 7*$angle/2; }
 
 
 	@for $i from 1 through $item-count {
@@ -98,10 +101,13 @@
       transform: translate(-50%, -50%);
 
       &.four   { @include on-circle(4, $circ-size); }
+      &.five   { @include on-circle(5, $circ-size); }
       &.six    { @include on-circle(6, $circ-size); }
       &.eight  { @include on-circle(8, $circ-size); }
       &.ten    { @include on-circle(10, $circ-size); }
       &.twelve { @include on-circle(12, $circ-size); }
+      &.fourteen { @include on-circle(14, $circ-size + 3rem); }
+      &.sixteen { @include on-circle(16, $circ-size + 3rem); }
     }
 }
 
@@ -123,6 +129,10 @@
     }
     .handbell .bell_img{
         width: 3rem;
+    }
+    .fourteen .bell:not(.handbell) .bell_img, 
+    .sixteen .bell:not(.handbell) .bell_img {
+        width: 1.5rem;
     }
 }
 
@@ -150,12 +160,19 @@
     .handbell .bell_img{
         width: 4.5rem;
     }
+    .fourteen .bell:not(.handbell) .bell_img, 
+    .sixteen .bell:not(.handbell) .bell_img {
+        width: 2rem;
+    }
 }
 
 @include media-breakpoint-up(lg) {
-    @include bell_circle(35rem,32vw,50vh);
+    @include bell_circle(28rem,32vw,50vh);
     @supports (width: max(5px,5px)){
-        @include bell_circle(35rem,32vw, max(24rem,50vh));
+        @include bell_circle(28rem,32vw, max(24rem,50vh));
+    }
+    .twelve .bell_img {
+        width: 2.5rem;
     }
     .bell_metadata {
         margin-left: -0.75rem;
@@ -181,13 +198,14 @@
     @supports (width: max(5px,5px)){
         @include bell_circle(40rem,30vw,max(27rem,50vh));
     }
-    .bell_img {
-        width: 4rem;
-    }
     .handbell .bell_img{
         width: 10rem;
     }
     .handbell .bell_img{
         width: 4rem;
+    }
+    .fourteen .bell:not(.handbell) .bell_img, 
+    .sixteen .bell:not(.handbell) .bell_img {
+        width: 2.5rem;
     }
 }

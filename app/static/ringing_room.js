@@ -574,7 +574,7 @@ $(document).ready(function() {
         // data in components should be a function, to maintain scope
         data: function() {
             return {
-                tower_sizes: [4, 6, 8, 10, 12],
+                tower_sizes: window.tower_parameters.sizes_available,
                 audio_type: window.tower_parameters.audio,
                 host_mode: window.tower_parameters.host_mode
             }
@@ -1878,6 +1878,14 @@ $(document).ready(function() {
                         bell_circle.pull_rope(11);
                     } else if (['='].includes(key)) {
                         bell_circle.pull_rope(12);
+                    } else if (['q'].includes(key)) {
+                        bell_circle.pull_rope(13);
+                    } else if (['w'].includes(key)) {
+                        bell_circle.pull_rope(14);
+                    } else if (['e'].includes(key)) {
+                        bell_circle.pull_rope(15);
+                    } else if (['r'].includes(key)) {
+                        bell_circle.pull_rope(16);
                     }
 
                     // Shift+numkey rotates the circle so that that bell is in position 4
@@ -1892,6 +1900,14 @@ $(document).ready(function() {
                             bell_circle.rotate(11);
                         } else if (['+'].includes(key)) {
                             bell_circle.rotate(12);
+                        } else if (['Q'].includes(key)) {
+                            bell_circle.rotate(13);
+                        } else if (['W'].includes(key)) {
+                            bell_circle.rotate(14);
+                        } else if (['E'].includes(key)) {
+                            bell_circle.rotate(15);
+                        } else if (['R'].includes(key)) {
+                            bell_circle.rotate(16);
                         }
                     }
 
@@ -2332,11 +2348,14 @@ $(document).ready(function() {
         <div class="col-12 col-lg-8 bell_circle_col">
             <!-- bell circle col -->
             <div class="bell_circle"
-                 v-bind:class="[number_of_bells == 4  ? 'four'   : '',
-                                number_of_bells == 6  ? 'six'    : '',
-                                number_of_bells == 8  ? 'eight'  : '',
-                                number_of_bells == 10 ? 'ten'    : '',
-                                number_of_bells == 12 ? 'twelve' : '']">
+                 v-bind:class="[number_of_bells == 4  ? 'four'     : '',
+                                number_of_bells == 5  ? 'five'     : '',
+                                number_of_bells == 6  ? 'six'      : '',
+                                number_of_bells == 8  ? 'eight'    : '',
+                                number_of_bells == 10 ? 'ten'      : '',
+                                number_of_bells == 12 ? 'twelve'   : '',
+                                number_of_bells == 14 ? 'fourteen' : '',
+                                number_of_bells == 16 ? 'sixteen'  : '']">
                 <call_display v-bind:audio="audio" ref="display"></call_display>
                 <focus_display ref="focus"></focus_display>
                 <bell_rope v-for="bell in bells"
