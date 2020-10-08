@@ -25,7 +25,9 @@ def _get_stage_name(num_bells):
         5: "Doubles", 6: "Minor",
         7: "Triples", 8: "Major",
         9: "Caters", 10: "Royal",
-        11: "Cinques", 12: "Maximus"
+        11: "Cinques", 12: "Maximus",
+        13: "Thirteen", 14: "Fourteen",
+        15: "Fifteen", 16: "Sixteen",
     }[num_bells]
 
 
