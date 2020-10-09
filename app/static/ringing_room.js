@@ -2312,9 +2312,6 @@ $(document).ready(function() {
                 </div>
             </div>
             <!-- tower header -->
-            <div class="help collapse" id="help">
-                <help ref="help"></help>
-            </div>
             <div class="tower_controls collapse"
                  id="tower_controls"
                  >
@@ -2333,6 +2330,9 @@ $(document).ready(function() {
                             Help [[ hidden_help ? '▸' : '▾' ]]
                         </button>
                     </div>
+                </div>
+                <div class="help collapse" id="help">
+                    <help ref="help"></help>
                 </div>
                 <tower_controls ref="controls"></tower_controls>
                 <template v-if="!window.tower_parameters.anonymous_user
