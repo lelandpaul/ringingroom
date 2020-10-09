@@ -2272,7 +2272,7 @@ $(document).ready(function() {
                                     </div>
                                 </div>
                             </div>
-                            <div @click="leave_tower" class="col-auto px-0">
+                            <div @click="leave_tower" class="col-auto">
                                 <a role="button"
                                 id="leave_tower_link_button"
                                 class="btn btn-outline-primary d-block"
@@ -2318,7 +2318,8 @@ $(document).ready(function() {
             <div class="tower_controls collapse"
                  id="tower_controls"
                  >
-                <div class="row justify-content-between align-bottom">
+                <div class="row justify-content-between align-bottom"
+                     style="min-height:3.3rem;">
                     <div class="col-auto">
                         <volume_control ref="volume"></volume_control>
                     </div>
