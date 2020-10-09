@@ -746,7 +746,6 @@ $(document).ready(function() {
             show_help: function() {
                 console.log('showing or hiding help');
                 this.help_showing = !this.help_showing
-
             },
         },
 
@@ -2192,6 +2191,7 @@ $(document).ready(function() {
                 if (window.tower_parameters.observer) {
                     return
                 } // don't do anything if in listener mode
+                $('div.bell_circle_col').toggleClass('background');
                 $('#tower_controls').collapse('hide');
                 this.hidden_sidebar = true;
                 this.hidden_help = !this.hidden_help;

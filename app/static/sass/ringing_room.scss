@@ -178,6 +178,10 @@ input[type=range]::slider-thumb {
     z-index: 2;
 }
 
+.bell_circle_col.background{
+    z-index:-1;
+}
+
 .bell {
     padding: 0;
     white-space: nowrap;
@@ -408,6 +412,7 @@ input[type=range]::slider-thumb {
         height: 30rem;
     }
     .help {
+        z-index: 3;
         width: 40rem;
     }
     #chatbox {
