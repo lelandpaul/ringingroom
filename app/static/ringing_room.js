@@ -1549,6 +1549,10 @@ $(document).ready(function() {
                     output += this.circled_digits[bell-1]
                 });
                 return output
+            },
+
+            assignment_mode_active: function(){
+                return this.$root.$refs.users.assignment_mode;
             }
 
         },
@@ -1570,7 +1574,8 @@ $(document).ready(function() {
         template: `
 <li class="list-group-item list-group-item-action"
     :class="{assignment_active: selected,
-             active: selected}"
+             active: selected,
+             clickable: assignment_mode_active}"
     @click="select_user"
     >
     [[ username ]] 
