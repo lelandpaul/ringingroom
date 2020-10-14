@@ -8,7 +8,6 @@ db = SQLAlchemy()
 migrate = Migrate(db)
 assets = Environment()
 socketio = SocketIO(logging=True,
-                    async_mode="threading",
                     cors_allowed_origins='*')
 login = LoginManager()
 
