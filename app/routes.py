@@ -204,6 +204,7 @@ def tower_settings(tower_id):
         # Set host-mode
         tower.host_mode_enabled = form.host_mode_enabled.data
         tower.additional_sizes_enabled = form.additional_sizes_enabled.data
+        tower.half_muffled = form.half_muffled.data
 
         # ===== DEAL WITH WHEATLEY POTENTIALLY BEING ENABLED OR DISABLED =====
         wheatley_enabled = form.wheatley_enabled.data

@@ -332,13 +332,13 @@ $(document).ready(function() {
                 this.stroke = !this.stroke;
                 let audio_type;
                 let audio_obj;
-                if (this.stroke && this.$root.$refs.controls.audio_type === 'Tower'){
-                    console.log('took branch')
+                if (window.tower_parameters.half_muffled && 
+                    this.$root.$refs.controls.audio_type === 'Tower' &&
+                    this.stroke){
                     audio_type = 'Muffled';
                     audio_obj = muffled;
                     console.log(audio_type + ' ' + this.number_of_bells);
                 } else {
-                    console.log('no branch')
                     audio_type = this.$root.$refs.controls.audio_type;
                     audio_obj = this.audio;
                     console.log(audio_type + ' ' + this.number_of_bells);

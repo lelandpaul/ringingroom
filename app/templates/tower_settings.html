@@ -328,6 +328,50 @@
 
 </div>
 
+{{ form.half_muffled(class="d-none",id="half_muffled_toggle") }}
+
+<div class="form-row my3 justify-content-between">
+    <div class="col-12 col-md-6 pr-2">
+        <div class="form-row my-2">
+
+            <div class="col-6 pt-1">
+                <h4>Half-Muffled:</h4>
+            </div>
+            <div class="col-6">
+
+                <div class="btn-group btn-block btn-group-toggle align-bottom">
+                    <label class="btn btn-outline-primary {{ 'active' if not form.half_muffled.data }}">
+                    <input type="radio" 
+                        name="half_muffled"
+                        id="half_muffled_false"
+                        onclick="$('#half_muffled_toggle').prop('checked',false); 
+                                    $('#submit_name_change').click()"
+                        />
+                        No
+                    </label>
+
+                    <label class="btn btn-outline-primary {{ 'active' if form.half_muffled.data }}">
+                        Yes
+                    <input type="radio" 
+                        name="half_muffled"
+                        id="half_muffled_true"
+                        onclick="$('#half_muffled_toggle').prop('checked',true); 
+                                    $('#submit_name_change').click()"
+                        />
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 pr-2">
+        <small class="form-text pl-3 pr-0" style="text-align:justify;">
+            <p>If set to 'Yes', when Tower Bells are select the backstrokes will be muffled. (You may need to refresh the tower for this to take effect.)</p>
+        </small>
+    </div>
+
+</div>
+
+
 </form>
 
 
