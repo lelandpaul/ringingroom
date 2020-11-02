@@ -342,9 +342,9 @@
                 <div class="btn-group btn-block btn-group-toggle align-bottom">
                     <label class="btn btn-outline-primary {{ 'active' if not form.half_muffled.data }}">
                     <input type="radio" 
-                        name="half_muffled"
+                        name="half_muffled_switch"
                         id="half_muffled_false"
-                        onclick="$('#half_muffled_toggle').prop('checked',false); 
+                        onclick="$('#half_muffled_toggle').prop('checked', false); 
                                     $('#submit_name_change').click()"
                         />
                         No
@@ -353,7 +353,7 @@
                     <label class="btn btn-outline-primary {{ 'active' if form.half_muffled.data }}">
                         Yes
                     <input type="radio" 
-                        name="half_muffled"
+                        name="half_muffled_switch"
                         id="half_muffled_true"
                         onclick="$('#half_muffled_toggle').prop('checked',true); 
                                     $('#submit_name_change').click()"

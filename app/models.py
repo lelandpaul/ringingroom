@@ -587,6 +587,7 @@ class Tower:
 
     @half_muffled.setter
     def half_muffled(self, new_state):
+        print("setting half_muffled to: ", new_state)
         self.to_TowerDB().half_muffled = new_state
         db.session.commit()
 
