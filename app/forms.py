@@ -96,6 +96,7 @@ class TowerSettingsForm(FlaskForm):
     remove_host = StringField('Remove host', validators=[Optional(),Email()])
     host_mode_enabled = BooleanField('Host Mode Enabled', validators=[Optional()])
     additional_sizes_enabled = BooleanField('Additional Sizes Enabled', validators=[Optional()])
+    half_muffled = BooleanField('Half-muffled Tower Bells', validators=[Optional()])
     wheatley_enabled = BooleanField('Wheatley Enabled', validators=[Optional()])
     submit = SubmitField('Save Changes')
 

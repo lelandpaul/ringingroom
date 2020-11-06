@@ -201,6 +201,7 @@ class TowerDB(db.Model):
     users = db.relationship("UserTowerRelation", back_populates="tower")
     host_mode_enabled = db.Column(db.Boolean, default=False)
     additional_sizes_enabled = db.Column(db.Boolean, default=False)
+    half_muffled = db.Column(db.Boolean, default=False)
     wheatley_enabled = db.Column(db.Boolean, default=False)
     wheatley_settings_json = db.Column(db.String(), default="{}")
 
@@ -579,6 +580,18 @@ class Tower:
             return [4,5,6,8,10,12,14,16]
         else:
             return [4,6,8,10,12]
+
+    @property
+    def half_muffled(self):
+        return self.to_TowerDB().half_muffled
+
+    @half_muffled.setter
+    def half_muffled(self, new_state):
+        print("setting half_muffled to: ", new_state)
+        self.to_TowerDB().half_muffled = new_state
+        db.session.commit()
+
+
 
 
 class TowerDict(dict):
