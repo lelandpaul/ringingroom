@@ -330,9 +330,20 @@ $(document).ready(function() {
             // Ringing event received; now ring the bell
             ring: function() {
                 this.stroke = !this.stroke;
-                const audio_type = this.$root.$refs.controls.audio_type;
-                console.log(audio_type + ' ' + this.number_of_bells);
-                this.audio.play(bell_mappings[audio_type][this.number_of_bells][this.number - 1]);
+                let audio_type;
+                let audio_obj;
+                if (window.tower_parameters.half_muffled && 
+                    this.$root.$refs.controls.audio_type === 'Tower' &&
+                    this.stroke){
+                    audio_type = 'Muffled';
+                    audio_obj = muffled;
+                    console.log(audio_type + ' ' + this.number_of_bells);
+                } else {
+                    audio_type = this.$root.$refs.controls.audio_type;
+                    audio_obj = this.audio;
+                    console.log(audio_type + ' ' + this.number_of_bells);
+                }
+                audio_obj.play(bell_mappings[audio_type][this.number_of_bells][this.number - 1]);
                 var report = "Bell " + this.number + " rang a " + (this.stroke ? "backstroke" : "handstroke");
                 console.log(report);
             },
