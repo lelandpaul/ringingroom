@@ -86,15 +86,21 @@ socketio.on('s_set_userlist', function(msg, cb) {
     });
 });
 
+// Pong was received; get latency
+socketio.on('pong', function(ms) {
+    bell_circle.$refs.users.$refs.cur_user_data[0].update_latency(ms);
+    console.log('Update latency: ' + bell_circle.$refs.users.$refs.cur_user_data[0].latency);
+});
+
 // User entered the room
 socketio.on('s_user_entered', function(msg, cb) {
-    console.log(msg.username + ' entered')
+    console.log(msg.username + ' entered');
     bell_circle.$refs.users.add_user(msg);
 });
 
 // User left the room
 socketio.on('s_user_left', function(msg, cb) {
-    console.log(msg.username + ' left')
+    console.log(msg.username + ' left');
     bell_circle.$refs.users.remove_user(msg);
     bell_circle.$refs.bells.forEach((bell, index) => {
         if (bell.assigned_user === msg.user_id) {
@@ -267,8 +273,6 @@ $(document).ready(function() {
 
             cur_user: function() {
                 return this.$root.$refs.users.cur_user;
-
-
             },
 
             assigned_user_name: function() {
@@ -332,7 +336,7 @@ $(document).ready(function() {
                 this.stroke = !this.stroke;
                 let audio_type;
                 let audio_obj;
-                if (window.tower_parameters.half_muffled && 
+                if (window.tower_parameters.half_muffled &&
                     this.$root.$refs.controls.audio_type === 'Tower' &&
                     this.stroke){
                     audio_type = 'Muffled';
@@ -863,7 +867,7 @@ $(document).ready(function() {
 
                 if (row_gen) {
                     if (row_gen.type == "method") {
-                        return "https://rsw.me.uk/blueline/methods/view/" + 
+                        return "https://rsw.me.uk/blueline/methods/view/" +
                             (row_gen.url || "Grandsire_Major");
                     } else if (row_gen.type == "composition") {
                         return row_gen.url || "";
@@ -1149,7 +1153,7 @@ $(document).ready(function() {
             >
                 Stop Touch
             </button>
-            
+
             <br/>
         </div>
 
@@ -1287,7 +1291,7 @@ $(document).ready(function() {
         >
             Stop at rounds
         </label>
-        
+
         <hr/>
 
         <!-- Reset Wheatley -->
@@ -1518,6 +1522,7 @@ $(document).ready(function() {
                 circled_digits: ["①", "②", "③", "④", "⑤", "⑥",
                     "⑦", "⑧", "⑨", "⑩", "⑪", "⑫","⑬","⑭","⑮","⑯"
                 ],
+                latency: -1,
             }
         },
 
@@ -1554,7 +1559,7 @@ $(document).ready(function() {
             },
 
             assigned_bell_string: function(){
-                var output = ''
+                var output = '';
                 this.bells_assigned_to_user.forEach((bell, index) => {
                     output += this.circled_digits[bell-1]
                 });
@@ -1563,8 +1568,7 @@ $(document).ready(function() {
 
             assignment_mode_active: function(){
                 return this.$root.$refs.users.assignment_mode;
-            }
-
+            },
         },
 
         methods: {
@@ -1578,7 +1582,10 @@ $(document).ready(function() {
                 };
                 this.$root.$refs.users.selected_user = this.user_id;
             },
-            
+
+            update_latency: function(ms) {
+                this.latency = ms;
+            }
         },
 
         template: `
@@ -1588,7 +1595,7 @@ $(document).ready(function() {
              clickable: assignment_mode_active}"
     @click="select_user"
     >
-    [[ username ]] 
+    [[ latency ]]ms | [[ username ]]
         <span id="user_assigned_bells" class="float-right pt-1" style="font-size: smaller;">
               [[assigned_bell_string]]
         </span>
@@ -1620,7 +1627,7 @@ $(document).ready(function() {
                 });
                 return bell_list;
             },
-            
+
             cur_user_name: function() {
                 var cur_username
                 this.users.forEach((user,index) => {

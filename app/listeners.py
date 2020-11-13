@@ -397,4 +397,3 @@ def on_remove_recent(tower_id):
 
 
 
-
