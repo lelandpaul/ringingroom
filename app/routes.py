@@ -262,6 +262,7 @@ def tower_settings(tower_id):
         return redirect(url_for('my_towers'))
     form.host_mode_enabled.data = tower.host_mode_enabled
     form.additional_sizes_enabled.data = tower.additional_sizes_enabled
+    form.half_muffled.data = tower_db.half_muffled
     form.wheatley_enabled.data = tower.wheatley.enabled
     return render_template('tower_settings.html',
                            form=form,
