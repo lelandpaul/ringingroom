@@ -122,7 +122,7 @@ def code_of_conduct():
     return render_template('code_of_conduct.html')
 
 @app.route('/.well-known/apple-app-site-association')
-def code_of_conduct():
+def apple_app_site():
     return send_from_directory(app.static_folder, './.well-known/apple-app-site-association')
 
 
