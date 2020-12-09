@@ -62,7 +62,8 @@ window.onbeforeunload = leave_room;
 
 // initial data state
 window.user_parameters = {
-    bell_volume: 5,
+    bell_volume: 4,
+    handbell_mod: 0.2,
 };
 
 ////////////////////////
@@ -171,7 +172,10 @@ socketio.on('s_audio_change', function(msg, cb) {
     bell_circle.$refs.controls.audio_type = msg.new_audio;
     bell_circle.audio = msg.new_audio == 'Tower' ? tower : hand;
     // Make sure the volume is set consistently
-    bell_circle.audio._volume = window.user_parameters.bell_volume * 0.1;
+    //md = msg.new_audio == 'Tower' ? 1 : window.user_parameters.handbell_mod;
+    let md = msg.new_audio == 'Tower' ? 1.0 : window.user_parameters.handbell_mod;
+    bell_circle.audio._volume = md * window.user_parameters.bell_volume * 0.1;
+
 });
 
 // A chat message was received
@@ -332,7 +336,7 @@ $(document).ready(function() {
                 this.stroke = !this.stroke;
                 let audio_type;
                 let audio_obj;
-                if (window.tower_parameters.half_muffled && 
+                if (window.tower_parameters.half_muffled &&
                     this.$root.$refs.controls.audio_type === 'Tower' &&
                     this.stroke){
                     audio_type = 'Muffled';
@@ -863,7 +867,7 @@ $(document).ready(function() {
 
                 if (row_gen) {
                     if (row_gen.type == "method") {
-                        return "https://rsw.me.uk/blueline/methods/view/" + 
+                        return "https://rsw.me.uk/blueline/methods/view/" +
                             (row_gen.url || "Grandsire_Major");
                     } else if (row_gen.type == "composition") {
                         return row_gen.url || "";
@@ -1149,7 +1153,7 @@ $(document).ready(function() {
             >
                 Stop Touch
             </button>
-            
+
             <br/>
         </div>
 
@@ -1287,7 +1291,7 @@ $(document).ready(function() {
         >
             Stop at rounds
         </label>
-        
+
         <hr/>
 
         <!-- Reset Wheatley -->
@@ -1482,7 +1486,8 @@ $(document).ready(function() {
         watch: {
             value: function(new_value) {
                 window.user_parameters.bell_volume = new_value;
-                bell_circle.audio._volume = window.user_parameters.bell_volume * 0.1;
+                let md = this.$root.$refs.controls.audio_type == 'Tower' ? 1.0 : window.user_parameters.handbell_mod;
+                bell_circle.audio._volume = md * window.user_parameters.bell_volume * 0.1;
             },
         },
 
@@ -1578,7 +1583,7 @@ $(document).ready(function() {
                 };
                 this.$root.$refs.users.selected_user = this.user_id;
             },
-            
+
         },
 
         template: `
@@ -1588,7 +1593,7 @@ $(document).ready(function() {
              clickable: assignment_mode_active}"
     @click="select_user"
     >
-    [[ username ]] 
+    [[ username ]]
         <span id="user_assigned_bells" class="float-right pt-1" style="font-size: smaller;">
               [[assigned_bell_string]]
         </span>
@@ -1620,7 +1625,7 @@ $(document).ready(function() {
                 });
                 return bell_list;
             },
-            
+
             cur_user_name: function() {
                 var cur_username
                 this.users.forEach((user,index) => {
