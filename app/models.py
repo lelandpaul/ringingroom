@@ -570,6 +570,7 @@ class Tower:
 
     @additional_sizes_enabled.setter
     def additional_sizes_enabled(self, new_state):
+        print("setting new sizes enabled to: ", new_state)
         self._additional_sizes_enabled = new_state
         self.to_TowerDB().additional_sizes_enabled = new_state
         db.session.commit()
