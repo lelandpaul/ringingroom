@@ -143,7 +143,9 @@ socketio.on('s_size_change', function(msg, cb) {
     bell_circle.number_of_bells = new_size;
     // The user may already be assigned to something, so rotate
     bell_circle.$refs.users.rotate_to_assignment();
-    bell_circle.$refs.wheatley.update_number_of_bells();
+    if (!window.tower_parameters.listen_link && !window.tower_parameters.anonymous_user) {
+        bell_circle.$refs.wheatley.update_number_of_bells();
+    }
 });
 
 
@@ -188,7 +190,9 @@ socketio.on('s_msg_sent', function(msg, cb) {
 // Wheatley has been enabled or disabled
 socketio.on('s_set_wheatley_enabledness', function (data) {
     console.log("Setting Wheatley's enabledness to " + data.enabled);
-    bell_circle.$refs.wheatley.enabled = data.enabled;
+    if (!window.tower_parameters.listen_link && !window.tower_parameters.anonymous_user) {
+        bell_circle.$refs.wheatley.enabled = data.enabled;
+    }
 });
 
 // A Wheatley setting has been changed
@@ -332,7 +336,7 @@ $(document).ready(function() {
                 this.stroke = !this.stroke;
                 let audio_type;
                 let audio_obj;
-                if (window.tower_parameters.half_muffled && 
+                if (window.tower_parameters.half_muffled &&
                     this.$root.$refs.controls.audio_type === 'Tower' &&
                     this.stroke){
                     audio_type = 'Muffled';
@@ -573,7 +577,7 @@ $(document).ready(function() {
         },
 
         template: `
-<h2 v-show="visible" id='focus_display'>
+<h2 v-show="visible" v-if="!window.tower_parameters.listen_link && !window.tower_parameters.anonymous_user" id='focus_display'>
     Click anywhere in Ringing Room to resume ringing.
 </h2>
 `
@@ -863,7 +867,7 @@ $(document).ready(function() {
 
                 if (row_gen) {
                     if (row_gen.type == "method") {
-                        return "https://rsw.me.uk/blueline/methods/view/" + 
+                        return "https://rsw.me.uk/blueline/methods/view/" +
                             (row_gen.url || "Grandsire_Major");
                     } else if (row_gen.type == "composition") {
                         return row_gen.url || "";
@@ -1149,7 +1153,7 @@ $(document).ready(function() {
             >
                 Stop Touch
             </button>
-            
+
             <br/>
         </div>
 
@@ -1287,7 +1291,7 @@ $(document).ready(function() {
         >
             Stop at rounds
         </label>
-        
+
         <hr/>
 
         <!-- Reset Wheatley -->
@@ -1578,7 +1582,7 @@ $(document).ready(function() {
                 };
                 this.$root.$refs.users.selected_user = this.user_id;
             },
-            
+
         },
 
         template: `
@@ -1588,7 +1592,7 @@ $(document).ready(function() {
              clickable: assignment_mode_active}"
     @click="select_user"
     >
-    [[ username ]] 
+    [[ username ]]
         <span id="user_assigned_bells" class="float-right pt-1" style="font-size: smaller;">
               [[assigned_bell_string]]
         </span>
@@ -1620,7 +1624,7 @@ $(document).ready(function() {
                 });
                 return bell_list;
             },
-            
+
             cur_user_name: function() {
                 var cur_username
                 this.users.forEach((user,index) => {
