@@ -289,7 +289,7 @@ $(document).ready(function() {
                 if (this.number_of_bells === 4 && this.position >= 3) {
                     return true
                 };
-                if (this.number_of_bells === 4 && this.position >= 3) {
+                if (this.number_of_bells === 5 && this.position >= 3) {
                     return true
                 };
                 if (this.number_of_bells === 6 && (this.position === 4 || this.position === 5)) {
