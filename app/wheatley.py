@@ -27,8 +27,8 @@ def _get_stage_name(num_bells):
         7: "Triples", 8: "Major",
         9: "Caters", 10: "Royal",
         11: "Cinques", 12: "Maximus",
-        13: "Thirteen", 14: "Fourteen",
-        15: "Fifteen", 16: "Sixteen",
+        13: "Sextuples", 14: "Fourteen",
+        15: "Sextuples", 16: "Sixteen",
     }[num_bells]
 
 
@@ -126,10 +126,13 @@ class Wheatley:
         stage_name = _get_stage_name(stage)
         plain_bob_notation = {
             4: 'x14x14,12',
+            5: '5.1.5.1.5,125',
             6: 'x16x16x16,12',
             8: 'x18x18x18x18,12',
             10: 'x10x10x10x10x10,12',
-            12: 'x1Tx1Tx1Tx1Tx1Tx1T,12'
+            12: 'x1Tx1Tx1Tx1Tx1Tx1T,12',
+            14: 'x1Bx1Bx1Bx1Bx1Bx1Bx1B,12',
+            16: 'x1Dx1Dx1Dx1Dx1Dx1Dx1Dx1D,12'
         }[stage]
 
         self._row_gen = {
