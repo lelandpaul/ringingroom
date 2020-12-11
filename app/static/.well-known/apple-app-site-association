@@ -1,0 +1,14 @@
+{
+  "applinks": {
+      "details": [
+          {
+              "appIDs": [
+                  "Q74YGQBJ89.com.goodship.iOSRingingRoom"
+              ]
+          }
+       ]
+  },
+    "webcredentials": {
+      "apps": [ "Q74YGQBJ89.com.goodship.iOSRingingRoom.app" ]
+    }
+}

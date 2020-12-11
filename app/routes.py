@@ -104,7 +104,6 @@ def about():
 def help():
     return render_template('help.html')
 
-
 @app.route('/contact')
 def contact():
     return render_template('contact.html')
@@ -121,6 +120,12 @@ def blog():
 @app.route('/code_of_conduct')
 def code_of_conduct():
     return render_template('code_of_conduct.html')
+
+@app.route('/.well-known/apple-app-site-association')
+def apple_app_site():
+    return send_from_directory(app.static_folder, './.well-known/apple-app-site-association')
+
+
 
 @app.route('/authenticate')
 def authenticate():
