@@ -289,6 +289,9 @@ $(document).ready(function() {
                 if (this.number_of_bells === 4 && this.position >= 3) {
                     return true
                 };
+                if (this.number_of_bells === 5 && this.position >= 3) {
+                    return true
+                };
                 if (this.number_of_bells === 6 && (this.position === 4 || this.position === 5)) {
                     return true
                 };
@@ -299,6 +302,12 @@ $(document).ready(function() {
                     return true
                 };
                 if (this.number_of_bells === 12 && this.position >= 5 && this.position <= 10) {
+                    return true
+                };
+                if (this.number_of_bells === 14 && this.position >= 7 && this.position <= 13) {
+                    return true
+                };
+                if (this.number_of_bells === 16 && this.position >= 7 && this.position <= 14) {
                     return true
                 };
             },
@@ -332,7 +341,7 @@ $(document).ready(function() {
                 this.stroke = !this.stroke;
                 let audio_type;
                 let audio_obj;
-                if (window.tower_parameters.half_muffled && 
+                if (window.tower_parameters.half_muffled &&
                     this.$root.$refs.controls.audio_type === 'Tower' &&
                     this.stroke){
                     audio_type = 'Muffled';
@@ -863,7 +872,7 @@ $(document).ready(function() {
 
                 if (row_gen) {
                     if (row_gen.type == "method") {
-                        return "https://rsw.me.uk/blueline/methods/view/" + 
+                        return "https://rsw.me.uk/blueline/methods/view/" +
                             (row_gen.url || "Grandsire_Major");
                     } else if (row_gen.type == "composition") {
                         return row_gen.url || "";
@@ -1149,7 +1158,7 @@ $(document).ready(function() {
             >
                 Stop Touch
             </button>
-            
+
             <br/>
         </div>
 
@@ -1287,7 +1296,7 @@ $(document).ready(function() {
         >
             Stop at rounds
         </label>
-        
+
         <hr/>
 
         <!-- Reset Wheatley -->
@@ -1578,7 +1587,7 @@ $(document).ready(function() {
                 };
                 this.$root.$refs.users.selected_user = this.user_id;
             },
-            
+
         },
 
         template: `
@@ -1588,7 +1597,7 @@ $(document).ready(function() {
              clickable: assignment_mode_active}"
     @click="select_user"
     >
-    [[ username ]] 
+    [[ username ]]
         <span id="user_assigned_bells" class="float-right pt-1" style="font-size: smaller;">
               [[assigned_bell_string]]
         </span>
@@ -1620,7 +1629,7 @@ $(document).ready(function() {
                 });
                 return bell_list;
             },
-            
+
             cur_user_name: function() {
                 var cur_username
                 this.users.forEach((user,index) => {
