@@ -62,7 +62,8 @@ window.onbeforeunload = leave_room;
 
 // initial data state
 window.user_parameters = {
-    bell_volume: 5,
+    bell_volume: 4,
+    handbell_mod: 0.2,
 };
 
 ////////////////////////
@@ -171,7 +172,10 @@ socketio.on('s_audio_change', function(msg, cb) {
     bell_circle.$refs.controls.audio_type = msg.new_audio;
     bell_circle.audio = msg.new_audio == 'Tower' ? tower : hand;
     // Make sure the volume is set consistently
-    bell_circle.audio._volume = window.user_parameters.bell_volume * 0.1;
+    //md = msg.new_audio == 'Tower' ? 1 : window.user_parameters.handbell_mod;
+    let md = msg.new_audio == 'Tower' ? 1.0 : window.user_parameters.handbell_mod;
+    bell_circle.audio._volume = md * window.user_parameters.bell_volume * 0.1;
+
 });
 
 // A chat message was received
@@ -1491,7 +1495,8 @@ $(document).ready(function() {
         watch: {
             value: function(new_value) {
                 window.user_parameters.bell_volume = new_value;
-                bell_circle.audio._volume = window.user_parameters.bell_volume * 0.1;
+                let md = this.$root.$refs.controls.audio_type == 'Tower' ? 1.0 : window.user_parameters.handbell_mod;
+                bell_circle.audio._volume = md * window.user_parameters.bell_volume * 0.1;
             },
         },
 
