@@ -1499,8 +1499,10 @@ $(document).ready(function() {
         watch: {
             value: function(new_value) {
                 window.user_parameters.bell_volume = new_value;
-                let md = this.$root.$refs.controls.audio_type == 'Tower' ? 1.0 : window.user_parameters.handbell_mod;
+                let md = this.$root.$refs.controls.audio_type == 'Tower' || 
+                         this.$root.$refs.controls.audio_type == 'Muffled' ? 1.0 : window.user_parameters.handbell_mod;
                 bell_circle.audio._volume = md * window.user_parameters.bell_volume * 0.1;
+                muffled._volume = md * window.user_parameters.bell_volume * 0.1;
             },
         },
 
