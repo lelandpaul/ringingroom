@@ -144,7 +144,9 @@ socketio.on('s_size_change', function(msg, cb) {
     bell_circle.number_of_bells = new_size;
     // The user may already be assigned to something, so rotate
     bell_circle.$refs.users.rotate_to_assignment();
-    bell_circle.$refs.wheatley.update_number_of_bells();
+    if (!window.tower_parameters.listen_link && !window.tower_parameters.anonymous_user) {
+        bell_circle.$refs.wheatley.update_number_of_bells();
+    }
 });
 
 
@@ -192,7 +194,9 @@ socketio.on('s_msg_sent', function(msg, cb) {
 // Wheatley has been enabled or disabled
 socketio.on('s_set_wheatley_enabledness', function (data) {
     console.log("Setting Wheatley's enabledness to " + data.enabled);
-    bell_circle.$refs.wheatley.enabled = data.enabled;
+    if (!window.tower_parameters.listen_link && !window.tower_parameters.anonymous_user) {
+        bell_circle.$refs.wheatley.enabled = data.enabled;
+    }
 });
 
 // A Wheatley setting has been changed
@@ -586,7 +590,7 @@ $(document).ready(function() {
         },
 
         template: `
-<h2 v-show="visible" id='focus_display'>
+<h2 v-show="visible" v-if="!window.tower_parameters.listen_link && !window.tower_parameters.anonymous_user" id='focus_display'>
     Click anywhere in Ringing Room to resume ringing.
 </h2>
 `
