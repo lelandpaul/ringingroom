@@ -121,6 +121,10 @@ def blog():
 def code_of_conduct():
     return render_template('code_of_conduct.html')
 
+@app.route('/carols')
+def carols():
+    return render_template('carols.html')
+
 @app.route('/.well-known/apple-app-site-association')
 def apple_app_site():
     return send_from_directory(app.static_folder, './.well-known/apple-app-site-association')
