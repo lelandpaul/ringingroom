@@ -350,7 +350,6 @@ $(document).ready(function() {
                 let audio_type;
                 let audio_obj;
                 if (window.tower_parameters.half_muffled &&
-                    this.number_of_bells < 14 &&
                     this.$root.$refs.controls.audio_type === 'Tower' &&
                     this.stroke){
                     audio_type = 'Muffled';
