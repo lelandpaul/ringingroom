@@ -8,7 +8,7 @@ load_dotenv(os.path.join(basedir,'.env'))
 
 class Config(object):
 
-    RR_VERSION = "20.45"
+    RR_VERSION = "21.1"
 
     RR_API_VERSION = "1.0"
 
