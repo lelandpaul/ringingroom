@@ -1154,7 +1154,7 @@ $(document).ready(function() {
          id="wheatley_body"
          >
         <!-- WHEATLEY ROW GEN SECTION -->
-        <p>[[ is_ringing ? "Currently ringing " : "Wheatley will ring " ]]
+        <p>[[ is_ringing ? "Currently ringing " : "After 'Look To', Wheatley will ring " ]]
             <a :href="touch_link" target="_blank">[[ touch_text ]]</a>.
         </p>
 
