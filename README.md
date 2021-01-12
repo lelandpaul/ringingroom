@@ -210,7 +210,8 @@ which are described in detail below the table.
 | `s_wheatley_is_ringing` | `Bool` | broadcast from the server after Wheatley sends `c_wheatley_is_ringing` |
 | `c_wheatley_stop_touch` | `{tower_id: Int}` | tells the server to broadcast **s_wheatley_stop_touch** |
 | `s_wheatley_stop_touch` | `{}` | broadcast by the server to tell Wheatley to stop ringing |
-| `c_reset_wheatley` | `{tower_id: Int}` | tells the server to kill the current Wheatley instance.  Used as a last-ditch way to reset Wheatley if he gets his knickers in a twist. |
+| `c_reset_wheatley` | `{tower_id: Int}` | tells the server to kill the current Wheatley instance(s).  Used as a last-ditch way to reset Wheatley if he gets his knickers in a twist. |
+| `c_roll_call` | `{tower_id: Int, instance_id: Int}` | sent by Wheatley instances in reply to `Look To` to say that they are ready to ring |
 
   #### The 'Settings' type
   The _Settings_ type is an object with 0 or more of the following properties:
