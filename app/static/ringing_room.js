@@ -1868,6 +1868,28 @@ $(document).ready(function() {
                   }
                 }
                 catch {}
+                for (var i=0;i<Cont.buttons.length;i++) {
+                  if (Cont.buttons[i].pressed) {
+                    if(i==0){
+                      if(myCont==MXP_LeftController){
+                        window.dispatchEvent(new KeyboardEvent('keydown',{'key':'g','which':71,'code':'KeyG'}));
+                        setTimeout(function(){window.dispatchEvent(new KeyboardEvent('keyup',{'key':'g','which':71,'code':'KeyG'}));}, 50);
+                      }else if(myCont==MXP_RightController){
+                        window.dispatchEvent(new KeyboardEvent('keydown',{'key':'n','which':78,'code':'KeyN'}));
+                        setTimeout(function(){window.dispatchEvent(new KeyboardEvent('keyup',{'key':'n','which':78,'code':'KeyN'}));}, 50);
+                      }
+                    }else if(i==1){
+                      if(myCont==MXP_LeftController){
+                        window.dispatchEvent(new KeyboardEvent('keydown',{'key':'h','which':72,'code':'KeyH'}));
+                        setTimeout(function(){window.dispatchEvent(new KeyboardEvent('keyup',{'key':'h','which':72,'code':'KeyH'}));}, 50);
+                      }else if(myCont==MXP_RightController){
+                        window.dispatchEvent(new KeyboardEvent('keydown',{'key':'b','which':66,'code':'KeyB'}));
+                        setTimeout(function(){window.dispatchEvent(new KeyboardEvent('keyup',{'key':'b','which':66,'code':'KeyB'}));}, 50);
+                      }
+                    }
+//                    alert("button "+ i + ". Controller " + myCont + ".");
+                  }
+                }
               }
             }
           }
@@ -1876,12 +1898,12 @@ $(document).ready(function() {
           {
             switch (myCont){
               case MXP_RightController:
-              window.dispatchEvent(new KeyboardEvent('keydown',{'key':'j','which':74,'code':'KeyJ'}));
-              setTimeout(function(){window.dispatchEvent(new KeyboardEvent('keyup',{'key':'j','which':74,'code':'KeyJ'}));}, 50);
+              window.dispatchEvent(new KeyboardEvent('keydown',{'key':'j','keycode':74,'which':74,'code':'KeyJ'}));
+              setTimeout(function(){window.dispatchEvent(new KeyboardEvent('keyup',{'key':'j','keycode':74,'which':74,'code':'KeyJ'}));}, 50);
               break;
               case MXP_LeftController:
-              window.dispatchEvent(new KeyboardEvent('keydown',{'key':'f','which':70,'code':'KeyF'}));
-              setTimeout(function(){window.dispatchEvent(new KeyboardEvent('keyup',{'key':'f','which':70,'code':'KeyF'}));}, 50);
+              window.dispatchEvent(new KeyboardEvent('keydown',{'key':'f','keycode':70,'which':70,'code':'KeyF'}));
+              setTimeout(function(){window.dispatchEvent(new KeyboardEvent('keyup',{'key':'f','keycode':70,'which':70,'code':'KeyF'}));}, 50);
               break;
             }
           }
@@ -2035,15 +2057,17 @@ $(document).ready(function() {
                     }
 
                     // MXP w will swap controllers
-                    if ( e.which == 87 && MXP_Active_Controllers >=2 && MXP_Controllers_ACTIVE) {
-                        MXP_SwapControllers();
+                    if ( e.which == 87 ) {
+                        if(MXP_Controllers_ACTIVE && MXP_Active_Controllers >=2 )MXP_SwapControllers();
                         return
                     }
 
                     // MXP CTL will toggle controller watching
-                    if ( e.which == 17 && MXP_Active_Controllers >=1 ) {
-                        MXP_Controllers_ACTIVE = !MXP_Controllers_ACTIVE;
-                        MXP_TOGGLE_CONTROLLERS();
+                    if ( e.which == 17 ) {
+                        if (MXP_Active_Controllers >=1){
+                          MXP_Controllers_ACTIVE = !MXP_Controllers_ACTIVE;
+                          MXP_TOGGLE_CONTROLLERS();
+                        }
                         return
                     }
 
@@ -2051,7 +2075,6 @@ $(document).ready(function() {
                         return
                     };
                     bell_circle.keys_down.push(key);
-
 
                     // Do a special thing to prevent space and the arrow keys from hitting focused elements
                     if (e.which == 32 || e.which == 37 || e.which == 38 || e.which == 39 || e.which == 40) {
