@@ -1499,7 +1499,7 @@ $(document).ready(function() {
         watch: {
             value: function(new_value) {
                 window.user_parameters.bell_volume = new_value;
-                let md = this.$root.$refs.controls.audio_type == 'Tower' || 
+                let md = this.$root.$refs.controls.audio_type == 'Tower' ||
                          this.$root.$refs.controls.audio_type == 'Muffled' ? 1.0 : window.user_parameters.handbell_mod;
                 bell_circle.audio._volume = md * window.user_parameters.bell_volume * 0.1;
                 muffled._volume = md * window.user_parameters.bell_volume * 0.1;
@@ -1874,7 +1874,6 @@ $(document).ready(function() {
 
           function MXP_send(myCont)
           {
-            console.log("myCont=" + myCont);
             switch (myCont){
               case MXP_RightController:
               window.dispatchEvent(new KeyboardEvent('keydown',{'key':'j','which':74,'code':'KeyJ'}));
@@ -2036,13 +2035,13 @@ $(document).ready(function() {
                     }
 
                     // MXP w will swap controllers
-                    if ( e.which == 87 && MXP_Active_Controllers >=2 ) {
+                    if ( e.which == 87 && MXP_Active_Controllers >=2 && MXP_Controllers_ACTIVE) {
                         MXP_SwapControllers();
                         return
                     }
 
                     // MXP CTL will toggle controller watching
-                    if ( e.which == 17 ) {
+                    if ( e.which == 17 && MXP_Active_Controllers >=1 ) {
                         MXP_Controllers_ACTIVE = !MXP_Controllers_ACTIVE;
                         MXP_TOGGLE_CONTROLLERS();
                         return
