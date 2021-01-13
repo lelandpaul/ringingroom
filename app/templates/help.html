@@ -79,6 +79,7 @@
     <li><a href="#host_mode">Hosts and Host Mode</a></li>
     <li><a href="#listener_links">Listener links</a></li>
     <li><a href="#simulators">Handbell and Towerbell Simulators</a></li>
+    <li><a href="#controllers">Handbell Controllers</a></li>
 </ul>
 
 <h4><a id="assigning"></a>Assigning ringers to bells</h4>
@@ -146,6 +147,21 @@
 <p>Tom Farthing has developed a Python script for those who have simulated handbells with a serial port input. This is definitely a "batteries not included" setup; if you're not comfortable with scripting in Python and working on the command-line, this probably isn't for you. But if you meet that description, you can download the necessary files <a href="static/downloads/serial-port-handbell-simulator.zip" download>here</a>.
 
 <p> Finally, there is also support for using mobile phones as handbell simulators. Richard Johnston has created a program for using Android phones this way, available <a href="http://ringingtraining.pbworks.com/w/page/139678398/Mobile_phone_input_for_Ringing_Room?mode=embedded">here</a>. On the iOS App Store, David Wilson has developed the Minibell app, which offers similar functionality (among many other useful functions). </p>
+
+<h4><a id="controllers"></a>Handbell Controllers</h4>
+
+<p>RingingRoom now supports handbell controllers without a separate handbell manager.
+  This handebell manager runs within the browser so is platform independent working on Windows, Mac and Linux systems.</p>
+<p>At the moment <a href="https://ebells.co.uk/"</p>eBells</a> and
+<a href="https://handbellmanager.changeringing.co.uk/comparison.html">ActionXL</a> controllers are supported. Other controllers
+that use an Arduino chip may be recognised as eBells. Currently a
+simple strike algorithm is used with fixed options, but this should be adequate for most purposes. No button actions are currently implemented.</p>
+<p>Detection of controllers is automatic but their use can be toggled on and off using the <b style="font-family: Courier Bold">[ctrl]</b> key.
+  A single controller can be used for ringing one bell to give a
+  physical sense of handstroke and backstroke. This operates the bottom right bell. If two controller are found these will
+ring the lower two bells. The controllers may be s<b>[w]</b>apped using the "w" key.</p>
+<p>If you wish to use this facility do not run Handbell Manager at the same time.<p>
+<p>eBells work best when connected after the web page has loaded otherwise they do not always behave correctly.</p>
 
 <h2><a id="faq"></a>Frequently Asked Questions / Known Bugs</h2>
 
