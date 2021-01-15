@@ -1821,179 +1821,182 @@ $(document).ready(function() {
 `,
     }); // End user_display
 
-    // The master Vue application
-    bell_circle = new Vue({
-        el: "#bell_circle",
+    Vue.component('mxp_controllers', {
+        data: function() {
+            return {
+              MXP_handStrike : [ 100, 100 , 100, 100  , 100, 100 ],
+              MXP_backStrike : [ -600, -600 , -600, -600 , -600, -600 ],
+              MXP_atHand : [ false , false , false , false , false , false ],
+              MXP_hasController : false,
+              MXP_checkController: null,
+              MXP_tickController: null,
+              MXP_LeftController: null,
+              MXP_RightController: null,
+              MXP_Active_Controllers: null,
+              MXP_Controllers_ACTIVE : true,
+            }
+        },
+
+        methods: {
+
+            MXP_ControlAvailable: function()
+                  {
+                    return "getGamepads" in navigator;
+                  },
+
+            MXP_ticktockController: function()
+                  {
+                    var nControllers = navigator.getGamepads().length;
+                    var myCont;
+                    for (myCont=0;myCont<nControllers;myCont++){
+                      if([this.MXP_LeftController, this.MXP_RightController].includes(myCont)){
+                        try {
+                          var Cont = navigator.getGamepads()[myCont];
+                          if( Math.max.apply(null, Cont.axes.map(Math.abs)) > 0 ){
+                            var Swing = Cont.axes[2]*2048;
+                            if (Swing >= this.MXP_handStrike[myCont] && this.MXP_atHand[myCont]) {
+                              this.MXP_atHand[myCont] = !this.MXP_atHand[myCont];
+                              this.MXP_send(myCont);
+                            }
+                            if (Swing <= this.MXP_backStrike[myCont] && !this.MXP_atHand[myCont]) {
+                              this.MXP_atHand[myCont] = !this.MXP_atHand[myCont];
+                              this.MXP_send(myCont);
+                            }
+                          }
+                        }
+                        catch {}
+                        for (var i=0;i<Cont.buttons.length;i++) {
+                          if (Cont.buttons[i].pressed) {
+                            if(i==0){
+                              if(myCont==this.MXP_LeftController){
+                                window.dispatchEvent(new KeyboardEvent('keydown',{'key':'g','which':71,'code':'KeyG'}));
+                                setTimeout(function(){window.dispatchEvent(new KeyboardEvent('keyup',{'key':'g','which':71,'code':'KeyG'}));}, 50);
+                              }else if(myCont==this.MXP_RightController){
+                                window.dispatchEvent(new KeyboardEvent('keydown',{'key':'n','which':78,'code':'KeyN'}));
+                                setTimeout(function(){window.dispatchEvent(new KeyboardEvent('keyup',{'key':'n','which':78,'code':'KeyN'}));}, 50);
+                              }
+                            }else if(i==1){
+                              if(myCont==this.MXP_LeftController){
+                                window.dispatchEvent(new KeyboardEvent('keydown',{'key':'h','which':72,'code':'KeyH'}));
+                                setTimeout(function(){window.dispatchEvent(new KeyboardEvent('keyup',{'key':'h','which':72,'code':'KeyH'}));}, 50);
+                              }else if(myCont==this.MXP_RightController){
+                                window.dispatchEvent(new KeyboardEvent('keydown',{'key':'b','which':66,'code':'KeyB'}));
+                                setTimeout(function(){window.dispatchEvent(new KeyboardEvent('keyup',{'key':'b','which':66,'code':'KeyB'}));}, 50);
+                              }
+                            }
+        //                    alert("button "+ i + ". Controller " + myCont + ".");
+                          }
+                        }
+                      }
+                    }
+                  },
+
+            MXP_send: function(myCont){
+                    switch (myCont){
+                      case this.MXP_RightController:
+                      window.dispatchEvent(new KeyboardEvent('keydown',{'key':'j','keycode':74,'which':74,'code':'KeyJ'}));
+                      setTimeout(function(){window.dispatchEvent(new KeyboardEvent('keyup',{'key':'j','keycode':74,'which':74,'code':'KeyJ'}));}, 50);
+                      break;
+                      case this.MXP_LeftController:
+                      window.dispatchEvent(new KeyboardEvent('keydown',{'key':'f','keycode':70,'which':70,'code':'KeyF'}));
+                      setTimeout(function(){window.dispatchEvent(new KeyboardEvent('keyup',{'key':'f','keycode':70,'which':70,'code':'KeyF'}));}, 50);
+                      break;
+                    }
+                  },
+
+            MXP_SwapControllers: function(){
+                    var tmp = this.MXP_RightController;
+                    this.MXP_RightController = this.MXP_LeftController;
+                    this.MXP_LeftController = tmp;
+                    var MXP_html=": Swapped";
+                    document.getElementById('MXP_HM_notice').innerHTML = MXP_html;
+                    setTimeout(() => {MXP_html=".";document.getElementById('MXP_HM_notice').innerHTML = MXP_html;}, 2000);
+                  },
+
+            MXP_setControllers: function(){
+                    var MXP_html="";
+                    var MXP_type=[];
+                    this.MXP_Active_Controllers = 0;
+                    var myCont;
+                    var nControllers = navigator.getGamepads().length;
+                    this.MXP_LeftController = -1;
+                    this.MXP_RightController = -1;
+
+                    for (myCont=0;myCont<nControllers;myCont++){
+                      var Cont = navigator.getGamepads()[myCont];
+                      try{
+                        if( Cont.id.includes('0ffe')&&Cont.connected ){
+                          if(this.MXP_RightController == -1){
+                            this.MXP_RightController = Cont.index;
+                          }else if (this.MXP_LeftController == -1){
+                            this.MXP_LeftController = Cont.index;
+                          }
+                          MXP_type[myCont] = "ActionXL";
+                          this.MXP_Active_Controllers++;
+                        }else if( Cont.id.includes('1234')&&Cont.connected ){
+                          MXP_type[myCont] = "vJoy";
+                        }
+                        else if ( Cont.id.includes('2341')&&Cont.connected ){
+                          if(this.MXP_RightController == -1){
+                            this.MXP_RightController = Cont.index;
+                          }else if (MXP_LeftController == -1){
+                            this.MXP_LeftController = Cont.index;
+                          }
+                          this.MXP_type[myCont] = "eBell";
+                          this.MXP_Active_Controllers++;
+                        }else{
+                          MXP_type[myCont] = "unknown";
+                        }
+                      }
+                      catch{
+                      }
+                    }
+                    if(this.MXP_RightController > -1){
+                      if(this.MXP_LeftController > -1){
+                        MXP_html += "L&R devices found";
+                      }else{
+                        MXP_html += "Single device assigned";
+                      }
+                    }
+                    if (this.MXP_Active_Controllers==0) MXP_html = "";
+                    document.getElementById('MXP_HM_status').innerHTML = MXP_html;
+                    if (nControllers == 0) window.clearInterval(this.MXP_tickController);
+              },
+
+            MXP_TOGGLE_CONTROLLERS: function(){
+                    if(this.MXP_Controllers_ACTIVE){
+                      this.MXP_setControllers();
+                      window.clearInterval(MXP_tickController);
+                      this.MXP_tickController = window.setInterval(MXP_ticktockController,15);
+                    }else{
+                      document.getElementById('MXP_HM_status').innerHTML = "Controllers are off";
+                      window.clearInterval(this.MXP_tickController);
+                    }
+              },
+
+        },
 
         mounted: function() {
+            console.log('mounting mxp')
+         if (this.MXP_ControlAvailable()) {
+            if(this.MXP_Controllers_ACTIVE){
+              
+            var instance = this; // smuggle this into the function
 
-          //////////////////////////
-          /* MXP handbell manager */
-          //////////////////////////
-
-          var MXP_handStrike = [ 100, 100 , 100, 100  , 100, 100 ] ;
-          var MXP_backStrike = [ -600, -600 , -600, -600 , -600, -600 ] ;
-          var MXP_atHand = [ false , false , false , false , false , false ];
-          var MXP_hasController = false;
-          var MXP_checkController;
-          var MXP_tickController;
-          var MXP_LeftController;
-          var MXP_RightController;
-          var MXP_Active_Controllers;
-          var MXP_Controllers_ACTIVE = true;
-
-          function MXP_ControlAvailable()
-          {
-            return "getGamepads" in navigator;
-          }
-
-          function MXP_ticktockController()
-          {
-            var nControllers = navigator.getGamepads().length;
-            var myCont;
-            for (myCont=0;myCont<nControllers;myCont++){
-              if([MXP_LeftController,MXP_RightController].includes(myCont)){
-                try {
-                  var Cont = navigator.getGamepads()[myCont];
-                  if( Math.max.apply(null, Cont.axes.map(Math.abs)) > 0 ){
-                    var Swing = Cont.axes[2]*2048;
-                    if (Swing >= MXP_handStrike[myCont] && MXP_atHand[myCont]) {
-                      MXP_atHand[myCont] = !MXP_atHand[myCont];
-                      MXP_send(myCont);
-                    }
-                    if (Swing <= MXP_backStrike[myCont] && !MXP_atHand[myCont]) {
-                      MXP_atHand[myCont] = !MXP_atHand[myCont];
-                      MXP_send(myCont);
-                    }
-                  }
-                }
-                catch {}
-                for (var i=0;i<Cont.buttons.length;i++) {
-                  if (Cont.buttons[i].pressed) {
-                    if(i==0){
-                      if(myCont==MXP_LeftController){
-                        window.dispatchEvent(new KeyboardEvent('keydown',{'key':'g','which':71,'code':'KeyG'}));
-                        setTimeout(function(){window.dispatchEvent(new KeyboardEvent('keyup',{'key':'g','which':71,'code':'KeyG'}));}, 50);
-                      }else if(myCont==MXP_RightController){
-                        window.dispatchEvent(new KeyboardEvent('keydown',{'key':'n','which':78,'code':'KeyN'}));
-                        setTimeout(function(){window.dispatchEvent(new KeyboardEvent('keyup',{'key':'n','which':78,'code':'KeyN'}));}, 50);
-                      }
-                    }else if(i==1){
-                      if(myCont==MXP_LeftController){
-                        window.dispatchEvent(new KeyboardEvent('keydown',{'key':'h','which':72,'code':'KeyH'}));
-                        setTimeout(function(){window.dispatchEvent(new KeyboardEvent('keyup',{'key':'h','which':72,'code':'KeyH'}));}, 50);
-                      }else if(myCont==MXP_RightController){
-                        window.dispatchEvent(new KeyboardEvent('keydown',{'key':'b','which':66,'code':'KeyB'}));
-                        setTimeout(function(){window.dispatchEvent(new KeyboardEvent('keyup',{'key':'b','which':66,'code':'KeyB'}));}, 50);
-                      }
-                    }
-//                    alert("button "+ i + ". Controller " + myCont + ".");
-                  }
-                }
-              }
-            }
-          }
-
-          function MXP_send(myCont)
-          {
-            switch (myCont){
-              case MXP_RightController:
-              window.dispatchEvent(new KeyboardEvent('keydown',{'key':'j','keycode':74,'which':74,'code':'KeyJ'}));
-              setTimeout(function(){window.dispatchEvent(new KeyboardEvent('keyup',{'key':'j','keycode':74,'which':74,'code':'KeyJ'}));}, 50);
-              break;
-              case MXP_LeftController:
-              window.dispatchEvent(new KeyboardEvent('keydown',{'key':'f','keycode':70,'which':70,'code':'KeyF'}));
-              setTimeout(function(){window.dispatchEvent(new KeyboardEvent('keyup',{'key':'f','keycode':70,'which':70,'code':'KeyF'}));}, 50);
-              break;
-            }
-          }
-
-          function MXP_SwapControllers(){
-            var tmp = MXP_RightController;
-            MXP_RightController = MXP_LeftController;
-            MXP_LeftController = tmp;
-            var MXP_html=": Swapped";
-            document.getElementById('MXP_HM_notice').innerHTML = MXP_html;
-            setTimeout(() => {MXP_html=".";document.getElementById('MXP_HM_notice').innerHTML = MXP_html;}, 2000);
-          }
-
-          function MXP_setControllers(){
-            var MXP_html="";
-            var MXP_type=[];
-            MXP_Active_Controllers = 0;
-            var myCont;
-            var nControllers = navigator.getGamepads().length;
-            MXP_LeftController = -1;
-            MXP_RightController = -1;
-
-            for (myCont=0;myCont<nControllers;myCont++){
-              var Cont = navigator.getGamepads()[myCont];
-              try{
-                if( Cont.id.includes('0ffe')&&Cont.connected ){
-                  if(MXP_RightController == -1){
-                    MXP_RightController = Cont.index;
-                  }else if (MXP_LeftController == -1){
-                    MXP_LeftController = Cont.index;
-                  }
-                  MXP_type[myCont] = "ActionXL";
-                  MXP_Active_Controllers++;
-                }else if( Cont.id.includes('1234')&&Cont.connected ){
-                  MXP_type[myCont] = "vJoy";
-                }
-                else if ( Cont.id.includes('2341')&&Cont.connected ){
-                  if(MXP_RightController == -1){
-                    MXP_RightController = Cont.index;
-                  }else if (MXP_LeftController == -1){
-                    MXP_LeftController = Cont.index;
-                  }
-                  MXP_type[myCont] = "eBell";
-                  MXP_Active_Controllers++;
-                }else{
-                  MXP_type[myCont] = "unknown";
-                }
-              }
-              catch{
-              }
-            }
-            if(MXP_RightController > -1){
-              if(MXP_LeftController > -1){
-                MXP_html += "L&R devices found";
-              }else{
-                MXP_html += "Single device assigned";
-              }
-            }
-            if (MXP_Active_Controllers==0) MXP_html = "";
-            document.getElementById('MXP_HM_status').innerHTML = MXP_html;
-            if (nControllers == 0) window.clearInterval(MXP_tickController);
-          }
-
-          function MXP_TOGGLE_CONTROLLERS(){
-            if(MXP_Controllers_ACTIVE){
-              MXP_setControllers();
-              window.clearInterval(MXP_tickController);
-              MXP_tickController = window.setInterval(MXP_ticktockController,15);
-            }else{
-              document.getElementById('MXP_HM_status').innerHTML = "Controllers are off";
-              window.clearInterval(MXP_tickController);
-            }
-          }
-
-          if (MXP_ControlAvailable()) {
-            if(MXP_Controllers_ACTIVE){
               $(window).on("gamepadconnected", function() {
-                MXP_hasController = true;
-                window.clearInterval(MXP_tickController);
-                MXP_tickController = window.setInterval(MXP_ticktockController,15);
-                MXP_setControllers();
+                instance.MXP_hasController = true;
+                window.clearInterval(instance.MXP_tickController);
+                instance.MXP_tickController = window.setInterval(instance.MXP_ticktockController,15);
+                instance.MXP_setControllers();
               });
 
               $(window).on("gamepaddisconnected", function() {
-                MXP_setControllers();
+                instance.MXP_setControllers();
               });
 
-              MXP_checkController = window.setInterval(function() {
+              this.MXP_checkController = window.setInterval(function() {
                 if (navigator.getGamepads()[0]) {
-                  if (!MXP_hasController) $(window).trigger("gamepadconnected");
+                  if (!this.MXP_hasController) $(window).trigger("gamepadconnected");
                 }
               },1000);
             }else{
@@ -2001,6 +2004,20 @@ $(document).ready(function() {
             }
           };
 
+        },
+
+    template: `<div><p><span id="MXP_HM_status"></span><span id="MXP_HM_notice"></span></p></div>`
+        
+
+
+    }); // End controllers
+
+
+    // The master Vue application
+    bell_circle = new Vue({
+        el: "#bell_circle",
+
+        mounted: function() {
 
             /////////////////
             /* Tower setup */
@@ -2058,15 +2075,18 @@ $(document).ready(function() {
 
                     // MXP w will swap controllers
                     if ( e.which == 87 ) {
-                        if(MXP_Controllers_ACTIVE && MXP_Active_Controllers >=2 )MXP_SwapControllers();
+                        if(this.$refs.mxp.MXP_Controllers_ACTIVE 
+                            && this.$refs.mxp.MXP_Active_Controllers >=2) {
+                            this.$refs.mxp.MXP_SwapControllers();
+                        }
                         return
                     }
 
                     // MXP CTL will toggle controller watching
                     if ( e.which == 17 ) {
-                        if (MXP_Active_Controllers >=1){
-                          MXP_Controllers_ACTIVE = !MXP_Controllers_ACTIVE;
-                          MXP_TOGGLE_CONTROLLERS();
+                        if (this.$refs.mxp.MXP_Active_Controllers >=1){
+                          this.$refs.mxp.MXP_Controllers_ACTIVE = !this.$refs.mxp.MXP_Controllers_ACTIVE;
+                          this.$refs.mxp.MXP_TOGGLE_CONTROLLERS();
                         }
                         return
                     }
@@ -2509,7 +2529,7 @@ $(document).ready(function() {
                             <!-- /////////////////////////
                                  / MXP handbell manager */
                                  ///////////////////////// -->
-                            <div><p><span id="MXP_HM_status"></span><span id="MXP_HM_notice"></span></p></div>
+                            <mxp_controllers ref="mxp"></mxp_controllers>
 
                             <div class="col-auto toggle_controls d-lg-none pl-0">
                                 <button class="toggle_controls btn btn-outline-primary"
