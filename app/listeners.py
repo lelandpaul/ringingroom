@@ -266,8 +266,12 @@ def on_wheatley_stop_touch(json):
 
 @socketio.on('c_reset_wheatley')
 def on_reset_wheatley(json):
-    towers[json['tower_id']].wheatley.kill_process()
+    towers[json['tower_id']].wheatley.reset()
     emit('s_wheatley_is_ringing', False, broadcast=True, room=json['tower_id'])
+
+@socketio.on('c_roll_call')
+def on_roll_call(json):
+    towers[json['tower_id']].wheatley.on_roll_call(json['instance_id'])
 
 
 # A call was made

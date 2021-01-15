@@ -1,14 +1,99 @@
 """
-A module to contain all the code relating to the interactions of Ringing Room with Wheatley.
-All the technical details are contained in this file and the Wheatley class, and the rest of the
-code should only interact with the provided functions.
+A module to contain all the code relating to the interactions of Ringing Room with Wheatley.  All
+the technical details are contained in this file and the Wheatley class, and the rest of the code
+should only interact with the provided functions.  This provides a separation of concerns, and
+allows the Wheatley interfacing code to be adjusted easily to keep up with changes to Wheatley
+itself.
+
+# Code overview
+
+## Goals
+
+The biggest concern of this module is to guaruntee the following properties:
+- At any time, there is **at most one** Wheatley instance active in any given tower
+- After enough inactivity, there should be no Wheatley instances running
+- When Wheatley is needed for some ringing, there is _exactly one_ Wheatley instance running in time
+  for the start of the ringing (note that this a Wheatley instance is not required immediatley after
+  `Look To`, only at the start of the ringing).
+
+## Why I think this system will actually work
+
+This system is makes a number of improvements over the last (broken) system to make it more paranoid
+and less likely to fail:
+
+1.  This system never forgets about Wheatley processes.  Therefore, it is explicitly able to recover
+    from the situation where multiple Wheatleys exist in the same tower. The old system could only
+    track at most one Wheatley in a given room, despite the fact that mistakes sometimes happen -
+    this meant that if a 2nd Wheatley instance did somehow appear, the first one would be forgotten
+    about forever, leaving it as a 'zombie Wheatley' to mess up the ringing and consume the CPU of
+    the RR server.
+
+2.  Secondly, this system detects active Wheatley instances by requiring them to send a WebSocket
+    signal (`c_roll_call`) in reply to `Look To`.  This means that if a Wheatley process is running
+    but somehow unable to send/recieve socketio messages then it is wasting CPU and memory time and
+    will be killed.
+
+3.  Apart from the inactivity timeout, Wheatley instances are always killed by the RR server
+    explicitly killing the Wheatley process.  This means that however much a Wheatley instance gets
+    its knickers in a twist, we will always be able to kill it.
+
+4.  Wheatley process classes (`Proc`s) are only pronounced to be `STATE_DEAD` when the process
+    actually terminates.
+
+5.  This system only creates new Wheatleys if it's absolutely necessary, minimising the number of
+    CPU spikes caused by spinning up new python interpreters.
+
+## How the system works
+
+If `Look To` is called and Wheatley is assigned, then a Wheatley instance is needed.  Importantly,
+Wheatley is not needed until the 'Look To' sound is finished, giving us ~3 seconds to make sure that
+exactly one Wheatley process is active.
+
+However, detecting active Wheatley instances purely by which processes are running is **very**
+unreliable (knowledge that we have learned through much trauma with the dev server).  Instead, we
+require that Wheatley and the server follow a standard protocol, with the following timeline:
+
+1.  `Look To` is called, and Wheatley is assigned to some bells - Wheatley therefore needs to start
+    ringing when `Look To` is finished.  The `Wheatley` class stores the current time in
+    `Wheatley._look_to_time` so that any new Wheatleys know when to start ringing.  Nothing else
+    happens.
+
+2.  Any active Wheatley instances reply to the `Look To` signal with a 'c_roll_call', to tell the
+    server that that Wheatley instance is already active and able to ring.  All the 'roll call'
+    replies are registered by the server.
+
+3.  `ROLL_CALL_TIME` seconds after 'Look To' is called, the `Wheatley` class looks at the 'roll call'
+    replies to decide what to do.  There are 3 cases:
+
+
+    ### Case 1: There were no replies
+
+    This means either
+      a) there aren't any Wheatley instances
+    or
+      b) all the existing Wheatley instances are broken in some way.
+    Either way, the correct response to this is to kill all existing processes and spawn another.
+
+
+    ### Case 2: There is exactly one instance and exactly one reply
+
+    In this case, the existing Wheatley instance must be alive and ready to ring, so all is fine.
+
+   
+    ### Case 3: There are multiple instances and some non-zero number of replies
+
+    In this case, we have too many instances running.  The server keeps the **newest** instance that
+    replied, and all others are killed.
+
+    In fact, case (2) is a special case of (3) (albeit the most likely one) so they are implemented
+    together.
 """
 
 import json
 import time
 import os
 import subprocess
-from threading import Thread
+from threading import Thread, Timer
 
 import requests
 
@@ -19,6 +104,8 @@ from app import Config
 USER_ID = -1
 USER_NAME = "Wheatley"
 
+# The number of seconds that the server waits for Wheatley instances to reply to a roll call
+ROLL_CALL_TIME = 1
 
 def _get_stage_name(num_bells):
     return {
@@ -37,7 +124,116 @@ def feature_flag() -> bool:
     return os.environ.get('RR_ENABLE_WHEATLEY') == '1'
 
 
-# Class to store the interface with an instance of Wheatley
+class Proc:
+    """
+    The interface to a single Wheatley instance.  There could be multiple Wheatleys in a single
+    tower for a short amount of time.
+    """
+
+    # The Wheatley process hasn't started yet
+    STATE_STARTING = 0
+    # The Wheatley process is running
+    STATE_RUNNING = 1
+    # The Wheatley process has been sent SIGTERM but has not closed yet
+    STATE_CONDEMNED = 2
+    # The Wheatley process has been killed
+    STATE_DEAD = 2
+    
+    def __init__(self, tower_id, look_to_time, instance_id):
+        self._tower_id = tower_id
+        self.instance_id = instance_id
+
+        self._state = self.STATE_STARTING
+
+        # The 'wheatley' command will never return, so we have to spawn it in a new thread.
+        # This has the pleasant side effect of allowing us to detect Wheatley crashing, because
+        # there is always a thread running to catch it
+        self._thread = Thread(target=self._process_func, args=[look_to_time])
+        self._thread.start()
+
+        # This is set to True when this object is deconstructed, to make sure that the process is
+        # not killed twice
+        self._has_been_closed = False
+
+    def log(self, message):
+        """ Function to make a log entry under this Wheatley instance's name """
+        log(f"WHEATLEY:{self._tower_id}:{self.instance_id}:{message}")
+
+    def close(self):
+        """ Kill the wheatley instance when this object is deleted. """
+        # Don't close this Wheatley instance twice
+        if self._has_been_closed:
+            return
+
+        self._has_been_closed = True
+        self.kill()
+
+    def kill(self):
+        # Mark this process as condemned
+        self._state = self.STATE_CONDEMNED
+
+        # Only kill the process if it has actually started
+        if self._wheatley_process is not None:
+            self.log("Killing process")
+            self._wheatley_process.kill()
+
+    @property
+    def is_dead(self):
+        return self._state == self.STATE_DEAD
+
+    # Close the process when this object is GCed
+    def __del__(self):
+        self.close()
+
+    def _process_func(self, look_to_time):
+        """
+        All the time that this instance's process is running, there will be a thread stuck in the
+        infinite loop within this function.  If the inner process is killed or crashes, then this
+        function will return.
+        """
+        self.log("Starting controller thread")
+        wheatley_cmd = "wheatley"
+        if "RR_WHEATLEY_PATH" in os.environ:
+            wheatley_cmd = os.environ["RR_WHEATLEY_PATH"]
+
+        self._wheatley_process = subprocess.Popen(
+            [
+                # Spawn wheatley in server-mode ...
+                wheatley_cmd,
+                "server-mode",
+                # ... with the correct tower_id ...
+                str(self._tower_id),
+                # ... and the current socketio port ...
+                "--port",
+                str(Config.RR_SOCKETIO_PORT),
+                # ... and the right look-to-time ...
+                '--look-to-time',
+                str(look_to_time),
+                # ... and this instances instance_id
+                '--id',
+                str(self.instance_id)
+            ],
+            # Capture both stdout and stderr (almost all of the logging goes to stderr)
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+
+        # Log the process starting and move into the 'running' state
+        self.log("Spawned process")
+        self._state = self.STATE_RUNNING
+
+        for line_bytes in iter(self._wheatley_process.stderr.readline, ""):
+            # Detect Wheatley crashing
+            if self._wheatley_process.poll() is not None:
+                break
+
+            line = line_bytes.decode('utf-8').rstrip("\n")
+            self.log(f"{line}")
+
+        # Move into the 'dead' state
+        self._state = self.STATE_DEAD
+
+
 class Wheatley:
     """
     A class to act as an interface between a Tower and the Wheatley instances.  This class will
@@ -47,7 +243,8 @@ class Wheatley:
 
     def __init__(self, tower, enabled, db_settings):
         self._tower = tower
-        # Make sure that the correct side effects happen when setting Wheatley's enabledness
+        # Make sure that Wheatley starts disabled and then becomes enabled.  This way, Wheatley gets
+        # explicitly added as a user
         self._enabled = False
         self.set_enabledness(enabled)
 
@@ -64,24 +261,25 @@ class Wheatley:
         if 'stop_at_rounds' not in self._settings:
             self._settings['stop_at_rounds'] = False
 
-        # If there is no row_gen defined, set it to even-bell Plain Bob on the right number of bells
+        # If there is no row_gen defined, default to even-bell Plain Bob on the right number of bells
         if self.row_gen == {}:
             self._set_default_row_gen()
 
-        self._is_active = False
-        self._wheatley_process = None
-        self._thread = None
-        self._should_thread_stop = False
-
-        self._has_been_closed = False
+        # Start out with no processes running
+        self._instances = []
+        self._next_instance_id = 0
+        self._roll_call_responses = []
+        self._last_look_to_time = float("inf")
 
     def log(self, message):
         """ Function to make a log entry under this Wheatley instance's name """
         log(f"WHEATLEY:{self._tower.tower_id}:{message}")
 
+    # ===== ENABLEDNESS =====
+
     @property
     def enabled(self):
-        """ Returns True if Wheatley is enabled """
+        """ Returns True if Wheatley is enabled. """
         return self._enabled
 
     def set_enabledness(self, value):
@@ -89,7 +287,8 @@ class Wheatley:
         Set the enabledness of Wheatley, making sure that the Tower's user list is kept up-to-date.
         """
         self._enabled = value
-        # Add or remove 'Wheatley' to the tower's user list
+        # Add or remove 'Wheatley' to the tower's user list.  This relies on the idempotence of
+        # `Tower.add_user` and `Tower.remove_user`
         if self._enabled:
             self._tower.add_user(USER_ID, USER_NAME)
         else:
@@ -99,7 +298,7 @@ class Wheatley:
 
     @property
     def settings(self):
-        """ Return Wheatley's settings. """
+        """ Return Wheatley's settings as JSON. """
         return self._settings
 
     def update_settings(self, new_settings):
@@ -147,13 +346,66 @@ class Wheatley:
 
     # ===== CALLBACKS =====
 
-    def on_assigned_bell(self):
-        """ Called whenever Wheatley is assigned to a bell. """
-        self._make_active()
-
     def on_call(self, call_name):
+        """ Called every time a call is made in this Tower. """
         if call_name == "Look to" and USER_ID in self._tower.assignments.values():
-            self._make_active(True)
+            self.log("Recieved `Look To` and needs to ring")
+            # Deal with the roll call according to the protocol
+            self._last_look_to_time = time.time()
+            self._roll_call_responses = []
+            Timer(ROLL_CALL_TIME, self._take_roll_call).start()
+
+    def on_roll_call(self, instance_id):
+        self.log(f"Recieved roll call reply from {instance_id}")
+        self._roll_call_responses.append(instance_id)
+
+    def _take_roll_call(self):
+        self.log(f"Taking roll call.  Responses: {self._roll_call_responses}")
+
+        # Before anything else, remove all the dead instances from the list
+        def check_alive(i):
+            if i.is_dead:
+                self.log(f"Removing dead instance {i.instance_id}")
+            return not i.is_dead
+
+        self._instances = list(filter(check_alive, self._instances))
+        
+        if self._roll_call_responses == []:
+            # Case 1: No responses were made, so all processes are assumed dead
+            self.log("No responses, so killing all processes and spawning new ones")
+            # Kill all instances, and create a new one
+            self._kill_all()
+            self._spawn_new_instance()
+        else:
+            # Case 2 & 3: Some number of responses were made.  If this is bigger than 1, then
+            # all processe but the newest reply should be killed.
+            self.log(f"{len(self._roll_call_responses)} responses and {len(self._instances)}"
+                    + f" instances.")
+            assert len(self._roll_call_responses) <= len(self._instances)
+            # Kill all instances except the newest one which replied to the roll-call
+            newest_active_instance = max(self._roll_call_responses)
+            self.log(f"Newest active instance is {newest_active_instance}")
+            for i in self._instances:
+                if i.instance_id != newest_active_instance:
+                    self.log(f"Killing {i.instance_id}")
+                    i.kill()
+
+    def _spawn_new_instance(self):
+        self.log(f"Spawning new process with id {self._next_instance_id}")
+        self._instances.append(
+            Proc(self._tower.tower_id, self._last_look_to_time, self._next_instance_id)
+        )
+        self._next_instance_id += 1
+
+    def _kill_all(self):
+        self.log("Killing all processes")
+        for i in self._instances:
+            i.kill()
+
+    def reset(self):
+        """ Kill all existing Wheatley processes, as a hard reset. """
+        self.log("Hard reset")
+        self._kill_all()
 
     def on_size_change(self):
         """ Called whenever the number of bells in the tower is changed. """
@@ -217,82 +469,3 @@ class Wheatley:
             # If it's a composition, then it cannot be stepped to a new stage.  So we always fallback to
             # even-bell Plain Bob
             self._set_default_row_gen()
-
-    # ===== PROCESS HANDLING =====
-
-    # Make sure the Wheatley process is active
-    def _make_active(self, has_called_look_to=False):
-        """ Makes sure that a Wheatley instance is active. """
-        if not self._is_active:
-            # Spawn a new Wheatley instance and add 'Wheatley' to the user index
-            self._spawn_process(has_called_look_to)
-
-    def _spawn_process(self, has_called_look_to):
-        """ Spawns a new thread that will run a Wheatley instance. """
-        # The 'wheatley' command will never return, so we have to spawn it in a new thread.
-        # This has the pleasant side effect of allowing us to detect Wheatley crashing because
-        self._thread = Thread(target=self._process_func, args=[has_called_look_to])
-        self._thread.start()
-
-    def _process_func(self, has_called_look_to):
-        """
-        This function handles the Wheatley process, and handles things like logging and detecting
-        crashes.
-        """
-        self.log("Spawning process")
-        wheatley_cmd = "wheatley"
-        if "RR_WHEATLEY_PATH" in os.environ:
-            wheatley_cmd = os.environ["RR_WHEATLEY_PATH"]
-
-        self._wheatley_process = subprocess.Popen(
-            [
-                wheatley_cmd,
-                "server-mode",
-                "--port",
-                Config.RR_SOCKETIO_PORT,
-                str(self._tower.tower_id)
-            ] + (['--look-to-time', str(time.time())] if has_called_look_to else []),
-            # Capture both stdout and stderr (almost all of the logging goes to stderr)
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
-        )
-        self.log("Spawned process")
-        self._is_active = True
-
-        for line_bytes in iter(self._wheatley_process.stderr.readline, ""):
-            if self._should_thread_stop:
-                break
-
-            # Detect Wheatley crashing
-            if self._wheatley_process.poll() is not None:
-                break
-
-            line = line_bytes.decode('utf-8').rstrip("\n")
-            self.log(f"{line}")
-
-        # Clear-up
-        self._thread = None
-        self._should_thread_stop = False
-        self._wheatley_process = None
-        self._is_active = False
-
-    def close(self):
-        """ Kill the wheatley instance when this object is deleted. """
-        # Don't close this Wheatley instance twice
-        if self._has_been_closed:
-            return
-
-        self._has_been_closed = True
-        self.kill_process()
-
-    def kill_process(self):
-        # Tell the thread to terminate
-        self._should_thread_stop = True
-
-        # Only kill the process if it has actually started
-        if self._wheatley_process is not None:
-            self.log("Killing process")
-            self._wheatley_process.kill()
-
-    def __del__(self):
-        self.close()
