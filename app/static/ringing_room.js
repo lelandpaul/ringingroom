@@ -1887,7 +1887,6 @@ $(document).ready(function() {
                                 setTimeout(function(){window.dispatchEvent(new KeyboardEvent('keyup',{'key':'b','which':66,'code':'KeyB'}));}, 50);
                               }
                             }
-        //                    alert("button "+ i + ". Controller " + myCont + ".");
                           }
                         }
                       }
@@ -1912,8 +1911,8 @@ $(document).ready(function() {
                     this.MXP_RightController = this.MXP_LeftController;
                     this.MXP_LeftController = tmp;
                     this.MXP_Controllers_swapped = !this.MXP_Controllers_swapped;
-                    this.MXP_notice=": Swapped";
-                    setTimeout(() => {this.MXP_notice='.';}, 2000);
+                    this.MXP_notice="Swapped controllers";
+                    setTimeout(() => {this.MXP_notice='';}, 2000);
                   },
 
             MXP_setControllers: function(){
@@ -1955,14 +1954,14 @@ $(document).ready(function() {
                     }
                     if(this.MXP_RightController > -1){
                       if(this.MXP_LeftController > -1){
-                        this.MXP_status = "L&R devises found";
+                        this.MXP_status = "L&R devises found.";
                         if (this.MXP_Controllers_swapped){
                           var tmp = this.MXP_RightController;
                           this.MXP_RightController = this.MXP_LeftController;
                           this.MXP_LeftController = tmp;
                         }
                       }else{
-                        this.MXP_status = "Single device assigned";
+                        this.MXP_status = "Single device assigned.";
                       }
                     }
                     if (this.MXP_Active_Controllers==0) this.MXP_status = "";
@@ -1975,7 +1974,7 @@ $(document).ready(function() {
                       window.clearInterval(this.MXP_tickController);
                       this.MXP_tickController = window.setInterval(this.MXP_ticktockController,15);
                     }else{
-                      this.MXP_status = "Controllers are off";
+                      this.MXP_status = "Controllers are off.";
                       window.clearInterval(this.MXP_tickController);
                     }
               },
@@ -1999,6 +1998,7 @@ $(document).ready(function() {
 
               $(window).on("gamepaddisconnected", function() {
                 window.clearInterval(instance.MXP_checkController);
+                instance.MXP_hasController = false;
                 instance.MXP_checkController = window.setInterval(function() {
                   if (navigator.getGamepads()[0]) {
                     if (!this.MXP_hasController) $(window).trigger("gamepadconnected");
@@ -2019,7 +2019,38 @@ $(document).ready(function() {
 
         },
 
-    template: `<div><p><span id="MXP_HM_status">[[MXP_status]]</span><span id="MXP_HM_notice">[[MXP_notice]]</span></p></div>`
+    template: `
+        <div class="card mb-3" v-if="MXP_hasController">
+            <div class="card-header">
+                <h2 style="display: inline; cursor: pointer;"
+                    id="controllers_header"
+                    data-toggle="collapse"
+                    data-target="#controllers_body">
+                    Controllers
+                </h2>
+            </div>
+            <div class="card-body" id="controllers_body">
+                <p>[[MXP_status]]</p>
+                <p>[[MXP_notice]]</p>
+                <div class="row">
+                    <div class="col">
+                        <button class="btn btn-outline-primary"
+                                @click="MXP_SwapControllers"
+                                >
+                                Swap controllers
+                        </button>
+                    </div>
+                    <div class="col">
+                        <button class="btn btn-outline-primary"
+                                @click="MXP_TOGGLE_CONTROLLERS"
+                                >
+                                [[ MXP_Controllers_ACTIVE ? "Disable" : "Enable" ]]
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `
         
 
 
@@ -2539,11 +2570,6 @@ $(document).ready(function() {
                                 </a>
                             </div>
 
-                            <!-- /////////////////////////
-                                 / MXP handbell manager */
-                                 ///////////////////////// -->
-                            <mxp_controllers ref="mxp"></mxp_controllers>
-
                             <div class="col-auto toggle_controls d-lg-none pl-0">
                                 <button class="toggle_controls btn btn-outline-primary"
                                         data-toggle="collapse"
@@ -2598,6 +2624,11 @@ $(document).ready(function() {
                     <help ref="help"></help>
                 </div>
                 <tower_controls ref="controls"></tower_controls>
+                <div class="row pb-0 flex-grow-1">
+                    <div class="col flex-grow-1">
+                        <mxp_controllers ref="mxp"></mxp_controllers>
+                    </div>
+                </div>
                 <template v-if="!window.tower_parameters.anonymous_user
                              && !window.tower_parameters.listen_link">
                     <div class="row pb-0 flex-grow-1">
