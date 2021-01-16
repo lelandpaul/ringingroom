@@ -1834,6 +1834,7 @@ $(document).ready(function() {
               MXP_RightController: null,
               MXP_Active_Controllers: null,
               MXP_Controllers_ACTIVE : true,
+              MXP_Controllers_swapped : false,
             }
         },
 
@@ -1908,6 +1909,7 @@ $(document).ready(function() {
                     var tmp = this.MXP_RightController;
                     this.MXP_RightController = this.MXP_LeftController;
                     this.MXP_LeftController = tmp;
+                    this.MXP_Controllers_swapped = !this.MXP_Controllers_swapped;
                     var MXP_html=": Swapped";
                     document.getElementById('MXP_HM_notice').innerHTML = MXP_html;
                     setTimeout(() => {MXP_html=".";document.getElementById('MXP_HM_notice').innerHTML = MXP_html;}, 2000);
@@ -1954,6 +1956,11 @@ $(document).ready(function() {
                     if(this.MXP_RightController > -1){
                       if(this.MXP_LeftController > -1){
                         MXP_html += "L&R devices found";
+                        if (this.MXP_Controllers_swapped){
+                          var tmp = this.MXP_RightController;
+                          this.MXP_RightController = this.MXP_LeftController;
+                          this.MXP_LeftController = tmp;
+                        }
                       }else{
                         MXP_html += "Single device assigned";
                       }
@@ -1966,8 +1973,8 @@ $(document).ready(function() {
             MXP_TOGGLE_CONTROLLERS: function(){
                     if(this.MXP_Controllers_ACTIVE){
                       this.MXP_setControllers();
-                      window.clearInterval(MXP_tickController);
-                      this.MXP_tickController = window.setInterval(MXP_ticktockController,15);
+                      window.clearInterval(this.MXP_tickController);
+                      this.MXP_tickController = window.setInterval(this.MXP_ticktockController,15);
                     }else{
                       document.getElementById('MXP_HM_status').innerHTML = "Controllers are off";
                       window.clearInterval(this.MXP_tickController);
@@ -1988,13 +1995,20 @@ $(document).ready(function() {
                 window.clearInterval(instance.MXP_tickController);
                 instance.MXP_tickController = window.setInterval(instance.MXP_ticktockController,15);
                 instance.MXP_setControllers();
+                window.clearInterval(instance.MXP_checkController);
               });
 
               $(window).on("gamepaddisconnected", function() {
+                window.clearInterval(instance.MXP_checkController);
+                instance.MXP_checkController = window.setInterval(function() {
+                  if (navigator.getGamepads()[0]) {
+                    if (!this.MXP_hasController) $(window).trigger("gamepadconnected");
+                  }
+                },1000);
                 instance.MXP_setControllers();
               });
 
-              this.MXP_checkController = window.setInterval(function() {
+              instance.MXP_checkController = window.setInterval(function() {
                 if (navigator.getGamepads()[0]) {
                   if (!this.MXP_hasController) $(window).trigger("gamepadconnected");
                 }
