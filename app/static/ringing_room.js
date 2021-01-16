@@ -1835,6 +1835,8 @@ $(document).ready(function() {
               MXP_Active_Controllers: null,
               MXP_Controllers_ACTIVE : true,
               MXP_Controllers_swapped : false,
+              MXP_notice : "",
+              MXP_status : "",
             }
         },
 
@@ -1910,13 +1912,11 @@ $(document).ready(function() {
                     this.MXP_RightController = this.MXP_LeftController;
                     this.MXP_LeftController = tmp;
                     this.MXP_Controllers_swapped = !this.MXP_Controllers_swapped;
-                    var MXP_html=": Swapped";
-                    document.getElementById('MXP_HM_notice').innerHTML = MXP_html;
-                    setTimeout(() => {MXP_html=".";document.getElementById('MXP_HM_notice').innerHTML = MXP_html;}, 2000);
+                    this.MXP_notice=": Swapped";
+                    setTimeout(() => {this.MXP_notice='.';}, 2000);
                   },
 
             MXP_setControllers: function(){
-                    var MXP_html="";
                     var MXP_type=[];
                     this.MXP_Active_Controllers = 0;
                     var myCont;
@@ -1955,18 +1955,17 @@ $(document).ready(function() {
                     }
                     if(this.MXP_RightController > -1){
                       if(this.MXP_LeftController > -1){
-                        MXP_html += "L&R devices found";
+                        this.MXP_status = "L&R devises found";
                         if (this.MXP_Controllers_swapped){
                           var tmp = this.MXP_RightController;
                           this.MXP_RightController = this.MXP_LeftController;
                           this.MXP_LeftController = tmp;
                         }
                       }else{
-                        MXP_html += "Single device assigned";
+                        this.MXP_status = "Single device assigned";
                       }
                     }
-                    if (this.MXP_Active_Controllers==0) MXP_html = "";
-                    document.getElementById('MXP_HM_status').innerHTML = MXP_html;
+                    if (this.MXP_Active_Controllers==0) this.MXP_status = "";
                     if (nControllers == 0) window.clearInterval(this.MXP_tickController);
               },
 
@@ -1976,7 +1975,7 @@ $(document).ready(function() {
                       window.clearInterval(this.MXP_tickController);
                       this.MXP_tickController = window.setInterval(this.MXP_ticktockController,15);
                     }else{
-                      document.getElementById('MXP_HM_status').innerHTML = "Controllers are off";
+                      this.MXP_status = "Controllers are off";
                       window.clearInterval(this.MXP_tickController);
                     }
               },
@@ -2020,7 +2019,7 @@ $(document).ready(function() {
 
         },
 
-    template: `<div><p><span id="MXP_HM_status"></span><span id="MXP_HM_notice"></span></p></div>`
+    template: `<div><p><span id="MXP_HM_status">[[MXP_status]]</span><span id="MXP_HM_notice">[[MXP_notice]]</span></p></div>`
         
 
 
