@@ -1979,7 +1979,7 @@ $(document).ready(function() {
                       window.clearInterval(this.MXP_tickController);
                       this.MXP_tickController = window.setInterval(this.MXP_ticktockController,15);
                     }else{
-                      this.MXP_status = "Controllers are off.";
+                      this.MXP_status = "Controllers are disabled";
                       window.clearInterval(this.MXP_tickController);
                     }
               },
