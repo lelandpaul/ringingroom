@@ -1832,7 +1832,7 @@ $(document).ready(function() {
               MXP_tickController: null,
               MXP_LeftController: null,
               MXP_RightController: null,
-              MXP_Active_Controllers: null,
+              MXP_Active_Controllers: 0,
               MXP_Controllers_ACTIVE : true,
               MXP_Controllers_swapped : false,
               MXP_notice : "",
@@ -1911,7 +1911,7 @@ $(document).ready(function() {
                     this.MXP_RightController = this.MXP_LeftController;
                     this.MXP_LeftController = tmp;
                     this.MXP_Controllers_swapped = !this.MXP_Controllers_swapped;
-                    this.MXP_notice="Swapped controllers";
+                    this.MXP_notice="Devices swapped";
                     setTimeout(() => {this.MXP_notice='';}, 2000);
                   },
 
@@ -1940,10 +1940,10 @@ $(document).ready(function() {
                         else if ( Cont.id.includes('2341')&&Cont.connected ){
                           if(this.MXP_RightController == -1){
                             this.MXP_RightController = Cont.index;
-                          }else if (MXP_LeftController == -1){
+                          }else if (this.MXP_LeftController == -1){
                             this.MXP_LeftController = Cont.index;
                           }
-                          this.MXP_type[myCont] = "eBell";
+                          MXP_type[myCont] = "eBell";
                           this.MXP_Active_Controllers++;
                         }else{
                           MXP_type[myCont] = "unknown";
@@ -1954,21 +1954,26 @@ $(document).ready(function() {
                     }
                     if(this.MXP_RightController > -1){
                       if(this.MXP_LeftController > -1){
-                        this.MXP_status = "L&R devises found.";
+                        this.MXP_status = "L&R devices found";
                         if (this.MXP_Controllers_swapped){
                           var tmp = this.MXP_RightController;
                           this.MXP_RightController = this.MXP_LeftController;
                           this.MXP_LeftController = tmp;
                         }
                       }else{
-                        this.MXP_status = "Single device assigned.";
+                        this.MXP_status = "Single device assigned";
                       }
                     }
-                    if (this.MXP_Active_Controllers==0) this.MXP_status = "";
+                    if (this.MXP_Active_Controllers == 0) this.MXP_status = "";
                     if (nControllers == 0) window.clearInterval(this.MXP_tickController);
+
+                    console.log("this.MXP_Active_Controllers=" + this.MXP_Active_Controllers);
+                    console.log("MXP_type[this.MXP_RightController]=" + MXP_type[this.MXP_RightController]);
+                    console.log("MXP_type[this.MXP_LeftController]=" + MXP_type[this.MXP_LeftController]);
               },
 
-            MXP_TOGGLE_CONTROLLERS: function(){
+              MXP_toggleControllers: function(){
+                    this.MXP_Controllers_ACTIVE = !this.MXP_Controllers_ACTIVE;
                     if(this.MXP_Controllers_ACTIVE){
                       this.MXP_setControllers();
                       window.clearInterval(this.MXP_tickController);
@@ -1985,7 +1990,7 @@ $(document).ready(function() {
             console.log('mounting mxp')
          if (this.MXP_ControlAvailable()) {
             if(this.MXP_Controllers_ACTIVE){
-              
+
             var instance = this; // smuggle this into the function
 
               $(window).on("gamepadconnected", function() {
@@ -2029,29 +2034,29 @@ $(document).ready(function() {
                     Controllers
                 </h2>
             </div>
-            <div class="card-body" id="controllers_body">
-                <p>[[MXP_status]]</p>
-                <p>[[MXP_notice]]</p>
+            <div class="card-body" id="controllers_body" >
+                <p style="text-align:center">[[MXP_status]]</p>
                 <div class="row">
                     <div class="col">
                         <button class="btn btn-outline-primary"
-                                @click="MXP_SwapControllers"
-                                >
-                                Swap controllers
-                        </button>
-                    </div>
-                    <div class="col">
-                        <button class="btn btn-outline-primary"
-                                @click="MXP_TOGGLE_CONTROLLERS"
+                                @click="MXP_toggleControllers"
                                 >
                                 [[ MXP_Controllers_ACTIVE ? "Disable" : "Enable" ]]
                         </button>
                     </div>
+                    <div class="col">
+                        <button class="btn btn-outline-primary"
+                                @click="MXP_SwapControllers"
+                                >
+                                Swap L&R
+                        </button>
+                    </div>
                 </div>
+                <p style="text-align:center">[[MXP_notice]]</p>
             </div>
         </div>
         `
-        
+
 
 
     }); // End controllers
@@ -2119,7 +2124,7 @@ $(document).ready(function() {
 
                     // MXP w will swap controllers
                     if ( e.which == 87 ) {
-                        if(this.$refs.mxp.MXP_Controllers_ACTIVE 
+                        if(this.$refs.mxp.MXP_Controllers_ACTIVE
                             && this.$refs.mxp.MXP_Active_Controllers >=2) {
                             this.$refs.mxp.MXP_SwapControllers();
                         }
@@ -2129,8 +2134,7 @@ $(document).ready(function() {
                     // MXP CTL will toggle controller watching
                     if ( e.which == 17 ) {
                         if (this.$refs.mxp.MXP_Active_Controllers >=1){
-                          this.$refs.mxp.MXP_Controllers_ACTIVE = !this.$refs.mxp.MXP_Controllers_ACTIVE;
-                          this.$refs.mxp.MXP_TOGGLE_CONTROLLERS();
+                          this.$refs.mxp.MXP_toggleControllers();
                         }
                         return
                     }
