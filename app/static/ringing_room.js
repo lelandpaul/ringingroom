@@ -258,7 +258,8 @@ $(document).ready(function() {
         data: function() {
             return {
                 stroke: true,
-                circled_digits: ["①", "②", "③", "④", "⑤", "⑥",
+                circled_digits: [
+                    "①", "②", "③", "④", "⑤", "⑥",
                     "⑦", "⑧", "⑨", "⑩", "⑪", "⑫"
                 ],
                 images: ["handstroke", "backstroke"],
@@ -843,19 +844,24 @@ $(document).ready(function() {
     Vue.component('wheatley', {
         data: function() {
             return {
+                // Set to `true` if Wheatley is enabled in this tower.  If this is `false`, then the
+                // Wheatley box will not be shown
                 enabled: false,
+
+                // Set by Wheatley to enable/disable the row gen panel
+                is_ringing: false,
+
+                // User-specifiable settings
                 sensitivity: 0.6,
                 use_up_down_in: true,
                 stop_at_rounds: true,
-
                 row_gen: {
                     type: "method",
                     title: "Double Norwich Court Bob Major",
                     url: "Double_Norwich_Court_Bob_Major",
                 },
 
-                is_ringing: false,
-
+                // Row-gen panel configuration
                 row_gen_panel: "method",
 
                 method_name: "",
@@ -873,43 +879,44 @@ $(document).ready(function() {
                 if (this.autocomplete_options.length == 0) {
                     return "NOWT";
                 }
-
                 return this.autocomplete_options.map(x => x.title).join(", ");
             },
+
             touch_link: function() {
                 let row_gen = this.row_gen;
-
-                if (row_gen) {
-                    if (row_gen.type == "method") {
-                        return "https://rsw.me.uk/blueline/methods/view/" +
-                            (row_gen.url || "Grandsire_Major");
-                    } else if (row_gen.type == "composition") {
-                        return row_gen.url || "";
-                    } else {
-                        return "";
-                    }
-                } else {
+                if (!row_gen) {
                     return "";
                 }
-            },
-            touch_text: function() {
-                let row_gen = this.row_gen;
-
-                if (row_gen) {
-                    if (row_gen.type == "method") {
-                        return row_gen.title || "No Method Title";
-                    } else if (row_gen.type == "composition") {
-                        return row_gen.title || "No Composition Title";
-                    } else {
-                        return "<unknown row_gen type " + row_gen.type + ">";
-                    }
-                } else {
-                    return "<no row gen>";
+                switch(row_gen.type) {
+                    case "method":
+                        return "https://rsw.me.uk/blueline/methods/view/"
+                            + (row_gen.url || "Grandsire_Major");
+                    case "composition":
+                        return row_gen.url || "";
+                    default:
+                        return "";
                 }
             },
+
+            touch_text: function() {
+                let row_gen = this.row_gen;
+                if (!row_gen) {
+                    return "<no row gen>";
+                }
+                switch (row_gen.type) {
+                    case "method":
+                        return row_gen.title || "No Method Title";
+                    case "composition":
+                        return row_gen.title || "No Composition Title";
+                    default:
+                        return "<unknown row_gen type " + row_gen.type + ">";
+                }
+            },
+
             row_gen_panel_disabled: function() {
                 return bell_circle.lock_controls || this.is_ringing;
             },
+
             settings_panel_disabled: function() {
                 return bell_circle.lock_controls;
             }
@@ -919,13 +926,14 @@ $(document).ready(function() {
             method_name: function(next_value) {
                 this.update_method_suggestions(next_value);
             },
+
             complib_id: function(next_value) {
                 this.update_comp_suggestions(next_value);
             }
         },
 
         methods: {
-            /* METHODS CALLED WHEN THE USER CHANGES SOME CONTROLS */
+            /* METHODS CALLED WHEN THE USER CHANGES THE CONTROLS */
             on_change_sensitivity: function() {
                 socketio.emit('c_wheatley_setting', {
                     tower_id: cur_tower_id,
@@ -934,6 +942,7 @@ $(document).ready(function() {
                     }
                 });
             },
+
             on_change_use_up_down_in: function() {
                 socketio.emit('c_wheatley_setting', {
                     tower_id: cur_tower_id,
@@ -942,6 +951,7 @@ $(document).ready(function() {
                     }
                 });
             },
+
             on_change_stop_at_rounds: function() {
                 socketio.emit('c_wheatley_setting', {
                     tower_id: cur_tower_id,
@@ -950,34 +960,38 @@ $(document).ready(function() {
                     }
                 });
             },
+
             reset_wheatley: function() {
-                socketio.emit('c_reset_wheatley', {
-                    tower_id: cur_tower_id
-                });
+                socketio.emit('c_reset_wheatley', {tower_id: cur_tower_id});
             },
 
             /* CALLBACKS CALLED FROM RECEIVING A SOCKETIO SIGNAL */
             update_settings: function(new_settings) {
                 for (const key in new_settings) {
-                    if (key == 'sensitivity') {
-                        this.sensitivity = new_settings[key];
-                    }
-                    if (key == 'use_up_down_in') {
-                        this.use_up_down_in = new_settings[key];
-                    }
-                    if (key == 'stop_at_rounds') {
-                        this.stop_at_rounds = new_settings[key];
+                    switch (key) {
+                        case 'sensitivity':
+                            this.sensitivity = new_settings[key];
+                            break;
+                        case 'use_up_down_in':
+                            this.use_up_down_in = new_settings[key];
+                            break;
+                        case 'stop_at_rounds':
+                            this.stop_at_rounds = new_settings[key];
+                            break;
                     }
                 }
             },
+
             update_row_gen: function(new_row_gen) {
                 if (new_row_gen) {
                     this.row_gen = new_row_gen;
                 }
             },
+
             update_is_ringing: function(new_value) {
                 this.is_ringing = new_value;
             },
+
             update_number_of_bells: function() {
                 this.update_method_suggestions(this.method_name);
                 this.update_comp_suggestions(this.complib_id);
@@ -989,36 +1003,39 @@ $(document).ready(function() {
                     tower_id: window.tower_parameters.id
                 });
             },
+
             update_method_suggestions: function(partial_method_name) {
                 // Store a reference to 'this' (the vue model) as a local variable, so that it can
                 // be used in the JSON get callback to set the autocomplete results.
                 var _this = this;
-
                 if (partial_method_name === "") {
                     this.autocomplete_options = [];
                 } else {
-                    const query_url = 'https://rsw.me.uk/blueline/methods/search.json?q=' + partial_method_name +
-                        '&stage=' + (bell_circle.number_of_bells - 1) +
-                        ',' + (bell_circle.number_of_bells);
+                    const query_url = 'https://rsw.me.uk/blueline/methods/search.json?q='
+                        + partial_method_name
+                        + '&stage=' + (bell_circle.number_of_bells - 1)
+                        + ',' + (bell_circle.number_of_bells);
                     $.getJSON(
                         query_url,
                         function(data) {
-                            // Early return if the queries get reordered in the ether and the user
-                            // has changed the input box since this was sent
-                            if (_this.method_name !== data.query.q) {
-                                return;
+                            // Set the method suggestions to the first 5 methods, but only if if
+                            // this response is from a query with the correct method name (this
+                            // stops jittering and bugs if the responses come back in a different
+                            // order to the queries).
+                            if (_this.method_name === data.query.q) {
+                                _this.autocomplete_options = data.results.slice(0, 5);
                             }
-                            // Only show the first 5 methods from this query
-                            _this.autocomplete_options = data.results.slice(0, 5);
                         }
                     );
                 }
             },
+            
             on_method_box_enter: function() {
                 if (this.autocomplete_options.length > 0) {
                     this.send_next_method(this.autocomplete_options[0]);
                 }
             },
+
             send_next_method: function(method) {
                 // Return early if there aren't any methods
                 if (this.autocomplete_options === []) {
@@ -1074,17 +1091,13 @@ $(document).ready(function() {
                 if (partial_comp_name == "") {
                     this.current_complib_comp = undefined;
                     this.complib_error = "Start typing a comp ID...";
-
                     return;
                 }
-
                 if (!/^\d+$/.test(partial_comp_name)) {
                     this.current_complib_comp = undefined;
                     this.complib_error = "Please enter a valid number";
-
                     return;
                 }
-
                 // Keep a reference to the correct 'this'
                 let _this = this;
 
@@ -1093,15 +1106,18 @@ $(document).ready(function() {
                 $.getJSON(api_url)
                     .fail(function(_evt, _jqxhr, state) {
                         _this.current_complib_comp = undefined;
-
-                        if (state == "Bad Request") {
-                            _this.complib_error = "Bad request.";
-                        } else if (state == "Not Found") {
-                            _this.complib_error = "#" + partial_comp_name + " doesn't exist.";
-                        } else if (state == "Unauthorized") {
-                            _this.complib_error = "#" + partial_comp_name + " is private.";
-                        } else {
-                            console.warn("Unknown error: " + state);
+                        switch (state) {
+                            case "Bad Request":
+                                _this.complib_error = "Bad request.";
+                                break;
+                            case "Not Found":
+                                _this.complib_error = "#" + partial_comp_name + " doesn't exist.";
+                                break;
+                            case "Unauthorized":
+                                _this.complib_error = "#" + partial_comp_name + " is private.";
+                                break;
+                            default:
+                                console.warn("Unknown error: " + state);
                         }
                     })
                     .done(function(data) {
@@ -1115,18 +1131,17 @@ $(document).ready(function() {
                         } else {
                             _this.current_complib_comp = undefined;
                             let required_tower_size = data.stage % 2 == 0 ? data.stage : data.stage + 1;
-                            _this.complib_error = "Comp needs " + required_tower_size + " bells, not " +
-                                bell_circle.number_of_bells;
+                            _this.complib_error = "Comp needs " + required_tower_size
+                                + " bells, not " + bell_circle.number_of_bells;
                         }
                     });
             },
+            
             send_next_comp: function() {
                 if (!this.current_complib_comp) {
                     return;
                 }
-
                 console.log("Setting Wheatley composition to " + this.current_complib_comp);
-
                 socketio.emit(
                     "c_wheatley_row_gen", {
                         tower_id: window.tower_parameters.id,
