@@ -27,6 +27,12 @@ If they are not set or set to anything other than `1`, the feature will be disab
 - **RR_ENABLE_WHEATLEY**
 
   If set to `1` Wheatley will be enabled, otherwise Wheatley will be disabled.
+- **RR_WHEATLEY_METHOD_EXTENSION**
+
+  If the stage is changed and this is set to `1`, Wheatley will try to load the same method on the
+  new stage.  This is disabled by default, because this check sends a request to Bob Wallis'
+  blueline website which can block the thread for a long time and therefore cause the method change
+  to be too late (if it happens at all).
 
 #### Other Enviroment Variables
 - **RR_WHEATLEY_PATH**
