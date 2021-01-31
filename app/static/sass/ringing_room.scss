@@ -369,6 +369,7 @@ input[type=range]::slider-thumb {
 
 #user_display_header.collapsed::after,
 #wheatley_header.collapsed::after,
+#controllers_header.collapsed::after,
 #chat_header.collapsed::after{
     content: '▸';
     font-size: 1.5rem;
@@ -376,6 +377,7 @@ input[type=range]::slider-thumb {
 
 #user_display_header::after,
 #wheatley_header::after,
+#controllers_header::after,
 #chat_header::after{
     content: '▾';
     font-size: 1.5rem;

@@ -81,9 +81,11 @@ socketio.on('s_bell_rung', function(msg, cb) {
 socketio.on('s_set_userlist', function(msg, cb) {
     console.log('s_set_userlist: ' + msg.user_list);
     bell_circle.$refs.users.user_names = msg.user_list;
-    msg.user_list.forEach((user,index) => {
-        bell_circle.$refs.users.add_user({user_id: parseInt(user.user_id),
-                                          username: user.username});
+    msg.user_list.forEach((user, index) => {
+        bell_circle.$refs.users.add_user({
+            user_id: parseInt(user.user_id),
+            username: user.username
+        });
     });
 });
 
@@ -192,7 +194,7 @@ socketio.on('s_msg_sent', function(msg, cb) {
 });
 
 // Wheatley has been enabled or disabled
-socketio.on('s_set_wheatley_enabledness', function (data) {
+socketio.on('s_set_wheatley_enabledness', function(data) {
     console.log("Setting Wheatley's enabledness to " + data.enabled);
     if (!window.tower_parameters.listen_link && !window.tower_parameters.anonymous_user) {
         bell_circle.$refs.wheatley.enabled = data.enabled;
@@ -200,19 +202,19 @@ socketio.on('s_set_wheatley_enabledness', function (data) {
 });
 
 // A Wheatley setting has been changed
-socketio.on('s_wheatley_setting', function (msg) {
+socketio.on('s_wheatley_setting', function(msg) {
     console.log("Received Wheatley setting(s):", msg);
     bell_circle.$refs.wheatley.update_settings(msg);
 });
 
 // Wheatley's row gen has been changed
-socketio.on('s_wheatley_row_gen', function (msg) {
+socketio.on('s_wheatley_row_gen', function(msg) {
     console.log("Received Wheatley row gen:", msg);
     bell_circle.$refs.wheatley.update_row_gen(msg);
 });
 
 // Wheatley has updated whether or not he thinks a touch is in progress
-socketio.on('s_wheatley_is_ringing', function (msg) {
+socketio.on('s_wheatley_is_ringing', function(msg) {
     console.log("Received Wheatley is-ringing:", msg);
     bell_circle.$refs.wheatley.update_is_ringing(msg);
 });
@@ -351,7 +353,7 @@ $(document).ready(function() {
                 let audio_obj;
                 if (window.tower_parameters.half_muffled &&
                     this.$root.$refs.controls.audio_type === 'Tower' &&
-                    this.stroke){
+                    this.stroke) {
                     audio_type = 'Muffled';
                     audio_obj = muffled;
                     console.log(audio_type + ' ' + this.number_of_bells);
@@ -759,7 +761,6 @@ $(document).ready(function() {
 
 
 
-
     // help holds help toggle
     Vue.component('help', {
         // data in components should be a function, to maintain scope
@@ -840,7 +841,7 @@ $(document).ready(function() {
     }); // End help
 
     Vue.component('wheatley', {
-        data: function () {
+        data: function() {
             return {
                 enabled: false,
                 sensitivity: 0.6,
@@ -868,14 +869,14 @@ $(document).ready(function() {
         },
 
         computed: {
-            display_text: function () {
+            display_text: function() {
                 if (this.autocomplete_options.length == 0) {
                     return "NOWT";
                 }
 
                 return this.autocomplete_options.map(x => x.title).join(", ");
             },
-            touch_link: function () {
+            touch_link: function() {
                 let row_gen = this.row_gen;
 
                 if (row_gen) {
@@ -891,7 +892,7 @@ $(document).ready(function() {
                     return "";
                 }
             },
-            touch_text: function () {
+            touch_text: function() {
                 let row_gen = this.row_gen;
 
                 if (row_gen) {
@@ -906,26 +907,26 @@ $(document).ready(function() {
                     return "<no row gen>";
                 }
             },
-            row_gen_panel_disabled: function () {
+            row_gen_panel_disabled: function() {
                 return bell_circle.lock_controls || this.is_ringing;
             },
-            settings_panel_disabled: function () {
+            settings_panel_disabled: function() {
                 return bell_circle.lock_controls;
             }
         },
 
         watch: {
-            method_name: function (next_value) {
+            method_name: function(next_value) {
                 this.update_method_suggestions(next_value);
             },
-            complib_id: function (next_value) {
+            complib_id: function(next_value) {
                 this.update_comp_suggestions(next_value);
             }
         },
 
         methods: {
             /* METHODS CALLED WHEN THE USER CHANGES SOME CONTROLS */
-            on_change_sensitivity: function () {
+            on_change_sensitivity: function() {
                 socketio.emit('c_wheatley_setting', {
                     tower_id: cur_tower_id,
                     settings: {
@@ -933,7 +934,7 @@ $(document).ready(function() {
                     }
                 });
             },
-            on_change_use_up_down_in: function () {
+            on_change_use_up_down_in: function() {
                 socketio.emit('c_wheatley_setting', {
                     tower_id: cur_tower_id,
                     settings: {
@@ -941,7 +942,7 @@ $(document).ready(function() {
                     }
                 });
             },
-            on_change_stop_at_rounds: function () {
+            on_change_stop_at_rounds: function() {
                 socketio.emit('c_wheatley_setting', {
                     tower_id: cur_tower_id,
                     settings: {
@@ -949,12 +950,14 @@ $(document).ready(function() {
                     }
                 });
             },
-            reset_wheatley: function () {
-                socketio.emit('c_reset_wheatley', {tower_id: cur_tower_id});
+            reset_wheatley: function() {
+                socketio.emit('c_reset_wheatley', {
+                    tower_id: cur_tower_id
+                });
             },
 
             /* CALLBACKS CALLED FROM RECEIVING A SOCKETIO SIGNAL */
-            update_settings: function (new_settings) {
+            update_settings: function(new_settings) {
                 for (const key in new_settings) {
                     if (key == 'sensitivity') {
                         this.sensitivity = new_settings[key];
@@ -967,24 +970,26 @@ $(document).ready(function() {
                     }
                 }
             },
-            update_row_gen: function (new_row_gen) {
+            update_row_gen: function(new_row_gen) {
                 if (new_row_gen) {
                     this.row_gen = new_row_gen;
                 }
             },
-            update_is_ringing: function (new_value) {
+            update_is_ringing: function(new_value) {
                 this.is_ringing = new_value;
             },
-            update_number_of_bells: function () {
+            update_number_of_bells: function() {
                 this.update_method_suggestions(this.method_name);
                 this.update_comp_suggestions(this.complib_id);
             },
 
             /* METHODS RELATED TO THE USER UPDATING THE ROW_GEN CONTROLS */
-            on_stop_touch: function () {
-                socketio.emit("c_wheatley_stop_touch", {tower_id: window.tower_parameters.id});
+            on_stop_touch: function() {
+                socketio.emit("c_wheatley_stop_touch", {
+                    tower_id: window.tower_parameters.id
+                });
             },
-            update_method_suggestions: function (partial_method_name) {
+            update_method_suggestions: function(partial_method_name) {
                 // Store a reference to 'this' (the vue model) as a local variable, so that it can
                 // be used in the JSON get callback to set the autocomplete results.
                 var _this = this;
@@ -992,12 +997,12 @@ $(document).ready(function() {
                 if (partial_method_name === "") {
                     this.autocomplete_options = [];
                 } else {
-                    const query_url = 'https://rsw.me.uk/blueline/methods/search.json?q=' + partial_method_name
-                            + '&stage=' + (bell_circle.number_of_bells - 1)
-                            + ',' + (bell_circle.number_of_bells);
+                    const query_url = 'https://rsw.me.uk/blueline/methods/search.json?q=' + partial_method_name +
+                        '&stage=' + (bell_circle.number_of_bells - 1) +
+                        ',' + (bell_circle.number_of_bells);
                     $.getJSON(
                         query_url,
-                        function (data) {
+                        function(data) {
                             // Early return if the queries get reordered in the ether and the user
                             // has changed the input box since this was sent
                             if (_this.method_name !== data.query.q) {
@@ -1014,7 +1019,7 @@ $(document).ready(function() {
                     this.send_next_method(this.autocomplete_options[0]);
                 }
             },
-            send_next_method: function (method) {
+            send_next_method: function(method) {
                 // Return early if there aren't any methods
                 if (this.autocomplete_options === []) {
                     console.warning("No results to send to Wheatley!");
@@ -1031,7 +1036,7 @@ $(document).ready(function() {
                 //    symbol: string    // The symbol of the call (is '-' for bobs and 's' for singles)
                 // }
                 // into what Wheatley expects (a map of indices to place notations)
-                var convert_call = function (call) {
+                var convert_call = function(call) {
                     if (call === undefined) {
                         return {};
                     }
@@ -1047,8 +1052,7 @@ $(document).ready(function() {
 
                 // Emit the socketio signal to tell Wheatley what to ring
                 socketio.emit(
-                    "c_wheatley_row_gen",
-                    {
+                    "c_wheatley_row_gen", {
                         tower_id: window.tower_parameters.id,
                         row_gen: {
                             type: "method",
@@ -1066,7 +1070,7 @@ $(document).ready(function() {
                 this.method_name = "";
             },
 
-            update_comp_suggestions: function (partial_comp_name) {
+            update_comp_suggestions: function(partial_comp_name) {
                 if (partial_comp_name == "") {
                     this.current_complib_comp = undefined;
                     this.complib_error = "Start typing a comp ID...";
@@ -1087,7 +1091,7 @@ $(document).ready(function() {
                 let api_url = 'https://api.complib.org/composition/' + partial_comp_name;
                 let standard_url = 'https://complib.org/composition/' + partial_comp_name;
                 $.getJSON(api_url)
-                    .fail(function (_evt, _jqxhr, state) {
+                    .fail(function(_evt, _jqxhr, state) {
                         _this.current_complib_comp = undefined;
 
                         if (state == "Bad Request") {
@@ -1100,9 +1104,9 @@ $(document).ready(function() {
                             console.warn("Unknown error: " + state);
                         }
                     })
-                    .done(function (data) {
-                        if (data.stage == bell_circle.number_of_bells
-                         || data.stage == bell_circle.number_of_bells - 1
+                    .done(function(data) {
+                        if (data.stage == bell_circle.number_of_bells ||
+                            data.stage == bell_circle.number_of_bells - 1
                         ) {
                             _this.current_complib_comp = {
                                 url: standard_url,
@@ -1111,12 +1115,12 @@ $(document).ready(function() {
                         } else {
                             _this.current_complib_comp = undefined;
                             let required_tower_size = data.stage % 2 == 0 ? data.stage : data.stage + 1;
-                            _this.complib_error = "Comp needs " + required_tower_size + " bells, not "
-                                                + bell_circle.number_of_bells;
+                            _this.complib_error = "Comp needs " + required_tower_size + " bells, not " +
+                                bell_circle.number_of_bells;
                         }
                     });
             },
-            send_next_comp: function () {
+            send_next_comp: function() {
                 if (!this.current_complib_comp) {
                     return;
                 }
@@ -1124,8 +1128,7 @@ $(document).ready(function() {
                 console.log("Setting Wheatley composition to " + this.current_complib_comp);
 
                 socketio.emit(
-                    "c_wheatley_row_gen",
-                    {
+                    "c_wheatley_row_gen", {
                         tower_id: window.tower_parameters.id,
                         row_gen: {
                             type: "composition",
@@ -1499,8 +1502,8 @@ $(document).ready(function() {
         watch: {
             value: function(new_value) {
                 window.user_parameters.bell_volume = new_value;
-                let md = this.$root.$refs.controls.audio_type == 'Tower' || 
-                         this.$root.$refs.controls.audio_type == 'Muffled' ? 1.0 : window.user_parameters.handbell_mod;
+                let md = this.$root.$refs.controls.audio_type == 'Tower' ||
+                    this.$root.$refs.controls.audio_type == 'Muffled' ? 1.0 : window.user_parameters.handbell_mod;
                 bell_circle.audio._volume = md * window.user_parameters.bell_volume * 0.1;
                 muffled._volume = md * window.user_parameters.bell_volume * 0.1;
             },
@@ -1533,10 +1536,10 @@ $(document).ready(function() {
 
         props: ['user_id', 'username', 'selected'],
 
-        data: function(){
+        data: function() {
             return {
                 circled_digits: ["①", "②", "③", "④", "⑤", "⑥",
-                    "⑦", "⑧", "⑨", "⑩", "⑪", "⑫","⑬","⑭","⑮","⑯"
+                    "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬", "⑭", "⑮", "⑯"
                 ],
             }
         },
@@ -1560,9 +1563,8 @@ $(document).ready(function() {
                             bell_list.push(index + 1);
                         }
                     });
-                }
-                catch (err) {
-                    setTimeout(100, function(){
+                } catch (err) {
+                    setTimeout(100, function() {
                         this.$root.$refs.bells.forEach((bell, index) => {
                             if (bell.assigned_user == this.user_id) {
                                 bell_list.push(index + 1);
@@ -1573,15 +1575,15 @@ $(document).ready(function() {
                 return bell_list
             },
 
-            assigned_bell_string: function(){
+            assigned_bell_string: function() {
                 var output = ''
                 this.bells_assigned_to_user.forEach((bell, index) => {
-                    output += this.circled_digits[bell-1]
+                    output += this.circled_digits[bell - 1]
                 });
                 return output
             },
 
-            assignment_mode_active: function(){
+            assignment_mode_active: function() {
                 return this.$root.$refs.users.assignment_mode;
             }
 
@@ -1643,8 +1645,8 @@ $(document).ready(function() {
 
             cur_user_name: function() {
                 var cur_username
-                this.users.forEach((user,index) => {
-                    if (user.user_id === this.cur_user){
+                this.users.forEach((user, index) => {
+                    if (user.user_id === this.cur_user) {
                         cur_username = user.username;
                     }
                 });
@@ -1678,7 +1680,7 @@ $(document).ready(function() {
                 if (window.tower_parameters.anonymous_user) {
                     return
                 }; // don't do anything if not logged in
-                for (const bell of bell_circle.$refs.bells){
+                for (const bell of bell_circle.$refs.bells) {
                     bell.unassign();
                 }
             },
@@ -1711,8 +1713,8 @@ $(document).ready(function() {
             add_user: function(user) {
                 console.log('adding user: ', user)
                 var flag = false
-                this.users.forEach((u)=>{
-                    if (u.user_id == user.user_id){
+                this.users.forEach((u) => {
+                    if (u.user_id == user.user_id) {
                         flag = true
                         return
                     };
@@ -1726,21 +1728,21 @@ $(document).ready(function() {
                 console.log('removing user: ', user);
 
                 var user_index = -1
-                this.users.forEach((u,index) => {
+                this.users.forEach((u, index) => {
                     if (u.user_id === user.user_id) {
                         user_index = index;
                         return;
                     }
                 });
                 if (user_index !== -1) {
-                    this.users.splice(user_index,1);
-                    }
+                    this.users.splice(user_index, 1);
+                }
             },
 
             get_user_name: function(user_id) {
                 var username
-                this.users.forEach((u,index) => {
-                    if (u.user_id === user_id){
+                this.users.forEach((u, index) => {
+                    if (u.user_id === user_id) {
                         username = u.username;
                     };
                 });
@@ -1821,6 +1823,314 @@ $(document).ready(function() {
 `,
     }); // End user_display
 
+    Vue.component('mxp_controllers', {
+        data: function() {
+            return {
+                MXP_handStrike: [100, 100, 100, 100, 100, 100],
+                MXP_backStrike: [-600, -600, -600, -600, -600, -600],
+                MXP_atHand: [false, false, false, false, false, false],
+                MXP_hasController: false,
+                MXP_checkController: null,
+                MXP_tickController: null,
+                MXP_LeftController: null,
+                MXP_RightController: null,
+                MXP_Active_Controllers: 0,
+                MXP_Controllers_ACTIVE: true,
+                MXP_Controllers_swapped: false,
+                MXP_notice: "",
+                MXP_type: [null, null],
+            }
+        },
+
+        methods: {
+
+            MXP_ControlAvailable: function() {
+                return "getGamepads" in navigator;
+            },
+
+            MXP_ticktockController: function() {
+                var nControllers = navigator.getGamepads().length;
+                var myCont;
+                for (myCont = 0; myCont < nControllers; myCont++) {
+                    if ([this.MXP_LeftController, this.MXP_RightController].includes(myCont)) {
+                        try {
+                            var Cont = navigator.getGamepads()[myCont];
+                            if (Math.max.apply(null, Cont.axes.map(Math.abs)) > 0) {
+                                var Swing = Cont.axes[2] * 2048;
+                                if (Swing >= this.MXP_handStrike[myCont] && this.MXP_atHand[myCont]) {
+                                    this.MXP_atHand[myCont] = !this.MXP_atHand[myCont];
+                                    this.MXP_send(myCont);
+                                }
+                                if (Swing <= this.MXP_backStrike[myCont] && !this.MXP_atHand[myCont]) {
+                                    this.MXP_atHand[myCont] = !this.MXP_atHand[myCont];
+                                    this.MXP_send(myCont);
+                                }
+                            }
+                        } catch {}
+                        for (var i = 0; i < Cont.buttons.length; i++) {
+                            if (Cont.buttons[i].pressed) {
+                                if (i == 0) {
+                                    if (myCont == this.MXP_LeftController) {
+                                        window.dispatchEvent(new KeyboardEvent('keydown', {
+                                            'key': 'g',
+                                            'which': 71,
+                                            'code': 'KeyG'
+                                        }));
+                                        setTimeout(function() {
+                                            window.dispatchEvent(new KeyboardEvent('keyup', {
+                                                'key': 'g',
+                                                'which': 71,
+                                                'code': 'KeyG'
+                                            }));
+                                        }, 50);
+                                    } else if (myCont == this.MXP_RightController) {
+                                        window.dispatchEvent(new KeyboardEvent('keydown', {
+                                            'key': 'n',
+                                            'which': 78,
+                                            'code': 'KeyN'
+                                        }));
+                                        setTimeout(function() {
+                                            window.dispatchEvent(new KeyboardEvent('keyup', {
+                                                'key': 'n',
+                                                'which': 78,
+                                                'code': 'KeyN'
+                                            }));
+                                        }, 50);
+                                    }
+                                } else if (i == 1) {
+                                    if (myCont == this.MXP_LeftController) {
+                                        window.dispatchEvent(new KeyboardEvent('keydown', {
+                                            'key': 'h',
+                                            'which': 72,
+                                            'code': 'KeyH'
+                                        }));
+                                        setTimeout(function() {
+                                            window.dispatchEvent(new KeyboardEvent('keyup', {
+                                                'key': 'h',
+                                                'which': 72,
+                                                'code': 'KeyH'
+                                            }));
+                                        }, 50);
+                                    } else if (myCont == this.MXP_RightController) {
+                                        window.dispatchEvent(new KeyboardEvent('keydown', {
+                                            'key': 'b',
+                                            'which': 66,
+                                            'code': 'KeyB'
+                                        }));
+                                        setTimeout(function() {
+                                            window.dispatchEvent(new KeyboardEvent('keyup', {
+                                                'key': 'b',
+                                                'which': 66,
+                                                'code': 'KeyB'
+                                            }));
+                                        }, 50);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+
+            MXP_send: function(myCont) {
+                switch (myCont) {
+                    case this.MXP_RightController:
+                        window.dispatchEvent(new KeyboardEvent('keydown', {
+                            'key': 'j',
+                            'keycode': 74,
+                            'which': 74,
+                            'code': 'KeyJ'
+                        }));
+                        setTimeout(function() {
+                            window.dispatchEvent(new KeyboardEvent('keyup', {
+                                'key': 'j',
+                                'keycode': 74,
+                                'which': 74,
+                                'code': 'KeyJ'
+                            }));
+                        }, 50);
+                        break;
+                    case this.MXP_LeftController:
+                        window.dispatchEvent(new KeyboardEvent('keydown', {
+                            'key': 'f',
+                            'keycode': 70,
+                            'which': 70,
+                            'code': 'KeyF'
+                        }));
+                        setTimeout(function() {
+                            window.dispatchEvent(new KeyboardEvent('keyup', {
+                                'key': 'f',
+                                'keycode': 70,
+                                'which': 70,
+                                'code': 'KeyF'
+                            }));
+                        }, 50);
+                        break;
+                }
+            },
+
+            MXP_SwapControllers: function() {
+                var tmp = this.MXP_RightController;
+                this.MXP_RightController = this.MXP_LeftController;
+                this.MXP_LeftController = tmp;
+                this.MXP_Controllers_swapped = !this.MXP_Controllers_swapped;
+                var old_notice = this.MXP_notice;
+                this.MXP_notice = "Swapped";
+                this.MXP_type.reverse();
+                setTimeout(() => {
+                    this.MXP_notice = old_notice;
+                }, 2000);
+            },
+
+            MXP_setControllers: function() {
+                this.MXP_type = [null, null];
+                this.MXP_Active_Controllers = 0;
+                var myCont;
+                var nControllers = navigator.getGamepads().length;
+                this.MXP_LeftController = -1;
+                this.MXP_RightController = -1;
+
+                for (myCont = 0; myCont < nControllers; myCont++) {
+                    var Cont = navigator.getGamepads()[myCont];
+                    try {
+                        if (Cont.id.includes('0ffe') && Cont.connected) {
+                            if (this.MXP_RightController == -1) {
+                                this.MXP_RightController = Cont.index;
+                            } else if (this.MXP_LeftController == -1) {
+                                this.MXP_LeftController = Cont.index;
+                            }
+                            this.MXP_type[myCont] = "ActionXL";
+                            this.MXP_Active_Controllers++;
+                        } else if (Cont.id.includes('1234') && Cont.connected) {
+                            this.MXP_type[myCont] = "vJoy";
+                        } else if (Cont.id.includes('2341') && Cont.connected) {
+                            if (this.MXP_RightController == -1) {
+                                this.MXP_RightController = Cont.index;
+                            } else if (this.MXP_LeftController == -1) {
+                                this.MXP_LeftController = Cont.index;
+                            }
+                            this.MXP_type[myCont] = "eBell";
+                            this.MXP_Active_Controllers++;
+                        } else {
+                            this.MXP_type[myCont] = "unknown";
+                        }
+                    } catch {}
+                }
+                if (this.MXP_RightController > -1) {
+                    if (this.MXP_LeftController > -1) {
+                        if (this.MXP_Controllers_swapped) {
+                            var tmp = this.MXP_RightController;
+                            this.MXP_RightController = this.MXP_LeftController;
+                            this.MXP_LeftController = tmp;
+                        }
+                    }
+                }
+                if (nControllers == 0) window.clearInterval(this.MXP_tickController);
+
+                console.log("this.MXP_Active_Controllers=" + this.MXP_Active_Controllers);
+                console.log("MXP_type[this.MXP_RightController]=" + this.MXP_type[this.MXP_RightController]);
+                console.log("MXP_type[this.MXP_LeftController]=" + this.MXP_type[this.MXP_LeftController]);
+            },
+
+            MXP_toggleControllers: function() {
+                this.MXP_Controllers_ACTIVE = !this.MXP_Controllers_ACTIVE;
+                if (this.MXP_Controllers_ACTIVE) {
+                    this.MXP_setControllers();
+                    window.clearInterval(this.MXP_tickController);
+                    this.MXP_tickController = window.setInterval(this.MXP_ticktockController, 15);
+                    this.MXP_notice = "";
+                } else {
+                    this.MXP_notice = "Disabled";
+                    window.clearInterval(this.MXP_tickController);
+                }
+            },
+
+        },
+
+        mounted: function() {
+            console.log('mounting mxp')
+            if (this.MXP_ControlAvailable()) {
+                if (this.MXP_Controllers_ACTIVE) {
+
+                    var instance = this; // smuggle this into the function
+
+                    $(window).on("gamepadconnected", function() {
+                        instance.MXP_hasController = true;
+                        window.clearInterval(instance.MXP_tickController);
+                        instance.MXP_tickController = window.setInterval(instance.MXP_ticktockController, 15);
+                        instance.MXP_setControllers();
+                        window.clearInterval(instance.MXP_checkController);
+                    });
+
+                    $(window).on("gamepaddisconnected", function() {
+                        window.clearInterval(instance.MXP_checkController);
+                        instance.MXP_hasController = false;
+                        instance.MXP_checkController = window.setInterval(function() {
+                            if (navigator.getGamepads()[0]) {
+                                if (!this.MXP_hasController) $(window).trigger("gamepadconnected");
+                            }
+                        }, 1000);
+                        instance.MXP_setControllers();
+                    });
+
+                    instance.MXP_checkController = window.setInterval(function() {
+                        if (navigator.getGamepads()[0]) {
+                            if (!this.MXP_hasController) $(window).trigger("gamepadconnected");
+                        }
+                    }, 1000);
+                } else {
+                    window.clearInterval(MXP_tickController);
+                }
+            };
+
+        },
+
+        template: `
+        <div class="card mb-3" v-if="MXP_hasController">
+            <div class="card-header">
+                <h3 style="display: inline; cursor: pointer;"
+                    id="controllers_header"
+                    data-toggle="collapse"
+                    data-target="#controllers_body">
+                    Controllers
+                </h3>
+                <span class="badge badge-dark float-right mt-1" v-if="MXP_notice"> [[ MXP_notice ]] </span>
+                <span class="sr-only" v-if="MXP_notice">Controllers swapped</span>
+            </div>
+            <div class="card-body show" id="controllers_body" >
+                <div class="row justify-content-center">
+                    <div class="col-6 px-0">
+                        <b>L:</b> [[ MXP_type[1] ]]
+                    </div>
+                    <div class="col-6 px-0">
+                        <b>R:</b> [[ MXP_type[0] ]]
+                    </div>
+                </div>
+                <div class="row pb-0">
+                    <div class="col p-1">
+                        <button class="btn btn-outline-primary w-100"
+                                @click="MXP_toggleControllers"
+                                >
+                                [[ MXP_Controllers_ACTIVE ? "Disable" : "Enable" ]]
+                        </button>
+                    </div>
+                    <div class="col p-1">
+                        <button class="btn btn-outline-primary w-100"
+                                @click="MXP_SwapControllers"
+                                >
+                                Swap L&R
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `
+
+
+
+    }); // End controllers
+
+
     // The master Vue application
     bell_circle = new Vue({
         el: "#bell_circle",
@@ -1870,10 +2180,10 @@ $(document).ready(function() {
                         } else return; // disable hotkeys when typing
                     }
 
-                    if ($("#wheatley_setting_name_box").is(":focus")
-                     || $("#wheatley_setting_value_box").is(":focus")
-                     || $("#wheatley_comp_id_box").is(":focus")
-                     || $("#wheatley_method_name_box").is(":focus")) {
+                    if ($("#wheatley_setting_name_box").is(":focus") ||
+                        $("#wheatley_setting_value_box").is(":focus") ||
+                        $("#wheatley_comp_id_box").is(":focus") ||
+                        $("#wheatley_method_name_box").is(":focus")) {
                         return;
                     }
 
@@ -1881,12 +2191,27 @@ $(document).ready(function() {
                         return; // disable hotkeys when the report is active
                     }
 
+                    // MXP w will swap controllers
+                    if (e.code == "KeyW") {
+                        if (this.$refs.mxp.MXP_Controllers_ACTIVE &&
+                            this.$refs.mxp.MXP_Active_Controllers >= 2) {
+                            this.$refs.mxp.MXP_SwapControllers();
+                        }
+                        return
+                    }
+
+                    // MXP c will toggle controller watching
+                    if (e.code == "KeyC") {
+                        if (this.$refs.mxp.MXP_Active_Controllers >= 1) {
+                            this.$refs.mxp.MXP_toggleControllers();
+                        }
+                        return
+                    }
 
                     if (bell_circle.keys_down.includes(key)) {
                         return
                     };
                     bell_circle.keys_down.push(key);
-
 
                     // Do a special thing to prevent space and the arrow keys from hitting focused elements
                     if (e.which == 32 || e.which == 37 || e.which == 38 || e.which == 39 || e.which == 40) {
@@ -2154,8 +2479,8 @@ $(document).ready(function() {
 
             // emit a call
             make_call: function(call) {
-                if (this.$root.$refs.users.cur_user_bells.length == 0
-                    && this.$root.$refs.controls.lock_controls
+                if (this.$root.$refs.users.cur_user_bells.length == 0 &&
+                    this.$root.$refs.controls.lock_controls
                 ) {
                     // user is not allowed to make calls
                     this.$root.$refs.display.display_message(
@@ -2317,6 +2642,7 @@ $(document).ready(function() {
                                     Leave Tower
                                 </a>
                             </div>
+
                             <div class="col-auto toggle_controls d-lg-none pl-0">
                                 <button class="toggle_controls btn btn-outline-primary"
                                         data-toggle="collapse"
@@ -2371,6 +2697,11 @@ $(document).ready(function() {
                     <help ref="help"></help>
                 </div>
                 <tower_controls ref="controls"></tower_controls>
+                <div class="row pb-0 flex-grow-1">
+                    <div class="col flex-grow-1">
+                        <mxp_controllers ref="mxp"></mxp_controllers>
+                    </div>
+                </div>
                 <template v-if="!window.tower_parameters.anonymous_user
                              && !window.tower_parameters.listen_link">
                     <div class="row pb-0 flex-grow-1">
