@@ -1836,7 +1836,7 @@ $(document).ready(function() {
               MXP_Controllers_ACTIVE : true,
               MXP_Controllers_swapped : false,
               MXP_notice : "",
-              MXP_status : "",
+              MXP_type : [null, null],
             }
         },
 
@@ -1911,12 +1911,14 @@ $(document).ready(function() {
                     this.MXP_RightController = this.MXP_LeftController;
                     this.MXP_LeftController = tmp;
                     this.MXP_Controllers_swapped = !this.MXP_Controllers_swapped;
-                    this.MXP_notice="Devices swapped";
-                    setTimeout(() => {this.MXP_notice='';}, 2000);
+                    var old_notice = this.MXP_notice;
+                    this.MXP_notice="Swapped";
+                    this.MXP_type.reverse();
+                    setTimeout(() => {this.MXP_notice=old_notice;}, 2000);
                   },
 
             MXP_setControllers: function(){
-                    var MXP_type=[];
+                    this.MXP_type=[null, null];
                     this.MXP_Active_Controllers = 0;
                     var myCont;
                     var nControllers = navigator.getGamepads().length;
@@ -1932,10 +1934,10 @@ $(document).ready(function() {
                           }else if (this.MXP_LeftController == -1){
                             this.MXP_LeftController = Cont.index;
                           }
-                          MXP_type[myCont] = "ActionXL";
+                          this.MXP_type[myCont] = "ActionXL";
                           this.MXP_Active_Controllers++;
                         }else if( Cont.id.includes('1234')&&Cont.connected ){
-                          MXP_type[myCont] = "vJoy";
+                          this.MXP_type[myCont] = "vJoy";
                         }
                         else if ( Cont.id.includes('2341')&&Cont.connected ){
                           if(this.MXP_RightController == -1){
@@ -1943,10 +1945,10 @@ $(document).ready(function() {
                           }else if (this.MXP_LeftController == -1){
                             this.MXP_LeftController = Cont.index;
                           }
-                          MXP_type[myCont] = "eBell";
+                          this.MXP_type[myCont] = "eBell";
                           this.MXP_Active_Controllers++;
                         }else{
-                          MXP_type[myCont] = "unknown";
+                          this.MXP_type[myCont] = "unknown";
                         }
                       }
                       catch{
@@ -1954,22 +1956,18 @@ $(document).ready(function() {
                     }
                     if(this.MXP_RightController > -1){
                       if(this.MXP_LeftController > -1){
-                        this.MXP_status = "L&R devices found";
                         if (this.MXP_Controllers_swapped){
                           var tmp = this.MXP_RightController;
                           this.MXP_RightController = this.MXP_LeftController;
                           this.MXP_LeftController = tmp;
                         }
-                      }else{
-                        this.MXP_status = "Single device assigned";
                       }
                     }
-                    if (this.MXP_Active_Controllers == 0) this.MXP_status = "";
                     if (nControllers == 0) window.clearInterval(this.MXP_tickController);
 
                     console.log("this.MXP_Active_Controllers=" + this.MXP_Active_Controllers);
-                    console.log("MXP_type[this.MXP_RightController]=" + MXP_type[this.MXP_RightController]);
-                    console.log("MXP_type[this.MXP_LeftController]=" + MXP_type[this.MXP_LeftController]);
+                    console.log("MXP_type[this.MXP_RightController]=" + this.MXP_type[this.MXP_RightController]);
+                    console.log("MXP_type[this.MXP_LeftController]=" + this.MXP_type[this.MXP_LeftController]);
               },
 
               MXP_toggleControllers: function(){
@@ -1978,8 +1976,9 @@ $(document).ready(function() {
                       this.MXP_setControllers();
                       window.clearInterval(this.MXP_tickController);
                       this.MXP_tickController = window.setInterval(this.MXP_ticktockController,15);
+                      this.MXP_notice = "";
                     }else{
-                      this.MXP_status = "Controllers are off.";
+                      this.MXP_notice = "Disabled";
                       window.clearInterval(this.MXP_tickController);
                     }
               },
@@ -2027,32 +2026,40 @@ $(document).ready(function() {
     template: `
         <div class="card mb-3" v-if="MXP_hasController">
             <div class="card-header">
-                <h2 style="display: inline; cursor: pointer;"
+                <h3 style="display: inline; cursor: pointer;"
                     id="controllers_header"
                     data-toggle="collapse"
                     data-target="#controllers_body">
                     Controllers
-                </h2>
+                </h3>
+                <span class="badge badge-dark float-right mt-1" v-if="MXP_notice"> [[ MXP_notice ]] </span>
+                <span class="sr-only" v-if="MXP_notice">Controllers swapped</span>
             </div>
-            <div class="card-body" id="controllers_body" >
-                <p style="text-align:center">[[MXP_status]]</p>
-                <div class="row">
-                    <div class="col">
-                        <button class="btn btn-outline-primary"
+            <div class="card-body show" id="controllers_body" >
+                <div class="row justify-content-center">
+                    <div class="col-6 px-0">
+                        <b>L:</b> [[ MXP_type[1] ]]
+                    </div>
+                    <div class="col-6 px-0">
+                        <b>R:</b> [[ MXP_type[0] ]]
+                    </div>
+                </div>
+                <div class="row pb-0">
+                    <div class="col p-1">
+                        <button class="btn btn-outline-primary w-100"
                                 @click="MXP_toggleControllers"
                                 >
                                 [[ MXP_Controllers_ACTIVE ? "Disable" : "Enable" ]]
                         </button>
                     </div>
-                    <div class="col">
-                        <button class="btn btn-outline-primary"
+                    <div class="col p-1">
+                        <button class="btn btn-outline-primary w-100"
                                 @click="MXP_SwapControllers"
                                 >
                                 Swap L&R
                         </button>
                     </div>
                 </div>
-                <p style="text-align:center">[[MXP_notice]]</p>
             </div>
         </div>
         `
