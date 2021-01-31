@@ -2130,7 +2130,7 @@ $(document).ready(function() {
                     }
 
                     // MXP w will swap controllers
-                    if ( e.which == 87 ) {
+                    if ( e.code == "KeyW" ) {
                         if(this.$refs.mxp.MXP_Controllers_ACTIVE
                             && this.$refs.mxp.MXP_Active_Controllers >=2) {
                             this.$refs.mxp.MXP_SwapControllers();
@@ -2138,8 +2138,8 @@ $(document).ready(function() {
                         return
                     }
 
-                    // MXP CTL will toggle controller watching
-                    if ( e.which == 17 ) {
+                    // MXP c will toggle controller watching
+                    if ( e.code == "KeyC") {
                         if (this.$refs.mxp.MXP_Active_Controllers >=1){
                           this.$refs.mxp.MXP_toggleControllers();
                         }
