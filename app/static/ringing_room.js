@@ -1761,8 +1761,8 @@ $(document).ready(function() {
                    data-target="#user_display_body">
             Users
         </h2>
-        <span class="badge badge-dark"> [[ users.length ]] </span>
-        <span class="float-right w-50">
+        <span class="badge badge-dark mx-3 align-text-bottom"> [[ users.length ]] </span>
+        <span class="float-right">
             <button class="btn btn-outline-primary w-100"
                     :class="{active: assignment_mode}"
                     @click="toggle_assignment"
