@@ -860,6 +860,20 @@ $(document).ready(function() {
                     title: "Double Norwich Court Bob Major",
                     url: "Double_Norwich_Court_Bob_Major",
                 },
+                // Peal speed has 3 values - two which are bound to the input fields, and one
+                // combined value that is the 'ground truth'.  This guaruntees that the display
+                // always represents the correct peal speed in the correct way (i.e. such that
+                // `0 <= peal_speed_mins < 60`.  The dataflow is:
+                // - User changes either `peal_speed_hours` or `peal_speed_mins`
+                // - `peal_speed_mins` and `peal_speed_hours` are combined to make a new value of
+                //   `peal_speed`
+                // - The `watch` callback detects the change, and does the following:
+                //   - Uses the new value to set `peal_speed_mins` and `peal_speed_hours` to a valid
+                //     representation
+                //   - A socketio signal is sent with the new peal speed
+                peal_speed_hours: 2,
+                peal_speed_mins: 55,
+                peal_speed: 175,
 
                 // Row-gen panel configuration
                 row_gen_panel: "method",
@@ -929,6 +943,32 @@ $(document).ready(function() {
 
             complib_id: function(next_value) {
                 this.update_comp_suggestions(next_value);
+            },
+
+            peal_speed_mins: function (new_value) {
+                if (new_value && !isNaN(parseInt(new_value))) {
+                    this.update_peal_speed();
+                }
+            },
+
+            peal_speed_hours: function (new_value) {
+                if (new_value && !isNaN(parseInt(new_value))) {
+                    this.update_peal_speed();
+                }
+            },
+
+            peal_speed: function () {
+                console.log("Peal speed changed", this.peal_speed);
+                // Clamp the peal speed to a reasonable range
+                const last_peal_speed = this.peal_speed;
+                this.peal_speed = Math.max(Math.min(last_peal_speed, 300), 60);
+                // Send an update to the server if the user **actually** changed the value
+                if (last_peal_speed != this.peal_speed) {
+
+                }
+                // Update the controls to the correct representation of the speed
+                this.peal_speed_mins = (this.peal_speed % 60).toString();
+                this.peal_speed_hours = Math.floor(this.peal_speed / 60).toString();
             }
         },
 
@@ -961,6 +1001,15 @@ $(document).ready(function() {
                 });
             },
 
+            on_change_peal_speed: function() {
+                socketio.emit('c_wheatley_setting', {
+                    tower_id: cur_tower_id,
+                    settings: {
+                        peal_speed: this.peal_speed
+                    }
+                });
+            },
+
             reset_wheatley: function() {
                 socketio.emit('c_reset_wheatley', {tower_id: cur_tower_id});
             },
@@ -968,15 +1017,19 @@ $(document).ready(function() {
             /* CALLBACKS CALLED FROM RECEIVING A SOCKETIO SIGNAL */
             update_settings: function(new_settings) {
                 for (const key in new_settings) {
+                    const value = new_settings[key];
                     switch (key) {
                         case 'sensitivity':
-                            this.sensitivity = new_settings[key];
+                            this.sensitivity = value;
                             break;
                         case 'use_up_down_in':
-                            this.use_up_down_in = new_settings[key];
+                            this.use_up_down_in = value;
                             break;
                         case 'stop_at_rounds':
-                            this.stop_at_rounds = new_settings[key];
+                            this.stop_at_rounds = value;
+                            break;
+                        case 'peal_speed':
+                            this.peal_speed = value;
                             break;
                     }
                 }
@@ -995,6 +1048,10 @@ $(document).ready(function() {
             update_number_of_bells: function() {
                 this.update_method_suggestions(this.method_name);
                 this.update_comp_suggestions(this.complib_id);
+            },
+
+            update_peal_speed: function() {
+                this.peal_speed = parseInt(this.peal_speed_hours) * 60 + parseInt(this.peal_speed_mins);
             },
 
             /* METHODS RELATED TO THE USER UPDATING THE ROW_GEN CONTROLS */
@@ -1322,6 +1379,22 @@ $(document).ready(function() {
         >
             Stop at rounds
         </label>
+
+        <hr/>
+
+        <!-- Peal Speed -->
+        <p>Peal Speed:
+            <input type="number"
+                   id="wheatley_peal_speed_hours"
+                   v-model="peal_speed_hours"
+                   v-on:change="on_change_peal_speed"
+                   style="border: none; width: 1.5em"/>hr
+            <input type="number"
+                   id="wheatley_peal_speed_mins"
+                   v-model="peal_speed_mins"
+                   v-on:change="on_change_peal_speed"
+                   style="border: none; width: 2.1em" step="5"/>min
+        </p>
 
         <hr/>
 
@@ -2199,7 +2272,9 @@ $(document).ready(function() {
                     if ($("#wheatley_setting_name_box").is(":focus") ||
                         $("#wheatley_setting_value_box").is(":focus") ||
                         $("#wheatley_comp_id_box").is(":focus") ||
-                        $("#wheatley_method_name_box").is(":focus")) {
+                        $("#wheatley_method_name_box").is(":focus") ||
+                        $("#wheatley_peal_speed_mins").is(":focus") ||
+                        $("#wheatley_peal_speed_hours").is(":focus")) {
                         return;
                     }
 

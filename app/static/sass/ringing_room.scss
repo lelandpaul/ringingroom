@@ -43,6 +43,11 @@ input[type=range]::-ms-thumb {
   background-color: $primary;
 }
 
+// Force chrome to render the up-down arrows for Wheatley's peal speed
+input[type=number]::-webkit-inner-spin-button {
+    opacity: 1
+}
+
 // tower name positioning
 #tower_name {
     font-family: 'Simonetta', cursive;
