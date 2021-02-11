@@ -2015,6 +2015,30 @@ $(document).ready(function() {
                 }
             },
 
+            get_assigned_controller_type: function(bell) {
+                for (var myCont = 0; myCont < this.controller_count; myCont++) {
+                    if (this.controller_list[myCont].bell == bell) {
+                        return this.controller_list[myCont].type;
+                    }
+                }
+                return "(unassigned)"
+            }
+        },
+
+        computed: {
+            assigned_bells: function() {
+                var bells = bell_circle.$refs.users.$refs.cur_user_data[0].bells_assigned_to_user;
+                if (bells.length == 0) {
+                    bells = [];
+                    if (this.controller_list[0] && this.controller_list[0].bell) {
+                        bells.push(this.controller_list[0].bell);
+                    }
+                    if (this.controller_list[1] && this.controller_list[1].bell) {
+                        bells.push(this.controller_list[1].bell);
+                    }
+                }
+                return bells;
+            }
         },
 
         mounted: function() {
@@ -2069,16 +2093,19 @@ $(document).ready(function() {
                 <span class="sr-only" v-if="notice">Controllers swapped</span>
             </div>
             <ul class="list-group list-group-flush show" id="controllers_body" >
+                <li class="list-group-item py-0">
+                    <small>Controllers connected: [[ this.controller_count ]]</small>
+                </li>
                 <li class="list-group-item py-0"
-                    v-for="cont in controller_list"
-                    v-if="cont instanceof Object"
+                    v-for="bell in assigned_bells"
                     >
                     <small>
-                        [[cont.type]]: 
-                        <span class="float-right pt-2 mt-n1">[[circled_digits[cont.bell-1] ]]</span>
-                    <small>
+                    [[ circled_digits[bell-1] ]]
+                    <span class="float-right pt-2 mt-n1">
+                        [[ get_assigned_controller_type(bell) ]]
+                    </span>
+                    </small>
                 </li>
-                
 
                 <li class="list-group-item">
                     <div class="row pb-0">
@@ -2089,7 +2116,8 @@ $(document).ready(function() {
                                     [[ active ? "Disable" : "Enable" ]]
                             </button>
                         </div>
-                        <div class="col p-1">
+                        <div class="col p-1" v-if="controller_count == 2 
+                                                   && [0,2].includes(assigned_bells.length)">
                             <button class="btn btn-outline-primary w-100"
                                     @click="swap_controllers"
                                     >
