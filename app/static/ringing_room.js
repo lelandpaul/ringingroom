@@ -1572,8 +1572,6 @@ $(document).ready(function() {
                         });
                     });
                 }
-                // Before returning: Any time this changes, we want to reassign controllers
-                bell_circle.$refs.mxp.autoassign_controllers();
                 return bell_list
             },
 
@@ -1837,8 +1835,8 @@ $(document).ready(function() {
                 active: true,
                 controllers_swapped: false,
                 notice: "",
-                controller_list: {},
-                controller_count: 0,
+                controller_list: [],
+                bell_in_assignment_mode: null,
                 circled_digits: ["①", "②", "③", "④", "⑤", "⑥",
                     "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬", "⑭", "⑮", "⑯"
                 ],
@@ -1851,22 +1849,35 @@ $(document).ready(function() {
                 return "getGamepads" in navigator;
             },
 
+            assign_cont_to_bell: function(cont) {
+                if (this.bell_in_assignment_mode) {
+                    cont.bell = this.bell_in_assignment_mode;
+                    this.bell_in_assignment_mode = null;
+                }
+            },
+
             ticktock_controller: function() {
                 var nControllers = navigator.getGamepads().length;
                 for (var myCont = 0; myCont < nControllers; myCont++) {
                     var cont = navigator.getGamepads()[myCont];
                     var curCont  = this.controller_list[myCont];
-                    if (curCont && curCont.bell) {
+                    if (curCont) {
                         try {
                             if (Math.max.apply(null, cont.axes.map(Math.abs)) > 0) {
                                 var swing = cont.axes[2] * 2048;
                                 if (swing >= this.hand_strike && curCont.at_hand) {
                                     curCont.at_hand = !curCont.at_hand;
-                                    bell_circle.pull_rope(curCont.bell);
+                                    this.assign_cont_to_bell(curCont)
+                                    if (curCont.bell) {
+                                        bell_circle.pull_rope(curCont.bell);
+                                    }
                                 }
                                 if (swing <= this.back_strike && !curCont.at_hand) {
                                     curCont.at_hand = !curCont.at_hand;
-                                    bell_circle.pull_rope(curCont.bell);
+                                    this.assign_cont_to_bell(curCont)
+                                    if (curCont.bell) {
+                                        bell_circle.pull_rope(curCont.bell);
+                                    }
                                 }
                             }
                         for (var i = 0; i < cont.buttons.length; i++) {
@@ -1946,30 +1957,30 @@ $(document).ready(function() {
             },
 
             autoassign_controllers: function() {
-                if (this.controller_count == 0 || this.controller_count > 2) {
+                if (this.controller_list.length != 2) {
                     // Do nothing: autoassignment isn't well defined with more than two controllers
                     // or for 0 controllers
                     return
                 }
-                if (this.controllers_swapped) {
-                    this.controller_list[0].bell = bell_circle.find_rope_by_hand(RIGHT_HAND);
-                    if (this.controller_list[1]) {
-                        this.controller_list[1].bell = bell_circle.find_rope_by_hand(LEFT_HAND);
-                        this.controller_list[1].left = true;
-                    }
-                } else {
-                    this.controller_list[0].bell = bell_circle.find_rope_by_hand(LEFT_HAND);
-                    this.controller_list[0].left = true;
-                    if (this.controller_list[1]) {
-                        this.controller_list[1].bell = bell_circle.find_rope_by_hand(RIGHT_HAND);
-                    }
+                var keys = [];
+                for (var cont in this.controller_list) {
+                    keys.push(cont)
                 }
-                this.controller_list.changed++;
+                var first = keys[0];
+                var second = keys[1];
+                if (this.controllers_swapped) {
+                    this.controller_list[first].bell = bell_circle.find_rope_by_hand(RIGHT_HAND);
+                    this.controller_list[second].bell = bell_circle.find_rope_by_hand(LEFT_HAND);
+                    this.controller_list[second].left = true;
+                } else {
+                    this.controller_list[first].bell = bell_circle.find_rope_by_hand(LEFT_HAND);
+                    this.controller_list[first].left = true;
+                    this.controller_list[second].bell = bell_circle.find_rope_by_hand(RIGHT_HAND);
+                }
             },
 
             set_controllers: function() {
-                this.controller_list = {changed: 0};
-                this.controller_count = 0;
+                this.controller_list = [];
                 var nControllers = navigator.getGamepads().length;
                 if (nControllers == 0) {
                     window.clearInterval(this.tick_controller);
@@ -1994,8 +2005,8 @@ $(document).ready(function() {
                     } else {
                     }
                     this.controller_list[myCont] = contObj;
-                    this.controller_count++;
                 };
+
 
                 this.autoassign_controllers();
                 // console.log('CONTROLLERS', navigator.getGamepads());
@@ -2016,9 +2027,9 @@ $(document).ready(function() {
             },
 
             get_assigned_controller_type: function(bell) {
-                for (var myCont = 0; myCont < this.controller_count; myCont++) {
-                    if (this.controller_list[myCont].bell == bell) {
-                        return this.controller_list[myCont].type;
+                for (var key in this.controller_list) {
+                    if (this.controller_list[key] && this.controller_list[key].bell == bell) {
+                        return this.controller_list[key].type;
                     }
                 }
                 return "(unassigned)"
@@ -2027,16 +2038,16 @@ $(document).ready(function() {
 
         computed: {
             assigned_bells: function() {
-                var bells = bell_circle.$refs.users.$refs.cur_user_data[0].bells_assigned_to_user;
-                if (bells.length == 0) {
-                    bells = [];
-                    if (this.controller_list[0] && this.controller_list[0].bell) {
-                        bells.push(this.controller_list[0].bell);
-                    }
-                    if (this.controller_list[1] && this.controller_list[1].bell) {
-                        bells.push(this.controller_list[1].bell);
-                    }
+                // Reactivity hack: make sure this changes any time assignments do
+                this.$root.$refs.users.assignment_mode;
+                var bells = [];
+                var cur_user_data = bell_circle.$refs.users.$refs.cur_user_data;
+                if (cur_user_data) {
+                    // We need this check because sometimes this gets mounted before
+                    // the cur_user_data does, causing errors
+                    bells = cur_user_data[0].bells_assigned_to_user;
                 }
+                if ([1,2].includes(bells.length)) this.autoassign_controllers();
                 return bells;
             }
         },
@@ -2094,16 +2105,20 @@ $(document).ready(function() {
             </div>
             <ul class="list-group list-group-flush show" id="controllers_body" >
                 <li class="list-group-item py-0">
-                    <small>Controllers connected: [[ this.controller_count ]]</small>
+                    <small>Controllers connected: [[ controller_list.length ]]</small>
                 </li>
                 <li class="list-group-item py-0"
                     v-for="bell in assigned_bells"
                     >
                     <small>
                     [[ circled_digits[bell-1] ]]
-                    <span class="float-right pt-2 mt-n1">
-                        [[ get_assigned_controller_type(bell) ]]
-                    </span>
+                    [[ bell_in_assignment_mode === bell ? 
+                       "assigning" : get_assigned_controller_type(bell) ]]
+                    <button class="btn btn-sm btn-outline-primary"
+                        @click="() => bell_in_assignment_mode = bell"
+                        >
+                        Assign
+                    </button>
                     </small>
                 </li>
 
@@ -2116,12 +2131,11 @@ $(document).ready(function() {
                                     [[ active ? "Disable" : "Enable" ]]
                             </button>
                         </div>
-                        <div class="col p-1" v-if="controller_count == 2 
-                                                   && [0,2].includes(assigned_bells.length)">
+                        <div class="col p-1" v-if="assigned_bells.length <= 2">
                             <button class="btn btn-outline-primary w-100"
                                     @click="swap_controllers"
                                     >
-                                    Swap L&R
+                                    Swap
                             </button>
                         </div>
                     </div>
