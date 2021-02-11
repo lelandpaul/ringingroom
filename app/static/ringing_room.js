@@ -72,14 +72,14 @@ window.user_parameters = {
 
 // A bell was rung
 socketio.on('s_bell_rung', function(msg, cb) {
-    console.log('Received event: ' + msg.global_bell_state + msg.who_rang);
+    // console.log('Received event: ' + msg.global_bell_state + msg.who_rang);
     // if(msg.disagree) {}
     bell_circle.ring_bell(msg.who_rang);
 });
 
 // Userlist was set
 socketio.on('s_set_userlist', function(msg, cb) {
-    console.log('s_set_userlist: ' + msg.user_list);
+    // console.log('s_set_userlist: ' + msg.user_list);
     bell_circle.$refs.users.user_names = msg.user_list;
     msg.user_list.forEach((user, index) => {
         bell_circle.$refs.users.add_user({
@@ -91,13 +91,13 @@ socketio.on('s_set_userlist', function(msg, cb) {
 
 // User entered the room
 socketio.on('s_user_entered', function(msg, cb) {
-    console.log(msg.username + ' entered')
+    // console.log(msg.username + ' entered')
     bell_circle.$refs.users.add_user(msg);
 });
 
 // User left the room
 socketio.on('s_user_left', function(msg, cb) {
-    console.log(msg.username + ' left')
+    // console.log(msg.username + ' left')
     bell_circle.$refs.users.remove_user(msg);
     bell_circle.$refs.bells.forEach((bell, index) => {
         if (bell.assigned_user === msg.user_id) {
@@ -108,13 +108,13 @@ socketio.on('s_user_left', function(msg, cb) {
 
 // Number of observers changed
 socketio.on('s_set_observers', function(msg, cb) {
-    console.log('observers: ' + msg.observers);
+    // console.log('observers: ' + msg.observers);
     bell_circle.$refs.users.observers = msg.observers;
 });
 
 // User was assigned to a bell
 socketio.on('s_assign_user', function(msg, cb) {
-    console.log('Received user assignment: ' + msg.bell + ' ' + msg.user);
+    // console.log('Received user assignment: ' + msg.bell + ' ' + msg.user);
     try {
         // This stochastically very error-prone:
         // Sometimes it sets the state before the bell is created
@@ -124,7 +124,7 @@ socketio.on('s_assign_user', function(msg, cb) {
             bell_circle.$refs.users.rotate_to_assignment();
         }
     } catch (err) {
-        console.log('caught error assign_user; trying again');
+        // console.log('caught error assign_user; trying again');
         setTimeout(100, function() {
             bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
             if (msg.user === cur_user_id) {
@@ -136,7 +136,7 @@ socketio.on('s_assign_user', function(msg, cb) {
 
 // A call was made
 socketio.on('s_call', function(msg, cb) {
-    console.log('Received call: ' + msg.call);
+    // console.log('Received call: ' + msg.call);
     bell_circle.$refs.display.make_call(msg.call);
 });
 
@@ -162,7 +162,7 @@ socketio.on('s_global_state', function(msg, cb) {
             // As such: try it, but if it doesn't work wait a bit and try again.
             bell_circle.$refs.bells[i].set_state_silently(gstate[i]);
         } catch (err) {
-            console.log('caught error set_state; trying again');
+            // console.log('caught error set_state; trying again');
             setTimeout(100, function() {
                 bell_circle.$refs.bells[i].set_state_silently(gstate[i]);
             });
@@ -172,7 +172,7 @@ socketio.on('s_global_state', function(msg, cb) {
 
 // The server told us whether to use handbells or towerbells
 socketio.on('s_audio_change', function(msg, cb) {
-    console.log('changing audio to: ' + msg.new_audio);
+    // console.log('changing audio to: ' + msg.new_audio);
     bell_circle.$refs.controls.audio_type = msg.new_audio;
     bell_circle.audio = msg.new_audio == 'Tower' ? tower : hand;
     // Make sure the volume is set consistently
@@ -195,7 +195,7 @@ socketio.on('s_msg_sent', function(msg, cb) {
 
 // Wheatley has been enabled or disabled
 socketio.on('s_set_wheatley_enabledness', function(data) {
-    console.log("Setting Wheatley's enabledness to " + data.enabled);
+    // console.log("Setting Wheatley's enabledness to " + data.enabled);
     if (!window.tower_parameters.listen_link && !window.tower_parameters.anonymous_user) {
         bell_circle.$refs.wheatley.enabled = data.enabled;
     }
@@ -203,19 +203,19 @@ socketio.on('s_set_wheatley_enabledness', function(data) {
 
 // A Wheatley setting has been changed
 socketio.on('s_wheatley_setting', function(msg) {
-    console.log("Received Wheatley setting(s):", msg);
+    // console.log("Received Wheatley setting(s):", msg);
     bell_circle.$refs.wheatley.update_settings(msg);
 });
 
 // Wheatley's row gen has been changed
 socketio.on('s_wheatley_row_gen', function(msg) {
-    console.log("Received Wheatley row gen:", msg);
+    // console.log("Received Wheatley row gen:", msg);
     bell_circle.$refs.wheatley.update_row_gen(msg);
 });
 
 // Wheatley has updated whether or not he thinks a touch is in progress
 socketio.on('s_wheatley_is_ringing', function(msg) {
-    console.log("Received Wheatley is-ringing:", msg);
+    // console.log("Received Wheatley is-ringing:", msg);
     bell_circle.$refs.wheatley.update_is_ringing(msg);
 });
 
@@ -259,7 +259,7 @@ $(document).ready(function() {
             return {
                 stroke: true,
                 circled_digits: ["①", "②", "③", "④", "⑤", "⑥",
-                    "⑦", "⑧", "⑨", "⑩", "⑪", "⑫"
+                    "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬", "⑭", "⑮", "⑯"
                 ],
                 images: ["handstroke", "backstroke"],
                 assigned_user: window.tower_parameters.assignments[this.number - 1],
@@ -343,7 +343,7 @@ $(document).ready(function() {
                     tower_id: cur_tower_id
                 });
                 var report = "Bell " + this.number + " will ring a " + (this.stroke ? "handstroke" : "backstroke");
-                console.log(report);
+                // console.log(report);
             },
 
             // Ringing event received; now ring the bell
@@ -356,20 +356,20 @@ $(document).ready(function() {
                     this.stroke) {
                     audio_type = 'Muffled';
                     audio_obj = muffled;
-                    console.log(audio_type + ' ' + this.number_of_bells);
+                    // console.log(audio_type + ' ' + this.number_of_bells);
                 } else {
                     audio_type = this.$root.$refs.controls.audio_type;
                     audio_obj = this.audio;
-                    console.log(audio_type + ' ' + this.number_of_bells);
+                    // console.log(audio_type + ' ' + this.number_of_bells);
                 }
                 audio_obj.play(bell_mappings[audio_type][this.number_of_bells][this.number - 1]);
                 var report = "Bell " + this.number + " rang a " + (this.stroke ? "backstroke" : "handstroke");
-                console.log(report);
+                // console.log(report);
             },
 
             // global_state received; set the bell to the correct stroke
             set_state_silently: function(new_state) {
-                console.log('Bell ' + this.number + ' set to ' + new_state)
+                // console.log('Bell ' + this.number + ' set to ' + new_state)
                 this.stroke = new_state
             },
 
@@ -388,7 +388,7 @@ $(document).ready(function() {
                     return
                 };
 
-                console.log('assigning user: ' + selected_user + ' to ' + this.number);
+                // console.log('assigning user: ' + selected_user + ' to ' + this.number);
 
                 socketio.emit('c_assign_user', {
                     bell: this.number,
@@ -531,27 +531,27 @@ $(document).ready(function() {
             // Used to display temporary messages to users (typically when they do something they're
             // not permitted to do in host-mode).
             display_message: function(message) {
-                console.log('display message: ', message);
+                // console.log('display message: ', message);
                 this.cur_call = message;
                 var self = this;
                 // remove the call after 2 seconds
                 setTimeout(function() {
                     self.cur_call = '';
-                    console.log('changing cur_call back');
+                    // console.log('changing cur_call back');
                 }, 3000);
 
             },
 
             // a call was received from the server; display it and play audio
             make_call: function(call) {
-                console.log('changing cur_call to: ' + call);
+                // console.log('changing cur_call to: ' + call);
                 this.cur_call = call;
                 this.audio.play(call);
                 var self = this;
                 // remove the call after 2 seconds
                 setTimeout(function() {
                     self.cur_call = '';
-                    console.log('changing cur_call back');
+                    // console.log('changing cur_call back');
                 }, 2000);
             }
         },
@@ -622,7 +622,7 @@ $(document).ready(function() {
 
         watch: {
             audio_type: function() {
-                console.log('swapped audio type');
+                // console.log('swapped audio type');
                 socketio.emit('c_audio_change', {
                     new_audio: this.audio_type,
                     tower_id: cur_tower_id
@@ -630,7 +630,7 @@ $(document).ready(function() {
             },
 
             host_mode: function() {
-                console.log('swapped host mode to: ' + this.host_mode);
+                // console.log('swapped host mode to: ' + this.host_mode);
                 socketio.emit('c_host_mode', {
                     new_mode: this.host_mode,
                     tower_id: cur_tower_id
@@ -644,7 +644,7 @@ $(document).ready(function() {
                 if (window.tower_parameters.anonymous_user) {
                     return
                 }; // don't do anything if not logged in
-                console.log('setting tower size to ' + size);
+                // console.log('setting tower size to ' + size);
                 socketio.emit('c_size_change', {
                     new_size: size,
                     tower_id: cur_tower_id
@@ -773,7 +773,7 @@ $(document).ready(function() {
         methods: {
             // the user clicked the audio toggle
             show_help: function() {
-                console.log('showing or hiding help');
+                // console.log('showing or hiding help');
                 this.help_showing = !this.help_showing
             },
         },
@@ -1048,7 +1048,7 @@ $(document).ready(function() {
                 };
 
                 // Log what we're sending Wheatley for ease of debugging
-                console.log("Setting Wheatley method to " + method.title);
+                // console.log("Setting Wheatley method to " + method.title);
 
                 // Emit the socketio signal to tell Wheatley what to ring
                 socketio.emit(
@@ -1125,7 +1125,7 @@ $(document).ready(function() {
                     return;
                 }
 
-                console.log("Setting Wheatley composition to " + this.current_complib_comp);
+                // console.log("Setting Wheatley composition to " + this.current_complib_comp);
 
                 socketio.emit(
                     "c_wheatley_row_gen", {
@@ -1337,7 +1337,7 @@ $(document).ready(function() {
 
         methods: {
             send_msg: function() {
-                console.log('send_msg');
+                // console.log('send_msg');
                 socketio.emit('c_msg_sent', {
                     user: this.name,
                     email: window.tower_parameters.cur_user_email,
@@ -1547,7 +1547,7 @@ $(document).ready(function() {
         computed: {
 
             bells_assigned_to_user: function() {
-                console.log('updating bells_assigned');
+                // console.log('updating bells_assigned');
                 // Hack to get around Vue reactivity issues:
                 // Referencing $root.number_of_bells ensures that this
                 // is recalculated whenever the towersize changes —
@@ -1572,6 +1572,8 @@ $(document).ready(function() {
                         });
                     });
                 }
+                // Before returning: Any time this changes, we want to reassign controllers
+                bell_circle.$refs.mxp.autoassign_controllers();
                 return bell_list
             },
 
@@ -1689,7 +1691,7 @@ $(document).ready(function() {
                 if (window.tower_parameters.anonymous_user) {
                     return
                 }; // don't do anything if not logged in
-                console.log('rotating to assignment')
+                // console.log('rotating to assignment')
                 // Don't rotate while assigning bells
                 if (this.assignment_mode) {
                     return
@@ -1700,10 +1702,10 @@ $(document).ready(function() {
                     return
                 };
 
-                console.log(this.cur_user_bells);
+                // console.log(this.cur_user_bells);
                 // the user has no bells; don't screw with rotation
                 if (this.cur_user_bells === []) {
-                    console.log('skipping — no assigned bells');
+                    // console.log('skipping — no assigned bells');
                     return;
                 };
                 const rotate_to = Math.min(...this.cur_user_bells);
@@ -1711,7 +1713,7 @@ $(document).ready(function() {
             },
 
             add_user: function(user) {
-                console.log('adding user: ', user)
+                // console.log('adding user: ', user)
                 var flag = false
                 this.users.forEach((u) => {
                     if (u.user_id == user.user_id) {
@@ -1725,7 +1727,7 @@ $(document).ready(function() {
             },
 
             remove_user: function(user) {
-                console.log('removing user: ', user);
+                // console.log('removing user: ', user);
 
                 var user_index = -1
                 this.users.forEach((u, index) => {
@@ -1827,51 +1829,50 @@ $(document).ready(function() {
     Vue.component('mxp_controllers', {
         data: function() {
             return {
-                MXP_handStrike: [100, 100, 100, 100, 100, 100],
-                MXP_backStrike: [-600, -600, -600, -600, -600, -600],
-                MXP_atHand: [false, false, false, false, false, false],
-                MXP_hasController: false,
-                MXP_checkController: null,
-                MXP_tickController: null,
-                MXP_LeftController: null,
-                MXP_RightController: null,
-                MXP_Active_Controllers: 0,
-                MXP_Controllers_ACTIVE: true,
-                MXP_Controllers_swapped: false,
-                MXP_notice: "",
-                MXP_type: [null, null],
+                hand_strike: 100,
+                back_strike: -600,
+                has_controller: false,
+                check_controller: null,
+                tick_controller: null,
+                active: true,
+                controllers_swapped: false,
+                notice: "",
+                controller_list: {},
+                controller_count: 0,
+                circled_digits: ["①", "②", "③", "④", "⑤", "⑥",
+                    "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬", "⑭", "⑮", "⑯"
+                ],
             }
         },
 
         methods: {
 
-            MXP_ControlAvailable: function() {
+            control_available: function() {
                 return "getGamepads" in navigator;
             },
 
-            MXP_ticktockController: function() {
+            ticktock_controller: function() {
                 var nControllers = navigator.getGamepads().length;
-                var myCont;
-                for (myCont = 0; myCont < nControllers; myCont++) {
-                    if ([this.MXP_LeftController, this.MXP_RightController].includes(myCont)) {
+                for (var myCont = 0; myCont < nControllers; myCont++) {
+                    var cont = navigator.getGamepads()[myCont];
+                    var curCont  = this.controller_list[myCont];
+                    if (curCont && curCont.bell) {
                         try {
-                            var Cont = navigator.getGamepads()[myCont];
-                            if (Math.max.apply(null, Cont.axes.map(Math.abs)) > 0) {
-                                var Swing = Cont.axes[2] * 2048;
-                                if (Swing >= this.MXP_handStrike[myCont] && this.MXP_atHand[myCont]) {
-                                    this.MXP_atHand[myCont] = !this.MXP_atHand[myCont];
-                                    this.MXP_send(myCont);
+                            if (Math.max.apply(null, cont.axes.map(Math.abs)) > 0) {
+                                var swing = cont.axes[2] * 2048;
+                                if (swing >= this.hand_strike && curCont.at_hand) {
+                                    curCont.at_hand = !curCont.at_hand;
+                                    bell_circle.pull_rope(curCont.bell);
                                 }
-                                if (Swing <= this.MXP_backStrike[myCont] && !this.MXP_atHand[myCont]) {
-                                    this.MXP_atHand[myCont] = !this.MXP_atHand[myCont];
-                                    this.MXP_send(myCont);
+                                if (swing <= this.back_strike && !curCont.at_hand) {
+                                    curCont.at_hand = !curCont.at_hand;
+                                    bell_circle.pull_rope(curCont.bell);
                                 }
                             }
-                        } catch {}
-                        for (var i = 0; i < Cont.buttons.length; i++) {
-                            if (Cont.buttons[i].pressed) {
+                        for (var i = 0; i < cont.buttons.length; i++) {
+                            if (cont.buttons[i].pressed) {
                                 if (i == 0) {
-                                    if (myCont == this.MXP_LeftController) {
+                                    if (curCont.left) {
                                         window.dispatchEvent(new KeyboardEvent('keydown', {
                                             'key': 'g',
                                             'which': 71,
@@ -1884,7 +1885,7 @@ $(document).ready(function() {
                                                 'code': 'KeyG'
                                             }));
                                         }, 50);
-                                    } else if (myCont == this.MXP_RightController) {
+                                    } else {
                                         window.dispatchEvent(new KeyboardEvent('keydown', {
                                             'key': 'n',
                                             'which': 78,
@@ -1899,7 +1900,7 @@ $(document).ready(function() {
                                         }, 50);
                                     }
                                 } else if (i == 1) {
-                                    if (myCont == this.MXP_LeftController) {
+                                    if (curCont.left) {
                                         window.dispatchEvent(new KeyboardEvent('keydown', {
                                             'key': 'h',
                                             'which': 72,
@@ -1912,7 +1913,7 @@ $(document).ready(function() {
                                                 'code': 'KeyH'
                                             }));
                                         }, 50);
-                                    } else if (myCont == this.MXP_RightController) {
+                                    } else {
                                         window.dispatchEvent(new KeyboardEvent('keydown', {
                                             'key': 'b',
                                             'which': 66,
@@ -1929,165 +1930,134 @@ $(document).ready(function() {
                                 }
                             }
                         }
+                        } catch {}
                     }
                 }
             },
 
-            MXP_send: function(myCont) {
-                switch (myCont) {
-                    case this.MXP_RightController:
-                        window.dispatchEvent(new KeyboardEvent('keydown', {
-                            'key': 'j',
-                            'keycode': 74,
-                            'which': 74,
-                            'code': 'KeyJ'
-                        }));
-                        setTimeout(function() {
-                            window.dispatchEvent(new KeyboardEvent('keyup', {
-                                'key': 'j',
-                                'keycode': 74,
-                                'which': 74,
-                                'code': 'KeyJ'
-                            }));
-                        }, 50);
-                        break;
-                    case this.MXP_LeftController:
-                        window.dispatchEvent(new KeyboardEvent('keydown', {
-                            'key': 'f',
-                            'keycode': 70,
-                            'which': 70,
-                            'code': 'KeyF'
-                        }));
-                        setTimeout(function() {
-                            window.dispatchEvent(new KeyboardEvent('keyup', {
-                                'key': 'f',
-                                'keycode': 70,
-                                'which': 70,
-                                'code': 'KeyF'
-                            }));
-                        }, 50);
-                        break;
-                }
-            },
-
-            MXP_SwapControllers: function() {
-                var tmp = this.MXP_RightController;
-                this.MXP_RightController = this.MXP_LeftController;
-                this.MXP_LeftController = tmp;
-                this.MXP_Controllers_swapped = !this.MXP_Controllers_swapped;
-                var old_notice = this.MXP_notice;
-                this.MXP_notice = "Swapped";
-                this.MXP_type.reverse();
+            swap_controllers: function() {
+                this.controllers_swapped = !this.controllers_swapped;
+                this.autoassign_controllers();
+                var old_notice = this.notice;
+                this.notice = "Swapped";
                 setTimeout(() => {
-                    this.MXP_notice = old_notice;
+                    this.notice = old_notice;
                 }, 2000);
             },
 
-            MXP_setControllers: function() {
-                this.MXP_type = [null, null];
-                this.MXP_Active_Controllers = 0;
-                var myCont;
-                var nControllers = navigator.getGamepads().length;
-                this.MXP_LeftController = -1;
-                this.MXP_RightController = -1;
-
-                for (myCont = 0; myCont < nControllers; myCont++) {
-                    var Cont = navigator.getGamepads()[myCont];
-                    try {
-                        if (Cont.id.includes('0ffe') && Cont.connected) {
-                            if (this.MXP_RightController == -1) {
-                                this.MXP_RightController = Cont.index;
-                            } else if (this.MXP_LeftController == -1) {
-                                this.MXP_LeftController = Cont.index;
-                            }
-                            this.MXP_type[myCont] = "ActionXL";
-                            this.MXP_Active_Controllers++;
-                        } else if (Cont.id.includes('1234') && Cont.connected) {
-                            this.MXP_type[myCont] = "vJoy";
-                        } else if (Cont.id.includes('2341') && Cont.connected) {
-                            if (this.MXP_RightController == -1) {
-                                this.MXP_RightController = Cont.index;
-                            } else if (this.MXP_LeftController == -1) {
-                                this.MXP_LeftController = Cont.index;
-                            }
-                            this.MXP_type[myCont] = "eBell";
-                            this.MXP_Active_Controllers++;
-                        } else {
-                            this.MXP_type[myCont] = "unknown";
-                        }
-                    } catch {}
+            autoassign_controllers: function() {
+                if (this.controller_count == 0 || this.controller_count > 2) {
+                    // Do nothing: autoassignment isn't well defined with more than two controllers
+                    // or for 0 controllers
+                    return
                 }
-                if (this.MXP_RightController > -1) {
-                    if (this.MXP_LeftController > -1) {
-                        if (this.MXP_Controllers_swapped) {
-                            var tmp = this.MXP_RightController;
-                            this.MXP_RightController = this.MXP_LeftController;
-                            this.MXP_LeftController = tmp;
-                        }
+                if (this.controllers_swapped) {
+                    this.controller_list[0].bell = bell_circle.find_rope_by_hand(RIGHT_HAND);
+                    if (this.controller_list[1]) {
+                        this.controller_list[1].bell = bell_circle.find_rope_by_hand(LEFT_HAND);
+                        this.controller_list[1].left = true;
+                    }
+                } else {
+                    this.controller_list[0].bell = bell_circle.find_rope_by_hand(LEFT_HAND);
+                    this.controller_list[0].left = true;
+                    if (this.controller_list[1]) {
+                        this.controller_list[1].bell = bell_circle.find_rope_by_hand(RIGHT_HAND);
                     }
                 }
-                if (nControllers == 0) window.clearInterval(this.MXP_tickController);
-
-                console.log("this.MXP_Active_Controllers=" + this.MXP_Active_Controllers);
-                console.log("MXP_type[this.MXP_RightController]=" + this.MXP_type[this.MXP_RightController]);
-                console.log("MXP_type[this.MXP_LeftController]=" + this.MXP_type[this.MXP_LeftController]);
+                this.controller_list.changed++;
             },
 
-            MXP_toggleControllers: function() {
-                this.MXP_Controllers_ACTIVE = !this.MXP_Controllers_ACTIVE;
-                if (this.MXP_Controllers_ACTIVE) {
-                    this.MXP_setControllers();
-                    window.clearInterval(this.MXP_tickController);
-                    this.MXP_tickController = window.setInterval(this.MXP_ticktockController, 15);
-                    this.MXP_notice = "";
+            set_controllers: function() {
+                this.controller_list = {changed: 0};
+                this.controller_count = 0;
+                var nControllers = navigator.getGamepads().length;
+                if (nControllers == 0) {
+                    window.clearInterval(this.tick_controller);
+                    return
+                }
+                
+                for (var myCont = 0; myCont < nControllers; myCont++) {
+                    var curCont = navigator.getGamepads()[myCont];
+                    if (!curCont) continue;
+                    var contObj = {
+                        type: '',
+                        bell: '',
+                        left: false,
+                        at_hand: true,
+                    };
+                    if (curCont.id.includes('0ffe') && curCont.connected) {
+                        contObj.type = "ActionXL";
+                    } else if (curCont.id.includes('1234') && curCont.connected) {
+                        contObj.type = "vJoy";
+                    } else if (curCont.id.includes('2341') && curCont.connected) {
+                        contObj.type = "eBell";
+                    } else {
+                    }
+                    this.controller_list[myCont] = contObj;
+                    this.controller_count++;
+                };
+
+                this.autoassign_controllers();
+                // console.log('CONTROLLERS', navigator.getGamepads());
+                // console.log("CONTS SET", this.controller_list);
+            },
+
+            toggle_controllers: function() {
+                this.active = !this.active;
+                if (this.active) {
+                    this.set_controllers();
+                    window.clearInterval(this.tick_controller);
+                    this.tick_controller = window.setInterval(this.ticktock_controller, 15);
+                    this.notice = "";
                 } else {
-                    this.MXP_notice = "Disabled";
-                    window.clearInterval(this.MXP_tickController);
+                    this.notice = "Disabled";
+                    window.clearInterval(this.tick_controller);
                 }
             },
 
         },
 
         mounted: function() {
-            console.log('mounting mxp')
-            if (this.MXP_ControlAvailable()) {
-                if (this.MXP_Controllers_ACTIVE) {
+            // console.log('mounting mxp')
+            if (this.control_available()) {
+                if (this.active) {
 
                     var instance = this; // smuggle this into the function
 
                     $(window).on("gamepadconnected", function() {
-                        instance.MXP_hasController = true;
-                        window.clearInterval(instance.MXP_tickController);
-                        instance.MXP_tickController = window.setInterval(instance.MXP_ticktockController, 15);
-                        instance.MXP_setControllers();
-                        window.clearInterval(instance.MXP_checkController);
+                        instance.has_controller = true;
+                        window.clearInterval(instance.tick_controller);
+                        instance.tick_controller = window.setInterval(instance.ticktock_controller, 15);
+                        instance.set_controllers();
+                        window.clearInterval(instance.check_controller);
                     });
 
                     $(window).on("gamepaddisconnected", function() {
-                        window.clearInterval(instance.MXP_checkController);
-                        instance.MXP_hasController = false;
-                        instance.MXP_checkController = window.setInterval(function() {
+                        window.clearInterval(instance.check_controller);
+                        instance.has_controller = false;
+                        instance.check_controller = window.setInterval(function() {
                             if (navigator.getGamepads()[0]) {
-                                if (!this.MXP_hasController) $(window).trigger("gamepadconnected");
+                                if (!this.has_controller) $(window).trigger("gamepadconnected");
                             }
                         }, 1000);
-                        instance.MXP_setControllers();
+                        instance.set_controllers();
                     });
 
-                    instance.MXP_checkController = window.setInterval(function() {
+                    instance.check_controller = window.setInterval(function() {
                         if (navigator.getGamepads()[0]) {
-                            if (!this.MXP_hasController) $(window).trigger("gamepadconnected");
+                            if (!this.has_controller) $(window).trigger("gamepadconnected");
                         }
                     }, 1000);
                 } else {
-                    window.clearInterval(MXP_tickController);
+                    window.clearInterval(tick_controller);
                 }
             };
-
         },
 
+
+
         template: `
-        <div class="card mb-3" v-if="MXP_hasController">
+        <div class="card mb-3" v-if="has_controller">
             <div class="card-header">
                 <h3 style="display: inline; cursor: pointer;"
                     id="controllers_header"
@@ -2095,34 +2065,39 @@ $(document).ready(function() {
                     data-target="#controllers_body">
                     Controllers
                 </h3>
-                <span class="badge badge-dark float-right mt-1" v-if="MXP_notice"> [[ MXP_notice ]] </span>
-                <span class="sr-only" v-if="MXP_notice">Controllers swapped</span>
+                <span class="badge badge-dark float-right mt-1" v-if="notice"> [[ notice ]] </span>
+                <span class="sr-only" v-if="notice">Controllers swapped</span>
             </div>
-            <div class="card-body show" id="controllers_body" >
-                <div class="row justify-content-center">
-                    <div class="col-6 px-0">
-                        <b>L:</b> [[ MXP_type[1] ]]
+            <ul class="list-group list-group-flush show" id="controllers_body" >
+                <li class="list-group-item py-0"
+                    v-for="cont in controller_list"
+                    v-if="cont instanceof Object"
+                    >
+                    <small>
+                        [[cont.type]]: 
+                        <span class="float-right pt-2 mt-n1">[[circled_digits[cont.bell-1] ]]</span>
+                    <small>
+                </li>
+                
+
+                <li class="list-group-item">
+                    <div class="row pb-0">
+                        <div class="col p-1">
+                            <button class="btn btn-outline-primary w-100"
+                                    @click="toggle_controllers"
+                                    >
+                                    [[ active ? "Disable" : "Enable" ]]
+                            </button>
+                        </div>
+                        <div class="col p-1">
+                            <button class="btn btn-outline-primary w-100"
+                                    @click="swap_controllers"
+                                    >
+                                    Swap L&R
+                            </button>
+                        </div>
                     </div>
-                    <div class="col-6 px-0">
-                        <b>R:</b> [[ MXP_type[0] ]]
-                    </div>
-                </div>
-                <div class="row pb-0">
-                    <div class="col p-1">
-                        <button class="btn btn-outline-primary w-100"
-                                @click="MXP_toggleControllers"
-                                >
-                                [[ MXP_Controllers_ACTIVE ? "Disable" : "Enable" ]]
-                        </button>
-                    </div>
-                    <div class="col p-1">
-                        <button class="btn btn-outline-primary w-100"
-                                @click="MXP_SwapControllers"
-                                >
-                                Swap L&R
-                        </button>
-                    </div>
-                </div>
+                </li>
             </div>
         </div>
         `
@@ -2157,7 +2132,7 @@ $(document).ready(function() {
             });
 
             if (!window.tower_parameters.anonymous_user) {
-                console.log('turning on keypress listening')
+                // console.log('turning on keypress listening')
 
                 // Do a special thing to prevent space from pressing focused buttons
                 window.addEventListener('keyup', (e) => {
@@ -2246,7 +2221,7 @@ $(document).ready(function() {
                     // Shift+numkey rotates the circle so that that bell is in position 4
                     // This is done in a slightly roundabout way to work on both US & UK keyboards
                     if (e.shiftKey) {
-                        console.log(key);
+                        // console.log(key);
                         if (parseInt(code) - 1 in [...Array(9).keys()]) {
                             bell_circle.rotate(parseInt(code));
                         } else if (parseInt(code) == 0) {
@@ -2278,31 +2253,31 @@ $(document).ready(function() {
 
                     // Calls are: g = go; h = stop; b = bob; n = single.
                     if (['b', 'B'].includes(key)) {
-                        console.log('calling bob');
+                        // console.log('calling bob');
                         bell_circle.make_call('Bob');
                     }
                     if (['n', 'N'].includes(key)) {
-                        console.log('calling single');
+                        // console.log('calling single');
                         bell_circle.make_call('Single');
                     }
 
                     if (['g', 'G'].includes(key)) {
-                        console.log('calling go');
+                        // console.log('calling go');
                         bell_circle.make_call('Go');
                     }
 
                     if (['h', 'H'].includes(key)) {
-                        console.log('calling stop');
+                        // console.log('calling stop');
                         bell_circle.make_call("That's all");
                     }
 
                     if (['t', 'T'].includes(key)) {
-                        console.log('calling stand');
+                        // console.log('calling stand');
                         bell_circle.make_call("Stand next");
                     }
 
                     if (['l', 'L'].includes(key)) {
-                        console.log('calling look-to');
+                        // console.log('calling look-to');
                         bell_circle.make_call("Look to");
                     }
                 });
@@ -2328,18 +2303,18 @@ $(document).ready(function() {
         watch: {
             // Change the list of bells to track the current number
             number_of_bells: function(new_count) {
-                console.log('changing number of bells to ' + new_count)
+                // console.log('changing number of bells to ' + new_count)
                 const new_bells = [];
                 //const new_users = [];
                 for (var i = 1; i <= new_count; i++) {
-                    console.log('pushing bell: ' + i);
+                    // console.log('pushing bell: ' + i);
                     new_bells.push({
                         number: i,
                         position: i
                     });
-                    console.log(new_bells);
+                    // console.log(new_bells);
                 }
-                console.log(new_bells);
+                // console.log(new_bells);
 
                 this.bells = new_bells;
                 this.rang_bell_recently = new Array(new_count).fill(false);
@@ -2354,7 +2329,7 @@ $(document).ready(function() {
         methods: {
             // the server rang a bell; find the correct one and ring it
             ring_bell: function(bell) {
-                console.log("Ringing the " + bell)
+                // console.log("Ringing the " + bell)
                 this.$refs.bells[bell - 1].ring()
             },
 
@@ -2363,7 +2338,7 @@ $(document).ready(function() {
                 if (this.rang_bell_recently[bell - 1]) {
                     return;
                 }
-                console.log("Pulling the " + bell);
+                // console.log("Pulling the " + bell);
                 this.$refs.bells[bell - 1].emit_ringing_event();
                 this.rang_bell_recently[bell - 1] = true;
                 setTimeout(() => {
@@ -2381,18 +2356,23 @@ $(document).ready(function() {
                 }
             },
 
-            // Like pull_rope, but calculated by the position in the circle (respecting rotation)
-            pull_rope_by_pos: function(pos) {
+            find_rope_by_pos: function(pos) {
                 for (var bell in this.bells) {
                     if (this.bells[bell]['position'] == pos) {
-                        this.pull_rope(this.bells[bell]['number']);
-                        return true;
+                        // this.pull_rope(this.bells[bell]['number']);
+                        return this.bells[bell]['number'];
                     }
                 }
             },
 
-            // Pull the 'left' or 'right' hand bell
-            pull_rope_by_hand: function(hand) {
+            // Like pull_rope, but calculated by the position in the circle (respecting rotation)
+            pull_rope_by_pos: function(pos) {
+                var bell_to_pull = this.find_rope_by_pos(pos);
+                this.pull_rope(bell_to_pull);
+            },
+
+            // Figure out which bell is the 'left' or 'right' hand bell
+            find_rope_by_hand: function(hand) {
                 // Drop out of this function if `hand` is invalid
                 if (!hand || (hand !== LEFT_HAND && hand !== RIGHT_HAND)) {
                     console.error("Unknown value of 'hand': '" + hand + "'.");
@@ -2417,9 +2397,9 @@ $(document).ready(function() {
                     // If no bells are assigned, fall back to the behaviour of 'left' and 'right'
                     // being the two bells on the bottom of the screen
                     if (hand == LEFT_HAND) {
-                        this.pull_rope_by_pos(2);
+                        return this.find_rope_by_pos(2);
                     } else {
-                        this.pull_rope_by_pos(1);
+                        return this.find_rope_by_pos(1);
                     }
                 }
 
@@ -2427,7 +2407,7 @@ $(document).ready(function() {
                 // In this case, we should assign it to the right hand, and ignore the left hand
                 // key presses
                 if (current_user_bells.length == 1 && hand === RIGHT_HAND) {
-                    this.pull_rope(current_user_bells[0]);
+                    return current_user_bells[0];
                 }
 
                 // CASE 3: Exactly two bells are defined.
@@ -2458,9 +2438,9 @@ $(document).ready(function() {
                     // We know that hand is one of `LEFT_HAND` or `RIGHT_HAND` because
                     // otherwise the function would have returned early
                     if (hand === LEFT_HAND) {
-                        this.pull_rope(left_hand_bell);
+                        return left_hand_bell;
                     } else {
-                        this.pull_rope(right_hand_bell);
+                        return right_hand_bell;
                     }
                 }
 
@@ -2471,11 +2451,17 @@ $(document).ready(function() {
                     // We know that hand is one of `LEFT_HAND` or `RIGHT_HAND` because
                     // otherwise the function would have returned early
                     if (hand === LEFT_HAND) {
-                        this.pull_rope(current_user_bells[1]);
+                        return current_user_bells[1];
                     } else {
-                        this.pull_rope(current_user_bells[0]);
+                        return current_user_bells[0];
                     }
                 }
+            },
+
+            // Pull the 'left' or 'right' hand bell
+            pull_rope_by_hand: function(hand) {
+                var bell_to_ring = this.find_rope_by_hand(hand);
+                this.pull_rope(bell_to_ring);
             },
 
             // emit a call
@@ -2532,7 +2518,7 @@ $(document).ready(function() {
                 if (window.tower_parameters.anonymous_user) {
                     return
                 }; // don't do anything if not logged in
-                console.log('setting all bells at hand')
+                // console.log('setting all bells at hand')
                 socketio.emit('c_set_bells', {
                     tower_id: cur_tower_id
                 });
