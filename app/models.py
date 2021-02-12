@@ -665,5 +665,3 @@ def get_server_ip(tower_id):
         return request.url_root
     else:
         return 'https://' + servers[tower_id % 10 % len(servers)]
-
-
