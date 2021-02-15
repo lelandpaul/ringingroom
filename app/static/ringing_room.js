@@ -2063,6 +2063,12 @@ $(document).ready(function() {
                     // the cur_user_data does, causing errors
                     bells = cur_user_data[0].bells_assigned_to_user;
                 }
+                // Disconnect controllers from any bells the user isn't assigned to
+                this.controller_list.forEach((cont) => {
+                    if (cont.bell && !bells.includes(cont.bell)) {
+                        cont.bell = null;
+                    }
+                });
                 if ([1,2].includes(bells.length)) this.autoassign_controllers();
                 return bells;
             }
