@@ -216,6 +216,13 @@ input[type=range]::slider-thumb {
     pointer-events: auto;
 }
 
+.btn.unassign {
+    border-width: 0;
+}
+
+.btn.unassign:hover {
+}
+
 .btn_number, .btn_unassign {
     z-index: 100;
     width: 1.75rem;

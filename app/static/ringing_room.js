@@ -1836,6 +1836,7 @@ $(document).ready(function() {
                 controllers_swapped: false,
                 notice: "",
                 controller_list: [],
+                controllers_will_ring: "",
                 bell_in_assignment_mode: null,
                 circled_digits: ["①", "②", "③", "④", "⑤", "⑥",
                     "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬", "⑭", "⑮", "⑯"
@@ -1966,24 +1967,29 @@ $(document).ready(function() {
             },
 
             autoassign_controllers: function() {
-                if (this.controller_list.length != 2) {
+                console.log('autoassigning');
+                if (this.controller_list.length > 2) {
                     // Do nothing: autoassignment isn't well defined with more than two controllers
-                    // or for 0 controllers
                     return
                 }
                 var keys = [];
                 for (var cont in this.controller_list) {
                     keys.push(cont)
                 }
+                console.log('keys', keys);
                 var first = keys[0];
-                var second = keys[1];
-                if (this.controllers_swapped) {
-                    this.controller_list[first].bell = bell_circle.find_rope_by_hand(RIGHT_HAND);
-                    this.controller_list[second].bell = bell_circle.find_rope_by_hand(LEFT_HAND);
-                } else {
-                    this.controller_list[first].bell = bell_circle.find_rope_by_hand(LEFT_HAND);
-                    this.controller_list[second].bell = bell_circle.find_rope_by_hand(RIGHT_HAND);
+                if (keys.length > 1) var second = keys[1];
+                var left_bell = bell_circle.find_rope_by_hand(LEFT_HAND);
+                var right_bell = bell_circle.find_rope_by_hand(RIGHT_HAND);
+                this.controller_list[first].bell = this.controllers_swapped && second ?
+                                                   left_bell : right_bell;
+                if (second) {
+                    this.controller_list[second].bell = !(this.controllers_swapped && second) ?
+                                                        left_bell : right_bell;
                 }
+                this.controllers_will_ring = second && left_bell ? 
+                    this.circled_digits[right_bell-1] + this.circled_digits[left_bell-1] : 
+                    this.circled_digits[right_bell-1];
             },
 
             set_controllers: function() {
@@ -1999,7 +2005,7 @@ $(document).ready(function() {
                     if (!curCont) continue;
                     var contObj = {
                         type: '',
-                        bell: '',
+                        bell: null,
                         at_hand: true,
                     };
                     if (curCont.id.includes('0ffe') && curCont.connected) {
@@ -2012,11 +2018,6 @@ $(document).ready(function() {
                     }
                     this.controller_list[myCont] = contObj;
                 };
-
-
-                this.autoassign_controllers();
-                // console.log('CONTROLLERS', navigator.getGamepads());
-                // console.log("CONTS SET", this.controller_list);
             },
 
             toggle_controllers: function() {
@@ -2033,27 +2034,35 @@ $(document).ready(function() {
             },
 
             get_assigned_controller_type: function(bell) {
+                console.log('getting assigned controller', bell);
                 for (var key in this.controller_list) {
                     if (this.controller_list[key] && this.controller_list[key].bell == bell) {
                         return this.controller_list[key].type;
                     }
                 }
-                return "(unassigned)"
+                return "No controller"
             },
 
             put_bell_in_assignment_mode: function(bell) {
                 // Disconnect any controllers attached to this bell already
+                this.unassign_bell(bell);
+                this.bell_in_assignment_mode = bell;
+            },
+
+            unassign_bell: function(bell) {
+                this.bell_in_assignment_mode = bell; // Reactivity hack: changes what's displayed for the type
+                this.bell_in_assignment_mode = null;
                 this.controller_list.forEach((cont) => {
                     if (cont.bell == bell) {
                         cont.bell = null;
                     }
                 });
-                this.bell_in_assignment_mode = bell;
             },
         },
 
         computed: {
             assigned_bells: function() {
+                console.log("computing assigned_bells");
                 // Reactivity hack: make sure this changes any time assignments do
                 this.$root.$refs.users.assignment_mode;
                 var bells = [];
@@ -2069,9 +2078,15 @@ $(document).ready(function() {
                         cont.bell = null;
                     }
                 });
-                if ([1,2].includes(bells.length)) this.autoassign_controllers();
+                this.autoassign_controllers();
                 return bells;
-            }
+            },
+
+            controllers_connected: function() {
+                var count = 0;
+                this.controller_list.forEach(cont => {if (cont) count++;});
+                return count;
+            },
         },
 
         mounted: function() {
@@ -2126,22 +2141,39 @@ $(document).ready(function() {
                 <span class="sr-only" v-if="notice">Controllers swapped</span>
             </div>
             <ul class="list-group list-group-flush show" id="controllers_body" >
-                <li class="list-group-item py-0">
-                    <small>Controllers connected: [[ controller_list.length ]]</small>
+                <li class="list-group-item d-flex">
+                    <small>Controllers connected:</small> 
+                    <small class="ml-auto">[[ controllers_connected ]]</small>
                 </li>
-                <li class="list-group-item py-0"
+                <li class="list-group-item d-flex" v-if="controllers_connected <= 2">
+                    <small>Ringing bell[[ controllers_connected == 2 ? 's' : '']]:</small>
+                    <small class="ml-auto">[[ controllers_will_ring ]]</small>
+                </li>
+                <li class="list-group-item d-flex"
+                    v-if="controllers_connected > 2"
                     v-for="bell in assigned_bells"
                     >
                     <small>
                     [[ circled_digits[bell-1] ]]
                     [[ bell_in_assignment_mode === bell ? 
-                       "assigning" : get_assigned_controller_type(bell) ]]
-                    <button class="btn btn-sm btn-outline-primary"
+                       "Assigning" : get_assigned_controller_type(bell) ]]
+                    </small>
+                    <button class="btn btn-outline-primary btn-sm unassign ml-1"
+                       v-if="get_assigned_controller_type(bell) !== 'No controller'"
+                       @click="unassign_bell(bell)"
+                       >
+                        <i class="fas fa-window-close p-0 m-0"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-primary ml-auto"
                         @click="put_bell_in_assignment_mode(bell)"
                         >
                         Assign
                     </button>
-                    </small>
+                </li>
+                <li class="list-group-item"
+                    v-if="controllers_connected > 2 && assigned_bells.length == 0"
+                    >
+                    With 3 or more controllers, you must be assigned to bells to ring.
                 </li>
 
                 <li class="list-group-item">
@@ -2153,7 +2185,7 @@ $(document).ready(function() {
                                     [[ active ? "Disable" : "Enable" ]]
                             </button>
                         </div>
-                        <div class="col p-1" v-if="assigned_bells.length <= 2">
+                        <div class="col p-1" v-if="controllers_connected == 2">
                             <button class="btn btn-outline-primary w-100"
                                     @click="swap_controllers"
                                     >
