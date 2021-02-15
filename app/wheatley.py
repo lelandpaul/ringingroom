@@ -124,6 +124,11 @@ def feature_flag() -> bool:
     return os.environ.get('RR_ENABLE_WHEATLEY') == '1'
 
 
+def use_method_extension() -> bool:
+    """ Determines if the Wheatley feature flag is set. """
+    return os.environ.get('RR_WHEATLEY_METHOD_EXTENSION') == '1'
+
+
 class Proc:
     """
     The interface to a single Wheatley instance.  There could be multiple Wheatleys in a single
@@ -412,7 +417,7 @@ class Wheatley:
         new_size = self._tower.n_bells
         # Shift the stage of Wheatley's row generation (defaulting to Plain Bob if the method cannot
         # be shifted)
-        if self._row_gen['type'] == 'method':
+        if self._row_gen['type'] == 'method' and use_method_extension():
             # If it's a method, we should first check that the method can extend to the new stage.
             # If it can, we update to that method - falling back to even-bell Plain Bob if anything
             # goes wrong.
@@ -461,11 +466,7 @@ class Wheatley:
                     'bob': convert_call('Bob'),
                     'single': convert_call('Single')
                 }
-            else:
-                # If anything went wrong with the request, fall back to Plain Bob, which can be
-                # generated offline
-                self._set_default_row_gen()
-        elif self._row_gen['type'] == 'composition':
-            # If it's a composition, then it cannot be stepped to a new stage.  So we always fallback to
-            # even-bell Plain Bob
-            self._set_default_row_gen()
+                return
+
+        # If no extension has been made, we fall back to Plain Bob on all the bells
+        self._set_default_row_gen()

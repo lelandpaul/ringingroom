@@ -27,6 +27,12 @@ If they are not set or set to anything other than `1`, the feature will be disab
 - **RR_ENABLE_WHEATLEY**
 
   If set to `1` Wheatley will be enabled, otherwise Wheatley will be disabled.
+- **RR_WHEATLEY_METHOD_EXTENSION**
+
+  If the stage is changed and this is set to `1`, Wheatley will try to load the same method on the
+  new stage.  This is disabled by default, because this check sends a request to Bob Wallis'
+  blueline website which can block the thread for a long time and therefore cause the method change
+  to be too late (if it happens at all).
 
 #### Other Enviroment Variables
 - **RR_WHEATLEY_PATH**
@@ -213,54 +219,55 @@ which are described in detail below the table.
 | `c_reset_wheatley` | `{tower_id: Int}` | tells the server to kill the current Wheatley instance(s).  Used as a last-ditch way to reset Wheatley if he gets his knickers in a twist. |
 | `c_roll_call` | `{tower_id: Int, instance_id: Int}` | sent by Wheatley instances in reply to `Look To` to say that they are ready to ring |
 
-  #### The 'Settings' type
-  The _Settings_ type is an object with 0 or more of the following properties:
-  ```
-  sensitivity   : 0 <= x <= 1
-  use_up_down_in: Bool
-  stop_at_rounds: Bool
-  ```
+#### The 'Settings' type
+The _Settings_ type is an object with 0 or more of the following properties:
+```
+sensitivity   : float; 0 <= x <= 1
+use_up_down_in: Bool
+stop_at_rounds: Bool
+peal_speed    : int; x >= 0
+```
 
-  #### The 'RowGen' type
-  The _RowGen_ type is a JSON representation of the following structured enum
-  (it's either a `Method` with a `title`, a `stage`, etc.
-  or it's a `Composition` with a `url` and `title`):
-  ```rust
-  enum RowGen {
-      Method {
-          title: String,
-          stage: Int,
-          notation: String,
-          url: String,
-          bob: Map<Int, String>,
-          single: Map<Int, String>
-      },
-      Composition {
-          url: String,
-          title: String
-      }
-  }
-  ```
-  The `Int`s in the call maps correspond to indices within the lead, and the `String`s are the place notations
-  that should be made at that position.  In JSON, the `RowGen` type corresponds to one of the following
-  objects:
-  ```
-  {
-      type: "method",
-      title: String,
-      stage: Int,
-      notation: String,
-      url: String,
-      bob: {Int: String},
-      single: {Int: String}
-  }
-  /* or */
-  {
-      type: "composition",
-      url: String,
-      title: String
-  }
-  ```
+#### The 'RowGen' type
+The _RowGen_ type is a JSON representation of the following structured enum
+(it's either a `Method` with a `title`, a `stage`, etc.
+or it's a `Composition` with a `url` and `title`):
+```rust
+enum RowGen {
+    Method {
+        title: String,
+        stage: Int,
+        notation: String,
+        url: String,
+        bob: Map<Int, String>,
+        single: Map<Int, String>
+    },
+    Composition {
+        url: String,
+        title: String
+    }
+}
+```
+The `Int`s in the call maps correspond to indices within the lead, and the `String`s are the place notations
+that should be made at that position.  In JSON, the `RowGen` type corresponds to one of the following
+objects:
+```
+{
+    type: "method",
+    title: String,
+    stage: Int,
+    notation: String,
+    url: String,
+    bob: { Int: String },
+    single: { Int: String }
+}
+/* or */
+{
+    type: "composition",
+    url: String,
+    title: String
+}
+```
 
 
 ### Directory structure (abbreviated...)
