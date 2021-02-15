@@ -2033,7 +2033,17 @@ $(document).ready(function() {
                     }
                 }
                 return "(unassigned)"
-            }
+            },
+
+            put_bell_in_assignment_mode: function(bell) {
+                // Disconnect any controllers attached to this bell already
+                this.controller_list.forEach((cont) => {
+                    if (cont.bell == bell) {
+                        cont.bell = null;
+                    }
+                });
+                this.bell_in_assignment_mode = bell;
+            },
         },
 
         computed: {
@@ -2115,7 +2125,7 @@ $(document).ready(function() {
                     [[ bell_in_assignment_mode === bell ? 
                        "assigning" : get_assigned_controller_type(bell) ]]
                     <button class="btn btn-sm btn-outline-primary"
-                        @click="() => bell_in_assignment_mode = bell"
+                        @click="put_bell_in_assignment_mode(bell)"
                         >
                         Assign
                     </button>
