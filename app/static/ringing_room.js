@@ -1882,71 +1882,33 @@ $(document).ready(function() {
                                 }
                             }
                         for (var i = 0; i < cont.buttons.length; i++) {
-                            // Determine if this controller should be treated as left- or right-handed
-                            // Letting b be the number of the bell under consideration:
-                            // 1. If b is even and b-1 is also assigned to the user, it's a left-hand bell
-                            // 2. Otherwise, it's a right-hand bell.
-                            // The logic here is: Only define left & right for sensible handbell pairs
-                            // Any bell not part of a sensible handbell pair should be able to call bob & single
-                            
-                            var left_hand = curCont.bell % 2 == 0 && this.assigned_bells.includes(curCont.bell-1);
-
                             if (cont.buttons[i].pressed) {
+
+                                // Determine if this controller should be treated as left- or right-handed
+                                // If bells are assigned to current user, let b be the number of the bell under consideration:
+                                //   1. If b is even and b-1 is also being rung by the user, it's a left-hand bell
+                                //   2. Otherwise, it's a right-hand bell.
+                                // If no bells are assigned to current user: Follow what's done for f&j
+                                //
+                                // The logic here is: Only define left & right for sensible handbell pairs
+                                // Any bell not part of a sensible handbell pair should be able to call bob & single
+                                //  
+                            
+                                var left_hand = 
+                                    curCont.bell === bell_circle.find_rope_by_hand(LEFT_HAND) ||
+                                    (curCont.bell % 2 == 0 && this.assigned_bells.includes(curCont.bell-1));
+
                                 if (i == 0) {
                                     if (left_hand) {
-                                        window.dispatchEvent(new KeyboardEvent('keydown', {
-                                            'key': 'g',
-                                            'which': 71,
-                                            'code': 'KeyG'
-                                        }));
-                                        setTimeout(function() {
-                                            window.dispatchEvent(new KeyboardEvent('keyup', {
-                                                'key': 'g',
-                                                'which': 71,
-                                                'code': 'KeyG'
-                                            }));
-                                        }, 50);
+                                        bell_circle.make_call("Stand next");
                                     } else {
-                                        window.dispatchEvent(new KeyboardEvent('keydown', {
-                                            'key': 'n',
-                                            'which': 78,
-                                            'code': 'KeyN'
-                                        }));
-                                        setTimeout(function() {
-                                            window.dispatchEvent(new KeyboardEvent('keyup', {
-                                                'key': 'n',
-                                                'which': 78,
-                                                'code': 'KeyN'
-                                            }));
-                                        }, 50);
+                                        bell_circle.make_call("Single");
                                     }
                                 } else if (i == 1) {
                                     if (left_hand) {
-                                        window.dispatchEvent(new KeyboardEvent('keydown', {
-                                            'key': 'h',
-                                            'which': 72,
-                                            'code': 'KeyH'
-                                        }));
-                                        setTimeout(function() {
-                                            window.dispatchEvent(new KeyboardEvent('keyup', {
-                                                'key': 'h',
-                                                'which': 72,
-                                                'code': 'KeyH'
-                                            }));
-                                        }, 50);
+                                        bell_circle.make_call("Go");
                                     } else {
-                                        window.dispatchEvent(new KeyboardEvent('keydown', {
-                                            'key': 'b',
-                                            'which': 66,
-                                            'code': 'KeyB'
-                                        }));
-                                        setTimeout(function() {
-                                            window.dispatchEvent(new KeyboardEvent('keyup', {
-                                                'key': 'b',
-                                                'which': 66,
-                                                'code': 'KeyB'
-                                            }));
-                                        }, 50);
+                                        bell_circle.make_call("Bob");
                                     }
                                 }
                             }
