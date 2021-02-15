@@ -1929,7 +1929,6 @@ $(document).ready(function() {
             },
 
             autoassign_controllers: function() {
-                console.log('autoassigning');
                 if (this.controller_list.length > 2) {
                     // Do nothing: autoassignment isn't well defined with more than two controllers
                     return
@@ -1938,7 +1937,6 @@ $(document).ready(function() {
                 for (var cont in this.controller_list) {
                     keys.push(cont)
                 }
-                console.log('keys', keys);
                 var first = keys[0];
                 if (keys.length > 1) var second = keys[1];
                 var left_bell = bell_circle.find_rope_by_hand(LEFT_HAND);
@@ -1996,7 +1994,6 @@ $(document).ready(function() {
             },
 
             get_assigned_controller_type: function(bell) {
-                console.log('getting assigned controller', bell);
                 for (var key in this.controller_list) {
                     if (this.controller_list[key] && this.controller_list[key].bell == bell) {
                         return this.controller_list[key].type;
@@ -2024,7 +2021,6 @@ $(document).ready(function() {
 
         computed: {
             assigned_bells: function() {
-                console.log("computing assigned_bells");
                 // Reactivity hack: make sure this changes any time assignments do
                 this.$root.$refs.users.assignment_mode;
                 var bells = [];
@@ -2070,8 +2066,10 @@ $(document).ready(function() {
                         window.clearInterval(instance.check_controller);
                         instance.has_controller = false;
                         instance.check_controller = window.setInterval(function() {
-                            if (navigator.getGamepads()[0]) {
-                                if (!this.has_controller) $(window).trigger("gamepadconnected");
+                            for (var key in navigator.getGamepads()) {
+                                if (navigator.getGamepads()[key]) {
+                                    if (!this.has_controller) $(window).trigger("gamepadconnected");
+                                }
                             }
                         }, 1000);
                         instance.set_controllers();
