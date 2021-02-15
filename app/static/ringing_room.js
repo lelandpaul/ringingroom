@@ -1881,9 +1881,18 @@ $(document).ready(function() {
                                 }
                             }
                         for (var i = 0; i < cont.buttons.length; i++) {
+                            // Determine if this controller should be treated as left- or right-handed
+                            // Letting b be the number of the bell under consideration:
+                            // 1. If b is even and b-1 is also assigned to the user, it's a left-hand bell
+                            // 2. Otherwise, it's a right-hand bell.
+                            // The logic here is: Only define left & right for sensible handbell pairs
+                            // Any bell not part of a sensible handbell pair should be able to call bob & single
+                            
+                            var left_hand = curCont.bell % 2 == 0 && this.assigned_bells.includes(curCont.bell-1);
+
                             if (cont.buttons[i].pressed) {
                                 if (i == 0) {
-                                    if (curCont.left) {
+                                    if (left_hand) {
                                         window.dispatchEvent(new KeyboardEvent('keydown', {
                                             'key': 'g',
                                             'which': 71,
@@ -1911,7 +1920,7 @@ $(document).ready(function() {
                                         }, 50);
                                     }
                                 } else if (i == 1) {
-                                    if (curCont.left) {
+                                    if (left_hand) {
                                         window.dispatchEvent(new KeyboardEvent('keydown', {
                                             'key': 'h',
                                             'which': 72,
@@ -1971,10 +1980,8 @@ $(document).ready(function() {
                 if (this.controllers_swapped) {
                     this.controller_list[first].bell = bell_circle.find_rope_by_hand(RIGHT_HAND);
                     this.controller_list[second].bell = bell_circle.find_rope_by_hand(LEFT_HAND);
-                    this.controller_list[second].left = true;
                 } else {
                     this.controller_list[first].bell = bell_circle.find_rope_by_hand(LEFT_HAND);
-                    this.controller_list[first].left = true;
                     this.controller_list[second].bell = bell_circle.find_rope_by_hand(RIGHT_HAND);
                 }
             },
@@ -1993,7 +2000,6 @@ $(document).ready(function() {
                     var contObj = {
                         type: '',
                         bell: '',
-                        left: false,
                         at_hand: true,
                     };
                     if (curCont.id.includes('0ffe') && curCont.connected) {
