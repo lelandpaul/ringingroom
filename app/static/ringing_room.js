@@ -962,7 +962,6 @@ $(document).ready(function() {
             },
 
             peal_speed: function () {
-                console.log("Peal speed changed", this.peal_speed);
                 // Clamp the peal speed to a reasonable range
                 const last_peal_speed = this.peal_speed;
                 this.peal_speed = Math.max(Math.min(last_peal_speed, 300), 60);
@@ -1367,6 +1366,25 @@ $(document).ready(function() {
         <br/>
         -->
 
+        <!-- Peal Speed -->
+        <p style="margin-bottom: 0.6rem;">Peal Speed:
+            <input type="number"
+                   id="wheatley_peal_speed_hours"
+                   v-model="peal_speed_hours"
+                   v-on:change="on_change_peal_speed"
+                   style="border: none; width: 1.5em"
+            />hr
+            <input type="number"
+                   id="wheatley_peal_speed_mins"
+                   v-model="peal_speed_mins"
+                   v-on:change="on_change_peal_speed"
+                   style="border: none; width: 2.1em; text-align: right;"
+                   step="5"
+            />min
+        </p>
+
+        <hr/>
+
         <!-- Up Down In -->
         <input type="checkbox"
                v-model="use_up_down_in"
@@ -1388,31 +1406,12 @@ $(document).ready(function() {
                name="stop_at_rounds"
                :disabled="settings_panel_disabled"
                />
-        <label style="margin-bottom: 0;"
+        <label style=" margin-bottom: 0.1rem;"
                for="stop_at_rounds"
                title="If checked, Wheatley will stand his bells when rounds occurs when ringing method."
         >
             Stop at rounds
         </label>
-
-        <hr/>
-
-        <!-- Peal Speed -->
-        <p>Peal Speed:
-            <input type="number"
-                   id="wheatley_peal_speed_hours"
-                   v-model="peal_speed_hours"
-                   v-on:change="on_change_peal_speed"
-                   style="border: none; width: 1.5em"
-            />hr
-            <input type="number"
-                   id="wheatley_peal_speed_mins"
-                   v-model="peal_speed_mins"
-                   v-on:change="on_change_peal_speed"
-                   style="border: none; width: 2.1em; text-align: right;"
-                   step="5"
-            />min
-        </p>
 
         <hr/>
 
