@@ -2530,14 +2530,14 @@ $(document).ready(function() {
 
                 // Collect the numbers of the bells that belong to the current user
                 let current_user_bells = [];
-
                 for (var i = 0; i < this.$refs.bells.length; i++) {
                     const bell = this.$refs.bells[i];
-
                     if (bell.assigned_user == window.tower_parameters.cur_user_id) {
                         current_user_bells.push(bell.number);
                     }
                 }
+                // Make sure that the bells are always in ascending order
+                current_user_bells.sort();
 
                 /* Use these to decide which bells should be in the user's left and right hands. */
                 // CASE 1: No bells are assigned
@@ -2571,7 +2571,7 @@ $(document).ready(function() {
                     var left_hand_bell;
                     var right_hand_bell;
 
-                    if (second_bell - first_bell < first_bell + this.bells.length - second_bell) {
+                    if (second_bell - first_bell <= first_bell + this.bells.length - second_bell) {
                         // The shortest way to pair the bells does not wrap round the 'end' of the
                         // circle
                         left_hand_bell = second_bell;
