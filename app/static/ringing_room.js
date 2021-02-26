@@ -1395,7 +1395,8 @@ $(document).ready(function() {
                    id="wheatley_peal_speed_mins"
                    v-model="peal_speed_mins"
                    v-on:change="on_change_peal_speed"
-                   style="border: none; width: 2.1em" step="5"/>min
+                   style="border: none; width: 2.1em; text-align: right;"
+                   step="5"/>min
         </p>
 
         <hr/>
