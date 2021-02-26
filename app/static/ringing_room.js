@@ -375,6 +375,16 @@ $(document).ready(function() {
                 this.stroke = new_state
             },
 
+            // Assign a specific user to this bell, without performing any checks (useful for
+            // filling Wheatley onto bells)
+            assign_specific_user: function(user) {
+                socketio.emit('c_assign_user', {
+                    bell: this.number,
+                    user: user,
+                    tower_id: cur_tower_id
+                });
+            },
+
             assign_user: function() {
                 if (window.tower_parameters.anonymous_user) {
                     return
@@ -384,19 +394,12 @@ $(document).ready(function() {
                     return
                 }; // don't kick people off
 
-                const selected_user = this.$root.$refs.users.selected_user;
-
                 if (!this.assignment_mode) {
                     return
                 };
 
-                // console.log('assigning user: ' + selected_user + ' to ' + this.number);
-
-                socketio.emit('c_assign_user', {
-                    bell: this.number,
-                    user: selected_user,
-                    tower_id: cur_tower_id
-                });
+                // override_user is used to assign Wheatley instead of the currently selected user
+                this.assign_specific_user(this.$root.$refs.users.selected_user);
             },
 
             unassign: function() {
@@ -1011,6 +1014,16 @@ $(document).ready(function() {
                 });
             },
 
+            fill_bells: function() {
+                // Assign all unassigned bells to Wheatley
+                for (const bell of bell_circle.$refs.bells) {
+                    if (!bell.assigned_user) {
+                        // -1 is Wheatley's user ID (see USER_ID in app/wheatley.py)
+                        bell.assign_specific_user(-1);
+                    }
+                }
+            },
+
             reset_wheatley: function() {
                 socketio.emit('c_reset_wheatley', {tower_id: cur_tower_id});
             },
@@ -1390,16 +1403,28 @@ $(document).ready(function() {
                    id="wheatley_peal_speed_hours"
                    v-model="peal_speed_hours"
                    v-on:change="on_change_peal_speed"
-                   style="border: none; width: 1.5em"/>hr
+                   style="border: none; width: 1.5em"
+            />hr
             <input type="number"
                    id="wheatley_peal_speed_mins"
                    v-model="peal_speed_mins"
                    v-on:change="on_change_peal_speed"
                    style="border: none; width: 2.1em; text-align: right;"
-                   step="5"/>min
+                   step="5"
+            />min
         </p>
 
         <hr/>
+
+        <!-- Fill in Wheatley -->
+        <button class="btn btn-outline-primary btn-block"
+                style="margin-top: 1rem"
+                :class="{disabled: settings_panel_disabled}"
+                @click="fill_bells"
+                title="Assign all unassigned bells to Wheatley"
+        >
+            Fill Unassigned Bells
+        </button>
 
         <!-- Reset Wheatley -->
         <button class="btn btn-outline-primary btn-block"
