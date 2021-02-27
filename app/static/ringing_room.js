@@ -515,46 +515,55 @@ $(document).ready(function() {
         // data in components should be a function, to maintain scope
         data: function() {
             return {
-                cur_call: ''
+                cur_call: '',
+                next_call_clear_time: -Infinity,
             };
         },
 
         computed: {
-
             assignment_mode: function() {
                 return this.$root.$refs.users.assignment_mode;
             },
-
-
         },
 
         methods: {
-
             // Used to display temporary messages to users (typically when they do something they're
             // not permitted to do in host-mode).
-            display_message: function(message) {
-                // console.log('display message: ', message);
+            display_message: function(message, timeout) {
+                // Default timeout to 3s
+                timeout = timeout || 3000;
+                // Set the call, and make sure that the display is not cleared until this call has
+                // had time to display (i.e. this will stop any old callbacks from taking effect).
                 this.cur_call = message;
+                this.next_call_clear_time = Date.now() + timeout;
                 var self = this;
-                // remove the call after 2 seconds
-                setTimeout(function() {
-                    self.cur_call = '';
-                    // console.log('changing cur_call back');
-                }, 3000);
-
+                // Remove the message after `timeout` milliseconds
+                setTimeout(
+                    function() {
+                        // Make sure that if another call has been called, then we don't clear the
+                        // screen from a callback from an old call.  Basically we want to avoid the
+                        // following timeline (time goes down):
+                        //
+                        // *        Calls Bob
+                        //
+                        //
+                        //     *    Calls Single
+                        // *        Callback from Bob clears call just after the Single appears
+                        //
+                        //
+                        //     *    Callback from Single does nothing
+                        if (Date.now() >= self.next_call_clear_time - 3) {
+                            self.cur_call = '';
+                        }
+                    },
+                    timeout
+                );
             },
 
             // a call was received from the server; display it and play audio
             make_call: function(call) {
-                // console.log('changing cur_call to: ' + call);
-                this.cur_call = call;
+                this.display_message(call, 2000);
                 this.audio.play(call);
-                var self = this;
-                // remove the call after 2 seconds
-                setTimeout(function() {
-                    self.cur_call = '';
-                    // console.log('changing cur_call back');
-                }, 2000);
             }
         },
 
