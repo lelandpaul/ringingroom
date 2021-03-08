@@ -3,12 +3,16 @@
       "details": [
           {
               "appIDs": [
-                  "Q74YGQBJ89.com.goodship.iOSRingingRoom"
+                  "Q74YGQBJ89.com.goodship.iOSRingingRoom",
+                  "Q74YGQBJ89.com.goodship.iOSRingingRoomDebug"
               ]
           }
        ]
   },
     "webcredentials": {
-      "apps": [ "Q74YGQBJ89.com.goodship.iOSRingingRoom.app" ]
+      "apps": [ 
+            "Q74YGQBJ89.com.goodship.iOSRingingRoom.app",
+            "Q74YGQBJ89.com.goodship.iOSRingingRoomDebug"
+         ]
     }
 }
