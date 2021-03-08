@@ -68,6 +68,7 @@ Ringing Room supplies a basic API for use in 3rd-party apps.
 | `/api/user`                      | `POST`   | Register new user                      |
 | `/api/user`                      | `PUT`    | Modify user settings                   |
 | `/api/user`                      | `DELETE` | Delete user account                    |
+| `/api/user/reset_password`       | `POST`   | Trigger password reset email           |
 | `/api/my_towers`                 | `GET`    | Get all towers related to current user |
 | `/api/my_towers/<tower_id>`      | `PUT`    | Toggle bookmark for `tower_id`         |
 | `/api/my_towers/<tower_id>`      | `DELETE` | Remove `tower_id` from recent towers   |
@@ -103,6 +104,8 @@ All other endpoints (except `POST /api/user` for registering new users) require 
 
 `DELETE /api/user`:  Deletes user.
 
+`POST /api/user/reset_password`: Must include an `email` field in the request JSON; if that email is associated with an account, an email will be sent to reset the password to that account. (Note: For security reasons, this endpoint will always respond with code 200 OK, no matter what email address was included.)
+
 ### My_Towers
 
 `GET /api/my_towers`: Gets all related towers:
@@ -137,7 +140,7 @@ All other endpoints (except `POST /api/user` for registering new users) require 
 
 ### Tower
 
-`GET /api/tower/<tower_id>`: Gets connection information for the tower. Response JSON includes `tower_id`, `tower_name`, and `server_address`.
+`GET /api/tower/<tower_id>`: Gets connection information for the tower, including tower settings. Response JSON includes `tower_id`, `tower_name`, `server_address`, `additional_sizes_enabled`, `host_mode_permitted`, and `half_muffled`.
 
 `POST /api/tower`: Creates a new tower. Request JSON should include `tower_name`. Responds as per `GET /api/tower/<tower_id>`.
 

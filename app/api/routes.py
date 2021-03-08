@@ -1,5 +1,6 @@
 from flask import jsonify, request, url_for
 from config import Config
+from app.email import send_password_reset_email
 from app.models import User, TowerDB, UserTowerRelation, Tower, get_server_ip, towers
 from app.extensions import db
 from app.api import bp
@@ -24,7 +25,6 @@ def get_version():
 @token_auth.login_required
 def get_user():
     return jsonify(current_user.to_dict())
-
 
 @bp.route('/user', methods=['POST'])
 def create_user():
@@ -77,6 +77,17 @@ def delete_user():
     payload = {'deleted_user': email}
     response = jsonify(payload)
     response.status_code = 202
+    return response
+
+@bp.route('/user/reset_password', methods=['POST'])
+def reset_password():
+    data = request.get_json() or {}
+    email_to_reset = data.get('email')
+    user = User.query.filter_by(email=email_to_reset).first()
+    if user:
+        send_password_reset_email(user)
+    response = jsonify({'title': f"Password reset email sent to {email_to_reset}"})
+    response.status_code = 200
     return response
 
 
@@ -184,6 +195,9 @@ def get_tower(tower_id):
         'tower_id': tower_id,
         'tower_name': tower.tower_name,
         'server_address': get_server_ip(tower_id),
+        'additional_sizes_enabled': tower.additional_sizes_enabled,
+        'host_mode_permitted': tower.host_mode_enabled,
+        'half_muffled': tower.half_muffled
     }
     return jsonify(data)
 
