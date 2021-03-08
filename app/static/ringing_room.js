@@ -518,46 +518,55 @@ $(document).ready(function() {
         // data in components should be a function, to maintain scope
         data: function() {
             return {
-                cur_call: ''
+                cur_call: '',
+                next_call_clear_time: -Infinity,
             };
         },
 
         computed: {
-
             assignment_mode: function() {
                 return this.$root.$refs.users.assignment_mode;
             },
-
-
         },
 
         methods: {
-
             // Used to display temporary messages to users (typically when they do something they're
             // not permitted to do in host-mode).
-            display_message: function(message) {
-                // console.log('display message: ', message);
+            display_message: function(message, timeout) {
+                // Default timeout to 3s
+                timeout = timeout || 3000;
+                // Set the call, and make sure that the display is not cleared until this call has
+                // had time to display (i.e. this will stop any old callbacks from taking effect).
                 this.cur_call = message;
+                this.next_call_clear_time = Date.now() + timeout;
                 var self = this;
-                // remove the call after 2 seconds
-                setTimeout(function() {
-                    self.cur_call = '';
-                    // console.log('changing cur_call back');
-                }, 3000);
-
+                // Remove the message after `timeout` milliseconds
+                setTimeout(
+                    function() {
+                        // Make sure that if another call has been called, then we don't clear the
+                        // screen from a callback from an old call.  Basically we want to avoid the
+                        // following timeline (time goes down):
+                        //
+                        // *        Calls Bob
+                        //
+                        //
+                        //     *    Calls Single
+                        // *        Callback from Bob clears call just after the Single appears
+                        //
+                        //
+                        //     *    Callback from Single does nothing
+                        if (Date.now() >= self.next_call_clear_time - 3) {
+                            self.cur_call = '';
+                        }
+                    },
+                    timeout
+                );
             },
 
             // a call was received from the server; display it and play audio
             make_call: function(call) {
-                // console.log('changing cur_call to: ' + call);
-                this.cur_call = call;
+                this.display_message(call, 2000);
                 this.audio.play(call);
-                var self = this;
-                // remove the call after 2 seconds
-                setTimeout(function() {
-                    self.cur_call = '';
-                    // console.log('changing cur_call back');
-                }, 2000);
             }
         },
 
@@ -1099,7 +1108,7 @@ $(document).ready(function() {
                     );
                 }
             },
-            
+
             on_method_box_enter: function() {
                 if (this.autocomplete_options.length > 0) {
                     this.send_next_method(this.autocomplete_options[0]);
@@ -1206,7 +1215,7 @@ $(document).ready(function() {
                         }
                     });
             },
-            
+
             send_next_comp: function() {
                 if (!this.current_complib_comp) {
                     return;
@@ -1951,6 +1960,7 @@ $(document).ready(function() {
                 controllers_swapped: false,
                 notice: "",
                 controller_list: [],
+                controller_index: [],
                 controllers_will_ring: "",
                 bell_in_assignment_mode: null,
                 circled_digits: ["①", "②", "③", "④", "⑤", "⑥",
@@ -1975,6 +1985,7 @@ $(document).ready(function() {
             ticktock_controller: function() {
                 var nControllers = navigator.getGamepads().length;
                 for (var myCont = 0; myCont < nControllers; myCont++) {
+                    if (!this.controller_index.includes(myCont)) continue;
                     var cont = navigator.getGamepads()[myCont];
                     var curCont  = this.controller_list[myCont];
                     if (curCont) {
@@ -1997,7 +2008,7 @@ $(document).ready(function() {
                                 }
                             }
                         for (var i = 0; i < cont.buttons.length; i++) {
-                            if (cont.buttons[i].pressed) {
+                            if (cont.buttons[i].pressed && curCont.bell) {
 
                                 // Determine if this controller should be treated as left- or right-handed
                                 // If bells are assigned to current user, let b be the number of the bell under consideration:
@@ -2007,23 +2018,23 @@ $(document).ready(function() {
                                 //
                                 // The logic here is: Only define left & right for sensible handbell pairs
                                 // Any bell not part of a sensible handbell pair should be able to call bob & single
-                                //  
-                            
-                                var left_hand = 
+                                //
+
+                                var left_hand =
                                     curCont.bell === bell_circle.find_rope_by_hand(LEFT_HAND) ||
                                     (curCont.bell % 2 == 0 && this.assigned_bells.includes(curCont.bell-1));
 
                                 if (i == 0) {
                                     if (left_hand) {
-                                        bell_circle.make_call("That's all");
+                                        bell_circle.make_call("Stand next");
                                     } else {
-                                        bell_circle.make_call("Bob");
+                                        bell_circle.make_call("Single");
                                     }
                                 } else if (i == 1) {
                                     if (left_hand) {
                                         bell_circle.make_call("Go");
                                     } else {
-                                        bell_circle.make_call("Single");
+                                        bell_circle.make_call("Bob");
                                     }
                                 }
                             }
@@ -2044,14 +2055,11 @@ $(document).ready(function() {
             },
 
             autoassign_controllers: function() {
-                if (this.controller_list.length > 2) {
+                if (this.controller_index.length > 2) {
                     // Do nothing: autoassignment isn't well defined with more than two controllers
                     return
                 }
-                var keys = [];
-                for (var cont in this.controller_list) {
-                    keys.push(cont)
-                }
+                var keys =  this.controller_index;
                 var first = keys[0];
                 if (keys.length > 1) var second = keys[1];
                 var left_bell = bell_circle.find_rope_by_hand(LEFT_HAND);
@@ -2062,19 +2070,20 @@ $(document).ready(function() {
                     this.controller_list[second].bell = !(this.controllers_swapped && second) ?
                                                         left_bell : right_bell;
                 }
-                this.controllers_will_ring = second && left_bell ? 
-                    this.circled_digits[right_bell-1] + this.circled_digits[left_bell-1] : 
+                this.controllers_will_ring = second && left_bell ?
+                    this.circled_digits[right_bell-1] + this.circled_digits[left_bell-1] :
                     this.circled_digits[right_bell-1];
             },
 
             set_controllers: function() {
-                this.controller_list = [];
+              this.controller_list = [];
+              this.controller_index = [];
                 var nControllers = navigator.getGamepads().length;
                 if (nControllers == 0) {
                     window.clearInterval(this.tick_controller);
                     return
                 }
-                
+
                 for (var myCont = 0; myCont < nControllers; myCont++) {
                     var curCont = navigator.getGamepads()[myCont];
                     if (!curCont) continue;
@@ -2085,11 +2094,12 @@ $(document).ready(function() {
                     };
                     if (curCont.id.includes('0ffe') && curCont.connected) {
                         contObj.type = "ActionXL";
+                        this.controller_index.push(myCont);
                     } else if (curCont.id.includes('1234') && curCont.connected) {
                         contObj.type = "vJoy";
                     } else if (curCont.id.includes('2341') && curCont.connected) {
                         contObj.type = "eBell";
-                    } else {
+                        this.controller_index.push(myCont);
                     }
                     this.controller_list[myCont] = contObj;
                 };
@@ -2156,13 +2166,13 @@ $(document).ready(function() {
             },
 
             controllers_connected: function() {
-                var count = 0;
-                this.controller_list.forEach(cont => {if (cont) count++;});
+                var count = this.controller_index.length;
                 return count;
             },
         },
 
         mounted: function() {
+            // console.log('mounting mxp')
             if (this.control_available()) {
                 if (this.active) {
 
@@ -2216,7 +2226,7 @@ $(document).ready(function() {
             </div>
             <ul class="list-group list-group-flush show" id="controllers_body" >
                 <li class="list-group-item d-flex">
-                    <small>Controllers connected:</small> 
+                    <small>Controllers connected:</small>
                     <small class="ml-auto">[[ controllers_connected ]]</small>
                 </li>
                 <li class="list-group-item d-flex" v-if="controllers_connected <= 2">
@@ -2229,7 +2239,7 @@ $(document).ready(function() {
                     >
                     <small>
                     [[ circled_digits[bell-1] ]]
-                    [[ bell_in_assignment_mode === bell ? 
+                    [[ bell_in_assignment_mode === bell ?
                        "Assigning" : get_assigned_controller_type(bell) ]]
                     </small>
                     <button class="btn btn-outline-primary btn-sm unassign ml-1"
@@ -2538,14 +2548,14 @@ $(document).ready(function() {
 
                 // Collect the numbers of the bells that belong to the current user
                 let current_user_bells = [];
-
                 for (var i = 0; i < this.$refs.bells.length; i++) {
                     const bell = this.$refs.bells[i];
-
                     if (bell.assigned_user == window.tower_parameters.cur_user_id) {
                         current_user_bells.push(bell.number);
                     }
                 }
+                // Make sure that the bells are always in ascending order
+                current_user_bells.sort();
 
                 /* Use these to decide which bells should be in the user's left and right hands. */
                 // CASE 1: No bells are assigned
@@ -2579,7 +2589,7 @@ $(document).ready(function() {
                     var left_hand_bell;
                     var right_hand_bell;
 
-                    if (second_bell - first_bell < first_bell + this.bells.length - second_bell) {
+                    if (second_bell - first_bell <= first_bell + this.bells.length - second_bell) {
                         // The shortest way to pair the bells does not wrap round the 'end' of the
                         // circle
                         left_hand_bell = second_bell;

@@ -27,7 +27,6 @@ body {
 input[type=range] {
   -webkit-appearance: none;
 }
-
 /* Special styling for WebKit/Blink */
 input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -42,6 +41,11 @@ input[type=range]::-moz-range-thumb {
 /* All the same stuff for IE */
 input[type=range]::-ms-thumb {
   background-color: $primary;
+}
+
+// Force chrome to render the up-down arrows for Wheatley's peal speed
+input[type=number]::-webkit-inner-spin-button {
+    opacity: 1
 }
 
 // tower name positioning
@@ -214,6 +218,13 @@ input[type=range]::slider-thumb {
 .clickable {
     cursor: pointer;
     pointer-events: auto;
+}
+
+.btn.unassign {
+    border-width: 0;
+}
+
+.btn.unassign:hover {
 }
 
 .btn_number, .btn_unassign {
