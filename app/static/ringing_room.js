@@ -1229,8 +1229,9 @@ $(document).ready(function() {
         template: `
 <div class="card mb-3" id="wheatley" v-if="enabled">
     <!-- Wheatley header -->
-    <div class="card-header">
+    <div class="card-header d-flex">
         <h2 style="display: inline; cursor: pointer;"
+            class="mr-auto"
             id="wheatley_header"
             data-toggle="collapse"
             data-target="#wheatley_body"
@@ -1238,6 +1239,15 @@ $(document).ready(function() {
         >
             Wheatley
         </h2>
+        <!-- Fill in Wheatley -->
+        <button class="btn btn-outline-primary btn-block"
+                style="width: max-content;"
+                :class="{disabled: settings_panel_disabled}"
+                @click="fill_bells"
+                title="Assign all unassigned bells to Wheatley"
+        >
+            Fill In
+        </button>
     </div>
     <div class="card-body collapse show"
          id="wheatley_body"
@@ -1414,16 +1424,6 @@ $(document).ready(function() {
         </label>
 
         <hr/>
-
-        <!-- Fill in Wheatley -->
-        <button class="btn btn-outline-primary btn-block"
-                style="margin-top: 1rem"
-                :class="{disabled: settings_panel_disabled}"
-                @click="fill_bells"
-                title="Assign all unassigned bells to Wheatley"
-        >
-            Fill Unassigned Bells
-        </button>
 
         <!-- Reset Wheatley -->
         <button class="btn btn-outline-primary btn-block"
