@@ -2015,15 +2015,15 @@ $(document).ready(function() {
 
                                 if (i == 0) {
                                     if (left_hand) {
-                                        bell_circle.make_call("Stand next");
+                                        bell_circle.make_call("That's all");
                                     } else {
-                                        bell_circle.make_call("Single");
+                                        bell_circle.make_call("Bob");
                                     }
                                 } else if (i == 1) {
                                     if (left_hand) {
                                         bell_circle.make_call("Go");
                                     } else {
-                                        bell_circle.make_call("Bob");
+                                        bell_circle.make_call("Single");
                                     }
                                 }
                             }
