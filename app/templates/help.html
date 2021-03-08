@@ -74,6 +74,7 @@
 
 <ul>
     <li><a href="#assigning">Assigning ringers to bells</a></li>
+    <li><a href="#wheatley">Wheatley</a></li>
     <li><a href="#managing_towers">Managing your towers</a></li>
     <li><a href="#host_mode">Hosts and Host Mode</a></li>
     <li><a href="#listener_links">Listener links</a></li>
@@ -86,6 +87,56 @@
 <p>The tower controls include a list of users presently in the tower, which you can use to <i>assign bells</i> to particular ringers. To assign ringers, press the "Assign Bells" button to enter bell assignment mode. While in this mode, you may select any ringer from the user list by clicking on them, and then click on the box next to the bell you want to assign them to. Clicking the "x" by a user's name will unassign them from that bell. While in assignment mode, you can't ring any bells; when you're done assigning bells, click the "Stop Assigning" button to return to normal mode.</p>
 
 <p>Assigning a user to a bell will have the effect of automatically rotating that ringer's "perspective" on the tower so that the bell is placed in the bottom right position. This will allow it to be rung using the [SPACE] or [j] hotkeys. If a user is assigned to multiple bells, the lowest-numbered one will be placed in position; this means that if the user is assigned to exactly 2 bells, those bells will be ringable with [f] and [j].</p>
+
+<h4><a id="wheatley"></a>Wheatley</h4>
+
+<p>Wheatley is a computer ringer for Ringing Room, made by Ben White-Horne and Matthew Johnson and
+designed to be a <i>'ninja helper with no ego'</i> - i.e. Wheatley will any number of bells to
+whatever you want to ring, but should fit in as much as possible to what you're ringing.  Wheatley
+is now available directly inside Ringing Room, without any installation.</p>
+
+<h5>Enabling Wheatley</h5>
+
+<p>Wheatley needs to be enabled on a per-tower basis with the switch in the
+<a href="#tower-settings">tower settings</a>.  Once Wheatley is enabled, two things will happen:</p>
+<ol>
+    <li>A user called "Wheatley" will appear permanently in the user list</li>
+    <li>A box will appear above the chat with Wheatley's settings.</li>
+</ol>
+<p>To ring something with Wheatley, assign Wheatley to any bells that you need filled (pressing the
+"Fill In" button in the Wheatley box will assign all unassigned bells to Wheatley).</p>
+
+<p>Now, you need to tell Wheatley what you want to ring.  Wheatley can either ring a method
+(responding to user calls), or a composition from <a href="https://complib.org/">Composition
+Library</a> (calling any calls needed).  These correspond to the two tabs in the Wheatley box.</p>
+
+<h5>Ringing a Method with Wheatley</h5>
+
+<ol>
+    <li>Click on the "Methods" tab in the Wheatley box.</li>
+    <li>Click in the text box that says "Start typing method name".</li>
+    <li>Start typing the name of the method you want to ring.  As you type, a list of potential
+        method names will appear (filtered according to the tower size).</li>
+    <li>Click on the method name you want to ring, or press "Enter" to select the first option.</li>
+    <li>If everything worked out, the first line of the Wheatley box should say <i>"After 'Look To',
+        Wheatley will ring &lt;your method name&gt;"</i>, and Wheatley will ring that method after
+        <code>Look To</code> is called.</li>
+</ol>
+
+<h5>Ringing a Composition with Wheatley</h5>
+
+<ol>
+    <li>Find the composition you want to ring in <a href="https://complib.org/">CompLib</a>.
+        In order for Wheatley to find the exact composition, you need to get the composition's ID.
+        This is a number (usually 5 digits), which can be found at the end of the URL of the
+        composition or in the 'Library Details' section.</li>
+    <li>Click on the "Composition" tab in the Wheatley box.</li>
+    <li>Click in the text box that says "Public CompLib URL".</li>
+    <li>Type in the ID of the composition you want, and press enter.</li>
+    <li>If everything worked out, the first line of the Wheatley box should say <i>"After 'Look To',
+        Wheatley will ring &lt;your composition name&gt;"</i>, and Wheatley will ring and call that
+        composition after <code>Look To</code> is called.</li>
+</ol>
 
 <h4><a id="managing_towers"></a>Managing your towers</h4>
 
@@ -105,7 +156,7 @@
     <li>Click the Bookmark icon (<i class="fa-fw far fa-bookmark" style="font-size:1rem;"></i>) to add or remove the tower from your list of bookmarks. Your bookmarked towers will show up in the user menu as well as on the Bookmarks tab of the My Towers page, allowing you to access them quickly. (You can also bookmark towers directly from the tower page by clicking the icon next to the tower name.)</li>
     <li>Click the tower name to go to that tower.</li>
     <li>Click the copy icon (<i class="fa-fw far fa-clipboard" style="font-size:1rem;"></i>) to copy the tower ID number.</li>
-    <li><i>If you are the tower's creator:</i> Click the Settings button to access the Tower Settings page, where you can change the tower name, enable Host Mode and add or remove hosts, or permanently delete the tower.</li>
+    <li><i>If you are the tower's creator:</i> Click the Settings button to access the <a id="tower-settings"></a>Tower Settings page, where you can change the tower name, enable Host Mode and add or remove hosts, or permanently delete the tower.</li>
     <li><i>On the Recent tab only:</i> Click the Remove from Recent button to remove the tower
         from the list of recently-visited towers.</li>
 </ul>
