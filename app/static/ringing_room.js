@@ -1087,7 +1087,7 @@ $(document).ready(function() {
                     );
                 }
             },
-            
+
             on_method_box_enter: function() {
                 if (this.autocomplete_options.length > 0) {
                     this.send_next_method(this.autocomplete_options[0]);
@@ -1194,7 +1194,7 @@ $(document).ready(function() {
                         }
                     });
             },
-            
+
             send_next_comp: function() {
                 if (!this.current_complib_comp) {
                     return;
@@ -1926,6 +1926,7 @@ $(document).ready(function() {
                 controllers_swapped: false,
                 notice: "",
                 controller_list: [],
+                controller_index: [],
                 controllers_will_ring: "",
                 bell_in_assignment_mode: null,
                 circled_digits: ["①", "②", "③", "④", "⑤", "⑥",
@@ -1950,6 +1951,7 @@ $(document).ready(function() {
             ticktock_controller: function() {
                 var nControllers = navigator.getGamepads().length;
                 for (var myCont = 0; myCont < nControllers; myCont++) {
+                    if(!this.controller_index.includes(myCont) )continue;
                     var cont = navigator.getGamepads()[myCont];
                     var curCont  = this.controller_list[myCont];
                     if (curCont) {
@@ -1972,7 +1974,7 @@ $(document).ready(function() {
                                 }
                             }
                         for (var i = 0; i < cont.buttons.length; i++) {
-                            if (cont.buttons[i].pressed) {
+                            if (cont.buttons[i].pressed && curCont.bell) {
 
                                 // Determine if this controller should be treated as left- or right-handed
                                 // If bells are assigned to current user, let b be the number of the bell under consideration:
@@ -1982,9 +1984,9 @@ $(document).ready(function() {
                                 //
                                 // The logic here is: Only define left & right for sensible handbell pairs
                                 // Any bell not part of a sensible handbell pair should be able to call bob & single
-                                //  
-                            
-                                var left_hand = 
+                                //
+
+                                var left_hand =
                                     curCont.bell === bell_circle.find_rope_by_hand(LEFT_HAND) ||
                                     (curCont.bell % 2 == 0 && this.assigned_bells.includes(curCont.bell-1));
 
@@ -2019,14 +2021,11 @@ $(document).ready(function() {
             },
 
             autoassign_controllers: function() {
-                if (this.controller_list.length > 2) {
+                if (this.controller_index.length > 2) {
                     // Do nothing: autoassignment isn't well defined with more than two controllers
                     return
                 }
-                var keys = [];
-                for (var cont in this.controller_list) {
-                    keys.push(cont)
-                }
+                var keys =  this.controller_index;
                 var first = keys[0];
                 if (keys.length > 1) var second = keys[1];
                 var left_bell = bell_circle.find_rope_by_hand(LEFT_HAND);
@@ -2037,19 +2036,20 @@ $(document).ready(function() {
                     this.controller_list[second].bell = !(this.controllers_swapped && second) ?
                                                         left_bell : right_bell;
                 }
-                this.controllers_will_ring = second && left_bell ? 
-                    this.circled_digits[right_bell-1] + this.circled_digits[left_bell-1] : 
+                this.controllers_will_ring = second && left_bell ?
+                    this.circled_digits[right_bell-1] + this.circled_digits[left_bell-1] :
                     this.circled_digits[right_bell-1];
             },
 
             set_controllers: function() {
-                this.controller_list = [];
+              this.controller_list = [];
+              this.controller_index = [];
                 var nControllers = navigator.getGamepads().length;
                 if (nControllers == 0) {
                     window.clearInterval(this.tick_controller);
                     return
                 }
-                
+
                 for (var myCont = 0; myCont < nControllers; myCont++) {
                     var curCont = navigator.getGamepads()[myCont];
                     if (!curCont) continue;
@@ -2060,11 +2060,12 @@ $(document).ready(function() {
                     };
                     if (curCont.id.includes('0ffe') && curCont.connected) {
                         contObj.type = "ActionXL";
+                        this.controller_index.push(myCont);
                     } else if (curCont.id.includes('1234') && curCont.connected) {
                         contObj.type = "vJoy";
                     } else if (curCont.id.includes('2341') && curCont.connected) {
                         contObj.type = "eBell";
-                    } else {
+                        this.controller_index.push(myCont);
                     }
                     this.controller_list[myCont] = contObj;
                 };
@@ -2131,8 +2132,7 @@ $(document).ready(function() {
             },
 
             controllers_connected: function() {
-                var count = 0;
-                this.controller_list.forEach(cont => {if (cont) count++;});
+                var count = this.controller_index.length;
                 return count;
             },
         },
@@ -2192,7 +2192,7 @@ $(document).ready(function() {
             </div>
             <ul class="list-group list-group-flush show" id="controllers_body" >
                 <li class="list-group-item d-flex">
-                    <small>Controllers connected:</small> 
+                    <small>Controllers connected:</small>
                     <small class="ml-auto">[[ controllers_connected ]]</small>
                 </li>
                 <li class="list-group-item d-flex" v-if="controllers_connected <= 2">
@@ -2205,7 +2205,7 @@ $(document).ready(function() {
                     >
                     <small>
                     [[ circled_digits[bell-1] ]]
-                    [[ bell_in_assignment_mode === bell ? 
+                    [[ bell_in_assignment_mode === bell ?
                        "Assigning" : get_assigned_controller_type(bell) ]]
                     </small>
                     <button class="btn btn-outline-primary btn-sm unassign ml-1"
