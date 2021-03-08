@@ -805,16 +805,16 @@ $(document).ready(function() {
                         <b>[SPACE]:</b> Rings the bell in the lower right corner.
                     </li>
                     <li>
-                        <b>[LEFT] and [RIGHT] arrow keys:</b> Rings the left and right bottom-most bells.
+                        <b>[LEFT] and [RIGHT] arrow keys:</b> Rings the left and right bottom-most bells; or if you are assigned to a bell or two, rings those bells instead, even if the tower is rotated.
                     </li>
                     <li>
                         <b>[f] and [j]:</b> same as [LEFT] and [RIGHT]
                     </li>
                     <li>
-                        <b>[SHIFT]+[0-9]\\[0]\\[-]\\[=]:</b> Rotate the "perspective" of the ringing room to put that bell in the lower right corner so it may be rung by [SPACE] or [j].
+                        <b>[SHIFT]+[1-9], [0], [-], [=], [q], [w], [e], [r]:</b> Rotate the "perspective" of the ringing room to put that bell in the lower right corner so it may be rung by [SPACE] or [j].
                     </li>
                     <li>
-                        <b>[1-9], [0], [-], [=]:</b> Rings bells 1 - 9, 10, 11, and 12
+                        <b>[1-9], [0], [-], [=], [q], [w], [e], [r]:</b> Rings bells 1 - 9, 10, 11, 12, 13, 14, 15, and 16
                     </li>
                     <li>
                         <b>[SHIFT]+[s]:</b> Set all bells at hand.</b>
