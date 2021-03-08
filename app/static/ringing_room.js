@@ -375,6 +375,16 @@ $(document).ready(function() {
                 this.stroke = new_state
             },
 
+            // Assign a specific user to this bell, without performing any checks (useful for
+            // filling Wheatley onto bells)
+            assign_specific_user: function(user) {
+                socketio.emit('c_assign_user', {
+                    bell: this.number,
+                    user: user,
+                    tower_id: cur_tower_id
+                });
+            },
+
             assign_user: function() {
                 if (window.tower_parameters.anonymous_user) {
                     return
@@ -384,19 +394,12 @@ $(document).ready(function() {
                     return
                 }; // don't kick people off
 
-                const selected_user = this.$root.$refs.users.selected_user;
-
                 if (!this.assignment_mode) {
                     return
                 };
 
-                // console.log('assigning user: ' + selected_user + ' to ' + this.number);
-
-                socketio.emit('c_assign_user', {
-                    bell: this.number,
-                    user: selected_user,
-                    tower_id: cur_tower_id
-                });
+                // override_user is used to assign Wheatley instead of the currently selected user
+                this.assign_specific_user(this.$root.$refs.users.selected_user);
             },
 
             unassign: function() {
@@ -959,7 +962,6 @@ $(document).ready(function() {
             },
 
             peal_speed: function () {
-                console.log("Peal speed changed", this.peal_speed);
                 // Clamp the peal speed to a reasonable range
                 const last_peal_speed = this.peal_speed;
                 this.peal_speed = Math.max(Math.min(last_peal_speed, 300), 60);
@@ -1009,6 +1011,16 @@ $(document).ready(function() {
                         peal_speed: this.peal_speed
                     }
                 });
+            },
+
+            fill_bells: function() {
+                // Assign all unassigned bells to Wheatley
+                for (const bell of bell_circle.$refs.bells) {
+                    if (!bell.assigned_user) {
+                        // -1 is Wheatley's user ID (see USER_ID in app/wheatley.py)
+                        bell.assign_specific_user(-1);
+                    }
+                }
             },
 
             reset_wheatley: function() {
@@ -1217,8 +1229,9 @@ $(document).ready(function() {
         template: `
 <div class="card mb-3" id="wheatley" v-if="enabled">
     <!-- Wheatley header -->
-    <div class="card-header">
+    <div class="card-header d-flex">
         <h2 style="display: inline; cursor: pointer;"
+            class="mr-auto"
             id="wheatley_header"
             data-toggle="collapse"
             data-target="#wheatley_body"
@@ -1226,6 +1239,15 @@ $(document).ready(function() {
         >
             Wheatley
         </h2>
+        <!-- Fill in Wheatley -->
+        <button class="btn btn-outline-primary btn-block"
+                style="width: max-content;"
+                :class="{disabled: settings_panel_disabled}"
+                @click="fill_bells"
+                title="Assign all unassigned bells to Wheatley"
+        >
+            Fill In
+        </button>
     </div>
     <div class="card-body collapse show"
          id="wheatley_body"
@@ -1354,6 +1376,25 @@ $(document).ready(function() {
         <br/>
         -->
 
+        <!-- Peal Speed -->
+        <p style="margin-bottom: 0.6rem;">Peal Speed:
+            <input type="number"
+                   id="wheatley_peal_speed_hours"
+                   v-model="peal_speed_hours"
+                   v-on:change="on_change_peal_speed"
+                   style="border: none; width: 1.5em"
+            />hr
+            <input type="number"
+                   id="wheatley_peal_speed_mins"
+                   v-model="peal_speed_mins"
+                   v-on:change="on_change_peal_speed"
+                   style="border: none; width: 2.1em; text-align: right;"
+                   step="5"
+            />min
+        </p>
+
+        <hr/>
+
         <!-- Up Down In -->
         <input type="checkbox"
                v-model="use_up_down_in"
@@ -1375,28 +1416,12 @@ $(document).ready(function() {
                name="stop_at_rounds"
                :disabled="settings_panel_disabled"
                />
-        <label style="margin-bottom: 0;"
+        <label style=" margin-bottom: 0.1rem;"
                for="stop_at_rounds"
                title="If checked, Wheatley will stand his bells when rounds occurs when ringing method."
         >
             Stop at rounds
         </label>
-
-        <hr/>
-
-        <!-- Peal Speed -->
-        <p>Peal Speed:
-            <input type="number"
-                   id="wheatley_peal_speed_hours"
-                   v-model="peal_speed_hours"
-                   v-on:change="on_change_peal_speed"
-                   style="border: none; width: 1.5em"/>hr
-            <input type="number"
-                   id="wheatley_peal_speed_mins"
-                   v-model="peal_speed_mins"
-                   v-on:change="on_change_peal_speed"
-                   style="border: none; width: 2.1em" step="5"/>min
-        </p>
 
         <hr/>
 
