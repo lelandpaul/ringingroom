@@ -793,16 +793,16 @@ $(document).ready(function() {
                         <b>[SPACE]:</b> Rings the bell in the lower right corner.
                     </li>
                     <li>
-                        <b>[LEFT] and [RIGHT] arrow keys:</b> Rings the left and right bottom-most bells.
+                        <b>[LEFT] and [RIGHT] arrow keys:</b> Rings the left and right bottom-most bells; or if you are assigned to a bell or two, rings those bells instead, even if the tower is rotated.
                     </li>
                     <li>
                         <b>[f] and [j]:</b> same as [LEFT] and [RIGHT]
                     </li>
                     <li>
-                        <b>[SHIFT]+[0-9]\\[0]\\[-]\\[=]:</b> Rotate the "perspective" of the ringing room to put that bell in the lower right corner so it may be rung by [SPACE] or [j].
+                        <b>[SHIFT]+[1-9], [0], [-], [=], [q], [w], [e], [r]:</b> Rotate the "perspective" of the ringing room to put that bell in the lower right corner so it may be rung by [SPACE] or [j].
                     </li>
                     <li>
-                        <b>[1-9], [0], [-], [=]:</b> Rings bells 1 - 9, 10, 11, and 12
+                        <b>[1-9], [0], [-], [=], [q], [w], [e], [r]:</b> Rings bells 1 - 9, 10, 11, 12, 13, 14, 15, and 16
                     </li>
                     <li>
                         <b>[SHIFT]+[s]:</b> Set all bells at hand.</b>
@@ -1087,7 +1087,7 @@ $(document).ready(function() {
                     );
                 }
             },
-            
+
             on_method_box_enter: function() {
                 if (this.autocomplete_options.length > 0) {
                     this.send_next_method(this.autocomplete_options[0]);
@@ -1194,7 +1194,7 @@ $(document).ready(function() {
                         }
                     });
             },
-            
+
             send_next_comp: function() {
                 if (!this.current_complib_comp) {
                     return;
@@ -1982,9 +1982,9 @@ $(document).ready(function() {
                                 //
                                 // The logic here is: Only define left & right for sensible handbell pairs
                                 // Any bell not part of a sensible handbell pair should be able to call bob & single
-                                //  
-                            
-                                var left_hand = 
+                                //
+
+                                var left_hand =
                                     curCont.bell === bell_circle.find_rope_by_hand(LEFT_HAND) ||
                                     (curCont.bell % 2 == 0 && this.assigned_bells.includes(curCont.bell-1));
 
@@ -2037,8 +2037,8 @@ $(document).ready(function() {
                     this.controller_list[second].bell = !(this.controllers_swapped && second) ?
                                                         left_bell : right_bell;
                 }
-                this.controllers_will_ring = second && left_bell ? 
-                    this.circled_digits[right_bell-1] + this.circled_digits[left_bell-1] : 
+                this.controllers_will_ring = second && left_bell ?
+                    this.circled_digits[right_bell-1] + this.circled_digits[left_bell-1] :
                     this.circled_digits[right_bell-1];
             },
 
@@ -2049,7 +2049,7 @@ $(document).ready(function() {
                     window.clearInterval(this.tick_controller);
                     return
                 }
-                
+
                 for (var myCont = 0; myCont < nControllers; myCont++) {
                     var curCont = navigator.getGamepads()[myCont];
                     if (!curCont) continue;
@@ -2192,7 +2192,7 @@ $(document).ready(function() {
             </div>
             <ul class="list-group list-group-flush show" id="controllers_body" >
                 <li class="list-group-item d-flex">
-                    <small>Controllers connected:</small> 
+                    <small>Controllers connected:</small>
                     <small class="ml-auto">[[ controllers_connected ]]</small>
                 </li>
                 <li class="list-group-item d-flex" v-if="controllers_connected <= 2">
@@ -2205,7 +2205,7 @@ $(document).ready(function() {
                     >
                     <small>
                     [[ circled_digits[bell-1] ]]
-                    [[ bell_in_assignment_mode === bell ? 
+                    [[ bell_in_assignment_mode === bell ?
                        "Assigning" : get_assigned_controller_type(bell) ]]
                     </small>
                     <button class="btn btn-outline-primary btn-sm unassign ml-1"
