@@ -1280,7 +1280,7 @@ $(document).ready(function() {
 
         <div id="wheatley_row_gen_box">
             <!-- Wheatley row gen type toggle -->
-            <div class="btn-group btn-block btn-group-toggle">
+            <div class="d-none btn-group btn-block btn-group-toggle">
                 <label class="btn btn-outline-primary"
                        style="border-bottom-left-radius: 0;"
                        :class="{active: row_gen_panel == 'method',
