@@ -2,6 +2,7 @@ from flask_socketio import emit, join_room
 from flask import session, request
 from flask_login import current_user
 from app import app
+from config import Config
 from app.extensions import socketio, log
 from app.models import Tower, towers
 from app.auth import token_login
@@ -81,6 +82,10 @@ def on_join(json):
     # Whether the user is anonymous or not, send them the list of current users and the Wheatley settings
     # (we send this to anonymous users because to the server, Wheatley is an anonymous user and we need to
     # send Wheatley the initial settings as quickly as possible).
+    # TODO 11 March 2021: We need to check wheatley enabledness in the database
+    # if we're on the support server
+    if Config.SUPPORT_SERVER:
+        tower.wheatley.set_enabledness(tower.wheatley_enabled())
     emit('s_set_wheatley_enabledness', {'enabled': tower.wheatley.enabled})
     if tower.wheatley.enabled:
         emit('s_wheatley_setting', tower.wheatley.settings)

@@ -31,3 +31,5 @@ class Config(object):
         SOCKETIO_SERVER_ADDRESSES = SOCKETIO_SERVER_ADDRESSES.split(',')
 
     RR_SOCKETIO_PORT = os.getenv('RR_SOCKETIO_PORT') or 5000
+
+    SUPPORT_SERVER = os.getenv('SUPPORT_SERVER') or False

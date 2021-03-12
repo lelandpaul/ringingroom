@@ -366,6 +366,11 @@ class Tower:
         self._host_ids = towerdb.host_ids
         self._additional_sizes_enabled = towerdb.additional_sizes_enabled
 
+    # TEMPORARY: 11 March 2021
+    # Get wheatley status from database
+    def wheatley_enabled(self):
+        return self.to_TowerDB().wheatley_enabled
+
     # generate a random caters change, for use as uid
     def generate_random_change(self):
         # Helper function to generate a potentially good change for a tower ID, given how
