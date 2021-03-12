@@ -940,13 +940,18 @@ $(document).ready(function() {
                 }
             },
 
+
             row_gen_panel_disabled: function() {
                 return bell_circle.lock_controls || this.is_ringing;
             },
 
             settings_panel_disabled: function() {
                 return bell_circle.lock_controls;
-            }
+            },
+
+            host_mode_lock_enabled: function() {
+                return this.$root.$refs.controls.lock_controls;
+            },
         },
 
         watch: {
@@ -1236,7 +1241,7 @@ $(document).ready(function() {
         },
 
         template: `
-<div class="card mb-3" id="wheatley" v-if="enabled">
+<div class="card mb-3" id="wheatley" v-if="enabled && !host_mode_lock_enabled">
     <!-- Wheatley header -->
     <div class="card-header d-flex">
         <h2 style="display: inline; cursor: pointer;"
