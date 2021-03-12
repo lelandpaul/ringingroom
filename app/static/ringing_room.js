@@ -2555,7 +2555,9 @@ $(document).ready(function() {
                     }
                 }
                 // Make sure that the bells are always in ascending order
-                current_user_bells.sort();
+                // The magic incantation function is necessary because JS defaults to sorting 
+                // integers... alphabetically. No, seriously.
+                current_user_bells.sort(function(a,b){return a-b});
 
                 /* Use these to decide which bells should be in the user's left and right hands. */
                 // CASE 1: No bells are assigned
