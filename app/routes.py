@@ -340,4 +340,6 @@ def reset_password(token):
         return redirect(url_for('authenticate'))
     return render_template('reset_password.html', form=form, token_success=bool(user))
 
-
+@app.route('/privacy', methods=['GET'])
+def privacy_policy():
+    return render_template('privacy_policy.html')

@@ -125,7 +125,24 @@
         </div>
     </form>
 
+<!-- Modal -->
+<div class="modal fade" id="privacy_modal" tabindex="-1" role="dialog">
+<div class="modal-dialog modal-lg" role="document">
+<div class="modal-content">
+<div class="modal-header">
+<h2 class="modal-title" id="privacy_title">Our Privacy Policy</h2>
+<button type="button" class="close" data-dismiss="modal">
+<span>&times;</span>
+</button>
+</div>
+<div class="modal-body" style="font-size: 1.25rem;">
     {% include '_privacy_policy.html' %}
-
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+</div>
+</div>
+</div>
+</div>
 
 {% endblock %}
