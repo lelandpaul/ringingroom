@@ -66,7 +66,7 @@ app = create_app()
 # Disable the stupid incessant debug logs
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
-file_handler = RotatingFileHandler('logs/ringingroom.log','a', 1 * 1024 * 1024, 10)
+file_handler = RotatingFileHandler('logs/ringingroom.log','a', 1 * 1024 * 1024, 50)
 file_handler.setFormatter(formatter)
 app.logger.setLevel(logging.INFO)
 file_handler.setLevel(logging.INFO)

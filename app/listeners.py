@@ -228,7 +228,7 @@ def on_assign_user(json):
 # A rope was pulled; ring the bell
 @socketio.on('c_bell_rung')
 def on_bell_rung(event_dict):
-    log('c_bell_rung', event_dict)
+    # log('c_bell_rung', event_dict)
     disagreement = False
     cur_bell = event_dict["bell"]
     tower_id = event_dict["tower_id"]
