@@ -193,31 +193,35 @@ socketio.on('s_msg_sent', function(msg, cb) {
     });
 });
 
-// Wheatley has been enabled or disabled
-socketio.on('s_set_wheatley_enabledness', function(data) {
-    // console.log("Setting Wheatley's enabledness to " + data.enabled);
-    if (!window.tower_parameters.listen_link && !window.tower_parameters.anonymous_user) {
-        bell_circle.$refs.wheatley.enabled = data.enabled;
-    }
-});
+if (!window.tower_parameters.listen_link) {
 
-// A Wheatley setting has been changed
-socketio.on('s_wheatley_setting', function(msg) {
-    // console.log("Received Wheatley setting(s):", msg);
-    bell_circle.$refs.wheatley.update_settings(msg);
-});
+    // Wheatley has been enabled or disabled
+    socketio.on('s_set_wheatley_enabledness', function(data) {
+        // console.log("Setting Wheatley's enabledness to " + data.enabled);
+        if (!window.tower_parameters.listen_link && !window.tower_parameters.anonymous_user) {
+            bell_circle.$refs.wheatley.enabled = data.enabled;
+        }
+    });
 
-// Wheatley's row gen has been changed
-socketio.on('s_wheatley_row_gen', function(msg) {
-    // console.log("Received Wheatley row gen:", msg);
-    bell_circle.$refs.wheatley.update_row_gen(msg);
-});
+    // A Wheatley setting has been changed
+    socketio.on('s_wheatley_setting', function(msg) {
+        // console.log("Received Wheatley setting(s):", msg);
+        bell_circle.$refs.wheatley.update_settings(msg);
+    });
 
-// Wheatley has updated whether or not he thinks a touch is in progress
-socketio.on('s_wheatley_is_ringing', function(msg) {
-    // console.log("Received Wheatley is-ringing:", msg);
-    bell_circle.$refs.wheatley.update_is_ringing(msg);
-});
+    // Wheatley's row gen has been changed
+    socketio.on('s_wheatley_row_gen', function(msg) {
+        // console.log("Received Wheatley row gen:", msg);
+        bell_circle.$refs.wheatley.update_row_gen(msg);
+    });
+
+    // Wheatley has updated whether or not he thinks a touch is in progress
+    socketio.on('s_wheatley_is_ringing', function(msg) {
+        // console.log("Received Wheatley is-ringing:", msg);
+        bell_circle.$refs.wheatley.update_is_ringing(msg);
+    });
+
+}
 
 // Host mode was changed
 socketio.on('s_host_mode', function(msg, cb) {
