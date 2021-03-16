@@ -1962,6 +1962,8 @@ $(document).ready(function() {
             return {
                 hand_strike: 100,
                 back_strike: -600,
+                debounce: 250,
+                rang_recently: false,
                 has_controller: false,
                 check_controller: null,
                 tick_controller: null,
@@ -1992,6 +1994,7 @@ $(document).ready(function() {
             },
 
             ticktock_controller: function() {
+                if (this.rang_recently) return; // debounce
                 var nControllers = navigator.getGamepads().length;
                 for (var myCont = 0; myCont < nControllers; myCont++) {
                     if (!this.controller_index.includes(myCont)) continue;
@@ -2006,6 +2009,8 @@ $(document).ready(function() {
                                     this.assign_cont_to_bell(curCont)
                                     if (curCont.bell) {
                                         bell_circle.pull_rope(curCont.bell);
+                                        this.rang_recently = true;
+                                        setTimeout(()=>this.rang_recently=false, this.debouce);
                                     }
                                 }
                                 if (swing <= this.back_strike && !curCont.at_hand) {
@@ -2013,6 +2018,8 @@ $(document).ready(function() {
                                     this.assign_cont_to_bell(curCont)
                                     if (curCont.bell) {
                                         bell_circle.pull_rope(curCont.bell);
+                                        this.rang_recently = true;
+                                        setTimeout(()=>this.rang_recently=false, this.debouce);
                                     }
                                 }
                             }
