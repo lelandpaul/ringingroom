@@ -2868,13 +2868,13 @@ $(document).ready(function() {
                     <help ref="help"></help>
                 </div>
                 <tower_controls ref="controls"></tower_controls>
-                <div class="row pb-0 flex-grow-1">
-                    <div class="col flex-grow-1">
-                        <controllers ref="controllers"></controllers>
-                    </div>
-                </div>
                 <template v-if="!window.tower_parameters.anonymous_user
                              && !window.tower_parameters.listen_link">
+                    <div class="row pb-0 flex-grow-1">
+                        <div class="col flex-grow-1">
+                            <controllers ref="controllers"></controllers>
+                        </div>
+                    </div>
                     <div class="row pb-0 flex-grow-1">
                         <div class="col flex-grow-1">
                             <user_display ref="users"></user_display>
