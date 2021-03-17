@@ -7,7 +7,7 @@ const LEFT_HAND = "left";
 const RIGHT_HAND = "right";
 
 // Don't log unless needed
-var logger = function() {
+var logger = (function () {
     var oldConsoleLog = null;
     var pub = {};
 
@@ -16,43 +16,40 @@ var logger = function() {
             return;
         }
 
-        window['console']['log'] = oldConsoleLog;
+        window["console"]["log"] = oldConsoleLog;
     };
 
     pub.disableLogger = function disableLogger() {
         oldConsoleLog = console.log;
-        window['console']['log'] = function() {};
+        window["console"]["log"] = function () {};
     };
 
     return pub;
-}();
+})();
 // logger.disableLogger()
 
 // Set up socketio instance
 var socketio = io(window.tower_parameters.server_ip);
 
-
 // Various Vue instances need this on creation
 var cur_tower_id = parseInt(window.tower_parameters.id);
-
 
 // If they're not anonymous, get their username
 var cur_user_name = window.tower_parameters.cur_user_name;
 const cur_user_id = parseInt(window.tower_parameters.cur_user_id);
 
-
 // Set up a handler for leaving, then register it *everywhere*
 var has_left_room = false;
-var leave_room = function() {
+var leave_room = function () {
     if (has_left_room) {
         return;
     }
     has_left_room = true;
-    socketio.emit('c_user_left', {
+    socketio.emit("c_user_left", {
         user_name: window.tower_parameters.cur_user_name,
         user_token: window.tower_parameters.user_token,
         anonymous_user: window.tower_parameters.anonymous_user,
-        tower_id: cur_tower_id
+        tower_id: cur_tower_id,
     });
 };
 
@@ -71,32 +68,32 @@ window.user_parameters = {
 ////////////////////////
 
 // A bell was rung
-socketio.on('s_bell_rung', function(msg, cb) {
+socketio.on("s_bell_rung", function (msg, cb) {
     // console.log('Received event: ' + msg.global_bell_state + msg.who_rang);
     // if(msg.disagree) {}
     bell_circle.ring_bell(msg.who_rang);
 });
 
 // Userlist was set
-socketio.on('s_set_userlist', function(msg, cb) {
+socketio.on("s_set_userlist", function (msg, cb) {
     // console.log('s_set_userlist: ' + msg.user_list);
     bell_circle.$refs.users.user_names = msg.user_list;
     msg.user_list.forEach((user, index) => {
         bell_circle.$refs.users.add_user({
             user_id: parseInt(user.user_id),
-            username: user.username
+            username: user.username,
         });
     });
 });
 
 // User entered the room
-socketio.on('s_user_entered', function(msg, cb) {
+socketio.on("s_user_entered", function (msg, cb) {
     // console.log(msg.username + ' entered')
     bell_circle.$refs.users.add_user(msg);
 });
 
 // User left the room
-socketio.on('s_user_left', function(msg, cb) {
+socketio.on("s_user_left", function (msg, cb) {
     // console.log(msg.username + ' left')
     bell_circle.$refs.users.remove_user(msg);
     bell_circle.$refs.bells.forEach((bell, index) => {
@@ -107,13 +104,13 @@ socketio.on('s_user_left', function(msg, cb) {
 });
 
 // Number of observers changed
-socketio.on('s_set_observers', function(msg, cb) {
+socketio.on("s_set_observers", function (msg, cb) {
     // console.log('observers: ' + msg.observers);
     bell_circle.$refs.users.observers = msg.observers;
 });
 
 // User was assigned to a bell
-socketio.on('s_assign_user', function(msg, cb) {
+socketio.on("s_assign_user", function (msg, cb) {
     // console.log('Received user assignment: ' + msg.bell + ' ' + msg.user);
     try {
         // This stochastically very error-prone:
@@ -125,7 +122,7 @@ socketio.on('s_assign_user', function(msg, cb) {
         }
     } catch (err) {
         // console.log('caught error assign_user; trying again');
-        setTimeout(100, function() {
+        setTimeout(100, function () {
             bell_circle.$refs.bells[msg.bell - 1].assigned_user = msg.user;
             if (msg.user === cur_user_id) {
                 bell_circle.$refs.users.rotate_to_assignment();
@@ -135,13 +132,13 @@ socketio.on('s_assign_user', function(msg, cb) {
 });
 
 // A call was made
-socketio.on('s_call', function(msg, cb) {
+socketio.on("s_call", function (msg, cb) {
     // console.log('Received call: ' + msg.call);
     bell_circle.$refs.display.make_call(msg.call);
 });
 
 // The server told us the number of bells in the tower
-socketio.on('s_size_change', function(msg, cb) {
+socketio.on("s_size_change", function (msg, cb) {
     var new_size = msg.size;
     bell_circle.number_of_bells = new_size;
     // The user may already be assigned to something, so rotate
@@ -151,9 +148,8 @@ socketio.on('s_size_change', function(msg, cb) {
     }
 });
 
-
 // The server sent us the global state; set all bells accordingly
-socketio.on('s_global_state', function(msg, cb) {
+socketio.on("s_global_state", function (msg, cb) {
     var gstate = msg.global_bell_state;
     for (var i = 0; i < gstate.length; i++) {
         try {
@@ -163,40 +159,38 @@ socketio.on('s_global_state', function(msg, cb) {
             bell_circle.$refs.bells[i].set_state_silently(gstate[i]);
         } catch (err) {
             // console.log('caught error set_state; trying again');
-            setTimeout(100, function() {
+            setTimeout(100, function () {
                 bell_circle.$refs.bells[i].set_state_silently(gstate[i]);
             });
         }
-    };
+    }
 });
 
 // The server told us whether to use handbells or towerbells
-socketio.on('s_audio_change', function(msg, cb) {
+socketio.on("s_audio_change", function (msg, cb) {
     // console.log('changing audio to: ' + msg.new_audio);
     bell_circle.$refs.controls.audio_type = msg.new_audio;
-    bell_circle.audio = msg.new_audio == 'Tower' ? tower : hand;
+    bell_circle.audio = msg.new_audio == "Tower" ? tower : hand;
     // Make sure the volume is set consistently
     //md = msg.new_audio == 'Tower' ? 1 : window.user_parameters.handbell_mod;
-    let md = msg.new_audio == 'Tower' ? 1.0 : window.user_parameters.handbell_mod;
+    let md = msg.new_audio == "Tower" ? 1.0 : window.user_parameters.handbell_mod;
     bell_circle.audio._volume = md * window.user_parameters.bell_volume * 0.1;
-
 });
 
 // A chat message was received
-socketio.on('s_msg_sent', function(msg, cb) {
+socketio.on("s_msg_sent", function (msg, cb) {
     bell_circle.$refs.chatbox.messages.push(msg);
-    if (msg.email != window.tower_parameters.cur_user_email && !$('#chat_input_box').is(':focus')) {
+    if (msg.email != window.tower_parameters.cur_user_email && !$("#chat_input_box").is(":focus")) {
         bell_circle.unread_messages++;
     }
-    bell_circle.$nextTick(function() {
-        $('#chat_messages').scrollTop($('#chat_messages')[0].scrollHeight);
+    bell_circle.$nextTick(function () {
+        $("#chat_messages").scrollTop($("#chat_messages")[0].scrollHeight);
     });
 });
 
 if (!window.tower_parameters.listen_link) {
-
     // Wheatley has been enabled or disabled
-    socketio.on('s_set_wheatley_enabledness', function(data) {
+    socketio.on("s_set_wheatley_enabledness", function (data) {
         // console.log("Setting Wheatley's enabledness to " + data.enabled);
         if (!window.tower_parameters.listen_link && !window.tower_parameters.anonymous_user) {
             bell_circle.$refs.wheatley.enabled = data.enabled;
@@ -204,34 +198,33 @@ if (!window.tower_parameters.listen_link) {
     });
 
     // A Wheatley setting has been changed
-    socketio.on('s_wheatley_setting', function(msg) {
+    socketio.on("s_wheatley_setting", function (msg) {
         // console.log("Received Wheatley setting(s):", msg);
         bell_circle.$refs.wheatley.update_settings(msg);
     });
 
     // Wheatley's row gen has been changed
-    socketio.on('s_wheatley_row_gen', function(msg) {
+    socketio.on("s_wheatley_row_gen", function (msg) {
         // console.log("Received Wheatley row gen:", msg);
         bell_circle.$refs.wheatley.update_row_gen(msg);
     });
 
     // Wheatley has updated whether or not he thinks a touch is in progress
-    socketio.on('s_wheatley_is_ringing', function(msg) {
+    socketio.on("s_wheatley_is_ringing", function (msg) {
         // console.log("Received Wheatley is-ringing:", msg);
         bell_circle.$refs.wheatley.update_is_ringing(msg);
     });
-
 }
 
 // Host mode was changed
-socketio.on('s_host_mode', function(msg, cb) {
+socketio.on("s_host_mode", function (msg, cb) {
     bell_circle.$refs.controls.host_mode = msg.new_mode;
 });
 
 // The server redirected us
 // This can happen if the user arrived here with an invalid Bearer token
 // In which case they get redirected to log in
-socketio.on('s_redirection', function(destination) {
+socketio.on("s_redirection", function (destination) {
     window.location.href = destination;
 });
 
@@ -243,10 +236,10 @@ socketio.on('s_redirection', function(destination) {
 // templates are rendered first
 
 // However, we need the main Vue to be accessible in the main scope
-var bell_circle
+var bell_circle;
 
-$(document).ready(function() {
-    Vue.options.delimiters = ['[[', ']]']; // make sure vue doesn't interfere with jinja
+$(document).ready(function () {
+    Vue.options.delimiters = ["[[", "]]"]; // make sure vue doesn't interfere with jinja
 
     /* BELLS */
 
@@ -259,13 +252,26 @@ $(document).ready(function() {
         props: ["number", "position", "number_of_bells", "audio"],
 
         // data in props should be a function, to maintain scope
-        data: function() {
+        data: function () {
             return {
                 stroke: true,
                 circled_digits: [
-                    "①", "②", "③", "④", "⑤", "⑥",
-                    "⑦", "⑧", "⑨", "⑩", "⑪", "⑫",
-                    "⑬", "⑭", "⑮", "⑯"
+                    "①",
+                    "②",
+                    "③",
+                    "④",
+                    "⑤",
+                    "⑥",
+                    "⑦",
+                    "⑧",
+                    "⑨",
+                    "⑩",
+                    "⑪",
+                    "⑫",
+                    "⑬",
+                    "⑭",
+                    "⑮",
+                    "⑯",
                 ],
                 images: ["handstroke", "backstroke"],
                 assigned_user: window.tower_parameters.assignments[this.number - 1],
@@ -273,94 +279,100 @@ $(document).ready(function() {
         },
 
         computed: {
-            image_prefix: function() {
-                return this.$root.$refs.controls.audio_type === 'Tower' ? 't-' : 'h-';
+            image_prefix: function () {
+                return this.$root.$refs.controls.audio_type === "Tower" ? "t-" : "h-";
             },
 
-            assignment_mode: function() {
+            assignment_mode: function () {
                 return this.$root.$refs.users.assignment_mode;
             },
 
-            cur_user: function() {
+            cur_user: function () {
                 return this.$root.$refs.users.cur_user;
-
-
             },
 
-            assigned_user_name: function() {
+            assigned_user_name: function () {
                 return this.$root.$refs.users.get_user_name(this.assigned_user);
             },
 
-            left_side: function() {
+            left_side: function () {
                 if (this.position == 1) {
-                    return false
-                };
-                if (this.position <= (this.number_of_bells / 2) + 1) {
-                    return true
-                };
+                    return false;
+                }
+                if (this.position <= this.number_of_bells / 2 + 1) {
+                    return true;
+                }
                 return false;
             },
 
-            top_side: function() {
+            top_side: function () {
                 if (this.number_of_bells === 4 && this.position >= 3) {
-                    return true
-                };
+                    return true;
+                }
                 if (this.number_of_bells === 5 && this.position >= 3) {
-                    return true
-                };
+                    return true;
+                }
                 if (this.number_of_bells === 6 && (this.position === 4 || this.position === 5)) {
-                    return true
-                };
+                    return true;
+                }
                 if (this.number_of_bells === 8 && this.position >= 4 && this.position !== 8) {
-                    return true
-                };
+                    return true;
+                }
                 if (this.number_of_bells === 10 && this.position >= 5 && this.position < 9) {
-                    return true
-                };
+                    return true;
+                }
                 if (this.number_of_bells === 12 && this.position >= 5 && this.position <= 10) {
-                    return true
-                };
+                    return true;
+                }
                 if (this.number_of_bells === 14 && this.position >= 7 && this.position <= 13) {
-                    return true
-                };
+                    return true;
+                }
                 if (this.number_of_bells === 16 && this.position >= 7 && this.position <= 14) {
-                    return true
-                };
+                    return true;
+                }
             },
         },
 
         methods: {
             // emit a ringing event ot the server
-            emit_ringing_event: function() {
+            emit_ringing_event: function () {
                 if (window.tower_parameters.anonymous_user) {
-                    return
-                }; // don't ring if not logged in
+                    return;
+                } // don't ring if not logged in
                 if (this.assignment_mode) {
-                    return
-                }; // disable while assigning
+                    return;
+                } // disable while assigning
                 if (this.$root.$refs.controls.host_mode && this.assigned_user !== cur_user_id) {
                     // user is not allowed to ring this bell
-                    bell_circle.$refs.display.display_message('You may only ring your assigned bells.');
-                    return
+                    bell_circle.$refs.display.display_message(
+                        "You may only ring your assigned bells."
+                    );
+                    return;
                 }
-                socketio.emit('c_bell_rung', {
+                socketio.emit("c_bell_rung", {
                     bell: this.number,
                     stroke: this.stroke,
-                    tower_id: cur_tower_id
+                    tower_id: cur_tower_id,
                 });
-                var report = "Bell " + this.number + " will ring a " + (this.stroke ? "handstroke" : "backstroke");
+                var report =
+                    "Bell " +
+                    this.number +
+                    " will ring a " +
+                    (this.stroke ? "handstroke" : "backstroke");
                 // console.log(report);
             },
 
             // Ringing event received; now ring the bell
-            ring: function() {
+            ring: function () {
                 this.stroke = !this.stroke;
                 let audio_type;
                 let audio_obj;
-                if (window.tower_parameters.half_muffled &&
-                    this.$root.$refs.controls.audio_type === 'Tower' &&
-                    this.stroke) {
-                    audio_type = 'Muffled';
+                if (
+                    window.tower_parameters.half_muffled &&
+                    this.$root.$refs.controls.audio_type === "Tower" &&
+                    this.stroke
+                ) {
+                    audio_type = "Muffled";
                     audio_obj = muffled;
                     // console.log(audio_type + ' ' + this.number_of_bells);
                 } else {
@@ -369,52 +381,56 @@ $(document).ready(function() {
                     // console.log(audio_type + ' ' + this.number_of_bells);
                 }
                 audio_obj.play(bell_mappings[audio_type][this.number_of_bells][this.number - 1]);
-                var report = "Bell " + this.number + " rang a " + (this.stroke ? "backstroke" : "handstroke");
+                var report =
+                    "Bell " +
+                    this.number +
+                    " rang a " +
+                    (this.stroke ? "backstroke" : "handstroke");
                 // console.log(report);
             },
 
             // global_state received; set the bell to the correct stroke
-            set_state_silently: function(new_state) {
+            set_state_silently: function (new_state) {
                 // console.log('Bell ' + this.number + ' set to ' + new_state)
-                this.stroke = new_state
+                this.stroke = new_state;
             },
 
             // Assign a specific user to this bell, without performing any checks (useful for
             // filling Wheatley onto bells)
-            assign_specific_user: function(user) {
-                socketio.emit('c_assign_user', {
+            assign_specific_user: function (user) {
+                socketio.emit("c_assign_user", {
                     bell: this.number,
                     user: user,
-                    tower_id: cur_tower_id
+                    tower_id: cur_tower_id,
                 });
             },
 
-            assign_user: function() {
+            assign_user: function () {
                 if (window.tower_parameters.anonymous_user) {
-                    return
-                }; // don't ring if not logged in
+                    return;
+                } // don't ring if not logged in
 
                 if (this.assigned_user) {
-                    return
-                }; // don't kick people off
+                    return;
+                } // don't kick people off
 
                 if (!this.assignment_mode) {
-                    return
-                };
+                    return;
+                }
 
                 // override_user is used to assign Wheatley instead of the currently selected user
                 this.assign_specific_user(this.$root.$refs.users.selected_user);
             },
 
-            unassign: function() {
+            unassign: function () {
                 if (window.tower_parameters.anonymous_user) {
-                    return
-                }; // don't ring if not logged in
+                    return;
+                } // don't ring if not logged in
 
-                socketio.emit('c_assign_user', {
+                socketio.emit("c_assign_user", {
                     bell: this.number,
-                    user: '',
-                    tower_id: cur_tower_id
+                    user: "",
+                    tower_id: cur_tower_id,
                 });
             },
         },
@@ -512,23 +528,23 @@ $(document).ready(function() {
         </div>
     </div>
 </div>
-`
+`,
     }); // End bell_rope component
 
     // The call_display is where call messages are flashed
-    Vue.component('call_display', {
+    Vue.component("call_display", {
         props: ["audio"],
 
         // data in components should be a function, to maintain scope
-        data: function() {
+        data: function () {
             return {
-                cur_call: '',
+                cur_call: "",
                 next_call_clear_time: -Infinity,
             };
         },
 
         computed: {
-            assignment_mode: function() {
+            assignment_mode: function () {
                 return this.$root.$refs.users.assignment_mode;
             },
         },
@@ -536,7 +552,7 @@ $(document).ready(function() {
         methods: {
             // Used to display temporary messages to users (typically when they do something they're
             // not permitted to do in host-mode).
-            display_message: function(message, timeout) {
+            display_message: function (message, timeout) {
                 // Default timeout to 3s
                 timeout = timeout || 3000;
                 // Set the call, and make sure that the display is not cleared until this call has
@@ -545,59 +561,55 @@ $(document).ready(function() {
                 this.next_call_clear_time = Date.now() + timeout;
                 var self = this;
                 // Remove the message after `timeout` milliseconds
-                setTimeout(
-                    function() {
-                        // Make sure that if another call has been called, then we don't clear the
-                        // screen from a callback from an old call.  Basically we want to avoid the
-                        // following timeline (time goes down):
-                        //
-                        // *        Calls Bob
-                        //
-                        //
-                        //     *    Calls Single
-                        // *        Callback from Bob clears call just after the Single appears
-                        //
-                        //
-                        //     *    Callback from Single does nothing
-                        if (Date.now() >= self.next_call_clear_time - 3) {
-                            self.cur_call = '';
-                        }
-                    },
-                    timeout
-                );
+                setTimeout(function () {
+                    // Make sure that if another call has been called, then we don't clear the
+                    // screen from a callback from an old call.  Basically we want to avoid the
+                    // following timeline (time goes down):
+                    //
+                    // *        Calls Bob
+                    //
+                    //
+                    //     *    Calls Single
+                    // *        Callback from Bob clears call just after the Single appears
+                    //
+                    //
+                    //     *    Callback from Single does nothing
+                    if (Date.now() >= self.next_call_clear_time - 3) {
+                        self.cur_call = "";
+                    }
+                }, timeout);
             },
 
             // a call was received from the server; display it and play audio
-            make_call: function(call) {
+            make_call: function (call) {
                 this.display_message(call, 2000);
                 this.audio.play(call);
-            }
+            },
         },
 
         template: `
 <h2 id='call_display' ref='display'>
     [[ assignment_mode ? 'To resume ringing, press "Stop Assigning" on the control panel.' : cur_call ]]
 </h2>
-`
+`,
     }); // end call_display component
 
-
     // The focus_display indicated when the window has lost focus
-    Vue.component('focus_display', {
+    Vue.component("focus_display", {
         // data in components should be a function, to maintain scope
-        data: function() {
+        data: function () {
             return {
-                visible: true
+                visible: true,
             };
         },
 
-        mounted: function() {
-            this.$nextTick(function() {
-                window.addEventListener('focus', this.hide)
-                window.addEventListener('blur', this.show)
+        mounted: function () {
+            this.$nextTick(function () {
+                window.addEventListener("focus", this.hide);
+                window.addEventListener("blur", this.show);
 
-                document.hasFocus() ? this.hide() : this.show()
-            })
+                document.hasFocus() ? this.hide() : this.show();
+            });
         },
 
         methods: {
@@ -606,70 +618,69 @@ $(document).ready(function() {
             },
             hide() {
                 this.visible = false;
-            }
+            },
         },
 
         template: `
 <h2 v-show="visible" v-if="!window.tower_parameters.listen_link && !window.tower_parameters.anonymous_user" id='focus_display'>
     Click anywhere in Ringing Room to resume ringing.
 </h2>
-`
+`,
     }); // end focus_display component
 
-
     // tower_controls holds title, id, size buttons, audio toggle
-    Vue.component('tower_controls', {
+    Vue.component("tower_controls", {
         // data in components should be a function, to maintain scope
-        data: function() {
+        data: function () {
             return {
                 tower_sizes: window.tower_parameters.sizes_available,
                 audio_type: window.tower_parameters.audio,
-                host_mode: window.tower_parameters.host_mode
-            }
+                host_mode: window.tower_parameters.host_mode,
+            };
         },
 
         computed: {
-            number_of_bells: function() {
+            number_of_bells: function () {
                 return this.$root.number_of_bells;
             },
 
-            lock_controls: function() {
+            lock_controls: function () {
                 return this.host_mode && !window.tower_parameters.host_permissions;
-            }
+            },
         },
 
         watch: {
-            audio_type: function() {
+            audio_type: function () {
                 // console.log('swapped audio type');
-                socketio.emit('c_audio_change', {
+                socketio.emit("c_audio_change", {
                     new_audio: this.audio_type,
-                    tower_id: cur_tower_id
+                    tower_id: cur_tower_id,
                 });
             },
 
-            host_mode: function() {
+            host_mode: function () {
                 // console.log('swapped host mode to: ' + this.host_mode);
-                socketio.emit('c_host_mode', {
+                socketio.emit("c_host_mode", {
                     new_mode: this.host_mode,
-                    tower_id: cur_tower_id
+                    tower_id: cur_tower_id,
                 });
             },
         },
 
         methods: {
             // the user clicked a tower-size button
-            set_tower_size: function(size) {
+            set_tower_size: function (size) {
                 if (window.tower_parameters.anonymous_user) {
-                    return
-                }; // don't do anything if not logged in
+                    return;
+                } // don't do anything if not logged in
                 // console.log('setting tower size to ' + size);
-                socketio.emit('c_size_change', {
+                socketio.emit("c_size_change", {
                     new_size: size,
-                    tower_id: cur_tower_id
+                    tower_id: cur_tower_id,
                 });
             },
 
-            set_bells_at_hand: function() {
+            set_bells_at_hand: function () {
                 bell_circle.set_bells_at_hand();
             },
         },
@@ -776,26 +787,22 @@ $(document).ready(function() {
 `,
     }); // End tower_controls
 
-
-
-
     // help holds help toggle
-    Vue.component('help', {
+    Vue.component("help", {
         // data in components should be a function, to maintain scope
-        data: function() {
+        data: function () {
             return {
-                help_showing: false
-            }
+                help_showing: false,
+            };
         },
 
         methods: {
             // the user clicked the audio toggle
-            show_help: function() {
+            show_help: function () {
                 // console.log('showing or hiding help');
-                this.help_showing = !this.help_showing
+                this.help_showing = !this.help_showing;
             },
         },
-
 
         template: `
 <div class="row" v-if="!window.tower_parameters.observer">
@@ -858,8 +865,8 @@ $(document).ready(function() {
 `,
     }); // End help
 
-    Vue.component('wheatley', {
-        data: function() {
+    Vue.component("wheatley", {
+        data: function () {
             return {
                 // Set to `true` if Wheatley is enabled in this tower.  If this is `false`, then the
                 // Wheatley box will not be shown
@@ -901,27 +908,29 @@ $(document).ready(function() {
 
                 complib_id: "",
                 current_complib_comp: undefined,
-                complib_error: ""
+                complib_error: "",
             };
         },
 
         computed: {
-            display_text: function() {
+            display_text: function () {
                 if (this.autocomplete_options.length == 0) {
                     return "NOWT";
                 }
-                return this.autocomplete_options.map(x => x.title).join(", ");
+                return this.autocomplete_options.map((x) => x.title).join(", ");
             },
 
-            touch_link: function() {
+            touch_link: function () {
                 let row_gen = this.row_gen;
                 if (!row_gen) {
                     return "";
                 }
-                switch(row_gen.type) {
+                switch (row_gen.type) {
                     case "method":
-                        return "https://rsw.me.uk/blueline/methods/view/"
-                            + (row_gen.url || "Grandsire_Major");
+                        return (
+                            "https://rsw.me.uk/blueline/methods/view/" +
+                            (row_gen.url || "Grandsire_Major")
+                        );
                     case "composition":
                         return row_gen.url || "";
                     default:
@@ -929,7 +938,7 @@ $(document).ready(function() {
                 }
             },
 
-            touch_text: function() {
+            touch_text: function () {
                 let row_gen = this.row_gen;
                 if (!row_gen) {
                     return "<no row gen>";
@@ -944,26 +953,25 @@ $(document).ready(function() {
                 }
             },
 
-
-            row_gen_panel_disabled: function() {
+            row_gen_panel_disabled: function () {
                 return bell_circle.lock_controls || this.is_ringing;
             },
 
-            settings_panel_disabled: function() {
+            settings_panel_disabled: function () {
                 return bell_circle.lock_controls;
             },
 
-            host_mode_lock_enabled: function() {
+            host_mode_lock_enabled: function () {
                 return this.$root.$refs.controls.lock_controls;
             },
         },
 
         watch: {
-            method_name: function(next_value) {
+            method_name: function (next_value) {
                 this.update_method_suggestions(next_value);
             },
 
-            complib_id: function(next_value) {
+            complib_id: function (next_value) {
                 this.update_comp_suggestions(next_value);
             },
 
@@ -985,53 +993,52 @@ $(document).ready(function() {
                 this.peal_speed = Math.max(Math.min(last_peal_speed, 300), 60);
                 // Send an update to the server if the user **actually** changed the value
                 if (last_peal_speed != this.peal_speed) {
-
                 }
                 // Update the controls to the correct representation of the speed
                 this.peal_speed_mins = (this.peal_speed % 60).toString();
                 this.peal_speed_hours = Math.floor(this.peal_speed / 60).toString();
-            }
+            },
         },
 
         methods: {
             /* METHODS CALLED WHEN THE USER CHANGES THE CONTROLS */
-            on_change_sensitivity: function() {
-                socketio.emit('c_wheatley_setting', {
+            on_change_sensitivity: function () {
+                socketio.emit("c_wheatley_setting", {
                     tower_id: cur_tower_id,
                     settings: {
-                        sensitivity: this.sensitivity
-                    }
+                        sensitivity: this.sensitivity,
+                    },
                 });
             },
 
-            on_change_use_up_down_in: function() {
-                socketio.emit('c_wheatley_setting', {
+            on_change_use_up_down_in: function () {
+                socketio.emit("c_wheatley_setting", {
                     tower_id: cur_tower_id,
                     settings: {
-                        use_up_down_in: this.use_up_down_in
-                    }
+                        use_up_down_in: this.use_up_down_in,
+                    },
                 });
             },
 
-            on_change_stop_at_rounds: function() {
-                socketio.emit('c_wheatley_setting', {
+            on_change_stop_at_rounds: function () {
+                socketio.emit("c_wheatley_setting", {
                     tower_id: cur_tower_id,
                     settings: {
-                        stop_at_rounds: this.stop_at_rounds
-                    }
+                        stop_at_rounds: this.stop_at_rounds,
+                    },
                 });
             },
 
-            on_change_peal_speed: function() {
-                socketio.emit('c_wheatley_setting', {
+            on_change_peal_speed: function () {
+                socketio.emit("c_wheatley_setting", {
                     tower_id: cur_tower_id,
                     settings: {
-                        peal_speed: this.peal_speed
-                    }
+                        peal_speed: this.peal_speed,
+                    },
                 });
             },
 
-            fill_bells: function() {
+            fill_bells: function () {
                 // Assign all unassigned bells to Wheatley
                 for (const bell of bell_circle.$refs.bells) {
                     if (!bell.assigned_user) {
@@ -1041,90 +1048,91 @@ $(document).ready(function() {
                 }
             },
 
-            reset_wheatley: function() {
-                socketio.emit('c_reset_wheatley', {tower_id: cur_tower_id});
+            reset_wheatley: function () {
+                socketio.emit("c_reset_wheatley", { tower_id: cur_tower_id });
             },
 
             /* CALLBACKS CALLED FROM RECEIVING A SOCKETIO SIGNAL */
-            update_settings: function(new_settings) {
+            update_settings: function (new_settings) {
                 for (const key in new_settings) {
                     const value = new_settings[key];
                     switch (key) {
-                        case 'sensitivity':
+                        case "sensitivity":
                             this.sensitivity = value;
                             break;
-                        case 'use_up_down_in':
+                        case "use_up_down_in":
                             this.use_up_down_in = value;
                             break;
-                        case 'stop_at_rounds':
+                        case "stop_at_rounds":
                             this.stop_at_rounds = value;
                             break;
-                        case 'peal_speed':
+                        case "peal_speed":
                             this.peal_speed = value;
                             break;
                     }
                 }
             },
 
-            update_row_gen: function(new_row_gen) {
+            update_row_gen: function (new_row_gen) {
                 if (new_row_gen) {
                     this.row_gen = new_row_gen;
                 }
             },
 
-            update_is_ringing: function(new_value) {
+            update_is_ringing: function (new_value) {
                 this.is_ringing = new_value;
             },
 
-            update_number_of_bells: function() {
+            update_number_of_bells: function () {
                 this.update_method_suggestions(this.method_name);
                 this.update_comp_suggestions(this.complib_id);
             },
 
-            update_peal_speed: function() {
-                this.peal_speed = parseInt(this.peal_speed_hours) * 60 + parseInt(this.peal_speed_mins);
+            update_peal_speed: function () {
+                this.peal_speed =
+                    parseInt(this.peal_speed_hours) * 60 + parseInt(this.peal_speed_mins);
             },
 
             /* METHODS RELATED TO THE USER UPDATING THE ROW_GEN CONTROLS */
-            on_stop_touch: function() {
+            on_stop_touch: function () {
                 socketio.emit("c_wheatley_stop_touch", {
-                    tower_id: window.tower_parameters.id
+                    tower_id: window.tower_parameters.id,
                 });
             },
 
-            update_method_suggestions: function(partial_method_name) {
+            update_method_suggestions: function (partial_method_name) {
                 // Store a reference to 'this' (the vue model) as a local variable, so that it can
                 // be used in the JSON get callback to set the autocomplete results.
                 var _this = this;
                 if (partial_method_name === "") {
                     this.autocomplete_options = [];
                 } else {
-                    const query_url = 'https://rsw.me.uk/blueline/methods/search.json?q='
-                        + partial_method_name
-                        + '&stage=' + (bell_circle.number_of_bells - 1)
-                        + ',' + (bell_circle.number_of_bells);
-                    $.getJSON(
-                        query_url,
-                        function(data) {
-                            // Set the method suggestions to the first 5 methods, but only if if
-                            // this response is from a query with the correct method name (this
-                            // stops jittering and bugs if the responses come back in a different
-                            // order to the queries).
-                            if (_this.method_name === data.query.q) {
-                                _this.autocomplete_options = data.results.slice(0, 5);
-                            }
+                    const query_url =
+                        "https://rsw.me.uk/blueline/methods/search.json?q=" +
+                        partial_method_name +
+                        "&stage=" +
+                        (bell_circle.number_of_bells - 1) +
+                        "," +
+                        bell_circle.number_of_bells;
+                    $.getJSON(query_url, function (data) {
+                        // Set the method suggestions to the first 5 methods, but only if if
+                        // this response is from a query with the correct method name (this
+                        // stops jittering and bugs if the responses come back in a different
+                        // order to the queries).
+                        if (_this.method_name === data.query.q) {
+                            _this.autocomplete_options = data.results.slice(0, 5);
                         }
-                    );
+                    });
                 }
             },
 
-            on_method_box_enter: function() {
+            on_method_box_enter: function () {
                 if (this.autocomplete_options.length > 0) {
                     this.send_next_method(this.autocomplete_options[0]);
                 }
             },
 
-            send_next_method: function(method) {
+            send_next_method: function (method) {
                 // Return early if there aren't any methods
                 if (this.autocomplete_options === []) {
                     console.warning("No results to send to Wheatley!");
@@ -1141,7 +1149,7 @@ $(document).ready(function() {
                 //    symbol: string    // The symbol of the call (is '-' for bobs and 's' for singles)
                 // }
                 // into what Wheatley expects (a map of indices to place notations)
-                var convert_call = function(call) {
+                var convert_call = function (call) {
                     if (call === undefined) {
                         return {};
                     }
@@ -1156,26 +1164,24 @@ $(document).ready(function() {
                 // console.log("Setting Wheatley method to " + method.title);
 
                 // Emit the socketio signal to tell Wheatley what to ring
-                socketio.emit(
-                    "c_wheatley_row_gen", {
-                        tower_id: window.tower_parameters.id,
-                        row_gen: {
-                            type: "method",
-                            title: method.title,
-                            stage: method.stage,
-                            notation: method.notation,
-                            url: method.url,
-                            bob: method.calls ? convert_call(method.calls["Bob"]) : {},
-                            single: method.calls ? convert_call(method.calls["Single"]) : {}
-                        }
-                    }
-                );
+                socketio.emit("c_wheatley_row_gen", {
+                    tower_id: window.tower_parameters.id,
+                    row_gen: {
+                        type: "method",
+                        title: method.title,
+                        stage: method.stage,
+                        notation: method.notation,
+                        url: method.url,
+                        bob: method.calls ? convert_call(method.calls["Bob"]) : {},
+                        single: method.calls ? convert_call(method.calls["Single"]) : {},
+                    },
+                });
 
                 // Clear the method name box
                 this.method_name = "";
             },
 
-            update_comp_suggestions: function(partial_comp_name) {
+            update_comp_suggestions: function (partial_comp_name) {
                 if (partial_comp_name == "") {
                     this.current_complib_comp = undefined;
                     this.complib_error = "Start typing a comp ID...";
@@ -1189,10 +1195,10 @@ $(document).ready(function() {
                 // Keep a reference to the correct 'this'
                 let _this = this;
 
-                let api_url = 'https://api.complib.org/composition/' + partial_comp_name;
-                let standard_url = 'https://complib.org/composition/' + partial_comp_name;
+                let api_url = "https://api.complib.org/composition/" + partial_comp_name;
+                let standard_url = "https://complib.org/composition/" + partial_comp_name;
                 $.getJSON(api_url)
-                    .fail(function(_evt, _jqxhr, state) {
+                    .fail(function (_evt, _jqxhr, state) {
                         _this.current_complib_comp = undefined;
                         switch (state) {
                             case "Bad Request":
@@ -1208,39 +1214,42 @@ $(document).ready(function() {
                                 console.warn("Unknown error: " + state);
                         }
                     })
-                    .done(function(data) {
-                        if (data.stage == bell_circle.number_of_bells ||
+                    .done(function (data) {
+                        if (
+                            data.stage == bell_circle.number_of_bells ||
                             data.stage == bell_circle.number_of_bells - 1
                         ) {
                             _this.current_complib_comp = {
                                 url: standard_url,
-                                title: data.derivedTitle
+                                title: data.derivedTitle,
                             };
                         } else {
                             _this.current_complib_comp = undefined;
-                            let required_tower_size = data.stage % 2 == 0 ? data.stage : data.stage + 1;
-                            _this.complib_error = "Comp needs " + required_tower_size
-                                + " bells, not " + bell_circle.number_of_bells;
+                            let required_tower_size =
+                                data.stage % 2 == 0 ? data.stage : data.stage + 1;
+                            _this.complib_error =
+                                "Comp needs " +
+                                required_tower_size +
+                                " bells, not " +
+                                bell_circle.number_of_bells;
                         }
                     });
             },
 
-            send_next_comp: function() {
+            send_next_comp: function () {
                 if (!this.current_complib_comp) {
                     return;
                 }
 
                 console.log("Setting Wheatley composition to " + this.current_complib_comp);
-                socketio.emit(
-                    "c_wheatley_row_gen", {
-                        tower_id: window.tower_parameters.id,
-                        row_gen: {
-                            type: "composition",
-                            url: this.current_complib_comp.url,
-                            title: this.current_complib_comp.title
-                        }
-                    }
-                );
+                socketio.emit("c_wheatley_row_gen", {
+                    tower_id: window.tower_parameters.id,
+                    row_gen: {
+                        type: "composition",
+                        url: this.current_complib_comp.url,
+                        title: this.current_complib_comp.title,
+                    },
+                });
             },
         },
 
@@ -1454,34 +1463,34 @@ $(document).ready(function() {
         </button>
     </div>
 </div>
-`
+`,
     }); // End Wheatley box
 
-    Vue.component('chatbox', {
-        data: function() {
+    Vue.component("chatbox", {
+        data: function () {
             return {
                 name: window.tower_parameters.cur_user_name,
-                cur_msg: '',
+                cur_msg: "",
                 messages: [],
-            }
+            };
         },
 
         props: ["unread_messages"],
 
         methods: {
-            send_msg: function() {
+            send_msg: function () {
                 // console.log('send_msg');
-                socketio.emit('c_msg_sent', {
+                socketio.emit("c_msg_sent", {
                     user: this.name,
                     email: window.tower_parameters.cur_user_email,
                     msg: this.cur_msg,
                     time: new Date(),
-                    tower_id: window.tower_parameters.id
+                    tower_id: window.tower_parameters.id,
                 });
-                this.cur_msg = '';
+                this.cur_msg = "";
             },
 
-            remove_all_unreads: function() {
+            remove_all_unreads: function () {
                 bell_circle.unread_messages = 0;
             },
         },
@@ -1551,33 +1560,33 @@ $(document).ready(function() {
         </div>
     </div>
 </div>
-`
+`,
     });
 
     // For silly CSS reasons, this needs to be it's own Vue instance
     var report_form = new Vue({
-        el: '#report_box',
+        el: "#report_box",
 
         data: {
-            report_description: '',
+            report_description: "",
             unsubmitted: true,
         },
 
         methods: {
-            send_report: function() {
-                socketio.emit('c_report', {
+            send_report: function () {
+                socketio.emit("c_report", {
                     time: new Date(),
                     user: window.tower_parameters.cur_user_name,
                     email: window.tower_parameters.cur_user_email,
                     report_description: this.report_description,
-                    messages: bell_circle.$refs.chatbox.messages
+                    messages: bell_circle.$refs.chatbox.messages,
                 });
                 this.unsubmitted = false;
 
-                setTimeout(function() {
-                    $('#report_box').modal('hide');
+                setTimeout(function () {
+                    $("#report_box").modal("hide");
                     report_form.unsubmitted = true;
-                    report_form.report_description = '';
+                    report_form.report_description = "";
                 }, 3000);
             },
         },
@@ -1622,21 +1631,24 @@ $(document).ready(function() {
         </div>
     </div>
 </div>
-`
+`,
     });
 
-    Vue.component('volume_control', {
-        data: function() {
+    Vue.component("volume_control", {
+        data: function () {
             return {
                 value: window.user_parameters.bell_volume,
-            }
+            };
         },
 
         watch: {
-            value: function(new_value) {
+            value: function (new_value) {
                 window.user_parameters.bell_volume = new_value;
-                let md = this.$root.$refs.controls.audio_type == 'Tower' ||
-                    this.$root.$refs.controls.audio_type == 'Muffled' ? 1.0 : window.user_parameters.handbell_mod;
+                let md =
+                    this.$root.$refs.controls.audio_type == "Tower" ||
+                    this.$root.$refs.controls.audio_type == "Muffled"
+                        ? 1.0
+                        : window.user_parameters.handbell_mod;
                 bell_circle.audio._volume = md * window.user_parameters.bell_volume * 0.1;
                 muffled._volume = md * window.user_parameters.bell_volume * 0.1;
             },
@@ -1661,25 +1673,38 @@ $(document).ready(function() {
         <i class="fas fa-volume-up volume_icon align-middle"></i>
     </div>
 </div>
-`
+`,
     });
 
     // user holds individual user data
-    Vue.component('user_data', {
+    Vue.component("user_data", {
+        props: ["user_id", "username", "selected"],
 
-        props: ['user_id', 'username', 'selected'],
-
-        data: function() {
+        data: function () {
             return {
-                circled_digits: ["①", "②", "③", "④", "⑤", "⑥",
-                    "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬", "⑭", "⑮", "⑯"
+                circled_digits: [
+                    "①",
+                    "②",
+                    "③",
+                    "④",
+                    "⑤",
+                    "⑥",
+                    "⑦",
+                    "⑧",
+                    "⑨",
+                    "⑩",
+                    "⑪",
+                    "⑫",
+                    "⑬",
+                    "⑭",
+                    "⑮",
+                    "⑯",
                 ],
-            }
+            };
         },
 
         computed: {
-
-            bells_assigned_to_user: function() {
+            bells_assigned_to_user: function () {
                 // console.log('updating bells_assigned');
                 // Hack to get around Vue reactivity issues:
                 // Referencing $root.number_of_bells ensures that this
@@ -1687,7 +1712,7 @@ $(document).ready(function() {
                 // which in turn ensures that it is dependent on the newly-created
                 // bell components and reacts to assignment on them.
                 this.$root.number_of_bells;
-                var bell_list = []
+                var bell_list = [];
                 try {
                     // Sometimes this fails because the bells haven't been created yet
                     // In that case, wait and try again
@@ -1697,7 +1722,7 @@ $(document).ready(function() {
                         }
                     });
                 } catch (err) {
-                    setTimeout(100, function() {
+                    setTimeout(100, function () {
                         this.$root.$refs.bells.forEach((bell, index) => {
                             if (bell.assigned_user == this.user_id) {
                                 bell_list.push(index + 1);
@@ -1705,35 +1730,32 @@ $(document).ready(function() {
                         });
                     });
                 }
-                return bell_list
+                return bell_list;
             },
 
-            assigned_bell_string: function() {
-                var output = ''
+            assigned_bell_string: function () {
+                var output = "";
                 this.bells_assigned_to_user.forEach((bell, index) => {
-                    output += this.circled_digits[bell - 1]
+                    output += this.circled_digits[bell - 1];
                 });
-                return output
+                return output;
             },
 
-            assignment_mode_active: function() {
+            assignment_mode_active: function () {
                 return this.$root.$refs.users.assignment_mode;
-            }
-
+            },
         },
 
         methods: {
-
-            select_user: function() {
+            select_user: function () {
                 if (window.tower_parameters.anonymous_user) {
-                    return
-                }; // don't do anything if not logged in
+                    return;
+                } // don't do anything if not logged in
                 if (this.$root.$refs.controls.lock_controls) {
-                    return
-                };
+                    return;
+                }
                 this.$root.$refs.users.selected_user = this.user_id;
             },
-
         },
 
         template: `
@@ -1751,23 +1773,22 @@ $(document).ready(function() {
 `,
     });
 
-
     // user_display holds functionality required for users
-    Vue.component('user_display', {
+    Vue.component("user_display", {
         // data in components should be a function, to maintain scope
-        data: function() {
+        data: function () {
             return {
                 users: [], // list of {user_id: Int, user_name: Str}
                 assignment_mode: false,
                 selected_user: null, // user_id
                 cur_user: parseInt(window.tower_parameters.cur_user_id),
                 observers: parseInt(window.tower_parameters.observers),
-            }
+            };
         },
 
         computed: {
-            cur_user_bells: function() {
-                var bell_list = []
+            cur_user_bells: function () {
+                var bell_list = [];
                 this.$root.$refs.bells.forEach((bell, index) => {
                     if (bell.assigned_user === this.cur_user) {
                         bell_list.push(index + 1);
@@ -1776,24 +1797,23 @@ $(document).ready(function() {
                 return bell_list;
             },
 
-            cur_user_name: function() {
-                var cur_username
+            cur_user_name: function () {
+                var cur_username;
                 this.users.forEach((user, index) => {
                     if (user.user_id === this.cur_user) {
                         cur_username = user.username;
                     }
                 });
-                return cur_username
+                return cur_username;
             },
         },
 
         methods: {
-
-            toggle_assignment: function() {
+            toggle_assignment: function () {
                 if (window.tower_parameters.anonymous_user) {
-                    return
-                }; // don't do anything if not logged in
-                $('#user_display_body').collapse('show');
+                    return;
+                } // don't do anything if not logged in
+                $("#user_display_body").collapse("show");
                 this.assignment_mode = !this.assignment_mode;
                 if (this.assignment_mode) {
                     this.selected_user = this.cur_user;
@@ -1802,65 +1822,64 @@ $(document).ready(function() {
                 }
             },
 
-
-            unassign_all: function() {
+            unassign_all: function () {
                 if (window.tower_parameters.anonymous_user) {
-                    return
-                }; // don't do anything if not logged in
+                    return;
+                } // don't do anything if not logged in
                 if (this.$root.$refs.controls.lock_controls) {
-                    return
-                };
+                    return;
+                }
                 if (window.tower_parameters.anonymous_user) {
-                    return
-                }; // don't do anything if not logged in
+                    return;
+                } // don't do anything if not logged in
                 for (const bell of bell_circle.$refs.bells) {
                     bell.unassign();
                 }
             },
 
-            rotate_to_assignment: function() {
+            rotate_to_assignment: function () {
                 if (window.tower_parameters.anonymous_user) {
-                    return
-                }; // don't do anything if not logged in
+                    return;
+                } // don't do anything if not logged in
                 // console.log('rotating to assignment')
                 // Don't rotate while assigning bells
                 if (this.assignment_mode) {
-                    return
-                };
+                    return;
+                }
 
                 // Don't rotate if the user has no name yet
                 if (!this.cur_user) {
-                    return
-                };
+                    return;
+                }
 
                 // console.log(this.cur_user_bells);
                 // the user has no bells; don't screw with rotation
                 if (this.cur_user_bells === []) {
                     // console.log('skipping — no assigned bells');
                     return;
-                };
+                }
                 const rotate_to = Math.min(...this.cur_user_bells);
                 this.$root.rotate(rotate_to);
             },
 
-            add_user: function(user) {
+            add_user: function (user) {
                 // console.log('adding user: ', user)
-                var flag = false
+                var flag = false;
                 this.users.forEach((u) => {
                     if (u.user_id == user.user_id) {
-                        flag = true
-                        return
-                    };
+                        flag = true;
+                        return;
+                    }
                 });
                 if (!flag) {
                     this.users.push(user);
                 }
             },
 
-            remove_user: function(user) {
+            remove_user: function (user) {
                 // console.log('removing user: ', user);
 
-                var user_index = -1
+                var user_index = -1;
                 this.users.forEach((u, index) => {
                     if (u.user_id === user.user_id) {
                         user_index = index;
@@ -1872,12 +1891,12 @@ $(document).ready(function() {
                 }
             },
 
-            get_user_name: function(user_id) {
-                var username
+            get_user_name: function (user_id) {
+                var username;
                 this.users.forEach((u, index) => {
                     if (u.user_id === user_id) {
                         username = u.username;
-                    };
+                    }
                 });
                 return username;
             },
@@ -1957,8 +1976,8 @@ $(document).ready(function() {
 `,
     }); // End user_display
 
-    Vue.component('controllers', {
-        data: function() {
+    Vue.component("controllers", {
+        data: function () {
             return {
                 hand_strike: 100,
                 back_strike: -600,
@@ -1974,93 +1993,113 @@ $(document).ready(function() {
                 controller_index: [],
                 controllers_will_ring: "",
                 bell_in_assignment_mode: null,
-                circled_digits: ["①", "②", "③", "④", "⑤", "⑥",
-                    "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬", "⑭", "⑮", "⑯"
+                circled_digits: [
+                    "①",
+                    "②",
+                    "③",
+                    "④",
+                    "⑤",
+                    "⑥",
+                    "⑦",
+                    "⑧",
+                    "⑨",
+                    "⑩",
+                    "⑪",
+                    "⑫",
+                    "⑬",
+                    "⑭",
+                    "⑮",
+                    "⑯",
                 ],
-            }
+            };
         },
 
         methods: {
-
-            control_available: function() {
+            control_available: function () {
                 return "getGamepads" in navigator;
             },
 
-            assign_cont_to_bell: function(cont) {
+            assign_cont_to_bell: function (cont) {
                 if (this.bell_in_assignment_mode) {
                     cont.bell = this.bell_in_assignment_mode;
                     this.bell_in_assignment_mode = null;
                 }
             },
 
-            ticktock_controller: function() {
+            ticktock_controller: function () {
                 if (this.rang_recently) return; // debounce
                 var nControllers = navigator.getGamepads().length;
                 for (var myCont = 0; myCont < nControllers; myCont++) {
                     if (!this.controller_index.includes(myCont)) continue;
                     var cont = navigator.getGamepads()[myCont];
-                    var curCont  = this.controller_list[myCont];
+                    var curCont = this.controller_list[myCont];
                     if (curCont) {
                         try {
                             if (Math.max.apply(null, cont.axes.map(Math.abs)) > 0) {
                                 var swing = cont.axes[2] * 2048;
                                 if (swing >= this.hand_strike && curCont.at_hand) {
                                     curCont.at_hand = !curCont.at_hand;
-                                    this.assign_cont_to_bell(curCont)
+                                    this.assign_cont_to_bell(curCont);
                                     if (curCont.bell) {
                                         bell_circle.pull_rope(curCont.bell);
                                         this.rang_recently = true;
-                                        setTimeout(()=>this.rang_recently=false, this.debouce);
+                                        setTimeout(
+                                            () => (this.rang_recently = false),
+                                            this.debouce
+                                        );
                                     }
                                 }
                                 if (swing <= this.back_strike && !curCont.at_hand) {
                                     curCont.at_hand = !curCont.at_hand;
-                                    this.assign_cont_to_bell(curCont)
+                                    this.assign_cont_to_bell(curCont);
                                     if (curCont.bell) {
                                         bell_circle.pull_rope(curCont.bell);
                                         this.rang_recently = true;
-                                        setTimeout(()=>this.rang_recently=false, this.debouce);
+                                        setTimeout(
+                                            () => (this.rang_recently = false),
+                                            this.debouce
+                                        );
                                     }
                                 }
                             }
-                        for (var i = 0; i < cont.buttons.length; i++) {
-                            if (cont.buttons[i].pressed && curCont.bell) {
+                            for (var i = 0; i < cont.buttons.length; i++) {
+                                if (cont.buttons[i].pressed && curCont.bell) {
+                                    // Determine if this controller should be treated as left- or right-handed
+                                    // If bells are assigned to current user, let b be the number of the bell under consideration:
+                                    //   1. If b is even and b-1 is also being rung by the user, it's a left-hand bell
+                                    //   2. Otherwise, it's a right-hand bell.
+                                    // If no bells are assigned to current user: Follow what's done for f&j
+                                    //
+                                    // The logic here is: Only define left & right for sensible handbell pairs
+                                    // Any bell not part of a sensible handbell pair should be able to call bob & single
+                                    //
 
-                                // Determine if this controller should be treated as left- or right-handed
-                                // If bells are assigned to current user, let b be the number of the bell under consideration:
-                                //   1. If b is even and b-1 is also being rung by the user, it's a left-hand bell
-                                //   2. Otherwise, it's a right-hand bell.
-                                // If no bells are assigned to current user: Follow what's done for f&j
-                                //
-                                // The logic here is: Only define left & right for sensible handbell pairs
-                                // Any bell not part of a sensible handbell pair should be able to call bob & single
-                                //
+                                    var left_hand =
+                                        curCont.bell === bell_circle.find_rope_by_hand(LEFT_HAND) ||
+                                        (curCont.bell % 2 == 0 &&
+                                            this.assigned_bells.includes(curCont.bell - 1));
 
-                                var left_hand =
-                                    curCont.bell === bell_circle.find_rope_by_hand(LEFT_HAND) ||
-                                    (curCont.bell % 2 == 0 && this.assigned_bells.includes(curCont.bell-1));
-
-                                if (i == 0) {
-                                    if (left_hand) {
-                                        bell_circle.make_call("Stand next");
-                                    } else {
-                                        bell_circle.make_call("Single");
-                                    }
-                                } else if (i == 1) {
-                                    if (left_hand) {
-                                        bell_circle.make_call("Go");
-                                    } else {
-                                        bell_circle.make_call("Bob");
+                                    if (i == 0) {
+                                        if (left_hand) {
+                                            bell_circle.make_call("Stand next");
+                                        } else {
+                                            bell_circle.make_call("Single");
+                                        }
+                                    } else if (i == 1) {
+                                        if (left_hand) {
+                                            bell_circle.make_call("Go");
+                                        } else {
+                                            bell_circle.make_call("Bob");
+                                        }
                                     }
                                 }
                             }
-                        }
                         } catch {}
                     }
                 }
             },
 
-            swap_controllers: function() {
+            swap_controllers: function () {
                 this.controllers_swapped = !this.controllers_swapped;
                 this.autoassign_controllers();
                 var old_notice = this.notice;
@@ -2070,58 +2109,60 @@ $(document).ready(function() {
                 }, 2000);
             },
 
-            autoassign_controllers: function() {
+            autoassign_controllers: function () {
                 if (this.controller_index.length > 2) {
                     // Do nothing: autoassignment isn't well defined with more than two controllers
-                    return
+                    return;
                 }
-                var keys =  this.controller_index;
+                var keys = this.controller_index;
                 var first = keys[0];
                 if (keys.length > 1) var second = keys[1];
                 var left_bell = bell_circle.find_rope_by_hand(LEFT_HAND);
                 var right_bell = bell_circle.find_rope_by_hand(RIGHT_HAND);
-                this.controller_list[first].bell = this.controllers_swapped && second ?
-                                                   left_bell : right_bell;
+                this.controller_list[first].bell =
+                    this.controllers_swapped && second ? left_bell : right_bell;
                 if (second) {
-                    this.controller_list[second].bell = !(this.controllers_swapped && second) ?
-                                                        left_bell : right_bell;
+                    this.controller_list[second].bell = !(this.controllers_swapped && second)
+                        ? left_bell
+                        : right_bell;
                 }
-                this.controllers_will_ring = second && left_bell ?
-                    this.circled_digits[right_bell-1] + this.circled_digits[left_bell-1] :
-                    this.circled_digits[right_bell-1];
+                this.controllers_will_ring =
+                    second && left_bell
+                        ? this.circled_digits[right_bell - 1] + this.circled_digits[left_bell - 1]
+                        : this.circled_digits[right_bell - 1];
             },
 
-            set_controllers: function() {
-              this.controller_list = [];
-              this.controller_index = [];
+            set_controllers: function () {
+                this.controller_list = [];
+                this.controller_index = [];
                 var nControllers = navigator.getGamepads().length;
                 if (nControllers == 0) {
                     window.clearInterval(this.tick_controller);
-                    return
+                    return;
                 }
 
                 for (var myCont = 0; myCont < nControllers; myCont++) {
                     var curCont = navigator.getGamepads()[myCont];
                     if (!curCont) continue;
                     var contObj = {
-                        type: '',
+                        type: "",
                         bell: null,
                         at_hand: true,
                     };
-                    if (curCont.id.includes('0ffe') && curCont.connected) {
+                    if (curCont.id.includes("0ffe") && curCont.connected) {
                         contObj.type = "ActionXL";
                         this.controller_index.push(myCont);
-                    } else if (curCont.id.includes('1234') && curCont.connected) {
+                    } else if (curCont.id.includes("1234") && curCont.connected) {
                         contObj.type = "vJoy";
-                    } else if (curCont.id.includes('2341') && curCont.connected) {
+                    } else if (curCont.id.includes("2341") && curCont.connected) {
                         contObj.type = "eBell";
                         this.controller_index.push(myCont);
                     }
                     this.controller_list[myCont] = contObj;
-                };
+                }
             },
 
-            toggle_controllers: function() {
+            toggle_controllers: function () {
                 this.active = !this.active;
                 if (this.active) {
                     this.set_controllers();
@@ -2134,22 +2175,22 @@ $(document).ready(function() {
                 }
             },
 
-            get_assigned_controller_type: function(bell) {
+            get_assigned_controller_type: function (bell) {
                 for (var key in this.controller_list) {
                     if (this.controller_list[key] && this.controller_list[key].bell == bell) {
                         return this.controller_list[key].type;
                     }
                 }
-                return "No controller"
+                return "No controller";
             },
 
-            put_bell_in_assignment_mode: function(bell) {
+            put_bell_in_assignment_mode: function (bell) {
                 // Disconnect any controllers attached to this bell already
                 this.unassign_bell(bell);
                 this.bell_in_assignment_mode = bell;
             },
 
-            unassign_bell: function(bell) {
+            unassign_bell: function (bell) {
                 this.bell_in_assignment_mode = bell; // Reactivity hack: changes what's displayed for the type
                 this.bell_in_assignment_mode = null;
                 this.controller_list.forEach((cont) => {
@@ -2161,7 +2202,7 @@ $(document).ready(function() {
         },
 
         computed: {
-            assigned_bells: function() {
+            assigned_bells: function () {
                 // Reactivity hack: make sure this changes any time assignments do
                 this.$root.$refs.users.assignment_mode;
                 var bells = [];
@@ -2181,31 +2222,33 @@ $(document).ready(function() {
                 return bells;
             },
 
-            controllers_connected: function() {
+            controllers_connected: function () {
                 var count = this.controller_index.length;
                 return count;
             },
         },
 
-        mounted: function() {
+        mounted: function () {
             // console.log('mounting mxp')
             if (this.control_available()) {
                 if (this.active) {
-
                     var instance = this; // smuggle this into the function
 
-                    $(window).on("gamepadconnected", function() {
+                    $(window).on("gamepadconnected", function () {
                         instance.has_controller = true;
                         window.clearInterval(instance.tick_controller);
-                        instance.tick_controller = window.setInterval(instance.ticktock_controller, 15);
+                        instance.tick_controller = window.setInterval(
+                            instance.ticktock_controller,
+                            15
+                        );
                         instance.set_controllers();
                         window.clearInterval(instance.check_controller);
                     });
 
-                    $(window).on("gamepaddisconnected", function() {
+                    $(window).on("gamepaddisconnected", function () {
                         window.clearInterval(instance.check_controller);
                         instance.has_controller = false;
-                        instance.check_controller = window.setInterval(function() {
+                        instance.check_controller = window.setInterval(function () {
                             for (var key in navigator.getGamepads()) {
                                 if (navigator.getGamepads()[key]) {
                                     if (!this.has_controller) $(window).trigger("gamepadconnected");
@@ -2215,7 +2258,7 @@ $(document).ready(function() {
                         instance.set_controllers();
                     });
 
-                    instance.check_controller = window.setInterval(function() {
+                    instance.check_controller = window.setInterval(function () {
                         if (navigator.getGamepads()[0]) {
                             if (!this.has_controller) $(window).trigger("gamepadconnected");
                         }
@@ -2223,10 +2266,8 @@ $(document).ready(function() {
                 } else {
                     window.clearInterval(tick_controller);
                 }
-            };
+            }
         },
-
-
 
         template: `
         <div class="card mb-3" v-if="has_controller">
@@ -2296,19 +2337,14 @@ $(document).ready(function() {
                 </li>
             </div>
         </div>
-        `
-
-
-
+        `,
     }); // End controllers
-
 
     // The master Vue application
     bell_circle = new Vue({
         el: "#bell_circle",
 
-        mounted: function() {
-
+        mounted: function () {
             /////////////////
             /* Tower setup */
             /////////////////
@@ -2317,13 +2353,13 @@ $(document).ready(function() {
             this.number_of_bells = window.tower_parameters.size;
 
             // Join the tower
-            socketio.emit('c_join', {
+            socketio.emit("c_join", {
                 tower_id: cur_tower_id,
                 user_token: window.tower_parameters.user_token,
-                anonymous_user: window.tower_parameters.anonymous_user
-            })
+                anonymous_user: window.tower_parameters.anonymous_user,
+            });
 
-            this.$nextTick(function() {
+            this.$nextTick(function () {
                 this.$refs.users.rotate_to_assignment();
             });
 
@@ -2331,54 +2367,61 @@ $(document).ready(function() {
                 // console.log('turning on keypress listening')
 
                 // Do a special thing to prevent space from pressing focused buttons
-                window.addEventListener('keyup', (e) => {
-                    this.keys_down.splice(this.keys_down.indexOf(e.key), 1)
-                    if (e.which == 32 && !$('#chat_input_box').is(':focus')) {
+                window.addEventListener("keyup", (e) => {
+                    this.keys_down.splice(this.keys_down.indexOf(e.key), 1);
+                    if (e.which == 32 && !$("#chat_input_box").is(":focus")) {
                         e.preventDefault();
                     }
                 });
 
                 $('[data-toggle="tooltip"]').tooltip();
 
-                window.addEventListener('keydown', (e) => {
+                window.addEventListener("keydown", (e) => {
                     e = e || window.event;
                     const key = e.key; // this wil be the character generated by the keypress
                     // Shift+1 produces code "Digit1"; this gets the digit itself
                     const code = e.code[e.code.length - 1];
 
                     if ($("#chat_input_box").is(":focus")) {
-                        if (key == 'Escape') {
-                            $('#chat_input_box').blur();
+                        if (key == "Escape") {
+                            $("#chat_input_box").blur();
                         } else return; // disable hotkeys when typing
                     }
 
-                    if ($("#wheatley_setting_name_box").is(":focus") ||
+                    if (
+                        $("#wheatley_setting_name_box").is(":focus") ||
                         $("#wheatley_setting_value_box").is(":focus") ||
                         $("#wheatley_comp_id_box").is(":focus") ||
                         $("#wheatley_method_name_box").is(":focus") ||
                         $("#wheatley_peal_speed_mins").is(":focus") ||
-                        $("#wheatley_peal_speed_hours").is(":focus")) {
+                        $("#wheatley_peal_speed_hours").is(":focus")
+                    ) {
                         return;
                     }
 
-                    if ($('#report_box').hasClass('show')) {
+                    if ($("#report_box").hasClass("show")) {
                         return; // disable hotkeys when the report is active
                     }
 
-
                     if (bell_circle.keys_down.includes(key)) {
-                        return
-                    };
+                        return;
+                    }
                     bell_circle.keys_down.push(key);
 
                     // Do a special thing to prevent space and the arrow keys from hitting focused elements
-                    if (e.which == 32 || e.which == 37 || e.which == 38 || e.which == 39 || e.which == 40) {
+                    if (
+                        e.which == 32 ||
+                        e.which == 37 ||
+                        e.which == 38 ||
+                        e.which == 39 ||
+                        e.which == 40
+                    ) {
                         e.preventDefault();
                     }
 
                     // Shift-S will set the bells at hand
                     if (e.shiftKey && e.which == 83) {
-                        bell_circle.set_bells_at_hand()
+                        bell_circle.set_bells_at_hand();
                     }
 
                     // The numberkeys 1-0 ring those bells, with -, = ringing E, T
@@ -2386,17 +2429,17 @@ $(document).ready(function() {
                         bell_circle.pull_rope(parseInt(key));
                     } else if (parseInt(key) == 0) {
                         bell_circle.pull_rope(10);
-                    } else if (['-'].includes(key)) {
+                    } else if (["-"].includes(key)) {
                         bell_circle.pull_rope(11);
-                    } else if (['='].includes(key)) {
+                    } else if (["="].includes(key)) {
                         bell_circle.pull_rope(12);
-                    } else if (['q'].includes(key)) {
+                    } else if (["q"].includes(key)) {
                         bell_circle.pull_rope(13);
-                    } else if (['w'].includes(key)) {
+                    } else if (["w"].includes(key)) {
                         bell_circle.pull_rope(14);
-                    } else if (['e'].includes(key)) {
+                    } else if (["e"].includes(key)) {
                         bell_circle.pull_rope(15);
-                    } else if (['r'].includes(key)) {
+                    } else if (["r"].includes(key)) {
                         bell_circle.pull_rope(16);
                     }
 
@@ -2408,69 +2451,69 @@ $(document).ready(function() {
                             bell_circle.rotate(parseInt(code));
                         } else if (parseInt(code) == 0) {
                             bell_circle.rotate(10);
-                        } else if (['_'].includes(key)) {
+                        } else if (["_"].includes(key)) {
                             bell_circle.rotate(11);
-                        } else if (['+'].includes(key)) {
+                        } else if (["+"].includes(key)) {
                             bell_circle.rotate(12);
-                        } else if (['Q'].includes(key)) {
+                        } else if (["Q"].includes(key)) {
                             bell_circle.rotate(13);
-                        } else if (['W'].includes(key)) {
+                        } else if (["W"].includes(key)) {
                             bell_circle.rotate(14);
-                        } else if (['E'].includes(key)) {
+                        } else if (["E"].includes(key)) {
                             bell_circle.rotate(15);
-                        } else if (['R'].includes(key)) {
+                        } else if (["R"].includes(key)) {
                             bell_circle.rotate(16);
                         }
                     }
 
                     // Space, j, and ArrowRight ring the bell in position n/2
-                    if ([' ', 'j', 'J', 'ArrowRight'].includes(key)) {
+                    if ([" ", "j", "J", "ArrowRight"].includes(key)) {
                         bell_circle.pull_rope_by_hand(RIGHT_HAND);
                     }
 
                     // f and ArrowLeft ring the bell in position n/2 + 1
-                    if (['f', 'F', 'ArrowLeft'].includes(key)) {
+                    if (["f", "F", "ArrowLeft"].includes(key)) {
                         bell_circle.pull_rope_by_hand(LEFT_HAND);
                     }
 
                     // Calls are: g = go; h = stop; b = bob; n = single.
-                    if (['b', 'B'].includes(key)) {
+                    if (["b", "B"].includes(key)) {
                         // console.log('calling bob');
-                        bell_circle.make_call('Bob');
+                        bell_circle.make_call("Bob");
                     }
-                    if (['n', 'N'].includes(key)) {
+                    if (["n", "N"].includes(key)) {
                         // console.log('calling single');
-                        bell_circle.make_call('Single');
+                        bell_circle.make_call("Single");
                     }
 
-                    if (['g', 'G'].includes(key)) {
+                    if (["g", "G"].includes(key)) {
                         // console.log('calling go');
-                        bell_circle.make_call('Go');
+                        bell_circle.make_call("Go");
                     }
 
-                    if (['h', 'H'].includes(key)) {
+                    if (["h", "H"].includes(key)) {
                         // console.log('calling stop');
                         bell_circle.make_call("That's all");
                     }
 
-                    if (['t', 'T'].includes(key)) {
+                    if (["t", "T"].includes(key)) {
                         // console.log('calling stand');
                         bell_circle.make_call("Stand next");
                     }
 
-                    if (['l', 'L'].includes(key)) {
+                    if (["l", "L"].includes(key)) {
                         // console.log('calling look-to');
                         bell_circle.make_call("Look to");
                     }
                 });
-            };
+            }
         },
 
         data: {
             number_of_bells: 0,
             bells: [],
             rang_bell_recently: [],
-            audio: window.tower_parameters.audio == 'Tower' ? tower : hand,
+            audio: window.tower_parameters.audio == "Tower" ? tower : hand,
             call_throttled: false,
             tower_name: window.tower_parameters.name,
             tower_id: parseInt(window.tower_parameters.id),
@@ -2484,7 +2527,7 @@ $(document).ready(function() {
 
         watch: {
             // Change the list of bells to track the current number
-            number_of_bells: function(new_count) {
+            number_of_bells: function (new_count) {
                 // console.log('changing number of bells to ' + new_count)
                 const new_bells = [];
                 //const new_users = [];
@@ -2492,7 +2535,7 @@ $(document).ready(function() {
                     // console.log('pushing bell: ' + i);
                     new_bells.push({
                         number: i,
-                        position: i
+                        position: i,
                     });
                     // console.log(new_bells);
                 }
@@ -2501,22 +2544,21 @@ $(document).ready(function() {
                 this.bells = new_bells;
                 this.rang_bell_recently = new Array(new_count).fill(false);
                 // Request the global state from the server
-                socketio.emit('c_request_global_state', {
-                    tower_id: cur_tower_id
+                socketio.emit("c_request_global_state", {
+                    tower_id: cur_tower_id,
                 });
             },
-
         },
 
         methods: {
             // the server rang a bell; find the correct one and ring it
-            ring_bell: function(bell) {
+            ring_bell: function (bell) {
                 // console.log("Ringing the " + bell)
-                this.$refs.bells[bell - 1].ring()
+                this.$refs.bells[bell - 1].ring();
             },
 
             // Trigger a specific bell to emit a ringing event
-            pull_rope: function(bell) {
+            pull_rope: function (bell) {
                 if (this.rang_bell_recently[bell - 1]) {
                     return;
                 }
@@ -2529,32 +2571,32 @@ $(document).ready(function() {
             },
 
             // Like ring_bell, but calculated by the position in the circle (respecting rotation)
-            ring_bell_by_pos: function(pos) {
+            ring_bell_by_pos: function (pos) {
                 for (bell in this.bells) {
-                    if (this.bells[bell]['position'] == pos) {
-                        this.ring_bell(this.bells[bell]['number']);
+                    if (this.bells[bell]["position"] == pos) {
+                        this.ring_bell(this.bells[bell]["number"]);
                         return true;
                     }
                 }
             },
 
-            find_rope_by_pos: function(pos) {
+            find_rope_by_pos: function (pos) {
                 for (var bell in this.bells) {
-                    if (this.bells[bell]['position'] == pos) {
+                    if (this.bells[bell]["position"] == pos) {
                         // this.pull_rope(this.bells[bell]['number']);
-                        return this.bells[bell]['number'];
+                        return this.bells[bell]["number"];
                     }
                 }
             },
 
             // Like pull_rope, but calculated by the position in the circle (respecting rotation)
-            pull_rope_by_pos: function(pos) {
+            pull_rope_by_pos: function (pos) {
                 var bell_to_pull = this.find_rope_by_pos(pos);
                 this.pull_rope(bell_to_pull);
             },
 
             // Figure out which bell is the 'left' or 'right' hand bell
-            find_rope_by_hand: function(hand) {
+            find_rope_by_hand: function (hand) {
                 // Drop out of this function if `hand` is invalid
                 if (!hand || (hand !== LEFT_HAND && hand !== RIGHT_HAND)) {
                     console.error("Unknown value of 'hand': '" + hand + "'.");
@@ -2571,9 +2613,11 @@ $(document).ready(function() {
                     }
                 }
                 // Make sure that the bells are always in ascending order
-                // The magic incantation function is necessary because JS defaults to sorting 
+                // The magic incantation function is necessary because JS defaults to sorting
                 // integers... alphabetically. No, seriously.
-                current_user_bells.sort(function(a,b){return a-b});
+                current_user_bells.sort(function (a, b) {
+                    return a - b;
+                });
 
                 /* Use these to decide which bells should be in the user's left and right hands. */
                 // CASE 1: No bells are assigned
@@ -2643,38 +2687,39 @@ $(document).ready(function() {
             },
 
             // Pull the 'left' or 'right' hand bell
-            pull_rope_by_hand: function(hand) {
+            pull_rope_by_hand: function (hand) {
                 var bell_to_ring = this.find_rope_by_hand(hand);
                 this.pull_rope(bell_to_ring);
             },
 
             // emit a call
-            make_call: function(call) {
-                if (this.$root.$refs.users.cur_user_bells.length == 0 &&
+            make_call: function (call) {
+                if (
+                    this.$root.$refs.users.cur_user_bells.length == 0 &&
                     this.$root.$refs.controls.lock_controls
                 ) {
                     // user is not allowed to make calls
                     this.$root.$refs.display.display_message(
-                        'Only hosts may make calls when not assigned to a bell.'
+                        "Only hosts may make calls when not assigned to a bell."
                     );
 
-                    return
-                };
+                    return;
+                }
                 if (this.call_throttled) {
-                    return
-                };
-                socketio.emit('c_call', {
+                    return;
+                }
+                socketio.emit("c_call", {
                     call: call,
-                    tower_id: cur_tower_id
+                    tower_id: cur_tower_id,
                 });
                 this.call_throttled = true;
                 setTimeout(() => {
-                    this.call_throttled = false
+                    this.call_throttled = false;
                 }, 500);
             },
 
             // rotate the view of the circle
-            rotate: function(newposs) {
+            rotate: function (newposs) {
                 if (newposs > this.number_of_bells) {
                     // the user tried to rotate to a bell that doesn't exist
                     return false;
@@ -2682,51 +2727,49 @@ $(document).ready(function() {
 
                 // how many positions to rotate?
                 var offset = this.number_of_bells - newposs;
-                var n_b = this.number_of_bells
+                var n_b = this.number_of_bells;
 
                 for (var bell in this.bells) {
                     // change the position of each bell
-                    var number = this.bells[bell]['number'];
-                    this.bells[bell]['position'] = (number + offset) % n_b + 1;
-                };
+                    var number = this.bells[bell]["number"];
+                    this.bells[bell]["position"] = ((number + offset) % n_b) + 1;
+                }
 
                 // We need the Vue's list to be sorted by position
-                this.bells = this.bells.sort(
-                    function(a, b) {
-                        return a['position'] - b['position'];
-                    }
-                );
-            },
-
-            set_bells_at_hand: function() {
-                if (window.tower_parameters.anonymous_user) {
-                    return
-                }; // don't do anything if not logged in
-                // console.log('setting all bells at hand')
-                socketio.emit('c_set_bells', {
-                    tower_id: cur_tower_id
+                this.bells = this.bells.sort(function (a, b) {
+                    return a["position"] - b["position"];
                 });
             },
 
-            toggle_controls: function() {
-                $('#help').collapse('hide');
+            set_bells_at_hand: function () {
+                if (window.tower_parameters.anonymous_user) {
+                    return;
+                } // don't do anything if not logged in
+                // console.log('setting all bells at hand')
+                socketio.emit("c_set_bells", {
+                    tower_id: cur_tower_id,
+                });
+            },
+
+            toggle_controls: function () {
+                $("#help").collapse("hide");
                 this.hidden_help = true;
                 this.hidden_sidebar = !this.hidden_sidebar;
             },
 
-            toggle_help: function() {
+            toggle_help: function () {
                 if (window.tower_parameters.observer) {
-                    return
+                    return;
                 } // don't do anything if in listener mode
-                $('div.bell_circle_col').toggleClass('background');
-                $('#tower_controls').collapse('hide');
+                $("div.bell_circle_col").toggleClass("background");
+                $("#tower_controls").collapse("hide");
                 this.hidden_sidebar = true;
                 this.hidden_help = !this.hidden_help;
             },
 
-            copy_id: function() {
+            copy_id: function () {
                 setTimeout(() => {
-                    $('#id_clipboard_tooltip').tooltip('hide')
+                    $("#id_clipboard_tooltip").tooltip("hide");
                 }, 1000);
                 var dummy = document.createElement("textarea");
                 document.body.appendChild(dummy);
@@ -2736,15 +2779,15 @@ $(document).ready(function() {
                 document.body.removeChild(dummy);
             },
 
-            toggle_bookmark: function() {
-                socketio.emit('c_toggle_bookmark', {
+            toggle_bookmark: function () {
+                socketio.emit("c_toggle_bookmark", {
                     tower_id: cur_tower_id,
-                    user_token: window.tower_parameters.user_token
+                    user_token: window.tower_parameters.user_token,
                 });
                 this.bookmarked = !this.bookmarked;
             },
 
-            leave_tower: function() {
+            leave_tower: function () {
                 leave_room();
             },
         },
@@ -2923,6 +2966,6 @@ $(document).ready(function() {
         <!-- row -->
     </div>
 </div>
-`
+`,
     }); // end Vue bell_circle
 }); // end document.ready
