@@ -2870,7 +2870,8 @@ $(document).ready(function() {
                 <tower_controls ref="controls"></tower_controls>
                 <template v-if="!window.tower_parameters.anonymous_user
                              && !window.tower_parameters.listen_link">
-                    <div class="row pb-0 flex-grow-1">
+                    <div class="row pb-0 flex-grow-1"
+                        v-if="'getGamepads' in navigator">
                         <div class="col flex-grow-1">
                             <controllers ref="controllers"></controllers>
                         </div>
