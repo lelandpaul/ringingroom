@@ -1962,7 +1962,7 @@ $(document).ready(function() {
             return {
                 hand_strike: 100,
                 back_strike: -600,
-                debounce: 250,
+                debounce: 600,
                 rang_recently: false,
                 has_controller: false,
                 check_controller: null,
