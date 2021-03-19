@@ -6,6 +6,9 @@
 const LEFT_HAND = "left";
 const RIGHT_HAND = "right";
 
+// Static config
+const WHEATLEY_MAX_METHOD_SUGGESTIONS = 8;
+
 // Don't log unless needed
 var logger = function() {
     var oldConsoleLog = null;
@@ -1111,7 +1114,10 @@ $(document).ready(function() {
                             // stops jittering and bugs if the responses come back in a different
                             // order to the queries).
                             if (_this.method_name === data.query.q) {
-                                _this.autocomplete_options = data.results.slice(0, 5);
+                                _this.autocomplete_options = data.results.slice(
+                                    0,
+                                    WHEATLEY_MAX_METHOD_SUGGESTIONS
+                                );
                             }
                         }
                     );
