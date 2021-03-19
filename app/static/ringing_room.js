@@ -1121,12 +1121,11 @@ $(document).ready(function () {
                         // Set the method suggestions to the first 5 methods, but only if if
                         // this response is from a query with the correct method name (this
                         // stops jittering and bugs if the responses come back in a different
-                            if (_this.method_name === data.query.q) {
-                                _this.autocomplete_options = data.results.slice(
-                                    0,
-                                    WHEATLEY_MAX_METHOD_SUGGESTIONS
-                                );
-                            }
+                        if (_this.method_name === data.query.q) {
+                            _this.autocomplete_options = data.results.slice(
+                                0,
+                                WHEATLEY_MAX_METHOD_SUGGESTIONS
+                            );
                         }
                     });
                 }
