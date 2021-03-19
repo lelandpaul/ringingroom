@@ -1,4 +1,4 @@
-const darkSwitch = document.getElementById('darkSwitch');
+var darkSwitch = document.getElementById('darkSwitch');
 window.addEventListener('load', () => {
   if (darkSwitch) {
     initTheme();
