@@ -6,6 +6,9 @@
 const LEFT_HAND = "left";
 const RIGHT_HAND = "right";
 
+// Static config
+const WHEATLEY_MAX_METHOD_SUGGESTIONS = 8;
+
 // Don't log unless needed
 var logger = (function () {
     var oldConsoleLog = null;
@@ -1118,9 +1121,12 @@ $(document).ready(function () {
                         // Set the method suggestions to the first 5 methods, but only if if
                         // this response is from a query with the correct method name (this
                         // stops jittering and bugs if the responses come back in a different
-                        // order to the queries).
-                        if (_this.method_name === data.query.q) {
-                            _this.autocomplete_options = data.results.slice(0, 5);
+                            if (_this.method_name === data.query.q) {
+                                _this.autocomplete_options = data.results.slice(
+                                    0,
+                                    WHEATLEY_MAX_METHOD_SUGGESTIONS
+                                );
+                            }
                         }
                     });
                 }
@@ -2094,7 +2100,8 @@ $(document).ready(function () {
                                     }
                                 }
                             }
-                        } catch {}
+
+                        } catch (err) {}
                     }
                 }
             },
