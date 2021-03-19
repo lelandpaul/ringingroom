@@ -2055,7 +2055,7 @@ $(document).ready(function() {
                                 }
                             }
                         }
-                        } catch {}
+                        } catch (err) {}
                     }
                 }
             },
