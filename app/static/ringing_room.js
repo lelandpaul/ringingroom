@@ -1737,6 +1737,7 @@ $(document).ready(function () {
             },
 
             kickable: function() {
+                if (this.assignment_mode_active) return false;
                 if (this.$root.$refs.controls.lock_controls) return false;
                 if (!this.$root.$refs.controls.host_mode) return false;
                 if (this.user_id === parseInt(window.tower_parameters.cur_user_id)) return false;
