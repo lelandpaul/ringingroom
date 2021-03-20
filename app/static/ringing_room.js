@@ -1673,6 +1673,7 @@ $(document).ready(function () {
 
         data: function () {
             return {
+                kicking: false,
                 circled_digits: [
                     "①",
                     "②",
@@ -1758,6 +1759,12 @@ $(document).ready(function () {
             },
 
             kick_user: function(){
+                if (!this.kicking) {
+                    console.log('marking kicking');
+                    this.kicking = true;
+                    setTimeout(()=>this.kicking = false, 2000);
+                    return
+                }
                 socketio.emit('c_kick_user', { tower_id: cur_tower_id,
                                                user_id: this.user_id });
             }
@@ -1778,7 +1785,9 @@ $(document).ready(function () {
             v-if="kickable"
             @click="kick_user"
             >
-            <i class="far fa-window-close"></i>
+            <small style="vertical-align: text-bottom;" v-if="kicking">Sure?</small>
+            <i v-if="!kicking" class="far fa-window-close"></i>
+            <i v-if="kicking" style="color: #b2276e;" class="fas fa-window-close"></i>
         </span>
 </li>
 `,
