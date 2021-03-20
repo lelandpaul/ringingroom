@@ -4,6 +4,7 @@
 
 body {
   overflow-x: hidden;
+  height: 125vh;
 }
 
 
@@ -186,26 +187,10 @@ input[type=range]::slider-thumb {
     z-index:-1;
 }
 
-.bell {
-    padding: 0;
-    white-space: nowrap;
-    z-index: 1;
-    overflow: visible;
-    width: 10rem;
-}
-
 .bell.no_ring img {
     cursor: unset;
 }
 
-.user_cartouche{
-    max-width: 6rem;
-}
-
-.bell_metadata button.btn {
-    font-size: 0.75rem;
-    padding: 1% 5%;
-}
 
 .unclickable_div {
     pointer-events: none;
@@ -224,12 +209,24 @@ input[type=range]::slider-thumb {
     border-width: 0;
 }
 
+.left span.unassign {
+    margin-right: -2px;
+}
+.right span.unassign {
+    margin-left: -2px;
+}
+
+.btn_number {
+    min-width: max-content;
+}
+
 .btn.unassign:hover {
 }
 
 .btn_number, .btn_unassign {
     z-index: 100;
     width: 1.75rem;
+    max-width: 1.75rem;
 }
 
 .btn_number:hover {
@@ -281,14 +278,21 @@ input[type=range]::slider-thumb {
 .btn_assigned_user {
     text-overflow: ellipsis;
     overflow: hidden;
-    width: 100%;
+    width: 6rem;
+    min-width: 6rem;
+    direction: ltr;
+}
+
+.bell_metadata button.btn {
+    font-size: 0.75rem;
+    padding: 1% 5%;
 }
 
 .assigned_user {
-    width: 100%;
+    width: 6rem;
     text-overflow: ellipsis;
     overflow: hidden;
-      cursor: pointer;
+    cursor: pointer;
 }
 
 .bell_metadata [class^="col-"] {
@@ -299,28 +303,64 @@ input[type=range]::slider-thumb {
     cursor: pointer;
 }
 
+
 .bell_img.assignment_mode{
     opacity: 0.4;
-}
-
-.assign {
-    width: max-content;
 }
 
 .assignment_active {
     cursor: pointer;
 }
 
-.handbell .bell_img {
-  -webkit-transform: scale(1.5) translateY(-10%);
-  transform: scale(1.5) translateY(-10%);
-
+.user_cartouche{
+    width: 6rem;
+    min-width: 6rem;
+    height: 2rem;
+    display: flex;
 }
 
-.handbell.left_side .bell_img {
-  -webkit-transform: scale(1.5) scaleX(-1) translateY(-10%);
-  transform: scale(1.5) scaleX(-1) translateY(-10%);
+
+.bell {
+    padding: 0;
+    white-space: nowrap;
+    z-index: 1;
+    overflow: visible;
+    width: 10rem;
+    display: flex;
+    flex-direction: row;
+
+    &.handbell {
+        align-items: flex-end;
+        justify-content: flex-start;
+        &.right {
+            flex-direction: row-reverse;
+            .bell_img {
+                transform: scaleX(-1);
+            }
+        }
+    }
+
+    &.towerbell {
+        justify-content: flex-end;
+        align-items: flex-end;
+        &.left {
+            flex-direction: row;
+        }
+        &.right {
+            flex-direction: row-reverse;
+        }
+        &.top{
+            align-items: flex-start;
+        }
+    }
+
+    &.left .user_cartouche{
+        direction: rtl;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+    }
 }
+
 
 /* Chatbox */
 

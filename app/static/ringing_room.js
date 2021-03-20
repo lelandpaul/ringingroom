@@ -440,96 +440,77 @@ $(document).ready(function () {
 
         template: `
 <div class="bell unclickable_div"
-     :class="[left_side ? 'left_side' : '',
-              image_prefix === 'h-' ? 'handbell' : '',
-              top_side ? 'top_side' : '',
-              window.tower_parameters.anonymous_user ? 'no_ring' : '']">
-    <div class="row unclickable_div"
-         :class="[left_side ? 'flex-row-reverse' :  '',
-                 top_side ? 'align-items-start' : 'align-items-end']">
-        <img @click='emit_ringing_event'
-             class="bell_img clickable"
-             :class="[assignment_mode ? 'assignment_mode' : '']"
-             :src="'static/images/' +
-                   image_prefix +
-                   (stroke ? images[0] : images[1]) +
-                   (number == 1 && stroke ? '-treble' : '') +
-                   '.png'"
-             />
-        <div class="bell_metadata clickable">
-            <template v-if="left_side">
-                <div class="btn-group user_cartouche">
-                    <button class="btn btn-sm btn_unassign"
-                            :class="[number == 1 ? 'treble' : '',
-                                     number == 1 ? 'btn-primary' : 'btn-outline-secondary']"
-                            v-if="assignment_mode && assigned_user &&
-                            !(assigned_user!==cur_user && $root.$refs.controls.lock_controls)"
-                            @click="unassign">
-                        <span class="unassign">
-                            <i class="fas fa-window-close"></i>
-                        </span>
-                    </button>
-                    <button class="btn btn-small btn_assigned_user"
-                            :class="[number == 1 ? 'treble' : '',
-                                     number == 1 ? 'btn-primary' : 'btn-outline-secondary',
-                                     assigned_user ? 'disabled' : '',
-                                     assigned_user==cur_user ? 'cur_user' :'',
-                                     assignment_mode ? '' : 'disabled']"
-                            @click="assign_user"
-                            v-if="assignment_mode || assigned_user">
-                        <span class="assigned_user">
-                            [[ (assignment_mode) ?
-                                ((assigned_user) ? assigned_user_name : '(none)')
-                                : assigned_user_name ]]
-                        </span>
-                    </button>
-                    <button class='btn btn-sm btn_number'
-                            :class="[number == 1 ? 'treble' : 'active',
-                                     number == 1 ? 'btn-primary' : 'btn-outline-secondary',
-                                     assigned_user == cur_user ? 'cur_user' : '']"
-                            style="cursor: inherit;">
-                        <span class="number"> [[number]] </span>
-                    </button>
-                </div>
-            </template>
-            <template v-else>
-                <div class="btn-group user_cartouche">
-                    <button class='btn btn-sm btn_number'
-                            :class="[number == 1 ? 'treble' : 'active',
-                                     number == 1 ? 'btn-primary' : 'btn-outline-secondary',
-                                     assigned_user == cur_user ? 'cur_user' : '']"
-                            style="cursor: inherit;">
-                        <span class="number">[[number]]</span>
-                    </button>
-                    <button class="btn btn-small btn_assigned_user"
-                            :class="[number == 1 ? 'treble' : '',
-                                     number == 1 ? 'btn-primary' : 'btn-outline-secondary',
-                                     assigned_user==cur_user ? 'cur_user' :'',
-                                     assigned_user ? 'disabled' : '',
-                                     assignment_mode ? '' : 'disabled']"
-                            @click="assign_user"
-                            v-if="assignment_mode || assigned_user"
-                            >
-                        <span class="assigned_user_name">
-                            [[ (assignment_mode) ?
-                               ((assigned_user) ? assigned_user_name : '(none)')
-                               : assigned_user_name ]]
-                        </span>
-                    </button>
-                    <button class="btn btn-sm btn_unassign"
-                            :class="[number == 1 ? 'treble' : '',
-                                     number == 1 ? 'btn-primary' : 'btn-outline-secondary']"
-                            v-if="assignment_mode && assigned_user &&
-                                  !(assigned_user!==cur_user && $root.$refs.controls.lock_controls)"
-                                  @click="unassign">
-                        <span class="unassign">
-                            <i class="fas fa-window-close"></i>
-                        </span>
-                    </button>
-                </div>
-            </template>
-        </div>
+        :class="[left_side ? 'left' : 'right',
+                top_side ? 'top' : 'bottom',
+                image_prefix === 'h-' ? 'handbell' : 'towerbell',
+                window.tower_parameters.anonymous_user ? 'no_ring' : '']">
+    <div class="btn-group user_cartouche clickable">
+        <template v-if="!left_side">
+            <button class="btn btn-sm btn_number"
+                    :class="[number == 1 ? 'treble' : 'active',
+                             number == 1 ? 'btn-primary' : 'btn-outline-secondary',
+                             assigned_user == cur_user ? 'cur_user' : '']"
+                    style="cursor: inherit;">
+                <span class="number"> [[number]] </span>
+            </button>
+        </template>
+        <template v-else>
+            <button class="btn btn-sm btn_unassign"
+                    :class="[number == 1 ? 'treble' : '',
+                             number == 1 ? 'btn-primary' : 'btn-outline-secondary']"
+                    v-if="assignment_mode && assigned_user &&
+                    !(assigned_user!==cur_user && $root.$refs.controls.lock_controls)"
+                    @click="unassign">
+                <span class="unassign">
+                    <i class="fas fa-window-close"></i>
+                </span>
+            </button>
+        </template>
+        <button class="btn btn-sm btn_assigned_user"
+                :class="[number == 1 ? 'treble' : '',
+                         number == 1 ? 'btn-primary' : 'btn-outline-secondary',
+                         assigned_user ? 'disabled' : '',
+                         assigned_user==cur_user ? 'cur_user' :'',
+                         assignment_mode ? '' : 'disabled']"
+                @click="assign_user"
+                v-if="assignment_mode || assigned_user">
+            <span class="assigned_user">
+                [[ (assignment_mode) ?
+                    ((assigned_user) ? assigned_user_name : '(none)')
+                    : assigned_user_name ]]
+            </span>
+        </button>
+        <template v-if="left_side">
+            <button class="btn btn-sm btn_number"
+                    :class="[number == 1 ? 'treble' : 'active',
+                             number == 1 ? 'btn-primary' : 'btn-outline-secondary',
+                             assigned_user == cur_user ? 'cur_user' : '']"
+                    style="cursor: inherit;">
+                <span class="number"> [[number]] </span>
+            </button>
+        </template>
+        <template v-else>
+            <button class="btn btn-sm btn_unassign"
+                    :class="[number == 1 ? 'treble' : '',
+                             number == 1 ? 'btn-primary' : 'btn-outline-secondary']"
+                    v-if="assignment_mode && assigned_user &&
+                    !(assigned_user!==cur_user && $root.$refs.controls.lock_controls)"
+                    @click="unassign">
+                <span class="unassign">
+                    <i class="fas fa-window-close"></i>
+                </span>
+            </button>
+        </template>
     </div>
+    <img @click='emit_ringing_event'
+         class="bell_img clickable"
+         :class="[assignment_mode ? 'assignment_mode' : '']"
+         :src="'static/images/' +
+               image_prefix +
+               (stroke ? images[0] : images[1]) +
+               (number == 1 && stroke ? '-treble' : '') +
+               '.png'"
+         />
 </div>
 `,
     }); // End bell_rope component

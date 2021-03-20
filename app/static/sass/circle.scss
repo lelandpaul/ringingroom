@@ -30,13 +30,13 @@
 
 	@for $i from 1 through $item-count {
       &:nth-of-type(#{$i}) {
-        &.left_side {
-            transform: translate(-50%,-50%)
+        &.left {
+            transform: translate(-50%,-60%)
                        rotate($rot * 1deg) 
                        translate($circle-size / 2) 
                        rotate($rot * -1deg)
                        translate(-50%,15%);
-            &.top_side {
+            &.top {
                 transform: translate(-50%,-50%)
                            rotate($rot * 1deg) 
                            translate($circle-size / 2) 
@@ -45,12 +45,12 @@
             }
         }
         transform: 
-          translate(-50%, -50%)
+          translate(-50%, -60%)
           rotate($rot * 1deg) 
           translate($circle-size / 2) 
           rotate($rot * -1deg)
           translate(50%,15%);
-            &.top_side {
+            &.top {
                 transform: translate(-50%,-50%)
                            rotate($rot * 1deg) 
                            translate($circle-size / 2) 
@@ -116,23 +116,22 @@
     @supports (width: max(5px,5px)){
         @include bell_circle(20rem,50vw,max(30vh,15rem));
     }
-    .bell_metadata {
-        margin-left: -0.5rem;
-        margin-right: -0.5rem;
+    .handbell .bell_img {
+        height: 5rem;
+        width: 5rem;
     }
-    .handbell .bell_metadata {
-        margin-left: 0.1rem;
-        margin-right: 0.1rem;
+    .towerbell .bell_img {
+        height: 7rem;
     }
-    .bell_img {
-        width: 2.25rem;
-    }
-    .handbell .bell_img{
-        width: 3rem;
-    }
-    .fourteen .bell:not(.handbell) .bell_img, 
-    .sixteen .bell:not(.handbell) .bell_img {
-        width: 1.5rem;
+    .twelve, .fourteen, .sixteen {
+        .handbell .bell_img {
+            height: 4rem;
+            width: 4rem;
+        }
+
+        .towerbell .bell_img {
+            height: 5rem;
+        }
     }
 }
 
@@ -141,28 +140,32 @@
     @supports (width: max(5px,5px)){
         @include bell_circle(25rem,50vw,max(35vh,20rem));
     }
-    .bell_img {
-        width: 3rem;
-    }
-    .handbell .bell_img{
-        width: 3.5rem;
-    }
 }
 
 @include media-breakpoint-up(md) {
-    @include bell_circle(35rem,50vw, 40vh);
+    @include bell_circle(30rem,50vw, 40vh);
     @supports (width: max(5px,5px)){
-        @include bell_circle(35rem,50vw,max(40vh,24rem));
+        @include bell_circle(30rem,50vw,max(40vh,24rem));
     }
-    .bell_img {
-        width: 3.5rem;
+    .bell .handbell {
+        justify-content: flex-end;
     }
-    .handbell .bell_img{
-        width: 4.5rem;
+    .handbell .bell_img {
+        height: 8rem;
+        width: 8rem;
     }
-    .fourteen .bell:not(.handbell) .bell_img, 
-    .sixteen .bell:not(.handbell) .bell_img {
-        width: 2rem;
+    .towerbell .bell_img {
+        height: 10rem;
+    }
+    .twelve, .fourteen, .sixteen {
+        .handbell .bell_img {
+            height: 5rem;
+            width: 5rem;
+        }
+
+        .towerbell .bell_img {
+            height: 7rem;
+        }
     }
 }
 
@@ -171,41 +174,36 @@
     @supports (width: max(5px,5px)){
         @include bell_circle(28rem,32vw, max(24rem,50vh));
     }
-    .twelve .bell_img {
-        width: 2.5rem;
+    .towerbell .bell_img {
+        height: 10rem;
     }
-    .bell_metadata {
-        margin-left: -0.75rem;
-        margin-right: -0.75rem;
+    .twelve, .fourteen {
+        .handbell .bell_img {
+            height: 6rem;
+            width: 6rem;
+        }
+
+        .towerbell .bell_img {
+            height: 7rem;
+        }
     }
-    .handbell .bell_metadata {
-        margin-left: 0.1rem;
-        margin-right: 0.1rem;
-    }
-    .handbell .bell_img{
-        width: 4rem;
-    }
-    .bell .bell_metadata button.btn {
-        font-size: 1rem;
-    }
-    .bell .user_cartouche {
-       max-width: 14rem; 
+
+    .sixteen .handbell .bell_img {
+        height: 5rem;
+        width: 5rem;
     }
 }
 
 @include media-breakpoint-up(xl) {
-    @include bell_circle(40rem,30vw,50vh);
+    @include bell_circle(34rem,30vw,50vh);
     @supports (width: max(5px,5px)){
-        @include bell_circle(40rem,30vw,max(27rem,50vh));
+        @include bell_circle(34rem,30vw,max(27rem,50vh));
     }
-    .handbell .bell_img{
-        width: 10rem;
+    .twelve .towerbell .bell_img {
+        height: 10rem;
     }
-    .handbell .bell_img{
-        width: 4rem;
-    }
-    .fourteen .bell:not(.handbell) .bell_img, 
-    .sixteen .bell:not(.handbell) .bell_img {
-        width: 2.5rem;
+    .sixteen .handbell .bell_img {
+        height: 6rem;
+        width: 6rem;
     }
 }
