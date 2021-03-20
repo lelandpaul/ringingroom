@@ -299,7 +299,14 @@ $(document).ready(function () {
             },
 
             left_side: function () {
+                
                 if (this.position == 1) {
+                    return false;
+                }
+                if (window.tower_parameters.anticlockwise) {
+                    if (this.position >= this.number_of_bells / 2 + 1) {
+                        return true;
+                    }
                     return false;
                 }
                 if (this.position <= this.number_of_bells / 2 + 1) {
@@ -308,7 +315,37 @@ $(document).ready(function () {
                 return false;
             },
 
+            top_side_anticlockwise: function() {
+                if (this.number_of_bells === 4 && 2 <= this.position <= 3) {
+                    return true;
+                }
+                if (this.number_of_bells === 5 && 2 <= this.position && this.position <= 5) {
+                    return true;
+                }
+                if (this.number_of_bells === 6 && (this.position === 3 || this.position === 4)) {
+                    return true;
+                }
+                if (this.number_of_bells === 8 && 3 <= this.position && this.position <= 6) {
+                    return true;
+                }
+                if (this.number_of_bells === 10 && this.position >= 4 && this.position <= 7) {
+                    return true;
+                }
+                if (this.number_of_bells === 12 && this.position >= 4 && this.position <= 9) {
+                    return true;
+                }
+                if (this.number_of_bells === 14 && this.position >= 5 && this.position <= 10) {
+                    return true;
+                }
+                if (this.number_of_bells === 16 && this.position >= 5 && this.position <= 12) {
+                    return true;
+                }
+            },
+
             top_side: function () {
+                if (window.tower_parameters.anticlockwise) {
+                    return this.top_side_anticlockwise;
+                }
                 if (this.number_of_bells === 4 && this.position >= 3) {
                     return true;
                 }
@@ -2511,6 +2548,7 @@ $(document).ready(function () {
             unread_messages: 0,
             host_mode: window.tower_parameters.host_mode,
             bookmarked: window.tower_parameters.bookmarked,
+            anticlockwise: window.tower_parameters.anticlockwise,
         },
 
         watch: {
@@ -2936,7 +2974,8 @@ $(document).ready(function () {
                                 number_of_bells == 10 ? 'ten'      : '',
                                 number_of_bells == 12 ? 'twelve'   : '',
                                 number_of_bells == 14 ? 'fourteen' : '',
-                                number_of_bells == 16 ? 'sixteen'  : '']">
+                                number_of_bells == 16 ? 'sixteen'  : '',
+                                anticlockwise ? 'anticlockwise' : '']">
                 <call_display v-bind:audio="audio" ref="display"></call_display>
                 <focus_display ref="focus"></focus_display>
                 <bell_rope v-for="bell in bells"
