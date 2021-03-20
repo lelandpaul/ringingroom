@@ -2014,6 +2014,7 @@ $(document).ready(function () {
 
             ticktock_controller: function () {
                 if (this.rang_recently) return; // debounce
+                if (!document.hasFocus()) return; // don't ring if window is unfocused
                 var nControllers = navigator.getGamepads().length;
                 for (var myCont = 0; myCont < nControllers; myCont++) {
                     if (!this.controller_index.includes(myCont)) continue;
