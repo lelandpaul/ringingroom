@@ -214,9 +214,12 @@ def tower_settings(tower_id):
     if form.validate_on_submit():
         # Set host-mode
         tower.host_mode_enabled = form.host_mode_enabled.data
+        # set additional tower sizes
         tower.additional_sizes_enabled = form.additional_sizes_enabled.data
-        print("form half_muffled is", form.half_muffled.data)
+        # set half-muffled
         tower.half_muffled = form.half_muffled.data
+        # set anticlockwise
+        tower.anticlockwise = form.anticlockwise.data
 
         # ===== DEAL WITH WHEATLEY POTENTIALLY BEING ENABLED OR DISABLED =====
         wheatley_enabled = form.wheatley_enabled.data
@@ -277,6 +280,7 @@ def tower_settings(tower_id):
             else:
                 host.remove_host(tower)
             form.remove_host.data =''
+
         db.session.commit()
     if delete_form.delete.data and delete_form.validate_on_submit():
         rels = UserTowerRelation.query.filter_by(tower=tower_db)
@@ -290,6 +294,7 @@ def tower_settings(tower_id):
     form.host_mode_enabled.data = tower.host_mode_enabled
     form.additional_sizes_enabled.data = tower.additional_sizes_enabled
     form.half_muffled.data = tower_db.half_muffled
+    form.anticlockwise.data = tower_db.anticlockwise
     form.wheatley_enabled.data = tower.wheatley.enabled
     return render_template('tower_settings.html',
                            form=form,
