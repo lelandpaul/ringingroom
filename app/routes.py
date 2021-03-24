@@ -361,3 +361,8 @@ def reset_password(token):
 @app.route('/privacy', methods=['GET'])
 def privacy_policy():
     return render_template('privacy_policy.html')
+
+@app.route('/survey', methods=['GET'])
+def survey():
+    return redirect('https://lelandpaul.com', code=302)
+
