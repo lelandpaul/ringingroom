@@ -53,6 +53,14 @@ class User(UserMixin, db.Model):
             return None
         return user
 
+    @property
+    def badge(self):
+        try:
+            return { 0: 'badge-tower.png',
+                     1: 'badge-hand.png'}[self.donation_badge]
+        except KeyError:
+            return None
+
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
