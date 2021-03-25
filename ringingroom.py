@@ -17,6 +17,14 @@ def make_shell_context():
             't': TowerDB.query.first(),
             'donated': add_donation_thank_you}
 
+cur_user = None
+def get_user_by_email(email):
+    user = User.query.filter_by(email=email).first()
+    if user is None:
+        return "Not found"
+    cur_user = user
+    return cur_user
+
 def add_donation_thank_you(email):
     user = User.query.filter_by(email=email).first()
     if not user:
@@ -28,6 +36,7 @@ def add_donation_thank_you(email):
     user.donation_thank_you = name
     db.session.commit()
     return("Done.")
+
 
 
 if __name__ == '__main__':
