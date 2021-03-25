@@ -476,7 +476,8 @@ class Tower:
     @property
     def user_json(self):
         # Returns an object appropriate for sending with s_set_userlist
-        return [{'user_id': id, 'username': username} for id, username in self._users.items()]
+        return [{'user_id': id, 'username': username, 'badge': User.query.get(id).badge} 
+                for id, username in self._users.items()]
 
     @property
     def host_mode(self):

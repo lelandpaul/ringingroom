@@ -81,12 +81,15 @@ def tower(tower_id, decorator=None):
 
     print('TOWER SIZES: ', tower.sizes_available)
 
+    print('BADGE:', current_user.badge)
+
     # Pass in both the tower and the user_name
     return render_template('ringing_room.html',
                             tower = tower,
                             user_id = '' if current_user.is_anonymous else current_user.id,
                             user_name = '' if current_user.is_anonymous else current_user.username,
                             user_email = '' if current_user.is_anonymous else current_user.email,
+                            user_badge = None if current_user.is_anonymous else current_user.badge,
                             server_ip=get_server_ip(tower_id),
                             user_token = user_token,
                             host_permissions = current_user.check_permissions(tower_id,'host')\

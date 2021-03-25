@@ -79,12 +79,13 @@ socketio.on("s_bell_rung", function (msg, cb) {
 
 // Userlist was set
 socketio.on("s_set_userlist", function (msg, cb) {
-    // console.log('s_set_userlist: ' + msg.user_list);
+    // console.log('s_set_userlist: ',  msg.user_list);
     bell_circle.$refs.users.user_names = msg.user_list;
     msg.user_list.forEach((user, index) => {
         bell_circle.$refs.users.add_user({
             user_id: parseInt(user.user_id),
             username: user.username,
+            badge: user.badge,
         });
     });
 });
@@ -1683,7 +1684,7 @@ $(document).ready(function () {
 
     // user holds individual user data
     Vue.component("user_data", {
-        props: ["user_id", "username", "selected"],
+        props: ["user_id", "username", "badge", "selected"],
 
         data: function () {
             return {
@@ -1770,6 +1771,9 @@ $(document).ready(function () {
              clickable: assignment_mode_active}"
     @click="select_user"
     >
+    <img v-if="badge" 
+         v-bind:class="{invert_colors: selected}"
+         class="mt-n1 mr-1" width=30 height=30 v-bind:src="'/static/images/' + badge"/>
     [[ username ]]
         <span id="user_assigned_bells" class="float-right pt-1" style="font-size: smaller;">
               [[assigned_bell_string]]
@@ -1787,6 +1791,7 @@ $(document).ready(function () {
                 assignment_mode: false,
                 selected_user: null, // user_id
                 cur_user: parseInt(window.tower_parameters.cur_user_id),
+                cur_user_badge: window.tower_parameters.cur_user_badge,
                 observers: parseInt(window.tower_parameters.observers),
             };
         },
@@ -1960,6 +1965,7 @@ $(document).ready(function () {
                    v-if="u.user_id === cur_user && !window.tower_parameters.anonymous_user"
                    :user_id="cur_user"
                    :username="cur_user_name"
+                   :badge="cur_user_badge"
                    :selected="selected_user === cur_user && assignment_mode"
                    class="cur_user"
                    ref="cur_user_data"
@@ -1972,6 +1978,7 @@ $(document).ready(function () {
               v-if="u.user_id != cur_user"
               :user_id="u.user_id"
               :username="u.username"
+              :badge="u.badge"
               :selected="selected_user === u.user_id && assignment_mode"
               ref="user_data"
               :id="cur_user"
