@@ -364,5 +364,5 @@ def privacy_policy():
 
 @app.route('/survey', methods=['GET'])
 def survey():
-    return redirect('https://lelandpaul.com', code=302)
+    return redirect('https://forms.gle/2YrTi2Qt8ptGo7nr7', code=302)
 
