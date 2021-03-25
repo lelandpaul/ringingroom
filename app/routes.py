@@ -113,7 +113,10 @@ def contact():
 
 @app.route('/donate')
 def donate():
-    return render_template('donate.html')
+    patrons = User.query.filter(User.donation_thank_you != None).all()
+    patrons.sort(key=lambda u: u.donation_thank_you)
+    return render_template('donate.html',
+                            patrons=patrons)
 
 @app.route('/blog')
 def blog():

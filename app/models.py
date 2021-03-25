@@ -23,6 +23,8 @@ class User(UserMixin, db.Model):
     joined = db.Column(db.Date, default=date.today)
     token = db.Column(db.String(32), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
+    donation_thank_you = db.Column(db.String(64), index=True)
+    donation_badge = db.Column(db.Integer)
 
 
     def to_dict(self):

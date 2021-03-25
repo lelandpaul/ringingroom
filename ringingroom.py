@@ -14,7 +14,20 @@ def make_shell_context():
             'User': User,
             'UserTowerRelation': UserTowerRelation,
             'u': User.query.first(),
-            't': TowerDB.query.first()}
+            't': TowerDB.query.first(),
+            'donated': add_donation_thank_you}
+
+def add_donation_thank_you(email):
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return "User not found"
+    x = input("Setting donation name for user: " + user.username + "; proceed? ")
+    if x != 'y':
+        return "Aborting"
+    name = input("Donation name: ")
+    user.donation_thank_you = name
+    db.session.commit()
+    return("Done.")
 
 
 if __name__ == '__main__':

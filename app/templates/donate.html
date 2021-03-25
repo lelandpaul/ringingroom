@@ -31,7 +31,19 @@
             <a href="https://bb.ringingworld.co.uk/donate.php"><i>The Ringing World</i></a>.
             </p>
 
+{% if patrons %}
 
+<h1>Thanks to our Patrons</h1>
+
+{% endif %}
+
+<div class="col-12 container">
+    <ul class="list-unstyled row mx-n4">
+        {% for patron in patrons %}
+        <li class="list-item col-4 py-2">{{ patron.donation_thank_you }}</li>
+        {% endfor %}
+    </ul>
+</div>
 
 
 
