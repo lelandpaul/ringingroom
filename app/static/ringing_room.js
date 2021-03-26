@@ -1994,7 +1994,7 @@ $(document).ready(function () {
                 hand_strike: 100,
                 back_strike: -600,
                 debounce: 600,
-                rang_recently: false,
+                next_ring: 0,
                 has_controller: false,
                 check_controller: null,
                 tick_controller: null,
@@ -2049,28 +2049,24 @@ $(document).ready(function () {
                         try {
                             if (Math.max.apply(null, cont.axes.map(Math.abs)) > 0) {
                                 var swing = cont.axes[2] * 2048;
-                                if (swing >= this.hand_strike && curCont.at_hand) {
+                                if (swing >= this.hand_strike 
+                                    && curCont.at_hand
+                                    && Date.now() > this.next_ring) {
                                     curCont.at_hand = !curCont.at_hand;
                                     this.assign_cont_to_bell(curCont);
                                     if (curCont.bell) {
                                         bell_circle.pull_rope(curCont.bell);
-                                        this.rang_recently = true;
-                                        setTimeout(
-                                            () => (this.rang_recently = false),
-                                            this.debouce
-                                        );
+                                        this.next_ring = Date.now() + debounce;
                                     }
                                 }
-                                if (swing <= this.back_strike && !curCont.at_hand) {
+                                if (swing <= this.back_strike 
+                                    && !curCont.at_hand
+                                    && Date.now() > this.next_ring) {
                                     curCont.at_hand = !curCont.at_hand;
                                     this.assign_cont_to_bell(curCont);
                                     if (curCont.bell) {
                                         bell_circle.pull_rope(curCont.bell);
-                                        this.rang_recently = true;
-                                        setTimeout(
-                                            () => (this.rang_recently = false),
-                                            this.debouce
-                                        );
+                                        this.next_ring = Date.now() + debounce;
                                     }
                                 }
                             }
@@ -2252,7 +2248,7 @@ $(document).ready(function () {
                         window.clearInterval(instance.tick_controller);
                         instance.tick_controller = window.setInterval(
                             instance.ticktock_controller,
-                            15
+                            5
                         );
                         instance.set_controllers();
                         window.clearInterval(instance.check_controller);
