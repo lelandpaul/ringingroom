@@ -37,6 +37,24 @@ def add_donation_thank_you(email):
     db.session.commit()
     return("Done.")
 
+def set_creator(tower_id, email_addr):
+     t1 = TowerDB.query.get(tower_id)
+     u1 = User.query.filter_by(email=email_addr).first()
+
+     if t1 is None:
+         print("Tower doesn't exist.")
+     elif u1 is None:
+         print("User doesn't exist.")
+     else:
+         input(f"Tower name: {t1}. Proceed? (y/n):")
+
+         if t1.creator is None:
+             t1.created_by(u1)
+             print(f"Success! {tower_id} owner is now {email_addr}")
+         else:
+             print(f"There is already a creator: {t1.creator}")
+
+     db.session.commit()
 
 
 if __name__ == '__main__':

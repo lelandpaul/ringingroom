@@ -1768,7 +1768,7 @@ $(document).ready(function () {
         // data in components should be a function, to maintain scope
         data: function () {
             return {
-                users: [], // list of {user_id: Int, user_name: Str}
+                users: [], // list of {user_id: Int, user_name: Str, badge: Str}
                 assignment_mode: false,
                 selected_user: null, // user_id
                 cur_user: parseInt(window.tower_parameters.cur_user_id),
