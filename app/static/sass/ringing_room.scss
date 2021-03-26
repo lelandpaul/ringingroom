@@ -163,6 +163,14 @@ input[type=range]::slider-thumb {
     font-weight: bold;
 }
 
+.invert_colors {
+    filter: brightness(0) invert(1);
+}
+
+[data-theme="dark"] .invert_colors {
+    filter: none;
+}
+
 .toggle_assign {
   cursor: pointer;
 }
