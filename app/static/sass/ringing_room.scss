@@ -348,6 +348,27 @@ input[type=range]::slider-thumb {
         }
     }
 
+    &.cowbell {
+        .bell_img {
+            transform: scaleX(-1);
+            margin-left: 10px;
+            margin-right: 5px;
+        }
+        &.backstroke {
+            .bell_img {
+                transform: scaleX(1);
+            }
+        }
+        .bell_img {
+            width: 80px;
+        }
+        align-items: flex-end;
+        justify-content: flex-start;
+        &.right {
+            flex-direction: row-reverse;
+        }
+    }
+
     &.towerbell {
         justify-content: flex-end;
         align-items: flex-end;

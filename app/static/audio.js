@@ -297,10 +297,10 @@ export const muffled = new Howl(
 export const cow = new Howl(
 {
   "src": [
-    "cow.ogg",
-    "cow.m4a",
-    "cow.mp3",
-    "cow.ac3"
+    "static/audio/cow.ogg",
+    "static/audio/cow.m4a",
+    "static/audio/cow.mp3",
+    "static/audio/cow.ac3"
   ],
   "sprite": {
     "1": [
@@ -392,9 +392,20 @@ export const cow = new Howl(
       1228.9342403628111
     ]
   }
-}
-)
+});
 
+// A mapping from audio names to audio objects and image prefixes
+export const audio_types = {
+    'Tower': tower,
+    'Hand': hand,
+    'Muffled': muffled,
+    'Cow': cow,
+    'image_prefix': {
+        'Tower': 't-',
+        'Hand': 'h-',
+        'Cow': 'c-',
+    }
+}
 
 // What sounds do you play on different numbers of bells? (Allows for ringing the front 8)
 export const bell_mappings = {

@@ -79,6 +79,8 @@ def tower(tower_id, decorator=None):
     user_token = '' if current_user.is_anonymous\
                     else current_user.get_token()
 
+    print(Config.MORE_COWBELL)
+
     # Pass in both the tower and the user_name
     return render_template('ringing_room.html',
                             tower = tower,
@@ -86,6 +88,7 @@ def tower(tower_id, decorator=None):
                             user_name = '' if current_user.is_anonymous else current_user.username,
                             user_email = '' if current_user.is_anonymous else current_user.email,
                             user_badge = '' if current_user.is_anonymous else current_user.badge,
+                            cow_enabled = Config.MORE_COWBELL,
                             server_ip=get_server_ip(tower_id),
                             user_token = user_token,
                             host_permissions = current_user.check_permissions(tower_id,'host')\

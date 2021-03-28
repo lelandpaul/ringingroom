@@ -174,7 +174,7 @@ socketio.on("s_global_state", function (msg, cb) {
 socketio.on("s_audio_change", function (msg, cb) {
     // console.log('changing audio to: ' + msg.new_audio);
     bell_circle.$refs.controls.audio_type = msg.new_audio;
-    bell_circle.audio = msg.new_audio == "Tower" ? tower : hand;
+    bell_circle.audio = audio_types[msg.new_audio];
     // Make sure the volume is set consistently
     //md = msg.new_audio == 'Tower' ? 1 : window.user_parameters.handbell_mod;
     let md = msg.new_audio == "Tower" ? 1.0 : window.user_parameters.handbell_mod;
@@ -284,7 +284,7 @@ $(document).ready(function () {
 
         computed: {
             image_prefix: function () {
-                return this.$root.$refs.controls.audio_type === "Tower" ? "t-" : "h-";
+                return audio_types.image_prefix[this.$root.$refs.controls.audio_type];
             },
 
             assignment_mode: function () {
@@ -443,7 +443,10 @@ $(document).ready(function () {
 <div class="bell unclickable_div"
         :class="[left_side ? 'left' : 'right',
                 top_side ? 'top' : 'bottom',
-                image_prefix === 'h-' ? 'handbell' : 'towerbell',
+                stroke ? 'handstroke' : 'backstroke',
+                image_prefix === 'h-' ? 'handbell' : '',
+                image_prefix === 't-' ? 'towerbell' : '',
+                image_prefix === 'c-' ? 'cowbell' : '',
                 window.tower_parameters.anonymous_user ? 'no_ring' : '']">
     <div class="btn-group user_cartouche clickable">
         <template v-if="!left_side">
@@ -508,8 +511,8 @@ $(document).ready(function () {
          :class="[assignment_mode ? 'assignment_mode' : '']"
          :src="'static/images/' +
                image_prefix +
-               (stroke ? images[0] : images[1]) +
-               (number == 1 && stroke ? '-treble' : '') +
+               ((stroke || image_prefix === 'c-') ? images[0] : images[1]) +
+               (number == 1 && (stroke || image_prefix === 'c-') ? '-treble' : '') +
                '.png'"
          />
 </div>
@@ -755,6 +758,19 @@ $(document).ready(function () {
                            v-model="audio_type"
                            />
                     Hand
+                </label>
+                <label class="btn btn-outline-primary"
+                       :class="{active: audio_type == 'Cow',
+                                disabled: lock_controls}"
+                       v-if="window.tower_parameters.cow_enabled"
+                        >
+                    <input type="radio"
+                           name="audio"
+                           id="audio_cow"
+                           value="Cow"
+                           v-model="audio_type"
+                           />
+                    Cow
                 </label>
             </div>
         </div>
@@ -2504,7 +2520,7 @@ $(document).ready(function () {
             number_of_bells: 0,
             bells: [],
             rang_bell_recently: [],
-            audio: window.tower_parameters.audio == "Tower" ? tower : hand,
+            audio: audio_types[window.tower_parameters.audio],
             call_throttled: false,
             tower_name: window.tower_parameters.name,
             tower_id: parseInt(window.tower_parameters.id),

@@ -12,6 +12,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 import base64
 import os
+from enum import Enum
 
 
 class User(UserMixin, db.Model):
@@ -353,6 +354,22 @@ class UserTowerRelation(db.Model):
 # `0` is therefore a reserved user ID and cannot be taken by any user, even Wheatley (who is user `-1`)
 UNASSIGNED_BELL = 0
 
+# Enum for Audio Types
+class AudioType(Enum):
+    TOWER = 1
+    HAND = 2
+    COW = 3
+
+    @property
+    def val(self):
+        # Handles Namecasing the name
+        return self.name[0] + self.name[1:].lower()
+
+    @staticmethod
+    def get(name):
+        # Handles UPPERCASING the name
+        return AudioType[name.upper()]
+
 
 class Tower:
     def __init__(self, name, tower_id=None, n=8, host_mode_enabled=False, wheatley_enabled=False,
@@ -365,7 +382,7 @@ class Tower:
         self._name = name
         self._n = 8
         self._bell_state = [True] * n
-        self._audio = True
+        self._audio = AudioType.TOWER
         self._users = {}
         self._assignments = {i + 1: '' for i in range(n)}
         self._observers = set()
@@ -526,11 +543,11 @@ class Tower:
 
     @property
     def audio(self):
-        return('Tower' if self._audio else 'Hand')
+        return self._audio.val
 
     @audio.setter
     def audio(self, new_state):
-        self._audio = True if new_state == 'Tower' else False
+        self._audio = AudioType.get(new_state)
 
     @property
     def url_safe_name(self):
