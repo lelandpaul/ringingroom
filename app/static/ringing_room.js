@@ -570,8 +570,8 @@ $(document).ready(function () {
 
             // a call was received from the server; display it and play audio
             make_call: function (call) {
-                this.display_message(call, 2000);
-                this.audio.play(call);
+                this.display_message(call_types[call], 2000);
+                calls.play(call);
             },
         },
 
@@ -2087,15 +2087,15 @@ $(document).ready(function () {
 
                                     if (i == 0) {
                                         if (left_hand) {
-                                            bell_circle.make_call("Stand next");
+                                            bell_circle.make_call("STAND");
                                         } else {
-                                            bell_circle.make_call("Single");
+                                            bell_circle.make_call("SINGLE");
                                         }
                                     } else if (i == 1) {
                                         if (left_hand) {
-                                            bell_circle.make_call("Go");
+                                            bell_circle.make_call("GO");
                                         } else {
-                                            bell_circle.make_call("Bob");
+                                            bell_circle.make_call("BOB");
                                         }
                                     }
                                 }
@@ -2486,31 +2486,31 @@ $(document).ready(function () {
                     // Calls are: g = go; h = stop; b = bob; n = single.
                     if (["b", "B"].includes(key)) {
                         // console.log('calling bob');
-                        bell_circle.make_call("Bob");
+                        bell_circle.make_call("BOB");
                     }
                     if (["n", "N"].includes(key)) {
                         // console.log('calling single');
-                        bell_circle.make_call("Single");
+                        bell_circle.make_call("SINGLE");
                     }
 
                     if (["g", "G"].includes(key)) {
                         // console.log('calling go');
-                        bell_circle.make_call("Go");
+                        bell_circle.make_call("GO");
                     }
 
                     if (["h", "H"].includes(key)) {
                         // console.log('calling stop');
-                        bell_circle.make_call("That's all");
+                        bell_circle.make_call("ALL");
                     }
 
                     if (["t", "T"].includes(key)) {
                         // console.log('calling stand');
-                        bell_circle.make_call("Stand next");
+                        bell_circle.make_call("STAND");
                     }
 
                     if (["l", "L"].includes(key)) {
                         // console.log('calling look-to');
-                        bell_circle.make_call("Look to");
+                        bell_circle.make_call("LOOK");
                     }
                 });
             }
