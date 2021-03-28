@@ -176,8 +176,7 @@ def on_user_left(json):
         return
 
     tower.remove_user(user_id)
-    emit('s_user_left', {'user_id': current_user.id,
-                         'username': current_user.username },
+    emit('s_user_left', {'user_id': current_user.id},
          broadcast=True, include_self=True, room=tower_id)
 
     # Now that the user is gone, check if there are any hosts left. If not, make sure
