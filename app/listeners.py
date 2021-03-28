@@ -127,7 +127,8 @@ def on_join(json):
         emit('s_audio_change', {'new_audio': tower.audio})
         emit('s_host_mode', {'tower_id': tower_id, 'new_mode': tower.host_mode})
 
-        emit('s_user_entered', {'user_id': current_user.id, 'username': current_user.username },
+        emit('s_user_entered', {'user_id': current_user.id, 'username': current_user.username,
+                                'badge': current_user.badge},
              broadcast=True, include_self = True, room=json['tower_id'])
 
     # Check if there are any hosts in the room, and if not, make sure that
