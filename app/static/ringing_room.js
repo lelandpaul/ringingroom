@@ -2483,11 +2483,11 @@ $(document).ready(function () {
                         bell_circle.pull_rope_by_hand(LEFT_HAND);
                     }
 
-                    // Calls are: g = go; h = stop; b = bob; n = single.
                     if (["b", "B"].includes(key)) {
                         // console.log('calling bob');
                         bell_circle.make_call("BOB");
                     }
+
                     if (["n", "N"].includes(key)) {
                         // console.log('calling single');
                         bell_circle.make_call("SINGLE");
@@ -2512,6 +2512,19 @@ $(document).ready(function () {
                         // console.log('calling look-to');
                         bell_circle.make_call("LOOK");
                     }
+
+                    if (["o", "O"].includes(key)) {
+                        bell_circle.make_call("ROUNDS");
+                    }
+
+                    if (["c", "C"].includes(key)) {
+                        bell_circle.make_call("CHANGE");
+                    }
+
+                    if (["s", "S"].includes(key)) {
+                        bell_circle.make_call("SORRY");
+                    }
+
                 });
             }
         },
