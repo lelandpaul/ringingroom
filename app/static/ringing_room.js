@@ -570,8 +570,13 @@ $(document).ready(function () {
 
             // a call was received from the server; display it and play audio
             make_call: function (call) {
-                this.display_message(call_types[call], 2000);
-                calls.play(call);
+                if (call.indexOf('sorry') != -1) {
+                    this.display_message(call, 2000);
+                    calls.play('SORRY');
+                } else {
+                    this.display_message(call_types[call], 2000);
+                    calls.play(call);
+                }
             },
         },
 
@@ -2522,7 +2527,7 @@ $(document).ready(function () {
                     }
 
                     if (["s", "S"].includes(key)) {
-                        bell_circle.make_call("SORRY");
+                        bell_circle.make_call(cur_user_name + " says sorry.");
                     }
 
                 });
