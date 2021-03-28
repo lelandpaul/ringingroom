@@ -238,7 +238,7 @@ def tower_settings(tower_id):
                 emit_socket(
                     's_user_entered',
                     {
-                        'user_name': WHEATLEY_USER_NAME,
+                        'username': WHEATLEY_USER_NAME,
                         'user_id': WHEATLEY_USER_ID
                     },
                 )
