@@ -38,6 +38,7 @@
             cur_user_id: "{{user_id}}",
             cur_user_name: "{{user_name}}",
             cur_user_email: "{{user_email}}",
+            cur_user_badge: "{{user_badge if user_badge else ''}}",
             anonymous_user: {{'true' if current_user.is_anonymous or listen_link else 'false'}},
             user_token: "{{user_token}}",
             host_mode_permitted: {{'true' if tower.host_mode_enabled else 'false'}},
@@ -112,6 +113,10 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="alert alert-primary fixed-top ml-auto mx-5" style="width: max-content;" role="alert">
+        <a href="{{url_for('survey')}}" class="stretched-link">Take our survey!</a>
     </div>
 </body>
 

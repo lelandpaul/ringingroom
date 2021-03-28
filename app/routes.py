@@ -79,14 +79,13 @@ def tower(tower_id, decorator=None):
     user_token = '' if current_user.is_anonymous\
                     else current_user.get_token()
 
-    print('TOWER SIZES: ', tower.sizes_available)
-
     # Pass in both the tower and the user_name
     return render_template('ringing_room.html',
                             tower = tower,
                             user_id = '' if current_user.is_anonymous else current_user.id,
                             user_name = '' if current_user.is_anonymous else current_user.username,
                             user_email = '' if current_user.is_anonymous else current_user.email,
+                            user_badge = '' if current_user.is_anonymous else current_user.badge,
                             server_ip=get_server_ip(tower_id),
                             user_token = user_token,
                             host_permissions = current_user.check_permissions(tower_id,'host')\
@@ -113,7 +112,10 @@ def contact():
 
 @app.route('/donate')
 def donate():
-    return render_template('donate.html')
+    patrons = User.query.filter(User.donation_thank_you != None).all()
+    patrons.sort(key=lambda u: u.donation_thank_you)
+    return render_template('donate.html',
+                            patrons=patrons)
 
 @app.route('/blog')
 def blog():
@@ -361,3 +363,8 @@ def reset_password(token):
 @app.route('/privacy', methods=['GET'])
 def privacy_policy():
     return render_template('privacy_policy.html')
+
+@app.route('/survey', methods=['GET'])
+def survey():
+    return redirect('https://forms.gle/2YrTi2Qt8ptGo7nr7', code=302)
+

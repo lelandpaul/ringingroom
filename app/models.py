@@ -23,6 +23,8 @@ class User(UserMixin, db.Model):
     joined = db.Column(db.Date, default=date.today)
     token = db.Column(db.String(32), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
+    donation_thank_you = db.Column(db.String(64), index=True)
+    donation_badge = db.Column(db.Integer)
 
 
     def to_dict(self):
@@ -50,6 +52,14 @@ class User(UserMixin, db.Model):
         if user is None or user.token_expiration < datetime.utcnow():
             return None
         return user
+
+    @property
+    def badge(self):
+        try:
+            return { 0: 'badge-tower.png',
+                     1: 'badge-hand.png'}[self.donation_badge]
+        except KeyError:
+            return None
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -466,7 +476,9 @@ class Tower:
     @property
     def user_json(self):
         # Returns an object appropriate for sending with s_set_userlist
-        return [{'user_id': id, 'username': username} for id, username in self._users.items()]
+        return [{'user_id': id, 'username': username, 
+                 'badge': User.query.get(id).badge if id != -1 else None}
+                for id, username in self._users.items()]
 
     @property
     def host_mode(self):
