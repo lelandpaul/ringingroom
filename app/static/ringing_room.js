@@ -1882,11 +1882,12 @@ $(document).ready(function () {
 
                 // console.log(this.cur_user_bells);
                 // the user has no bells; don't screw with rotation
-                if (this.cur_user_bells === []) {
+                if (this.cur_user_bells.length == 0) {
                     // console.log('skipping — no assigned bells');
                     return;
                 }
-                const rotate_to = Math.min(...this.cur_user_bells);
+
+                const rotate_to = bell_circle.find_rope_by_hand(RIGHT_HAND);
                 this.$root.rotate(rotate_to);
             },
 
@@ -2653,6 +2654,13 @@ $(document).ready(function () {
                 if (current_user_bells.length == 0) {
                     // If no bells are assigned, fall back to the behaviour of 'left' and 'right'
                     // being the two bells on the bottom of the screen
+                    if (window.tower_parameters.anticlockwise) {
+                        if (hand == LEFT_HAND) {
+                            return this.find_rope_by_pos(8);
+                        } else {
+                            return this.find_rope_by_pos(1);
+                        }
+                    }
                     if (hand == LEFT_HAND) {
                         return this.find_rope_by_pos(2);
                     } else {
@@ -2694,6 +2702,13 @@ $(document).ready(function () {
 
                     // We know that hand is one of `LEFT_HAND` or `RIGHT_HAND` because
                     // otherwise the function would have returned early
+                    if (window.tower_parameters.anticlockwise) {
+                        if (hand === LEFT_HAND) {
+                            return right_hand_bell;
+                        } else {
+                            return left_hand_bell;
+                        }
+                    }
                     if (hand === LEFT_HAND) {
                         return left_hand_bell;
                     } else {
