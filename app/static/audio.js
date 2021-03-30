@@ -381,17 +381,17 @@ export const audio_types = {
     }
 };
 
-// A mapping from calls to call text to display
+// A mapping from call text to call audio trigger
 export const call_types = {
-    'ALL': "That's all",
-    'BOB': "Bob",
-    'CHANGE': "Change method",
-    'GO': "Go next",
-    'LOOK': "Look to",
-    'ROUNDS': "Rounds next",
-    'SINGLE': "Single",
-    'SORRY': "Sorry!",
-    'STAND': "Stand next",
+    "That's all": 'ALL', 
+    "Bob": 'BOB', 
+    "Change method": 'CHANGE', 
+    "Go": 'GO', 
+    "Look to": 'LOOK', 
+    "Rounds": 'ROUNDS', 
+    "Single": 'SINGLE', 
+    "Sorry!": 'SORRY', 
+    "Stand next": 'STAND', 
 };
 
 // What sounds do you play on different numbers of bells? (Allows for ringing the front 8)
