@@ -356,7 +356,7 @@ UNASSIGNED_BELL = 0
 
 
 class Tower:
-    def __init__(self, name, tower_id=None, n=8, host_mode_enabled=False, anticlockwise=False,
+    def __init__(self, name, tower_id=None, n=8, host_mode_enabled=False,
                  wheatley_enabled=False, wheatley_db_settings={}):
         if not tower_id:
             self._id = self.generate_random_change()
@@ -372,9 +372,9 @@ class Tower:
         self._observers = set()
         self._host_mode = False
         self._host_mode_enabled = host_mode_enabled
-        self._anticlockwise = anticlockwise
         self.wheatley = app.wheatley.Wheatley(self, wheatley_enabled, wheatley_db_settings)
         towerdb = self.to_TowerDB()
+        self._anticlockwise = self.to_TowerDB()
         self._host_ids = towerdb.host_ids
         self._additional_sizes_enabled = towerdb.additional_sizes_enabled
 
