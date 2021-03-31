@@ -2095,15 +2095,15 @@ $(document).ready(function () {
 
                                     if (i == 0) {
                                         if (left_hand) {
-                                            bell_circle.make_call("STAND");
+                                            bell_circle.make_call("Stand");
                                         } else {
-                                            bell_circle.make_call("SINGLE");
+                                            bell_circle.make_call("Single");
                                         }
                                     } else if (i == 1) {
                                         if (left_hand) {
-                                            bell_circle.make_call("GO");
+                                            bell_circle.make_call("Go");
                                         } else {
-                                            bell_circle.make_call("BOB");
+                                            bell_circle.make_call("Bob");
                                         }
                                     }
                                 }
@@ -2532,11 +2532,6 @@ $(document).ready(function () {
                     if (["s", "S"].includes(key)) {
                         bell_circle.make_call(cur_user_name + " says sorry.");
                     }
-
-                    if (["z", "Z"].includes(key)) {
-                        bell_circle.make_call("Double Norwich");
-                    }
-
                 });
             }
         },
