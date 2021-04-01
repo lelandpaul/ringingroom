@@ -371,8 +371,53 @@
 
 </div>
 
+{{ form.anticlockwise(class="d-none",id="anticlockwise_toggle") }}
+
+<div class="form-row my3 justify-content-between">
+    <div class="col-12 col-md-6 pr-2">
+        <div class="form-row my-2">
+
+            <div class="col-6 pt-1">
+                <h4>Anticlockwise:</h4>
+            </div>
+            <div class="col-6">
+
+                <div class="btn-group btn-block btn-group-toggle align-bottom">
+                    <label class="btn btn-outline-primary {{ 'active' if not form.anticlockwise.data }}">
+                    <input type="radio"
+                        name="anticlockwise_switch"
+                        id="anticlockwise_false"
+                        onclick="$('#anticlockwise_toggle').prop('checked', false);
+                                    $('#submit_name_change').click()"
+                        />
+                        No
+                    </label>
+
+                    <label class="btn btn-outline-primary {{ 'active' if form.anticlockwise.data }}">
+                        Yes
+                    <input type="radio"
+                        name="anticlockwise_switch"
+                        id="anticlockwise_true"
+                        onclick="$('#anticlockwise_toggle').prop('checked',true);
+                                    $('#submit_name_change').click()"
+                        />
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 pr-2">
+        <small class="form-text pl-3 pr-0" style="text-align:justify;">
+            <p>If set to 'yes', the bells (both Tower and Hand) will be arranged anticlockwise. (You will need to refresh the tower page for this to take effect.)</p>
+        </small>
+    </div>
+
+</div>
+
+<hr>
 
 </form>
+
 
 
 {% else %}

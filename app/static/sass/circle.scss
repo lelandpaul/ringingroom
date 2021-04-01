@@ -65,6 +65,67 @@
     }
 }
 
+@mixin on-circle-anticlockwise($item-count, $circle-size) {
+  width:  $circle-size;
+  height: $circle-size;
+  border-radius: 50%;
+
+  > .bell {
+    position: absolute;
+    z-index: -1;
+    top:  50%; 
+    left: 50%;
+  
+    $angle: (360 / $item-count);
+	$rot: 360; // initialize for scope
+
+    @if $item-count == 4 { $rot: 1*$angle/2; }
+    @if $item-count == 5 { $rot: 3*$angle/4; }
+	@if $item-count == 6 { $rot: 1*$angle; }
+	@if $item-count == 8 { $rot: 3*$angle/2; }
+	@if $item-count == 10 { $rot: 2*$angle; }
+	@if $item-count == 12 { $rot: 5*$angle/2; }
+    @if $item-count == 14 { $rot: 3*$angle; }
+    @if $item-count == 16 { $rot: 7*$angle/2; }
+
+
+	@for $i from 1 through $item-count {
+      &:nth-of-type(#{$i}) {
+        &.left {
+            transform: translate(-50%,-60%)
+                       rotate($rot * 1deg) 
+                       translate($circle-size / 2) 
+                       rotate($rot * -1deg)
+                       translate(-50%,15%);
+            &.top {
+                transform: translate(-50%,-50%)
+                           rotate($rot * 1deg) 
+                           translate($circle-size / 2) 
+                           rotate($rot * -1deg)
+                           translate(-50%,-15%);
+            }
+        }
+        transform: 
+          translate(-50%, -60%)
+          rotate($rot * 1deg) 
+          translate($circle-size / 2) 
+          rotate($rot * -1deg)
+          translate(50%,15%);
+            &.top {
+                transform: translate(-50%,-50%)
+                           rotate($rot * 1deg) 
+                           translate($circle-size / 2) 
+                           rotate($rot * -1deg)
+                           translate(50%,-15%);
+            }
+
+      }
+
+      $rot: $rot - $angle;
+    }
+    }
+}
+
 
 @mixin bell_circle($media-circ-size, $media-lr-offset, $media-tb-offset) {
 
@@ -108,6 +169,15 @@
       &.twelve { @include on-circle(12, $circ-size); }
       &.fourteen { @include on-circle(14, $circ-size + 3rem); }
       &.sixteen { @include on-circle(16, $circ-size + 3rem); }
+
+      &.anticlockwise.four   { @include on-circle-anticlockwise(4, $circ-size); }
+      &.anticlockwise.five   { @include on-circle-anticlockwise(5, $circ-size); }
+      &.anticlockwise.six    { @include on-circle-anticlockwise(6, $circ-size); }
+      &.anticlockwise.eight  { @include on-circle-anticlockwise(8, $circ-size); }
+      &.anticlockwise.ten    { @include on-circle-anticlockwise(10, $circ-size); }
+      &.anticlockwise.twelve { @include on-circle-anticlockwise(12, $circ-size); }
+      &.anticlockwise.fourteen { @include on-circle-anticlockwise(14, $circ-size + 3rem); }
+      &.anticlockwise.sixteen { @include on-circle-anticlockwise(16, $circ-size + 3rem); }
     }
 }
 

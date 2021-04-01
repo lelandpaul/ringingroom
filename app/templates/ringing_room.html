@@ -45,6 +45,7 @@
             host_mode: {{'true' if tower.host_mode else 'false'}},
             host_permissions: {{'true' if host_permissions else 'false'}},
             half_muffled: {{'true' if tower.half_muffled else 'false'}},
+            anticlockwise: {{'true' if tower.anticlockwise else 'false'}},
             bookmarked: {{'true' if current_user.is_authenticated and current_user.bookmarked(tower.tower_id) else 'false'}},
             listen_link: {{'true' if listen_link else 'false'}},
             server_ip: "{{server_ip}}",
@@ -117,7 +118,7 @@
     </div>
 
     <div class="alert alert-primary fixed-top ml-auto mx-5" style="width: max-content;" role="alert">
-        <a href="{{url_for('survey')}}" class="stretched-link">Take our survey!</a>
+        <a href="{{url_for('survey')}}" target="_blank" class="stretched-link">Take our survey!</a>
     </div>
 </body>
 
