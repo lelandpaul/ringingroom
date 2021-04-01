@@ -15,7 +15,8 @@ def make_shell_context():
             'UserTowerRelation': UserTowerRelation,
             'u': User.query.first(),
             't': TowerDB.query.first(),
-            'donated': add_donation_thank_you}
+            'donated': add_donation_thank_you,
+            'set_creator': set_creator}
 
 cur_user = None
 def get_user_by_email(email):
