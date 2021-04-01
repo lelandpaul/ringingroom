@@ -79,8 +79,6 @@ def tower(tower_id, decorator=None):
     user_token = '' if current_user.is_anonymous\
                     else current_user.get_token()
 
-    print('ANTICLOCKWISE', tower.anticlockwise)
-
     # Pass in both the tower and the user_name
     return render_template('ringing_room.html',
                             tower = tower,
