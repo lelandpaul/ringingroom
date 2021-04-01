@@ -177,7 +177,7 @@ socketio.on("s_audio_change", function (msg, cb) {
     bell_circle.audio = audio_types[msg.new_audio];
     // Make sure the volume is set consistently
     //md = msg.new_audio == 'Tower' ? 1 : window.user_parameters.handbell_mod;
-    let md = msg.new_audio == "Tower" ? 1.0 : window.user_parameters.handbell_mod;
+    let md = msg.new_audio == "Hand" ? window.user_parameters.handbell_mod : 1.0;
     bell_circle.audio._volume = md * window.user_parameters.bell_volume * 0.1;
 });
 
@@ -2567,7 +2567,7 @@ $(document).ready(function () {
                         bell_circle.make_call("Change method");
                     }
 
-                    if (["s", "S"].includes(key)) {
+                    if (["s"].includes(key)) {
                         bell_circle.make_call(cur_user_name + " says sorry.");
                     }
                 });
