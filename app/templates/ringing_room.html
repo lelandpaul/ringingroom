@@ -49,6 +49,7 @@
             bookmarked: {{'true' if current_user.is_authenticated and current_user.bookmarked(tower.tower_id) else 'false'}},
             listen_link: {{'true' if listen_link else 'false'}},
             server_ip: "{{server_ip}}",
+            cow_enabled: {{'true' if cow_enabled else 'false'}},
         };
     </script>
     <!-- internal resources -->

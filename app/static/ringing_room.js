@@ -174,7 +174,7 @@ socketio.on("s_global_state", function (msg, cb) {
 socketio.on("s_audio_change", function (msg, cb) {
     // console.log('changing audio to: ' + msg.new_audio);
     bell_circle.$refs.controls.audio_type = msg.new_audio;
-    bell_circle.audio = msg.new_audio == "Tower" ? tower : hand;
+    bell_circle.audio = audio_types[msg.new_audio];
     // Make sure the volume is set consistently
     //md = msg.new_audio == 'Tower' ? 1 : window.user_parameters.handbell_mod;
     let md = msg.new_audio == "Tower" ? 1.0 : window.user_parameters.handbell_mod;
@@ -284,7 +284,7 @@ $(document).ready(function () {
 
         computed: {
             image_prefix: function () {
-                return this.$root.$refs.controls.audio_type === "Tower" ? "t-" : "h-";
+                return audio_types.image_prefix[this.$root.$refs.controls.audio_type];
             },
 
             assignment_mode: function () {
@@ -480,7 +480,10 @@ $(document).ready(function () {
 <div class="bell unclickable_div"
         :class="[left_side ? 'left' : 'right',
                 top_side ? 'top' : 'bottom',
-                image_prefix === 'h-' ? 'handbell' : 'towerbell',
+                stroke ? 'handstroke' : 'backstroke',
+                image_prefix === 'h-' ? 'handbell' : '',
+                image_prefix === 't-' ? 'towerbell' : '',
+                image_prefix === 'c-' ? 'cowbell' : '',
                 window.tower_parameters.anonymous_user ? 'no_ring' : '']">
     <div class="btn-group user_cartouche clickable">
         <template v-if="!left_side">
@@ -545,8 +548,8 @@ $(document).ready(function () {
          :class="[assignment_mode ? 'assignment_mode' : '']"
          :src="'static/images/' +
                image_prefix +
-               (stroke ? images[0] : images[1]) +
-               (number == 1 && stroke ? '-treble' : '') +
+               ((stroke || image_prefix === 'c-') ? images[0] : images[1]) +
+               (number == 1 && (stroke || image_prefix === 'c-') ? '-treble' : '') +
                '.png'"
          />
 </div>
@@ -605,7 +608,15 @@ $(document).ready(function () {
             // a call was received from the server; display it and play audio
             make_call: function (call) {
                 this.display_message(call, 2000);
-                this.audio.play(call);
+                if (call.indexOf('sorry') != -1) {
+                    calls.play('SORRY');
+                } else if (call in call_types) {
+                    calls.play(call_types[call]);
+                } else if (call.indexOf('Go') == 0) {
+                    return
+                } else {
+                    calls.play(call_types['Change method']);
+                }
             },
         },
 
@@ -792,6 +803,19 @@ $(document).ready(function () {
                            v-model="audio_type"
                            />
                     Hand
+                </label>
+                <label class="btn btn-outline-primary"
+                       :class="{active: audio_type == 'Cow',
+                                disabled: lock_controls}"
+                       v-if="window.tower_parameters.cow_enabled"
+                        >
+                    <input type="radio"
+                           name="audio"
+                           id="audio_cow"
+                           value="Cow"
+                           v-model="audio_type"
+                           />
+                    Cow
                 </label>
             </div>
         </div>
@@ -2109,7 +2133,7 @@ $(document).ready(function () {
 
                                     if (i == 0) {
                                         if (left_hand) {
-                                            bell_circle.make_call("Stand next");
+                                            bell_circle.make_call("Stand");
                                         } else {
                                             bell_circle.make_call("Single");
                                         }
@@ -2505,11 +2529,11 @@ $(document).ready(function () {
                         bell_circle.pull_rope_by_hand(LEFT_HAND);
                     }
 
-                    // Calls are: g = go; h = stop; b = bob; n = single.
                     if (["b", "B"].includes(key)) {
                         // console.log('calling bob');
                         bell_circle.make_call("Bob");
                     }
+
                     if (["n", "N"].includes(key)) {
                         // console.log('calling single');
                         bell_circle.make_call("Single");
@@ -2534,6 +2558,18 @@ $(document).ready(function () {
                         // console.log('calling look-to');
                         bell_circle.make_call("Look to");
                     }
+
+                    if (["o", "O"].includes(key)) {
+                        bell_circle.make_call("Rounds");
+                    }
+
+                    if (["c", "C"].includes(key)) {
+                        bell_circle.make_call("Change method");
+                    }
+
+                    if (["s", "S"].includes(key)) {
+                        bell_circle.make_call(cur_user_name + " says sorry.");
+                    }
                 });
             }
         },
@@ -2542,7 +2578,7 @@ $(document).ready(function () {
             number_of_bells: 0,
             bells: [],
             rang_bell_recently: [],
-            audio: window.tower_parameters.audio == "Tower" ? tower : hand,
+            audio: audio_types[window.tower_parameters.audio],
             call_throttled: false,
             tower_name: window.tower_parameters.name,
             tower_id: parseInt(window.tower_parameters.id),

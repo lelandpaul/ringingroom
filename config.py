@@ -33,3 +33,5 @@ class Config(object):
     RR_SOCKETIO_PORT = os.getenv('RR_SOCKETIO_PORT') or 5000
 
     SUPPORT_SERVER = os.getenv('SUPPORT_SERVER') or False
+
+    MORE_COWBELL = os.getenv('COWBELL_ENABLED') or False
