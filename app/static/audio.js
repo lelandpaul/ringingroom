@@ -329,6 +329,7 @@ export const calls = new Howl(
     "static/audio/calls.mp3",
     "static/audio/calls.ac3"
   ],
+  "volume": 0.2,
   "sprite": {
     "ALL": [
       0,
