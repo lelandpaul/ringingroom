@@ -214,6 +214,7 @@ class TowerDB(db.Model):
     half_muffled = db.Column(db.Boolean, default=False)
     wheatley_enabled = db.Column(db.Boolean, default=False)
     wheatley_settings_json = db.Column(db.String(), default="{}")
+    anticlockwise = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return '<TowerDB {}: {}>'.format(self.tower_id, self.tower_name)
@@ -355,8 +356,8 @@ UNASSIGNED_BELL = 0
 
 
 class Tower:
-    def __init__(self, name, tower_id=None, n=8, host_mode_enabled=False, wheatley_enabled=False,
-                 wheatley_db_settings={}):
+    def __init__(self, name, tower_id=None, n=8, host_mode_enabled=False,
+                 wheatley_enabled=False, wheatley_db_settings={}):
         if not tower_id:
             self._id = self.generate_random_change()
         else:
@@ -373,6 +374,7 @@ class Tower:
         self._host_mode_enabled = host_mode_enabled
         self.wheatley = app.wheatley.Wheatley(self, wheatley_enabled, wheatley_db_settings)
         towerdb = self.to_TowerDB()
+        self._anticlockwise = self.to_TowerDB()
         self._host_ids = towerdb.host_ids
         self._additional_sizes_enabled = towerdb.additional_sizes_enabled
 
@@ -602,6 +604,16 @@ class Tower:
     def half_muffled(self, new_state):
         self.to_TowerDB().half_muffled = new_state
         db.session.commit()
+
+    @property
+    def anticlockwise(self):
+        return self._anticlockwise
+
+    @anticlockwise.setter
+    def anticlockwise(self, new_state):
+        self._anticlockwise = new_state
+        self.to_TowerDB().anticlockwise = new_state
+        db.session.commit
 
 
 

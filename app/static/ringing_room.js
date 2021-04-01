@@ -300,7 +300,14 @@ $(document).ready(function () {
             },
 
             left_side: function () {
+                
                 if (this.position == 1) {
+                    return false;
+                }
+                if (window.tower_parameters.anticlockwise) {
+                    if (this.position >= this.number_of_bells / 2 + 1) {
+                        return true;
+                    }
                     return false;
                 }
                 if (this.position <= this.number_of_bells / 2 + 1) {
@@ -309,7 +316,37 @@ $(document).ready(function () {
                 return false;
             },
 
+            top_side_anticlockwise: function() {
+                if (this.number_of_bells === 4 && 2 <= this.position <= 3) {
+                    return true;
+                }
+                if (this.number_of_bells === 5 && 2 <= this.position && this.position <= 5) {
+                    return true;
+                }
+                if (this.number_of_bells === 6 && (this.position === 3 || this.position === 4)) {
+                    return true;
+                }
+                if (this.number_of_bells === 8 && 3 <= this.position && this.position <= 6) {
+                    return true;
+                }
+                if (this.number_of_bells === 10 && this.position >= 4 && this.position <= 7) {
+                    return true;
+                }
+                if (this.number_of_bells === 12 && this.position >= 4 && this.position <= 9) {
+                    return true;
+                }
+                if (this.number_of_bells === 14 && this.position >= 5 && this.position <= 10) {
+                    return true;
+                }
+                if (this.number_of_bells === 16 && this.position >= 5 && this.position <= 12) {
+                    return true;
+                }
+            },
+
             top_side: function () {
+                if (window.tower_parameters.anticlockwise) {
+                    return this.top_side_anticlockwise;
+                }
                 if (this.number_of_bells === 4 && this.position >= 3) {
                     return true;
                 }
@@ -1845,11 +1882,12 @@ $(document).ready(function () {
 
                 // console.log(this.cur_user_bells);
                 // the user has no bells; don't screw with rotation
-                if (this.cur_user_bells === []) {
+                if (this.cur_user_bells.length == 0) {
                     // console.log('skipping — no assigned bells');
                     return;
                 }
-                const rotate_to = Math.min(...this.cur_user_bells);
+
+                const rotate_to = bell_circle.find_rope_by_hand(RIGHT_HAND);
                 this.$root.rotate(rotate_to);
             },
 
@@ -2514,6 +2552,7 @@ $(document).ready(function () {
             unread_messages: 0,
             host_mode: window.tower_parameters.host_mode,
             bookmarked: window.tower_parameters.bookmarked,
+            anticlockwise: window.tower_parameters.anticlockwise,
         },
 
         watch: {
@@ -2615,6 +2654,13 @@ $(document).ready(function () {
                 if (current_user_bells.length == 0) {
                     // If no bells are assigned, fall back to the behaviour of 'left' and 'right'
                     // being the two bells on the bottom of the screen
+                    if (window.tower_parameters.anticlockwise) {
+                        if (hand == LEFT_HAND) {
+                            return this.find_rope_by_pos(8);
+                        } else {
+                            return this.find_rope_by_pos(1);
+                        }
+                    }
                     if (hand == LEFT_HAND) {
                         return this.find_rope_by_pos(2);
                     } else {
@@ -2656,6 +2702,13 @@ $(document).ready(function () {
 
                     // We know that hand is one of `LEFT_HAND` or `RIGHT_HAND` because
                     // otherwise the function would have returned early
+                    if (window.tower_parameters.anticlockwise) {
+                        if (hand === LEFT_HAND) {
+                            return right_hand_bell;
+                        } else {
+                            return left_hand_bell;
+                        }
+                    }
                     if (hand === LEFT_HAND) {
                         return left_hand_bell;
                     } else {
@@ -2939,7 +2992,8 @@ $(document).ready(function () {
                                 number_of_bells == 10 ? 'ten'      : '',
                                 number_of_bells == 12 ? 'twelve'   : '',
                                 number_of_bells == 14 ? 'fourteen' : '',
-                                number_of_bells == 16 ? 'sixteen'  : '']">
+                                number_of_bells == 16 ? 'sixteen'  : '',
+                                anticlockwise ? 'anticlockwise' : '']">
                 <call_display v-bind:audio="audio" ref="display"></call_display>
                 <focus_display ref="focus"></focus_display>
                 <bell_rope v-for="bell in bells"
