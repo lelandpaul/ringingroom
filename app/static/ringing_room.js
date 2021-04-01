@@ -820,7 +820,7 @@ $(document).ready(function () {
             </div>
         </div>
         <div class="col">
-            <button class="set_at_hand btn btn-outline-primary btn-block"
+            <button class="set_at_hand btn btn-outline-primary btn-block px-1"
                     :class="{disabled: lock_controls}"
                     @click="set_bells_at_hand"
                     >
