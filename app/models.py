@@ -391,7 +391,7 @@ class Tower:
         self._host_mode_enabled = host_mode_enabled
         self.wheatley = app.wheatley.Wheatley(self, wheatley_enabled, wheatley_db_settings)
         towerdb = self.to_TowerDB()
-        self._anticlockwise = self.to_TowerDB()
+        self._anticlockwise = self.to_TowerDB().anticlockwise
         self._host_ids = towerdb.host_ids
         self._additional_sizes_enabled = towerdb.additional_sizes_enabled
 
@@ -453,6 +453,7 @@ class Tower:
         return tower_db or TowerDB(tower_id=self.tower_id,
                                    tower_name=self.name,
                                    host_mode_enabled=self._host_mode_enabled,
+                                   anticlockwise=False,
                                    wheatley_enabled=self.wheatley.enabled)
 
     @property
