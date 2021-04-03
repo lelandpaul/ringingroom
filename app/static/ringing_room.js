@@ -1699,6 +1699,7 @@ $(document).ready(function () {
                         : window.user_parameters.handbell_mod;
                 bell_circle.audio._volume = md * window.user_parameters.bell_volume * 0.1;
                 muffled._volume = md * window.user_parameters.bell_volume * 0.1;
+                calls._volume = md * window.user_parameters.bell_volume * 0.1;
             },
         },
 
