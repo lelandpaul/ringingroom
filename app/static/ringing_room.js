@@ -940,7 +940,7 @@ $(document).ready(function () {
                 // - The `watch` callback detects the change, and does the following:
                 //   - Uses the new value to set `peal_speed_mins` and `peal_speed_hours` to a valid
                 //     representation
-                //   - A socketio signal is sent with the new peal speed
+                //   - Sends a socketio signal with the new peal speed
                 peal_speed_hours: 2,
                 peal_speed_mins: 55,
                 peal_speed: 175,
@@ -1211,6 +1211,17 @@ $(document).ready(function () {
                 // Log what we're sending Wheatley for ease of debugging
                 // console.log("Setting Wheatley method to " + method.title);
 
+                // Generate the call definitions, with a special case made for Stedman Doubles (for
+                // which the singles defined don't work for slow sixes - see
+                // https://github.com/kneasle/wheatley/issues/171)
+                let bob_def = method.calls ? convert_call(method.calls["Bob"]) : {};
+                let single_def = method.calls ? convert_call(method.calls["Single"]) : {};
+                if (method.title === "Stedman Doubles") {
+                    single_def = {
+                        0: "145",
+                        6: "345",
+                    };
+                }
                 // Emit the socketio signal to tell Wheatley what to ring
                 socketio.emit("c_wheatley_row_gen", {
                     tower_id: window.tower_parameters.id,
@@ -1220,8 +1231,8 @@ $(document).ready(function () {
                         stage: method.stage,
                         notation: method.notation,
                         url: method.url,
-                        bob: method.calls ? convert_call(method.calls["Bob"]) : {},
-                        single: method.calls ? convert_call(method.calls["Single"]) : {},
+                        bob: bob_def,
+                        single: single_def,
                     },
                 });
 
