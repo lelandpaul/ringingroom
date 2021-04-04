@@ -300,7 +300,6 @@ $(document).ready(function () {
             },
 
             left_side: function () {
-                
                 if (this.position == 1) {
                     return false;
                 }
@@ -316,7 +315,7 @@ $(document).ready(function () {
                 return false;
             },
 
-            top_side_anticlockwise: function() {
+            top_side_anticlockwise: function () {
                 if (this.number_of_bells === 4 && 2 <= this.position <= 3) {
                     return true;
                 }
@@ -608,14 +607,14 @@ $(document).ready(function () {
             // a call was received from the server; display it and play audio
             make_call: function (call) {
                 this.display_message(call, 2000);
-                if (call.indexOf('sorry') != -1) {
-                    calls.play('SORRY');
+                if (call.indexOf("sorry") != -1) {
+                    calls.play("SORRY");
                 } else if (call in call_types) {
                     calls.play(call_types[call]);
-                } else if (call.indexOf('Go') == 0) {
-                    return
+                } else if (call.indexOf("Go") == 0) {
+                    return;
                 } else {
-                    calls.play(call_types['Change method']);
+                    calls.play(call_types["Change method"]);
                 }
             },
         },
@@ -1186,7 +1185,6 @@ $(document).ready(function () {
                     console.warning("No results to send to Wheatley!");
                     return;
                 }
-
                 // A helper function to convert a call from Bob Wallis' data structure:
                 // {
                 //    cover: int,       // The number of rows covered by the call
@@ -1197,7 +1195,7 @@ $(document).ready(function () {
                 //    symbol: string    // The symbol of the call (is '-' for bobs and 's' for singles)
                 // }
                 // into what Wheatley expects (a map of indices to place notations)
-                var convert_call = function (call) {
+                const convert_call = function (call) {
                     if (call === undefined) {
                         return {};
                     }
@@ -1207,10 +1205,6 @@ $(document).ready(function () {
                     }
                     return converted_call;
                 };
-
-                // Log what we're sending Wheatley for ease of debugging
-                // console.log("Setting Wheatley method to " + method.title);
-
                 // Generate the call definitions, with a special case made for Stedman Doubles (for
                 // which the singles defined don't work for slow sixes - see
                 // https://github.com/kneasle/wheatley/issues/171)
@@ -1235,7 +1229,6 @@ $(document).ready(function () {
                         single: single_def,
                     },
                 });
-
                 // Clear the method name box
                 this.method_name = "";
             },
@@ -2104,9 +2097,11 @@ $(document).ready(function () {
                         try {
                             if (Math.max.apply(null, cont.axes.map(Math.abs)) > 0) {
                                 var swing = cont.axes[2] * 2048;
-                                if (swing >= this.hand_strike 
-                                    && curCont.at_hand
-                                    && Date.now() > this.next_ring) {
+                                if (
+                                    swing >= this.hand_strike &&
+                                    curCont.at_hand &&
+                                    Date.now() > this.next_ring
+                                ) {
                                     curCont.at_hand = !curCont.at_hand;
                                     this.assign_cont_to_bell(curCont);
                                     if (curCont.bell) {
@@ -2114,9 +2109,11 @@ $(document).ready(function () {
                                         this.next_ring = Date.now() + debounce;
                                     }
                                 }
-                                if (swing <= this.back_strike 
-                                    && !curCont.at_hand
-                                    && Date.now() > this.next_ring) {
+                                if (
+                                    swing <= this.back_strike &&
+                                    !curCont.at_hand &&
+                                    Date.now() > this.next_ring
+                                ) {
                                     curCont.at_hand = !curCont.at_hand;
                                     this.assign_cont_to_bell(curCont);
                                     if (curCont.bell) {
@@ -2157,7 +2154,6 @@ $(document).ready(function () {
                                     }
                                 }
                             }
-
                         } catch (err) {}
                     }
                 }
