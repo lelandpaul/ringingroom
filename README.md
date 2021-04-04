@@ -181,8 +181,8 @@ What follows is a incomplete list of events — these should be only the events 
 | ---                      | ---                                                                      | ---                                                                                   |
 | `c_join`                 | `{tower_id: Int, user_token: Str, anonymous_user: Bool}`                 | User joined a tower.                                                                  |
 | `s_user_entered`         | `{user_id: Int, username: Str}`                                          | Server relayed user entering.                                                         |
-| `c_user_left`            | `{user_id: Int, user_token: Str, anonymous_user: Bool, tower_id: Int}` | User left a tower.                                                                    |
-| `s_user_left`            | `{user_id: Int}`                                          | Server relayed user leaving.                                                          |
+| `c_user_left`            | `{user_name: Str, user_token: Str, anonymous_user: Bool, tower_id: Int}` | User left a tower.                                                                    |
+| `s_user_left`            | `{user_id: Int, username: Str}` **(`username` is depricated)**           | Server relayed user leaving.                                                          |
 | `c_request_global_state` | `{tower_id: Int}`                                                        | Client requested tower state.                                                         |
 | `s_global_state`         | `{global_bell_state: [Bool]}`                                            | Server sent current tower state.                                                      |
 | `s_set_userlist`         | `{user_list: [{user_id: Int, username: Str}]}`                           | Server set list of users in tower.                                                    |
