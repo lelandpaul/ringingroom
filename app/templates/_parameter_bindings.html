@@ -1,0 +1,108 @@
+<!-- Load mousetrap -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.5/mousetrap.min.js" integrity="sha512-+Jg3Ynmj9hse704K48H6rBBI3jdNBjReRGBCxUWFfOz3yVurnJFWtAWssDAsGtzWYw89xFWPxShuj2T6E9EOpg==" crossorigin="anonymous"></script>
+
+<!-- bind tower data -->
+<script>
+window.tower_parameters = {
+    id: parseInt({{tower.tower_id}}),
+    name: "{{tower.name | safe}}",
+    audio: "{{tower.audio}}",
+    size: parseInt({{tower.n_bells}}),
+    observers: parseInt({{tower.observers}}),
+    assignments: {{tower.assignments_as_list() | safe }},
+    sizes_available: {{ [4,5,6,8,10,12,14,16] if tower.additional_sizes_enabled else [4,6,8,10,12]}},
+    cur_user_id: "{{user_id}}",
+    cur_user_name: "{{user_name}}",
+    cur_user_email: "{{user_email}}",
+    cur_user_badge: "{{user_badge if user_badge else ''}}",
+    anonymous_user: {{'true' if current_user.is_anonymous or listen_link else 'false'}},
+    user_token: "{{user_token}}",
+    host_mode_permitted: {{'true' if tower.host_mode_enabled else 'false'}},
+    host_mode: {{'true' if tower.host_mode else 'false'}},
+    host_permissions: {{'true' if host_permissions else 'false'}},
+    half_muffled: {{'true' if tower.half_muffled else 'false'}},
+    anticlockwise: {{'true' if tower.anticlockwise else 'false'}},
+    bookmarked: {{'true' if current_user.is_authenticated and current_user.bookmarked(tower.tower_id) else 'false'}},
+    listen_link: {{'true' if listen_link else 'false'}},
+    server_ip: "{{server_ip}}",
+    cow_enabled: {{'true' if cow_enabled else 'false'}},
+};
+
+
+_bind_hotkeys = function(bell_obj) {
+
+    _handle_ring = function(key) {
+        if (parseInt(key) - 1 in [...Array(9).keys()]) {
+            bell_obj.pull_rope(parseInt(key));
+        } else if (parseInt(key) == 0) {
+            bell_obj.pull_rope(10);
+        } else if (["-"].includes(key)) {
+            bell_obj.pull_rope(11);
+        } else if (["="].includes(key)) {
+            bell_obj.pull_rope(12);
+        } else if (["q"].includes(key)) {
+            bell_obj.pull_rope(13);
+        } else if (["w"].includes(key)) {
+            bell_obj.pull_rope(14);
+        } else if (["e"].includes(key)) {
+            bell_obj.pull_rope(15);
+        } else if (["r"].includes(key)) {
+            bell_obj.pull_rope(16);
+        }
+    }
+
+    _handle_rotate = function(key) {
+        key = key[-1]
+        if (parseInt(code) - 1 in [...Array(9).keys()]) {
+            bell_obj.rotate(parseInt(code));
+        } else if (parseInt(code) == 0) {
+            bell_obj.rotate(10);
+        } else if (["_"].includes(key)) {
+            bell_obj.rotate(11);
+        } else if (["+"].includes(key)) {
+            bell_obj.rotate(12);
+        } else if (["Q"].includes(key)) {
+            bell_obj.rotate(13);
+        } else if (["W"].includes(key)) {
+            bell_obj.rotate(14);
+        } else if (["E"].includes(key)) {
+            bell_obj.rotate(15);
+        } else if (["R"].includes(key)) {
+            bell_obj.rotate(16);
+        }
+    }
+
+
+    // Escape to unfocus chatbox
+    Mousetrap.bind('escape',  () => {if ($("#chat_input_box").is(":focus")) $("#chat_input_box").blur();});
+    // shift+s to set at hand
+    Mousetrap.bind('shift+s', bell_obj.set_bells_at_hand);
+    // Ring specific bell
+    Mousetrap.bind(['1','2','3','4','5','6','7','8','9','0','-','=','q','w','e','r'],
+            (e, key) => {_handle_ring(key);});
+    // Rotate circle
+    Mousetrap.bind(['shift+1','shift+2','shift+3','shift+4','shift+5','shift+6','shift+7','shift+8',
+                    'shift+9','shift+0','shift+-','shift+=','shift+q','shift+w','shift+e','shift+r'],
+            (e, key) => {_handle_rotate(key);});
+    // Right hand
+    Mousetrap.bind(['space','j','J','right'], 
+                   ()=>{bell_obj.pull_rope_by_hand("right"); return false}, 
+                   'keydown');
+    Mousetrap.bind(['f','F','left'], 
+                   ()=>{bell_obj.pull_rope_by_hand("left"); return false}, 
+                   'keydown');
+    Mousetrap.bind(['b', 'B'], ()=>bell_obj.make_call("Bob"));
+    Mousetrap.bind(['n', 'N'], ()=>bell_obj.make_call("Single"));
+    Mousetrap.bind(['g', 'G'], ()=>bell_obj.make_call("Go"));
+    Mousetrap.bind(['h', 'H'], ()=>bell_obj.make_call("That's all"));
+    Mousetrap.bind(['t', 'T'], ()=>bell_obj.make_call("Stand next"));
+    Mousetrap.bind(['l', 'L'], ()=>bell_obj.make_call("Look to"));
+    Mousetrap.bind(['r', 'R'], ()=>bell_obj.make_call("Rounds"));
+    Mousetrap.bind(['c', 'C'], ()=>bell_obj.make_call("Change method"));
+    Mousetrap.bind('s', ()=>bell_obj.make_call(window.tower_parameters.cur_user_name + " says sorry."));
+}
+
+
+
+
+</script>

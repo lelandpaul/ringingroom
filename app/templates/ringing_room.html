@@ -24,34 +24,9 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
+    {% include '_parameter_bindings.html' %}
 
-    <!-- bind tower data -->
-    <script>
-        window.tower_parameters = {
-            id: parseInt({{tower.tower_id}}),
-            name: "{{tower.name | safe}}",
-            audio: "{{tower.audio}}",
-            size: parseInt({{tower.n_bells}}),
-            observers: parseInt({{tower.observers}}),
-            assignments: {{tower.assignments_as_list() | safe }},
-            sizes_available: {{ [4,5,6,8,10,12,14,16] if tower.additional_sizes_enabled else [4,6,8,10,12]}},
-            cur_user_id: "{{user_id}}",
-            cur_user_name: "{{user_name}}",
-            cur_user_email: "{{user_email}}",
-            cur_user_badge: "{{user_badge if user_badge else ''}}",
-            anonymous_user: {{'true' if current_user.is_anonymous or listen_link else 'false'}},
-            user_token: "{{user_token}}",
-            host_mode_permitted: {{'true' if tower.host_mode_enabled else 'false'}},
-            host_mode: {{'true' if tower.host_mode else 'false'}},
-            host_permissions: {{'true' if host_permissions else 'false'}},
-            half_muffled: {{'true' if tower.half_muffled else 'false'}},
-            anticlockwise: {{'true' if tower.anticlockwise else 'false'}},
-            bookmarked: {{'true' if current_user.is_authenticated and current_user.bookmarked(tower.tower_id) else 'false'}},
-            listen_link: {{'true' if listen_link else 'false'}},
-            server_ip: "{{server_ip}}",
-            cow_enabled: {{'true' if cow_enabled else 'false'}},
-        };
-    </script>
+
     <!-- internal resources -->
     {% assets "js_rr" %}
     <script type="module" src="{{ ASSET_URL }}"></script>
