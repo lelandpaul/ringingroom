@@ -85,10 +85,10 @@ _bind_hotkeys = function(bell_obj) {
                     'shift+9','shift+0','shift+-','shift+=','shift+q','shift+w','shift+e','shift+r'],
             (e, key) => {_handle_rotate(key);});
     // Right hand
-    Mousetrap.bind(['space','j','J','right'], 
+    Mousetrap.bind({{user_settings['right'] | safe}},
                    ()=>{bell_obj.pull_rope_by_hand("right"); return false}, 
                    'keydown');
-    Mousetrap.bind(['f','F','left'], 
+    Mousetrap.bind({{user_settings['left'] | safe}},
                    ()=>{bell_obj.pull_rope_by_hand("left"); return false}, 
                    'keydown');
     Mousetrap.bind(['b', 'B'], ()=>bell_obj.make_call("Bob"));

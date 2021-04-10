@@ -86,6 +86,7 @@ def tower(tower_id, decorator=None):
                             user_name = '' if current_user.is_anonymous else current_user.username,
                             user_email = '' if current_user.is_anonymous else current_user.email,
                             user_badge = '' if current_user.is_anonymous else current_user.badge,
+                            user_settings = current_user.user_settings,
                             cow_enabled = Config.MORE_COWBELL,
                             server_ip=get_server_ip(tower_id),
                             user_token = user_token,

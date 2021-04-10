@@ -26,6 +26,7 @@ class User(UserMixin, db.Model):
     token_expiration = db.Column(db.DateTime)
     donation_thank_you = db.Column(db.String(64), index=True)
     donation_badge = db.Column(db.Integer)
+    user_settings_json = db.Column(db.String(), default="{}")
 
 
     def to_dict(self):
@@ -199,6 +200,18 @@ class User(UserMixin, db.Model):
         except ValueError:
             pass
         db.session.commit()
+
+    @property
+    def user_settings(self):
+        # Parse user settings from json to dict
+        try:
+            user_settings = json.loads(self.user_settings_json)
+        except TypeError:
+            user_settings = {}
+        # When we convert to Python 3.9, do the following instead:
+        # return Config.DEFAULT_SETTINGS | user_settings
+        return {**Config.DEFAULT_SETTINGS, **user_settings}
+        
 
 
 class TowerDB(db.Model):
