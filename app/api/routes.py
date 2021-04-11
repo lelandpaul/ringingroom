@@ -1,4 +1,5 @@
 from flask import jsonify, request, url_for
+import json
 from config import Config
 from app.email import send_password_reset_email
 from app.models import User, TowerDB, UserTowerRelation, Tower, get_server_ip, towers
@@ -89,6 +90,36 @@ def reset_password():
     response = jsonify({'title': f"Password reset email sent to {email_to_reset}"})
     response.status_code = 200
     return response
+
+@bp.route('/user/keybindings', methods=['GET'])
+def get_keybindings():
+    response = jsonify(current_user.user_settings)
+    response.status_code = 200
+    return response
+
+@bp.route('/user/keybindings', methods=['POST'])
+def update_keybindings():
+    data = request.get_json() or {}
+    user_settings = current_user.user_settings
+    user_settings.update(data)
+    current_user.user_settings = user_settings
+    response = jsonify(current_user.user_settings)
+    response.status_code = 200
+    return response
+
+@bp.route('/user/keybindings', methods=['DELETE'])
+def reset_keybinding():
+    data = request.get_json() or {}
+    to_reset = data['to_reset'] if data else None
+    current_user.reset_user_setting(to_reset)
+    response = jsonify(current_user.user_settings)
+    response.status_code = 200
+    return response
+
+    
+
+
+
 
 
 # my_towers endpoints

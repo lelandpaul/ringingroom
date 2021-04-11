@@ -37,6 +37,6 @@ class Config(object):
     MORE_COWBELL = os.getenv('COWBELL_ENABLED') or False
 
     DEFAULT_SETTINGS = {
-            'right': ['space', 'j', 'J', 'right'],
-            'left': ['f', 'F', 'left'],
+                'right': ['space', 'j', 'J', 'right'],
+                'left': ['f', 'F', 'left'],
             }

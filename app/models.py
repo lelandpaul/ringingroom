@@ -211,6 +211,18 @@ class User(UserMixin, db.Model):
         # When we convert to Python 3.9, do the following instead:
         # return Config.DEFAULT_SETTINGS | user_settings
         return {**Config.DEFAULT_SETTINGS, **user_settings}
+
+    @user_settings.setter
+    def user_settings(self, update):
+        self.user_settings_json = json.dumps(update)
+        db.session.commit()
+
+    def reset_user_setting(self, setting):
+        user_settings = json.loads(self.user_settings_json)
+        if setting in user_settings:
+            del user_settings[setting]
+        self.user_settings_json = json.dumps(user_settings)
+        db.session.commit()
         
 
 
