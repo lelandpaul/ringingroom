@@ -93,7 +93,7 @@ def reset_password():
 
 @bp.route('/user/keybindings', methods=['GET'])
 def get_keybindings():
-    response = jsonify(current_user.user_settings)
+    response = jsonify(current_user.get_settings_with_defaults()['keybindings'])
     response.status_code = 200
     return response
 
@@ -101,9 +101,9 @@ def get_keybindings():
 def update_keybindings():
     data = request.get_json() or {}
     user_settings = current_user.user_settings
-    user_settings.update(data)
+    user_settings['keybindings'].update(data)
     current_user.user_settings = user_settings
-    response = jsonify(current_user.user_settings)
+    response = jsonify(current_user.user_settings['keybindings'])
     response.status_code = 200
     return response
 
@@ -111,16 +111,13 @@ def update_keybindings():
 def reset_keybinding():
     data = request.get_json() or {}
     to_reset = data['to_reset'] if data else None
-    current_user.reset_user_setting(to_reset)
-    response = jsonify(current_user.user_settings)
+    if to_reset == 'ALL_KEYBINDINGS':
+        current_user.reset_category('keybindings')
+    else:
+        current_user.reset_keybinding(to_reset)
+    response = jsonify(current_user.get_settings_with_defaults()['keybindings'])
     response.status_code = 200
     return response
-
-    
-
-
-
-
 
 # my_towers endpoints
 

@@ -31,59 +31,44 @@ window.tower_parameters = {
 
 _bind_hotkeys = function(bell_obj) {
 
-    _handle_ring = function(key) {
-        if (parseInt(key) - 1 in [...Array(9).keys()]) {
-            bell_obj.pull_rope(parseInt(key));
-        } else if (parseInt(key) == 0) {
-            bell_obj.pull_rope(10);
-        } else if (["-"].includes(key)) {
-            bell_obj.pull_rope(11);
-        } else if (["="].includes(key)) {
-            bell_obj.pull_rope(12);
-        } else if (["q"].includes(key)) {
-            bell_obj.pull_rope(13);
-        } else if (["w"].includes(key)) {
-            bell_obj.pull_rope(14);
-        } else if (["e"].includes(key)) {
-            bell_obj.pull_rope(15);
-        } else if (["r"].includes(key)) {
-            bell_obj.pull_rope(16);
-        }
-    }
-
-    _handle_rotate = function(key) {
-        key = key[-1]
-        if (parseInt(code) - 1 in [...Array(9).keys()]) {
-            bell_obj.rotate(parseInt(code));
-        } else if (parseInt(code) == 0) {
-            bell_obj.rotate(10);
-        } else if (["_"].includes(key)) {
-            bell_obj.rotate(11);
-        } else if (["+"].includes(key)) {
-            bell_obj.rotate(12);
-        } else if (["Q"].includes(key)) {
-            bell_obj.rotate(13);
-        } else if (["W"].includes(key)) {
-            bell_obj.rotate(14);
-        } else if (["E"].includes(key)) {
-            bell_obj.rotate(15);
-        } else if (["R"].includes(key)) {
-            bell_obj.rotate(16);
-        }
-    }
-
-
     // Escape to unfocus chatbox
     Mousetrap.bind('escape',  () => {if ($("#chat_input_box").is(":focus")) $("#chat_input_box").blur();});
     // shift+s to set at hand
-    Mousetrap.bind('shift+s', bell_obj.set_bells_at_hand);
+    Mousetrap.bind({{user_settings['set_at_hand'] | safe }}, bell_obj.set_bells_at_hand);
     // Ring specific bell
-    Mousetrap.bind(['1','2','3','4','5','6','7','8','9','0','-','=','q','w','e','r'],
-            (e, key) => {_handle_ring(key);});
-    // Rotate circle
-    Mousetrap.bind(['shift+1','shift+2','shift+3','shift+4','shift+5','shift+6','shift+7','shift+8',
-                    'shift+9','shift+0','shift+-','shift+=','shift+q','shift+w','shift+e','shift+r'],
-            (e, key) => {_handle_rotate(key);});
+    Mousetrap.bind({{user_settings['1'] | safe}}, ()=>bell_obj.pull_rope(1))
+    Mousetrap.bind({{user_settings['2'] | safe}}, ()=>bell_obj.pull_rope(2))
+    Mousetrap.bind({{user_settings['3'] | safe}}, ()=>bell_obj.pull_rope(3))
+    Mousetrap.bind({{user_settings['4'] | safe}}, ()=>bell_obj.pull_rope(4))
+    Mousetrap.bind({{user_settings['5'] | safe}}, ()=>bell_obj.pull_rope(5))
+    Mousetrap.bind({{user_settings['6'] | safe}}, ()=>bell_obj.pull_rope(6))
+    Mousetrap.bind({{user_settings['7'] | safe}}, ()=>bell_obj.pull_rope(7))
+    Mousetrap.bind({{user_settings['8'] | safe}}, ()=>bell_obj.pull_rope(8))
+    Mousetrap.bind({{user_settings['9'] | safe}}, ()=>bell_obj.pull_rope(9))
+    Mousetrap.bind({{user_settings['10'] | safe}}, ()=>bell_obj.pull_rope(10))
+    Mousetrap.bind({{user_settings['11'] | safe}}, ()=>bell_obj.pull_rope(11))
+    Mousetrap.bind({{user_settings['12'] | safe}}, ()=>bell_obj.pull_rope(12))
+    Mousetrap.bind({{user_settings['13'] | safe}}, ()=>bell_obj.pull_rope(13))
+    Mousetrap.bind({{user_settings['14'] | safe}}, ()=>bell_obj.pull_rope(14))
+    Mousetrap.bind({{user_settings['15'] | safe}}, ()=>bell_obj.pull_rope(15))
+    Mousetrap.bind({{user_settings['16'] | safe}}, ()=>bell_obj.pull_rope(16))
+    //Rotate to bell
+    Mousetrap.bind({{user_settings['rotate-1'] | safe}}, ()=>bell_obj.rotate(1))
+    Mousetrap.bind({{user_settings['rotate-2'] | safe}}, ()=>bell_obj.rotate(2))
+    Mousetrap.bind({{user_settings['rotate-3'] | safe}}, ()=>bell_obj.rotate(3))
+    Mousetrap.bind({{user_settings['rotate-4'] | safe}}, ()=>bell_obj.rotate(4))
+    Mousetrap.bind({{user_settings['rotate-5'] | safe}}, ()=>bell_obj.rotate(5))
+    Mousetrap.bind({{user_settings['rotate-6'] | safe}}, ()=>bell_obj.rotate(6))
+    Mousetrap.bind({{user_settings['rotate-7'] | safe}}, ()=>bell_obj.rotate(7))
+    Mousetrap.bind({{user_settings['rotate-8'] | safe}}, ()=>bell_obj.rotate(8))
+    Mousetrap.bind({{user_settings['rotate-9'] | safe}}, ()=>bell_obj.rotate(9))
+    Mousetrap.bind({{user_settings['rotate-10'] | safe}}, ()=>bell_obj.rotate(10))
+    Mousetrap.bind({{user_settings['rotate-11'] | safe}}, ()=>bell_obj.rotate(11))
+    Mousetrap.bind({{user_settings['rotate-12'] | safe}}, ()=>bell_obj.rotate(12))
+    Mousetrap.bind({{user_settings['rotate-13'] | safe}}, ()=>bell_obj.rotate(13))
+    Mousetrap.bind({{user_settings['rotate-14'] | safe}}, ()=>bell_obj.rotate(14))
+    Mousetrap.bind({{user_settings['rotate-15'] | safe}}, ()=>bell_obj.rotate(15))
+    Mousetrap.bind({{user_settings['rotate-16'] | safe}}, ()=>bell_obj.rotate(16))
     // Right hand
     Mousetrap.bind({{user_settings['right'] | safe}},
                    ()=>{bell_obj.pull_rope_by_hand("right"); return false}, 
@@ -91,15 +76,15 @@ _bind_hotkeys = function(bell_obj) {
     Mousetrap.bind({{user_settings['left'] | safe}},
                    ()=>{bell_obj.pull_rope_by_hand("left"); return false}, 
                    'keydown');
-    Mousetrap.bind(['b', 'B'], ()=>bell_obj.make_call("Bob"));
-    Mousetrap.bind(['n', 'N'], ()=>bell_obj.make_call("Single"));
-    Mousetrap.bind(['g', 'G'], ()=>bell_obj.make_call("Go"));
-    Mousetrap.bind(['h', 'H'], ()=>bell_obj.make_call("That's all"));
-    Mousetrap.bind(['t', 'T'], ()=>bell_obj.make_call("Stand next"));
-    Mousetrap.bind(['l', 'L'], ()=>bell_obj.make_call("Look to"));
-    Mousetrap.bind(['r', 'R'], ()=>bell_obj.make_call("Rounds"));
-    Mousetrap.bind(['c', 'C'], ()=>bell_obj.make_call("Change method"));
-    Mousetrap.bind('s', ()=>bell_obj.make_call(window.tower_parameters.cur_user_name + " says sorry."));
+    Mousetrap.bind({{user_settings['bob'] | safe}}, ()=>bell_obj.make_call("Bob"));
+    Mousetrap.bind({{user_settings['single'] | safe}}, ()=>bell_obj.make_call("Single"));
+    Mousetrap.bind({{user_settings['go'] | safe}}, ()=>bell_obj.make_call("Go"));
+    Mousetrap.bind({{user_settings['all'] | safe}}, ()=>bell_obj.make_call("That's all"));
+    Mousetrap.bind({{user_settings['stand'] | safe}}, ()=>bell_obj.make_call("Stand next"));
+    Mousetrap.bind({{user_settings['look'] | safe}}, ()=>bell_obj.make_call("Look to"));
+    Mousetrap.bind({{user_settings['rounds'] | safe}}, ()=>bell_obj.make_call("Rounds"));
+    Mousetrap.bind({{user_settings['change'] | safe}}, ()=>bell_obj.make_call("Change method"));
+    Mousetrap.bind({{user_settings['sorry'] | safe}}, ()=>bell_obj.make_call(window.tower_parameters.cur_user_name + " says sorry."));
 }
 
 
