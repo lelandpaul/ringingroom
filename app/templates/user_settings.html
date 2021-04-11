@@ -4,192 +4,221 @@
 
 {% block app_content %}
 
-<form action="" method="post" novalidate>
-    {{form.hidden_tag()}}
 
 <h1>Account settings: {{ current_user.username }}</h1>
 
   <!-- <label class="custom-control-label" for="darkSwitch">Dark Mode</label> -->
 
-<div class="row my-4">
-    <div class="col-3">
-        Dark Mode:
-    </div>
-    <div class="col-3">
-        <div class="btn-group btn-block btn-group-toggle align-bottom">
-            <label class="btn btn-outline-primary" id="dark_false_label">
-            <input type="radio"
-                   name="dark_mode"
-                   id="dark_false"
-                   onclick="$('#darkSwitch').click(); window.toggle_dark_switch()"
-                   />
-                   Off
-            </label>
 
-            <label class="btn btn-outline-primary" id="dark_true_label">
-            <input type="radio"
-                   name="dark_mode"
-                   id="dark_true"
-                   onclick="$('#darkSwitch').click(); window.toggle_dark_switch()"
-                   />
-                   On
-            </label>
+<ul class="nav nav-tabs" id="user_settings_tabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="account-tab" data-toggle="tab" href="#account" role="tab" aria-controls="account" aria-selected="true">Account</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link active" id="keyboard-tab" data-toggle="tab" href="#keyboard" role="tab" aria-controls="keyboard" aria-selected="false">Keyboard</a>
+  </li>
+</ul>
+  
+<div class="tab-content" id="user_settings_tab_content">
+
+
+    <div class="tab-pane fade" id="account" role="tabpanel" aria-labelledby="account-tab">
+
+    <form action="" method="post" novalidate>
+        {{form.hidden_tag()}}
+
+    <div class="row my-4">
+        <div class="col-3">
+            Dark Mode:
         </div>
-    </div>
-</div>
+        <div class="col-3">
+            <div class="btn-group btn-block btn-group-toggle align-bottom">
+                <label class="btn btn-outline-primary" id="dark_false_label">
+                <input type="radio"
+                       name="dark_mode"
+                       id="dark_false"
+                       onclick="$('#darkSwitch').click(); window.toggle_dark_switch()"
+                       />
+                       Off
+                </label>
 
-
-<input type="checkbox" class="d-none" id="darkSwitch" />
-<script src="static/dark-mode-switch/dark-mode-switch.min.js"></script>
-<script>
-    window.toggle_dark_switch = function(){
-        $('#dark_true_label').toggleClass('active');
-        $('#dark_false_label').toggleClass('active');
-    };
-    $(document).ready(function(){
-        if ( localStorage.getItem('darkSwitch') !== null &&
-             localStorage.getItem('darkSwitch') === 'dark'){
-            $('#dark_true_label').addClass('active');
-        } else {
-            $('#dark_false_label').addClass('active');
-        }
-    });
-</script>
-
-<small class="form-text text-muted">
-
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul>
-            {% for message in messages %}
-            <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-    {% endwith %}
-
-</small>
-
-<hr class="mb-5">
-
-<small class="form-text">To change your username, email, or password, enter the updates you would like (leaving other fields blank), then enter your current password below and press "Save changes".</small>
-
-<div class="form-row mt-2">
-
-    <div class="form-group col-6">
-        {{ form.new_username.label }}
-        {{ form.new_username(size=32, class="form-control")}}
-    </div>
-
-    <div class="form-group col-6">
-        {{ form.new_email.label }}
-        {{ form.new_email(size=32, class="form-control")}}
-    </div>
-
-    <small class="form-text col-6 mt-n2">
-        Current username: {{current_user.username}}<br>
-        {% for error in form.new_username.errors %}
-        <span style="color: red;">{{ error }}</span>
-        {% endfor %}
-    </small>
-
-    <small class="form-text col-6 mt-n2">
-        Current email: {{current_user.email}}<br>
-        {% for error in form.new_email.errors %}
-        <span style="color: red;">{{ error }}</span>
-        {% endfor %}
-    </small>
-
-</div>
-
-
-<div class="form-row mt-3">
-
-    <div class="form-group col">
-        {{ form.new_password.label }}
-        {{ form.new_password(size=32, class="form-control") }}
-        <small class="form-text">
-        {% for error in form.new_password.errors %}
-        <span style="color: red;">{{ error }}</span>
-        {% endfor %}
-        </small>
-    </div>
-
-    <div class="form-group col">
-        {{ form.new_password2.label }}
-        {{ form.new_password2(size=32, class="form-control") }}
-        <small class="form-text">
-        {% for error in form.new_password2.errors %}
-        <span style="color: red;">{{ error }}</span>
-        {% endfor %}
-        </small>
-    </div>
-
-</div>
-
-<hr class="my-5">
-
-<div class="form-row align-items-center">
-
-    <div class="col-3 col-form-label">
-            {{ form.password.label }}
-    </div>
-    <div class="col-9">
-        <div class="input-group">
-            {{ form.password(size=32, class="form-control") }}
-            <div class="input-group-append">
-                {{ form.submit(class="btn btn-outline-primary") }}
+                <label class="btn btn-outline-primary" id="dark_true_label">
+                <input type="radio"
+                       name="dark_mode"
+                       id="dark_true"
+                       onclick="$('#darkSwitch').click(); window.toggle_dark_switch()"
+                       />
+                       On
+                </label>
             </div>
         </div>
     </div>
 
-    <div class="col-9 offset-3">
-        <small class="form-text mt-n2">
-            Enter your current password to make changes.<br>
-            {% for error in form.password.errors %}
+
+    <input type="checkbox" class="d-none" id="darkSwitch" />
+    <script src="static/dark-mode-switch/dark-mode-switch.min.js"></script>
+    <script>
+        window.toggle_dark_switch = function(){
+            $('#dark_true_label').toggleClass('active');
+            $('#dark_false_label').toggleClass('active');
+        };
+        $(document).ready(function(){
+            if ( localStorage.getItem('darkSwitch') !== null &&
+                 localStorage.getItem('darkSwitch') === 'dark'){
+                $('#dark_true_label').addClass('active');
+            } else {
+                $('#dark_false_label').addClass('active');
+            }
+        });
+    </script>
+
+    <small class="form-text text-muted">
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% endwith %}
+
+    </small>
+
+    <hr class="mb-5">
+
+    <small class="form-text">To change your username, email, or password, enter the updates you would like (leaving other fields blank), then enter your current password below and press "Save changes".</small>
+
+    <div class="form-row mt-2">
+
+        <div class="form-group col-6">
+            {{ form.new_username.label }}
+            {{ form.new_username(size=32, class="form-control")}}
+        </div>
+
+        <div class="form-group col-6">
+            {{ form.new_email.label }}
+            {{ form.new_email(size=32, class="form-control")}}
+        </div>
+
+        <small class="form-text col-6 mt-n2">
+            Current username: {{current_user.username}}<br>
+            {% for error in form.new_username.errors %}
             <span style="color: red;">{{ error }}</span>
             {% endfor %}
         </small>
+
+        <small class="form-text col-6 mt-n2">
+            Current email: {{current_user.email}}<br>
+            {% for error in form.new_email.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </small>
+
     </div>
 
 
+    <div class="form-row mt-3">
 
+        <div class="form-group col">
+            {{ form.new_password.label }}
+            {{ form.new_password(size=32, class="form-control") }}
+            <small class="form-text">
+            {% for error in form.new_password.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+            </small>
+        </div>
 
-</div>
+        <div class="form-group col">
+            {{ form.new_password2.label }}
+            {{ form.new_password2(size=32, class="form-control") }}
+            <small class="form-text">
+            {% for error in form.new_password2.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+            </small>
+        </div>
 
-</form>
-
-<hr class="my-5">
-
-<small class="form-text">If you would like to permanently delete your account, enter your current password here and then click "Delete account".</small>
-
-<form action="" method="post" novalidate>
-    {{del_form.hidden_tag()}}
-
-<div class="form-row align-items-center mt-3">
-
-    <div class="col-5 col-form-label">
-        {{del_form.delete_password.label}}
     </div>
-    <div class="col-7">
-        <div class="input-group">
-            {{del_form.delete_password(size=32,class="form-control")}}
-            <div class="input-group-append">
-                {{ del_form.delete(class="btn btn-outline-primary") }}
+
+    <hr class="my-5">
+
+    <div class="form-row align-items-center">
+
+        <div class="col-3 col-form-label">
+                {{ form.password.label }}
+        </div>
+        <div class="col-9">
+            <div class="input-group">
+                {{ form.password(size=32, class="form-control") }}
+                <div class="input-group-append">
+                    {{ form.submit(class="btn btn-outline-primary") }}
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col-7 offset-5">
-        <small class="form-text mt-n2">
-            This will immediately delete all of your stored data.<br>
-            {% for error in del_form.delete_password.errors %}
-            <span style="color: red;">{{ error }}</span>
-            {% endfor %}
-        </small>
-    </div>
-</div>
 
-</form>
+        <div class="col-9 offset-3">
+            <small class="form-text mt-n2">
+                Enter your current password to make changes.<br>
+                {% for error in form.password.errors %}
+                <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+            </small>
+        </div>
+
+
+
+
+    </div>
+
+    </form>
+
+    <hr class="my-5">
+
+    <small class="form-text">If you would like to permanently delete your account, enter your current password here and then click "Delete account".</small>
+
+    <form action="" method="post" novalidate>
+        {{del_form.hidden_tag()}}
+
+    <div class="form-row align-items-center mt-3">
+
+        <div class="col-5 col-form-label">
+            {{del_form.delete_password.label}}
+        </div>
+        <div class="col-7">
+            <div class="input-group">
+                {{del_form.delete_password(size=32,class="form-control")}}
+                <div class="input-group-append">
+                    {{ del_form.delete(class="btn btn-outline-primary") }}
+                </div>
+            </div>
+        </div>
+        <div class="col-7 offset-5">
+            <small class="form-text mt-n2">
+                This will immediately delete all of your stored data.<br>
+                {% for error in del_form.delete_password.errors %}
+                <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+            </small>
+        </div>
+    </div>
+
+    </form>
+
+    </div>
+
+    <!-- Keyboard -->
+
+    <div class="tab-pane fade show active" id="keyboard" role="tabpanel" aria-labelledby="keyboard-tab">
+
+
+    <div id="keyboard_form"></div>
+
+    </div>
+
+</div>
 
 
 
