@@ -10,7 +10,7 @@ class Config(object):
 
     RR_VERSION = "21.13"
 
-    RR_API_VERSION = "1.1"
+    RR_API_VERSION = "1.2"
 
     RR_SOCKETIO_VERSION = "1.0"
 

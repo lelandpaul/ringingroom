@@ -69,6 +69,12 @@ Ringing Room supplies a basic API for use in 3rd-party apps.
 | `/api/user`                      | `PUT`    | Modify user settings                   |
 | `/api/user`                      | `DELETE` | Delete user account                    |
 | `/api/user/reset_password`       | `POST`   | Trigger password reset email           |
+| `/api/user/keybindings`          | `GET`    | Get keybindings                        |
+| `/api/user/keybindings`          | `POST`   | Update keybinding                      |
+| `/api/user/keybindings`          | `DELETE` | Reset keybindings                      |
+| `/api/user/controllers`          | `GET`    | Get motion controller parameters       |
+| `/api/user/controllers`          | `POST`   | Update motion controller parameters    |
+| `/api/user/controllers`          | `DELETE` | Reset motion controller parameters     |
 | `/api/my_towers`                 | `GET`    | Get all towers related to current user |
 | `/api/my_towers/<tower_id>`      | `PUT`    | Toggle bookmark for `tower_id`         |
 | `/api/my_towers/<tower_id>`      | `DELETE` | Remove `tower_id` from recent towers   |
@@ -105,6 +111,20 @@ All other endpoints (except `POST /api/user` for registering new users) require 
 `DELETE /api/user`:  Deletes user.
 
 `POST /api/user/reset_password`: Must include an `email` field in the request JSON; if that email is associated with an account, an email will be sent to reset the password to that account. (Note: For security reasons, this endpoint will always respond with code 200 OK, no matter what email address was included.)
+
+#### Keyboard & Controller parameters
+
+`GET /api/user/keybindings`: Gets all keybindings. Responds with a JSON including fields for each function (e.g "Call Bob" or "Ring left-hand bell"), with values a list of keybindings. (See `config.py` for the default keybindings and a list of all fields this will return.)
+
+`POST /api/user/keybindings`: Update a specific keybinding. Request must include a JSON with a single field named for one of the functions where the value is the complete list of keys bound to that function. Responds as per `GET /api/user/keybindings`.
+
+`DELETE /api/user/keybindings`: Reset either a specific keybinding or all keybindings. Request must include a *string* which is either a) the name of a specific keybinding function or b) the special key `ALL_KEYBINDINGS`. Responds as per `GET /api/user/keybindings`.
+
+`GET /api/user/controllers`: Gets all controller parameters. Responds with a JSON including fields for each parameter. See `config.py` for the default parameters and a list of all fields this will return.
+
+`POST /api/user/controllers`: Update a specific controller parameter. Request must include a JSON with a single field named for one of the controller parameters. Responds as per `GET /api/user/controllers`.
+
+`DELETE /api/user/controllers`: Resets *all* controller parameters. Requet body is ignored. Responds as per `GET /api/user/controllers`.
 
 ### My_Towers
 

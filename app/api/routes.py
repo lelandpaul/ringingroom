@@ -91,6 +91,8 @@ def reset_password():
     response.status_code = 200
     return response
 
+# Keybindings and controller parameters
+
 @bp.route('/user/keybindings', methods=['GET'])
 @token_auth.login_required
 def get_keybindings():
