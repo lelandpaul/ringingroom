@@ -125,7 +125,7 @@ $(document).ready(function() {
     });
 
 
-    var form = new Vue({
+    const keyboard_form = new Vue({
         el: "#keyboard_form",
 
         data: {
@@ -158,7 +158,6 @@ $(document).ready(function() {
 
         methods: {
             _filter_functions: function(cat){
-                console.log(this.function_names)
                 return Object.keys(this.function_names)
                         .filter((func)=>{
                             return this.function_names[func].cat === cat;
@@ -218,7 +217,7 @@ $(document).ready(function() {
 
 
         template:`
-        <div id="form-container" class="py-3">
+        <div id="keyboard-form-container" class="py-3">
             <div class="row py-3">
                 <div class="col-10">
                     <small> 
@@ -285,7 +284,178 @@ $(document).ready(function() {
             </a>
         </div>
         `
+    });
 
+    const controllers_form = new Vue({
+        el: "#controllers_form",
 
+        data: {
+            cur_values: {},
+            options: [
+                { call: 'Bob' },
+                { call: 'Change method' },
+                { call: 'Go' },
+                { call: 'Look to' },
+                { call: 'Rounds' },
+                { call: 'Single' },
+                { call: 'Sorry' },
+                { call: 'Stand' },
+                { call: "That's all" },
+            ]
+        },
+
+        mounted: function() {
+            $.ajax({
+                url: '/api/user/controllers',
+                type: 'GET',
+                success: (response) => this.cur_values = response,
+            }).then(()=>console.log(this.cur_values));
+        },
+
+        methods: {
+            update: function(param) {
+                var data = {};
+                data[param] = this.cur_values[param];
+                return $.ajax({
+                    url: '/api/user/controllers',
+                    type: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                });
+            },
+
+            reset: function(func) {
+                return $.ajax({
+                    url: '/api/user/controllers',
+                    type: 'DELETE',
+                    success: (result)=>this.cur_values=result,
+                });
+            },
+        },
+
+        template:`
+            <div id="controllers-form-container" class="py-2">
+            <div class="row py-3">
+                <div class="col-10">
+                    <small> 
+                        These parameters control the behavior of motion controllers such as eBells or  
+                        ActionXLs.
+                    </small>
+                </div>
+                <div class="col-2 d-flex flex-row-reverse align-items-center">
+                    <button class="btn btn-outline-primary btn-sm"
+                        style="height: min-content;"
+                        @click="reset"
+                        >
+                        Restore all to default settings
+                    </button>
+                </div>
+            </div>
+                <h4 class="pt-3">Strike settings</h4>
+                <div class="form-group row justify-content-between">
+                    <label for="debounce" class="col col-sm-4 col-form-label">
+                        Debounce
+                    </label>
+                    <div class="col col-sm-2 d-flex align-items-center">
+                        <input id="debounce" class="form-control" type="number" 
+                               min="0"
+                               step="10"
+                               @change="update('debounce')"
+                               v-model:value="cur_values.debounce"/>
+                    </div>
+                </div>
+                <div class="row mt-n3 mb-3">
+                    <div class="col-12 col-sm-auto">
+                        <small>How many milliseconds must pass between one stroke and the next.</small>
+                    </div>
+                </div>
+                <div class="form-group row justify-content-between">
+                    <label for="handstroke" class="col col-sm-4 col-form-label">
+                        Handstroke
+                    </label>
+                    <div class="col col-sm-2 d-flex align-items-center">
+                        <input id="handstroke" class="form-control" type="number" 
+                               step="10"
+                               @change="update('handstroke')"
+                               v-model:value="cur_values.handstroke"/>
+                    </div>
+                </div>
+                <div class="row mt-n3 mb-3">
+                    <div class="col-12 col-sm-auto">
+                        <small>The angle at which a handstroke is detected. (Higher numbers indicate a more vertical bell.)</small>
+                    </div>
+                </div>
+                <div class="form-group row justify-content-between">
+                    <label for="backstroke" class="col col-sm-4 col-form-label">
+                        Backstroke
+                    </label>
+                    <div class="col col-sm-2 d-flex align-items-center">
+                        <input id="backstroke" class="form-control" type="number" 
+                               step="10"
+                               @change="update('backstroke')"
+                               v-model:value="cur_values.backstroke"/>
+                    </div>
+                </div>
+                <div class="row mt-n3 mb-3">
+                    <div class="col-12 col-sm-auto">
+                        <small>The angle at which a backstroke is detected. (Higher numbers indicate a more vertical bell.)</small>
+                    </div>
+                </div>
+                <h4 class="pt-3"> Left controller buttons </h4>
+                <div class="form-group row">
+                    <label for="left_left" class="col-6 col-sm-1 col-form-label">
+                        Left
+                    </label>
+                    <div class="col col-sm-3 d-flex align-items-center">
+                        <select id="left_left" class="form-control"
+                            @change="update('left_left')"
+                            v-model="cur_values.left_left">
+                            <option v-for="option in options" v-bind:value="option.call">
+                                [[ option.call ]]
+                            </option>
+                        </select>
+                    </div>
+                    <label for="left_right" class="col-6 col-sm-1 offset-sm-4 col-form-label">
+                        Right
+                    </label>
+                    <div class="col col-sm-3 d-flex align-items-center">
+                        <select id="left_right" class="form-control"
+                            @change="update('left_right')"
+                            v-model="cur_values.left_right">
+                            <option v-for="option in options" v-bind:value="option.call">
+                                [[ option.call ]]
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <h4 class="pt-3"> Right controller buttons </h4>
+                <div class="form-group row">
+                    <label for="right_left" class="col-6 col-sm-1 col-form-label">
+                        Left
+                    </label>
+                    <div class="col-6 col-sm-3 d-flex align-items-center">
+                        <select id="right_left" class="form-control"
+                            @change="update('right_left')"
+                            v-model="cur_values.right_left">
+                            <option v-for="option in options" v-bind:value="option.call">
+                                [[ option.call ]]
+                            </option>
+                        </select>
+                    </div>
+                    <label for="right_right" class="col-6 col-sm-1 offset-sm-4 col-form-label">
+                        Right
+                    </label>
+                    <div class="col col-sm-3 d-flex align-items-center">
+                        <select id="right_right" class="form-control"
+                            @change="update('right_right')"
+                            v-model="cur_values.right_right">
+                            <option v-for="option in options" v-bind:value="option.call">
+                                [[ option.call ]]
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        `,
     });
 });

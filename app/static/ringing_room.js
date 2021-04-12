@@ -2041,9 +2041,13 @@ $(document).ready(function () {
     Vue.component("controllers", {
         data: function () {
             return {
-                hand_strike: 100,
-                back_strike: -600,
-                debounce: 600,
+                hand_strike: window.user_settings.controller_handstroke,
+                back_strike: window.user_settings.controller_backstroke,
+                debounce: window.user_settings.controller_debounce,
+                left_left: window.user_settings.controller_left_left,
+                left_right: window.user_settings.controller_left_right,
+                right_left: window.user_settings.controller_right_left,
+                right_right: window.user_settings.controller_right_right,
                 next_ring: 0,
                 has_controller: false,
                 check_controller: null,
@@ -2140,15 +2144,15 @@ $(document).ready(function () {
 
                                     if (i == 0) {
                                         if (left_hand) {
-                                            bell_circle.make_call("Stand");
+                                            bell_circle.make_call(this.left_left);
                                         } else {
-                                            bell_circle.make_call("Single");
+                                            bell_circle.make_call(this.right_left);
                                         }
                                     } else if (i == 1) {
                                         if (left_hand) {
-                                            bell_circle.make_call("Go");
+                                            bell_circle.make_call(this.left_right);
                                         } else {
-                                            bell_circle.make_call("Bob");
+                                            bell_circle.make_call(this.right_right);
                                         }
                                     }
                                 }

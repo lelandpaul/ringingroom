@@ -82,5 +82,14 @@ class Config(object):
                 'rotate-14': ['shift+w'],
                 'rotate-15': ['shift+e'],
                 'rotate-16': ['shift+r'],
-                }
+                },
+             'controllers': {
+                 'debounce': 600,
+                 'handstroke': 100,
+                 'backstroke': -600,
+                 'left_left': 'Stand',
+                 'left_right': 'Go',
+                 'right_left': 'Single',
+                 'right_right': 'Bob',
+                 }
             }

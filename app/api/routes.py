@@ -119,6 +119,29 @@ def reset_keybinding():
     response.status_code = 200
     return response
 
+@bp.route('/user/controllers', methods=['GET'])
+def get_controller_settings():
+    response = jsonify(current_user.get_settings_with_defaults()['controllers'])
+    response.status_code = 200
+    return response
+
+@bp.route('/user/controllers', methods=['POST'])
+def update_controller_settings():
+    data = request.get_json() or {}
+    user_settings = current_user.user_settings
+    user_settings['controllers'].update(data)
+    current_user.user_settings = user_settings
+    response = jsonify({})
+    response.status_code = 200
+    return response
+
+@bp.route('/user/controllers', methods=['DELETE'])
+def reset_controller_settings():
+    current_user.reset_category('controllers')
+    response = jsonify(current_user.get_settings_with_defaults()['controllers'])
+    response.status_code = 200
+    return response
+
 # my_towers endpoints
 
 @bp.route('/my_towers', methods=['GET'])
