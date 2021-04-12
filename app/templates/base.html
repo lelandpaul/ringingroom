@@ -58,18 +58,23 @@
 <body>
 
 {%  if not user_settings_flag %}
+
 <div class="custom-control custom-switch d-none">
       <input type="checkbox" class="custom-control-input" id="darkSwitch" />
       <label class="custom-control-label" for="darkSwitch">Dark Mode</label>
 </div>
 <script src="static/dark-mode-switch/dark-mode-switch.min.js"></script>
+
 {% else %}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.5/mousetrap.min.js" integrity="sha512-+Jg3Ynmj9hse704K48H6rBBI3jdNBjReRGBCxUWFfOz3yVurnJFWtAWssDAsGtzWYw89xFWPxShuj2T6E9EOpg==" crossorigin="anonymous"></script>
-
-
 <script src="/static/mousetrap-record.min.js"></script>
 <script type="module" src="/static/user_settings_form.js"></script>
+<script>
+    // Used for authenticating at API endpoints
+    window.user_token = "{{ user_token }}";
+</script>
+
 {% endif %}
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">

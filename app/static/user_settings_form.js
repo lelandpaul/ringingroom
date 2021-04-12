@@ -152,6 +152,9 @@ $(document).ready(function() {
             $.ajax({
                 url: '/api/user/keybindings',
                 type: 'GET',
+                headers: {
+                    "Authorization": "Bearer " + window.user_token,
+                },
                 success: (response) => this.rows = response,
             });
         },
@@ -200,6 +203,9 @@ $(document).ready(function() {
                     url: '/api/user/keybindings',
                     type: 'POST',
                     data: JSON.stringify(data),
+                    headers: {
+                        "Authorization": "Bearer " + window.user_token,
+                    },
                     contentType: 'application/json',
                 });
             },
@@ -210,6 +216,9 @@ $(document).ready(function() {
                     type: 'DELETE',
                     data: JSON.stringify({'to_reset': func}),
                     contentType: 'application/json',
+                    headers: {
+                        "Authorization": "Bearer " + window.user_token,
+                    },
                     success: (result)=>this.rows=result,
                 });
             },
@@ -308,8 +317,11 @@ $(document).ready(function() {
             $.ajax({
                 url: '/api/user/controllers',
                 type: 'GET',
+                headers: {
+                    "Authorization": "Bearer " + window.user_token,
+                },
                 success: (response) => this.cur_values = response,
-            }).then(()=>console.log(this.cur_values));
+            });
         },
 
         methods: {
@@ -320,6 +332,9 @@ $(document).ready(function() {
                     url: '/api/user/controllers',
                     type: 'POST',
                     data: JSON.stringify(data),
+                    headers: {
+                        "Authorization": "Bearer " + window.user_token,
+                    },
                     contentType: 'application/json',
                 });
             },
@@ -328,6 +343,9 @@ $(document).ready(function() {
                 return $.ajax({
                     url: '/api/user/controllers',
                     type: 'DELETE',
+                    headers: {
+                        "Authorization": "Bearer " + window.user_token,
+                    },
                     success: (result)=>this.cur_values=result,
                 });
             },

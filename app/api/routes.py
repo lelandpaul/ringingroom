@@ -92,12 +92,14 @@ def reset_password():
     return response
 
 @bp.route('/user/keybindings', methods=['GET'])
+@token_auth.login_required
 def get_keybindings():
     response = jsonify(current_user.get_settings_with_defaults()['keybindings'])
     response.status_code = 200
     return response
 
 @bp.route('/user/keybindings', methods=['POST'])
+@token_auth.login_required
 def update_keybindings():
     data = request.get_json() or {}
     user_settings = current_user.user_settings
@@ -108,6 +110,7 @@ def update_keybindings():
     return response
 
 @bp.route('/user/keybindings', methods=['DELETE'])
+@token_auth.login_required
 def reset_keybinding():
     data = request.get_json() or {}
     to_reset = data['to_reset'] if data else None
@@ -120,12 +123,14 @@ def reset_keybinding():
     return response
 
 @bp.route('/user/controllers', methods=['GET'])
+@token_auth.login_required
 def get_controller_settings():
     response = jsonify(current_user.get_settings_with_defaults()['controllers'])
     response.status_code = 200
     return response
 
 @bp.route('/user/controllers', methods=['POST'])
+@token_auth.login_required
 def update_controller_settings():
     data = request.get_json() or {}
     user_settings = current_user.user_settings
@@ -136,6 +141,7 @@ def update_controller_settings():
     return response
 
 @bp.route('/user/controllers', methods=['DELETE'])
+@token_auth.login_required
 def reset_controller_settings():
     current_user.reset_category('controllers')
     response = jsonify(current_user.get_settings_with_defaults()['controllers'])

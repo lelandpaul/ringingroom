@@ -337,7 +337,11 @@ def user_settings():
         db.session.commit()
         logout_user()
         return redirect(url_for('index'))
-    return render_template('user_settings.html', form=form, del_form=del_form, user_settings_flag=True)
+    return render_template('user_settings.html', 
+                           form=form, 
+                           del_form=del_form, 
+                           user_token=current_user.get_token(),
+                           user_settings_flag=True)
 
 @app.route('/reset_password', methods=['GET','POST'])
 def request_reset_password():
