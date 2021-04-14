@@ -13,6 +13,7 @@ import jwt
 import base64
 import os
 from enum import Enum
+from collections import defaultdict
 
 
 class User(UserMixin, db.Model):
@@ -26,6 +27,7 @@ class User(UserMixin, db.Model):
     token_expiration = db.Column(db.DateTime)
     donation_thank_you = db.Column(db.String(64), index=True)
     donation_badge = db.Column(db.Integer)
+    user_settings_json = db.Column(db.String(), default="{}")
 
 
     def to_dict(self):
@@ -199,6 +201,52 @@ class User(UserMixin, db.Model):
         except ValueError:
             pass
         db.session.commit()
+
+    @property
+    def user_settings(self):
+        # Parse user settings from json to dict
+        user_settings = defaultdict(dict)
+        try:
+            user_settings.update(json.loads(self.user_settings_json))
+        except TypeError:
+            pass
+        return user_settings
+
+    def get_settings_with_defaults(self):
+        try:
+            user_settings = json.loads(self.user_settings_json)
+        except TypeError:
+            user_settings = {}
+        merged_dict = {}
+        for key, val in Config.DEFAULT_SETTINGS.items():
+            merged_dict[key] = val.copy()
+            if key in user_settings:
+                merged_dict[key].update(user_settings[key])
+
+        return merged_dict
+
+    @user_settings.setter
+    def user_settings(self, update):
+        self.user_settings_json = json.dumps(update)
+        db.session.commit()
+
+    def reset_category(self, category):
+        user_settings = json.loads(self.user_settings_json)
+        user_settings[category] = {}
+        self.user_settings_json = json.dumps(user_settings)
+        db.session.commit()
+
+    def reset_keybinding(self, setting):
+        user_settings = json.loads(self.user_settings_json)
+        if setting in user_settings['keybindings']:
+            del user_settings['keybindings'][setting]
+            for keybinding in Config.DEFAULT_SETTINGS['keybindings'][setting]:
+                for val in user_settings['keybindings'].values():
+                    if keybinding in val:
+                        val.remove(keybinding)
+        self.user_settings_json = json.dumps(user_settings)
+        db.session.commit()
+        
 
 
 class TowerDB(db.Model):

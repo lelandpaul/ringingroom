@@ -86,6 +86,7 @@ def tower(tower_id, decorator=None):
                             user_name = '' if current_user.is_anonymous else current_user.username,
                             user_email = '' if current_user.is_anonymous else current_user.email,
                             user_badge = '' if current_user.is_anonymous else current_user.badge,
+                            user_settings = current_user.get_settings_with_defaults(),
                             cow_enabled = Config.MORE_COWBELL,
                             server_ip=get_server_ip(tower_id),
                             user_token = user_token,
@@ -338,7 +339,11 @@ def user_settings():
         db.session.commit()
         logout_user()
         return redirect(url_for('index'))
-    return render_template('user_settings.html', form=form, del_form=del_form, user_settings_flag=True)
+    return render_template('user_settings.html', 
+                           form=form, 
+                           del_form=del_form, 
+                           user_token=current_user.get_token(),
+                           user_settings_flag=True)
 
 @app.route('/reset_password', methods=['GET','POST'])
 def request_reset_password():

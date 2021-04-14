@@ -1,4 +1,5 @@
 from flask import jsonify, request, url_for
+import json
 from config import Config
 from app.email import send_password_reset_email
 from app.models import User, TowerDB, UserTowerRelation, Tower, get_server_ip, towers
@@ -90,6 +91,64 @@ def reset_password():
     response.status_code = 200
     return response
 
+# Keybindings and controller parameters
+
+@bp.route('/user/keybindings', methods=['GET'])
+@token_auth.login_required
+def get_keybindings():
+    response = jsonify(current_user.get_settings_with_defaults()['keybindings'])
+    response.status_code = 200
+    return response
+
+@bp.route('/user/keybindings', methods=['POST'])
+@token_auth.login_required
+def update_keybindings():
+    data = request.get_json() or {}
+    user_settings = current_user.user_settings
+    user_settings['keybindings'].update(data)
+    current_user.user_settings = user_settings
+    response = jsonify(current_user.user_settings['keybindings'])
+    response.status_code = 200
+    return response
+
+@bp.route('/user/keybindings', methods=['DELETE'])
+@token_auth.login_required
+def reset_keybinding():
+    data = request.get_json() or {}
+    to_reset = data['to_reset'] if data else None
+    if to_reset == 'ALL_KEYBINDINGS':
+        current_user.reset_category('keybindings')
+    else:
+        current_user.reset_keybinding(to_reset)
+    response = jsonify(current_user.get_settings_with_defaults()['keybindings'])
+    response.status_code = 200
+    return response
+
+@bp.route('/user/controllers', methods=['GET'])
+@token_auth.login_required
+def get_controller_settings():
+    response = jsonify(current_user.get_settings_with_defaults()['controllers'])
+    response.status_code = 200
+    return response
+
+@bp.route('/user/controllers', methods=['POST'])
+@token_auth.login_required
+def update_controller_settings():
+    data = request.get_json() or {}
+    user_settings = current_user.user_settings
+    user_settings['controllers'].update(data)
+    current_user.user_settings = user_settings
+    response = jsonify({})
+    response.status_code = 200
+    return response
+
+@bp.route('/user/controllers', methods=['DELETE'])
+@token_auth.login_required
+def reset_controller_settings():
+    current_user.reset_category('controllers')
+    response = jsonify(current_user.get_settings_with_defaults()['controllers'])
+    response.status_code = 200
+    return response
 
 # my_towers endpoints
 

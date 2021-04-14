@@ -729,9 +729,10 @@ $(document).ready(function () {
         </div>
         <div class="col">
             <div class="btn-group btn-block btn-group-toggle align-bottom">
-                <label class="btn btn-outline-primary"
+                <label class="btn btn-outline-primary autoblur"
                        :class="{active: !host_mode}">
                     <input type="radio"
+                           class="autoblur"
                            name="host_mode"
                            id="host_false"
                            :value="false"
@@ -739,9 +740,10 @@ $(document).ready(function () {
                            />
                     Off
                 </label>
-                <label class="btn btn-outline-primary"
+                <label class="btn btn-outline-primary autoblur"
                        :class="{active: host_mode}">
                     <input type="radio"
+                           class="autoblur"
                            name="host_mode"
                            id="host_true"
                            :value="true"
@@ -764,12 +766,13 @@ $(document).ready(function () {
             <div class="btn-group btn-block btn-group-toggle">
                 <label v-for="size in tower_sizes"
                        :size="size"
-                       class="btn btn-outline-primary"
+                       class="btn btn-outline-primary autoblur"
                        :class="{active: size === number_of_bells,
                        disabled: lock_controls}"
                        @click="set_tower_size(size)"
                        >
                     <input type="radio"
+                           class="autoblur"
                            name="size"
                            :value="size"
                            />
@@ -781,10 +784,11 @@ $(document).ready(function () {
     <div class="row justify-content-between">
         <div class="col">
             <div class="btn-group btn-block btn-group-toggle">
-                <label class="btn btn-outline-primary"
+                <label class="btn btn-outline-primary autoblur"
                        :class="{active: audio_type == 'Tower',
                                 disabled: lock_controls}">
                     <input type="radio"
+                           class="autoblur"
                            name="audio"
                            id="audio_tower"
                            value="Tower"
@@ -792,11 +796,12 @@ $(document).ready(function () {
                            />
                     Tower
                 </label>
-                <label class="btn btn-outline-primary"
+                <label class="btn btn-outline-primary autoblur"
                        :class="{active: audio_type == 'Hand',
                        disabled: lock_controls}"
                        >
                     <input type="radio"
+                           class="autoblur"
                            name="audio"
                            id="audio_hand"
                            value="Hand"
@@ -804,12 +809,13 @@ $(document).ready(function () {
                            />
                     Hand
                 </label>
-                <label class="btn btn-outline-primary"
+                <label class="btn btn-outline-primary autoblur"
                        :class="{active: audio_type == 'Cow',
                                 disabled: lock_controls}"
                        v-if="window.tower_parameters.cow_enabled"
                         >
                     <input type="radio"
+                           class="autoblur"
                            name="audio"
                            id="audio_cow"
                            value="Cow"
@@ -820,7 +826,7 @@ $(document).ready(function () {
             </div>
         </div>
         <div class="col">
-            <button class="set_at_hand btn btn-outline-primary btn-block px-1"
+            <button class="set_at_hand btn btn-outline-primary btn-block px-1 autoblur"
                     :class="{disabled: lock_controls}"
                     @click="set_bells_at_hand"
                     >
@@ -2035,9 +2041,13 @@ $(document).ready(function () {
     Vue.component("controllers", {
         data: function () {
             return {
-                hand_strike: 100,
-                back_strike: -600,
-                debounce: 600,
+                hand_strike: window.user_settings.controller_handstroke,
+                back_strike: window.user_settings.controller_backstroke,
+                debounce: window.user_settings.controller_debounce,
+                left_left: window.user_settings.controller_left_left,
+                left_right: window.user_settings.controller_left_right,
+                right_left: window.user_settings.controller_right_left,
+                right_right: window.user_settings.controller_right_right,
                 next_ring: 0,
                 has_controller: false,
                 check_controller: null,
@@ -2134,15 +2144,15 @@ $(document).ready(function () {
 
                                     if (i == 0) {
                                         if (left_hand) {
-                                            bell_circle.make_call("Stand");
+                                            bell_circle.make_call(this.left_left);
                                         } else {
-                                            bell_circle.make_call("Single");
+                                            bell_circle.make_call(this.right_left);
                                         }
                                     } else if (i == 1) {
                                         if (left_hand) {
-                                            bell_circle.make_call("Go");
+                                            bell_circle.make_call(this.left_right);
                                         } else {
-                                            bell_circle.make_call("Bob");
+                                            bell_circle.make_call(this.right_right);
                                         }
                                     }
                                 }
@@ -2412,167 +2422,22 @@ $(document).ready(function () {
                 user_token: window.tower_parameters.user_token,
                 anonymous_user: window.tower_parameters.anonymous_user,
             });
+            $('[data-toggle="tooltip"]').tooltip();
 
             this.$nextTick(function () {
                 this.$refs.users.rotate_to_assignment();
+                if (!window.tower_parameters.anonymous_user) {
+                    // console.log('turning on keypress listening')
+                    _bind_hotkeys(bell_circle);
+                }
+                
+                $("*").focus(() => {
+                    if (document.activeElement.classList.contains("autoblur")) {
+                        document.activeElement.blur();
+                    }
+                });
+
             });
-
-            if (!window.tower_parameters.anonymous_user) {
-                // console.log('turning on keypress listening')
-
-                // Do a special thing to prevent space from pressing focused buttons
-                window.addEventListener("keyup", (e) => {
-                    this.keys_down.splice(this.keys_down.indexOf(e.key), 1);
-                    if (e.which == 32 && !$("#chat_input_box").is(":focus")) {
-                        e.preventDefault();
-                    }
-                });
-
-                $('[data-toggle="tooltip"]').tooltip();
-
-                window.addEventListener("keydown", (e) => {
-                    e = e || window.event;
-                    const key = e.key; // this wil be the character generated by the keypress
-                    // Shift+1 produces code "Digit1"; this gets the digit itself
-                    const code = e.code[e.code.length - 1];
-
-                    if ($("#chat_input_box").is(":focus")) {
-                        if (key == "Escape") {
-                            $("#chat_input_box").blur();
-                        } else return; // disable hotkeys when typing
-                    }
-
-                    if (
-                        $("#wheatley_setting_name_box").is(":focus") ||
-                        $("#wheatley_setting_value_box").is(":focus") ||
-                        $("#wheatley_comp_id_box").is(":focus") ||
-                        $("#wheatley_method_name_box").is(":focus") ||
-                        $("#wheatley_peal_speed_mins").is(":focus") ||
-                        $("#wheatley_peal_speed_hours").is(":focus")
-                    ) {
-                        return;
-                    }
-
-                    if ($("#report_box").hasClass("show")) {
-                        return; // disable hotkeys when the report is active
-                    }
-
-                    if (bell_circle.keys_down.includes(key)) {
-                        return;
-                    }
-                    bell_circle.keys_down.push(key);
-
-                    // Do a special thing to prevent space and the arrow keys from hitting focused elements
-                    if (
-                        e.which == 32 ||
-                        e.which == 37 ||
-                        e.which == 38 ||
-                        e.which == 39 ||
-                        e.which == 40
-                    ) {
-                        e.preventDefault();
-                    }
-
-                    // Shift-S will set the bells at hand
-                    if (e.shiftKey && e.which == 83) {
-                        bell_circle.set_bells_at_hand();
-                    }
-
-                    // The numberkeys 1-0 ring those bells, with -, = ringing E, T
-                    if (parseInt(key) - 1 in [...Array(9).keys()]) {
-                        bell_circle.pull_rope(parseInt(key));
-                    } else if (parseInt(key) == 0) {
-                        bell_circle.pull_rope(10);
-                    } else if (["-"].includes(key)) {
-                        bell_circle.pull_rope(11);
-                    } else if (["="].includes(key)) {
-                        bell_circle.pull_rope(12);
-                    } else if (["q"].includes(key)) {
-                        bell_circle.pull_rope(13);
-                    } else if (["w"].includes(key)) {
-                        bell_circle.pull_rope(14);
-                    } else if (["e"].includes(key)) {
-                        bell_circle.pull_rope(15);
-                    } else if (["r"].includes(key)) {
-                        bell_circle.pull_rope(16);
-                    }
-
-                    // Shift+numkey rotates the circle so that that bell is in position 4
-                    // This is done in a slightly roundabout way to work on both US & UK keyboards
-                    if (e.shiftKey) {
-                        // console.log(key);
-                        if (parseInt(code) - 1 in [...Array(9).keys()]) {
-                            bell_circle.rotate(parseInt(code));
-                        } else if (parseInt(code) == 0) {
-                            bell_circle.rotate(10);
-                        } else if (["_"].includes(key)) {
-                            bell_circle.rotate(11);
-                        } else if (["+"].includes(key)) {
-                            bell_circle.rotate(12);
-                        } else if (["Q"].includes(key)) {
-                            bell_circle.rotate(13);
-                        } else if (["W"].includes(key)) {
-                            bell_circle.rotate(14);
-                        } else if (["E"].includes(key)) {
-                            bell_circle.rotate(15);
-                        } else if (["R"].includes(key)) {
-                            bell_circle.rotate(16);
-                        }
-                    }
-
-                    // Space, j, and ArrowRight ring the bell in position n/2
-                    if ([" ", "j", "J", "ArrowRight"].includes(key)) {
-                        bell_circle.pull_rope_by_hand(RIGHT_HAND);
-                    }
-
-                    // f and ArrowLeft ring the bell in position n/2 + 1
-                    if (["f", "F", "ArrowLeft"].includes(key)) {
-                        bell_circle.pull_rope_by_hand(LEFT_HAND);
-                    }
-
-                    if (["b", "B"].includes(key)) {
-                        // console.log('calling bob');
-                        bell_circle.make_call("Bob");
-                    }
-
-                    if (["n", "N"].includes(key)) {
-                        // console.log('calling single');
-                        bell_circle.make_call("Single");
-                    }
-
-                    if (["g", "G"].includes(key)) {
-                        // console.log('calling go');
-                        bell_circle.make_call("Go");
-                    }
-
-                    if (["h", "H"].includes(key)) {
-                        // console.log('calling stop');
-                        bell_circle.make_call("That's all");
-                    }
-
-                    if (["t", "T"].includes(key)) {
-                        // console.log('calling stand');
-                        bell_circle.make_call("Stand next");
-                    }
-
-                    if (["l", "L"].includes(key)) {
-                        // console.log('calling look-to');
-                        bell_circle.make_call("Look to");
-                    }
-
-                    if (["o", "O"].includes(key)) {
-                        bell_circle.make_call("Rounds");
-                    }
-
-                    if (["c", "C"].includes(key)) {
-                        bell_circle.make_call("Change method");
-                    }
-
-                    if (["s"].includes(key)) {
-                        bell_circle.make_call(cur_user_name + " says sorry.");
-                    }
-                });
-            }
         },
 
         data: {
@@ -2585,7 +2450,6 @@ $(document).ready(function () {
             tower_id: parseInt(window.tower_parameters.id),
             hidden_sidebar: true,
             hidden_help: true,
-            keys_down: [],
             unread_messages: 0,
             host_mode: window.tower_parameters.host_mode,
             bookmarked: window.tower_parameters.bookmarked,

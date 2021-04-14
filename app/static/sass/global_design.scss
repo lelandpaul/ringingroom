@@ -199,6 +199,17 @@ body {
   font-weight: 100;
 }
 
+.clickable {
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.disable-hover:hover {
+    color: inherit;
+    background-color: inherit;
+    border-color: inherit;
+}
+
 /* Font Styling */
 
 h1, h2, h3, h4 {
