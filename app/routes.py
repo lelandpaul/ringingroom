@@ -115,8 +115,10 @@ def contact():
 def donate():
     patrons = User.query.filter(User.donation_thank_you != None).all()
     patrons.sort(key=lambda u: u.donation_thank_you)
+    is_a_patron = current_user in patrons
     return render_template('donate.html',
-                            patrons=patrons)
+                            patrons=patrons,
+                            is_a_patron=is_a_patron)
 
 @app.route('/blog')
 def blog():

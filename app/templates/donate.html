@@ -4,7 +4,17 @@
 			<p>
                 We decided to create the Ringing Room in order to facilitate continued engagement with ringing
                 during the coronavirus crisis and are deeply honored by the enthusiasm and support the community
-                has shown us. If you'd like to help us keep the site up and running into the future, the best way
+                has shown us. 
+
+                {% if is_a_patron %}
+            </p>
+            <p>
+
+            <b>It looks like you already support us on Patreon — thank you so much!</b>
+
+                {% else %}
+
+                If you'd like to help us keep the site up and running into the future, the best way
                 to support us is on Patreon:
             </p>
 
@@ -18,6 +28,8 @@
             <p>
                 We also accept donations Venmo and Paypal: <a href="https://paypal.me/ringingroom">paypal.me/ringingroom</a>.
             </p>
+
+            {% endif %}
 
             <p>
             We strongly encourage all who ring on this platform to support 
