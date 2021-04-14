@@ -34,8 +34,6 @@ class Config(object):
 
     SUPPORT_SERVER = os.getenv('SUPPORT_SERVER') or False
 
-    MORE_COWBELL = os.getenv('COWBELL_ENABLED') or False
-
     DEFAULT_SETTINGS = {
             'keybindings': {
                 'left': ['f', 'F', 'left'],

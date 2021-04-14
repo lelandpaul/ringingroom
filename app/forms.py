@@ -98,6 +98,7 @@ class TowerSettingsForm(FlaskForm):
     additional_sizes_enabled = BooleanField('Additional Sizes Enabled', validators=[Optional()])
     half_muffled = BooleanField('Half-muffled Tower Bells', validators=[Optional()])
     anticlockwise = BooleanField('Anticlockwise Ring', validators=[Optional()])
+    cowbell_enabled = BooleanField('Cowbell Mode Enabled', validators=[Optional()])
     wheatley_enabled = BooleanField('Wheatley Enabled', validators=[Optional()])
     submit = SubmitField('Save Changes')
 

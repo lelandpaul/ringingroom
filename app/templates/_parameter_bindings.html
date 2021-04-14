@@ -25,7 +25,7 @@ window.tower_parameters = {
     bookmarked: {{'true' if current_user.is_authenticated and current_user.bookmarked(tower.tower_id) else 'false'}},
     listen_link: {{'true' if listen_link else 'false'}},
     server_ip: "{{server_ip}}",
-    cow_enabled: {{'true' if cow_enabled else 'false'}},
+    cow_enabled: {{'true' if tower.cowbell_enabled else 'false'}},
 };
 
 window.user_settings = {
