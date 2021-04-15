@@ -2750,6 +2750,16 @@ $(document).ready(function () {
                            style="cursor:pointer"
                            @click="toggle_bookmark"
                         ></i>
+                        <a class="text-secondary" :href="'/tower_settings/' + tower_id"
+                           v-if="window.tower_parameters.cur_user_is_creator"
+                           data-toggle="tooltip"
+                           data-placement="bottom"
+                           data-container="body"
+                           id="settings_tooltip"
+                           title="Go to tower settings">
+                            <i class="fas fa-fw fa-cog align-text-top"
+                            ></i>
+                        </a>
                         <h1 id="tower_name" class="d-inline d-lg-none text-wrap"> [[ tower_name ]] </h1>
                         <h1 id="tower_name" class="d-none d-lg-inline"> [[ tower_name ]] </h1>
                         <span class="badge badge-dark"
