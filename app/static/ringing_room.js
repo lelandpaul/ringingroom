@@ -98,6 +98,11 @@ socketio.on("s_user_entered", function (msg, cb) {
 // User left the room
 socketio.on("s_user_left", function (msg, cb) {
     // console.log(msg.username + ' left')
+    // It's possible that we'll receive this when we've just been kicked. If so, redirect
+    console.log(msg)
+    if (msg.kicked && msg.user_id === parseInt(window.tower_parameters.cur_user_id)) {
+        window.location.href = '/';
+    }
     bell_circle.$refs.users.remove_user(msg);
     bell_circle.$refs.bells.forEach((bell, index) => {
         if (bell.assigned_user === msg.user_id) {
@@ -1747,6 +1752,7 @@ $(document).ready(function () {
 
         data: function () {
             return {
+                kicking: false,
                 circled_digits: [
                     "①",
                     "②",
@@ -1809,6 +1815,15 @@ $(document).ready(function () {
             assignment_mode_active: function () {
                 return this.$root.$refs.users.assignment_mode;
             },
+
+            kickable: function() {
+                if (this.assignment_mode_active) return false;
+                if (this.$root.$refs.controls.lock_controls) return false;
+                if (!this.$root.$refs.controls.host_mode) return false;
+                if (this.user_id === parseInt(window.tower_parameters.cur_user_id)) return false;
+                if (this.user_id === -1) return false;
+                return true;
+            }
         },
 
         methods: {
@@ -1821,10 +1836,21 @@ $(document).ready(function () {
                 }
                 this.$root.$refs.users.selected_user = this.user_id;
             },
+
+            kick_user: function(){
+                if (!this.kicking) {
+                    console.log('marking kicking');
+                    this.kicking = true;
+                    setTimeout(()=>this.kicking = false, 2000);
+                    return
+                }
+                socketio.emit('c_kick_user', { tower_id: cur_tower_id,
+                                               user_id: this.user_id });
+            }
         },
 
         template: `
-<li class="list-group-item list-group-item-action"
+<li class="list-group-item list-group-item-action d-flex"
     :class="{assignment_active: selected,
              active: selected,
              clickable: assignment_mode_active}"
@@ -1836,6 +1862,14 @@ $(document).ready(function () {
     [[ username ]]
         <span id="user_assigned_bells" class="float-right pt-1" style="font-size: smaller;">
               [[assigned_bell_string]]
+        </span>
+        <span class="ml-auto clickable"
+            v-if="kickable"
+            @click="kick_user"
+            >
+            <small style="vertical-align: text-bottom;" v-if="kicking">Sure?</small>
+            <i v-if="!kicking" class="far fa-window-close"></i>
+            <i v-if="kicking" style="color: #b2276e;" class="fas fa-window-close"></i>
         </span>
 </li>
 `,
