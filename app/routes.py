@@ -87,7 +87,6 @@ def tower(tower_id, decorator=None):
                             user_email = '' if current_user.is_anonymous else current_user.email,
                             user_badge = '' if current_user.is_anonymous else current_user.badge,
                             user_settings = current_user.get_settings_with_defaults(),
-                            cow_enabled = Config.MORE_COWBELL,
                             server_ip=get_server_ip(tower_id),
                             user_token = user_token,
                             host_permissions = current_user.check_permissions(tower_id,'host')\
@@ -226,6 +225,8 @@ def tower_settings(tower_id):
         tower.half_muffled = form.half_muffled.data
         # set anticlockwise
         tower.anticlockwise = form.anticlockwise.data
+        # set cowbell
+        tower.cowbell_enabled = form.cowbell_enabled.data
 
         # ===== DEAL WITH WHEATLEY POTENTIALLY BEING ENABLED OR DISABLED =====
         wheatley_enabled = form.wheatley_enabled.data
@@ -301,6 +302,7 @@ def tower_settings(tower_id):
     form.additional_sizes_enabled.data = tower.additional_sizes_enabled
     form.half_muffled.data = tower_db.half_muffled
     form.anticlockwise.data = tower_db.anticlockwise
+    form.cowbell_enabled.data = tower_db.cowbell_enabled
     form.wheatley_enabled.data = tower.wheatley.enabled
     return render_template('tower_settings.html',
                            form=form,

@@ -264,6 +264,7 @@ class TowerDB(db.Model):
     wheatley_enabled = db.Column(db.Boolean, default=False)
     wheatley_settings_json = db.Column(db.String(), default="{}")
     anticlockwise = db.Column(db.Boolean, default=False)
+    cowbell_enabled = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return '<TowerDB {}: {}>'.format(self.tower_id, self.tower_name)
@@ -442,6 +443,7 @@ class Tower:
         self._anticlockwise = self.to_TowerDB().anticlockwise
         self._host_ids = towerdb.host_ids
         self._additional_sizes_enabled = towerdb.additional_sizes_enabled
+        self._cowbell_enabled = towerdb.cowbell_enabled
 
     # TEMPORARY: 11 March 2021
     # Get wheatley status from database
@@ -680,6 +682,16 @@ class Tower:
         self._anticlockwise = new_state
         self.to_TowerDB().anticlockwise = new_state
         db.session.commit
+
+    @property
+    def cowbell_enabled(self):
+        return self._cowbell_enabled
+
+    @cowbell_enabled.setter
+    def cowbell_enabled(self, new_state):
+        self._cowbell_enabled = new_state
+        self.to_TowerDB().cowbell_enabled = new_state
+        db.session.commit()
 
 
 
