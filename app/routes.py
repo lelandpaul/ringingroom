@@ -10,6 +10,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from app.forms import *
 from app.wheatley import USER_ID as WHEATLEY_USER_ID
 from app.wheatley import USER_NAME as WHEATLEY_USER_NAME
+from util.patrons import get_patron_thank_yous
 
 from urllib.parse import urlparse
 import string
@@ -114,8 +115,7 @@ def contact():
 
 @app.route('/donate')
 def donate():
-    patrons = User.query.filter(User.donation_thank_you != None).all()
-    patrons.sort(key=lambda u: u.donation_thank_you)
+    patrons = get_patron_thank_yous()
     is_a_patron = current_user in patrons
     return render_template('donate.html',
                             patrons=patrons,
