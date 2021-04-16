@@ -45,6 +45,6 @@ def get_patron_thank_yous():
             continue
         badge = BADGE_MAPPING[row[3]] if row[3] in BADGE_MAPPING else None
         accounts[email] = (thank_you, badge)
-    return accounts.values()
+    return accounts
 
 

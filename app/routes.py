@@ -116,9 +116,9 @@ def contact():
 @app.route('/donate')
 def donate():
     patrons = get_patron_thank_yous()
-    is_a_patron = current_user in patrons
+    is_a_patron = current_user.is_authenticated and current_user.email in patrons
     return render_template('donate.html',
-                            patrons=patrons,
+                            patrons=patrons.values(),
                             is_a_patron=is_a_patron)
 
 @app.route('/blog')
