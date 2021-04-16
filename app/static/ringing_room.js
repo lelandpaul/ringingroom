@@ -636,6 +636,13 @@ $(document).ready(function () {
             };
         },
 
+        computed: {
+            controller_active: function(){
+                const controllers = this.$root.$refs.controllers;
+                return controllers.has_controller && controllers.active;
+            },
+        },
+
         mounted: function () {
             this.$nextTick(function () {
                 window.addEventListener("focus", this.hide);
@@ -655,7 +662,11 @@ $(document).ready(function () {
         },
 
         template: `
-<h2 v-show="visible" v-if="!window.tower_parameters.listen_link && !window.tower_parameters.anonymous_user" id='focus_display'>
+<h2 v-show="visible" 
+    v-if="!window.tower_parameters.listen_link 
+          && !window.tower_parameters.anonymous_user
+          && !controller_active" 
+          id='focus_display'>
     Click anywhere in Ringing Room to resume ringing.
 </h2>
 `,
@@ -2037,7 +2048,7 @@ $(document).ready(function () {
             return {
                 hand_strike: 100,
                 back_strike: -600,
-                debounce: 600,
+                debounce: 900,
                 next_ring: 0,
                 has_controller: false,
                 check_controller: null,
@@ -2084,7 +2095,6 @@ $(document).ready(function () {
 
             ticktock_controller: function () {
                 if (this.rang_recently) return; // debounce
-                if (!document.hasFocus()) return; // don't ring if window is unfocused
                 var nControllers = navigator.getGamepads().length;
                 for (var myCont = 0; myCont < nControllers; myCont++) {
                     if (!this.controller_index.includes(myCont)) continue;
