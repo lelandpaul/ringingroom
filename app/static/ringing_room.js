@@ -49,7 +49,6 @@ var leave_room = function () {
     }
     has_left_room = true;
     socketio.emit("c_user_left", {
-        user_name: window.tower_parameters.cur_user_name,
         user_token: window.tower_parameters.user_token,
         anonymous_user: window.tower_parameters.anonymous_user,
         tower_id: cur_tower_id,
@@ -2120,9 +2119,11 @@ $(document).ready(function () {
                         try {
                             if (Math.max.apply(null, cont.axes.map(Math.abs)) > 0) {
                                 var swing = cont.axes[2] * 2048;
-                                if (swing >= this.hand_strike 
-                                    && curCont.at_hand
-                                    && Date.now() > this.next_ring) {
+                                if (
+                                    swing >= this.hand_strike &&
+                                    curCont.at_hand &&
+                                    Date.now() > this.next_ring
+                                ) {
                                     curCont.at_hand = !curCont.at_hand;
                                     this.assign_cont_to_bell(curCont);
                                     if (curCont.bell) {
@@ -2130,9 +2131,11 @@ $(document).ready(function () {
                                         this.next_ring = Date.now() + debounce;
                                     }
                                 }
-                                if (swing <= this.back_strike 
-                                    && !curCont.at_hand
-                                    && Date.now() > this.next_ring) {
+                                if (
+                                    swing <= this.back_strike &&
+                                    !curCont.at_hand &&
+                                    Date.now() > this.next_ring
+                                ) {
                                     curCont.at_hand = !curCont.at_hand;
                                     this.assign_cont_to_bell(curCont);
                                     if (curCont.bell) {
@@ -2173,7 +2176,6 @@ $(document).ready(function () {
                                     }
                                 }
                             }
-
                         } catch (err) {}
                     }
                 }
