@@ -304,7 +304,6 @@ $(document).ready(function () {
             },
 
             left_side: function () {
-                
                 if (this.position == 1) {
                     return false;
                 }
@@ -320,7 +319,7 @@ $(document).ready(function () {
                 return false;
             },
 
-            top_side_anticlockwise: function() {
+            top_side_anticlockwise: function () {
                 if (this.number_of_bells === 4 && 2 <= this.position <= 3) {
                     return true;
                 }
@@ -612,14 +611,14 @@ $(document).ready(function () {
             // a call was received from the server; display it and play audio
             make_call: function (call) {
                 this.display_message(call, 2000);
-                if (call.indexOf('sorry') != -1) {
-                    calls.play('SORRY');
+                if (call.indexOf("sorry") != -1) {
+                    calls.play("SORRY");
                 } else if (call in call_types) {
                     calls.play(call_types[call]);
-                } else if (call.indexOf('Go') == 0) {
-                    return
+                } else if (call.indexOf("Go") == 0) {
+                    return;
                 } else {
-                    calls.play(call_types['Change method']);
+                    calls.play(call_types["Change method"]);
                 }
             },
         },
@@ -961,7 +960,7 @@ $(document).ready(function () {
                 // - The `watch` callback detects the change, and does the following:
                 //   - Uses the new value to set `peal_speed_mins` and `peal_speed_hours` to a valid
                 //     representation
-                //   - A socketio signal is sent with the new peal speed
+                //   - Sends a socketio signal with the new peal speed
                 peal_speed_hours: 2,
                 peal_speed_mins: 55,
                 peal_speed: 175,
@@ -1207,7 +1206,6 @@ $(document).ready(function () {
                     console.warning("No results to send to Wheatley!");
                     return;
                 }
-
                 // A helper function to convert a call from Bob Wallis' data structure:
                 // {
                 //    cover: int,       // The number of rows covered by the call
@@ -1218,7 +1216,7 @@ $(document).ready(function () {
                 //    symbol: string    // The symbol of the call (is '-' for bobs and 's' for singles)
                 // }
                 // into what Wheatley expects (a map of indices to place notations)
-                var convert_call = function (call) {
+                const convert_call = function (call) {
                     if (call === undefined) {
                         return {};
                     }
@@ -1228,10 +1226,17 @@ $(document).ready(function () {
                     }
                     return converted_call;
                 };
-
-                // Log what we're sending Wheatley for ease of debugging
-                // console.log("Setting Wheatley method to " + method.title);
-
+                // Generate the call definitions, with a special case made for Stedman Doubles (for
+                // which the singles defined don't work for slow sixes - see
+                // https://github.com/kneasle/wheatley/issues/171)
+                let bob_def = method.calls ? convert_call(method.calls["Bob"]) : {};
+                let single_def = method.calls ? convert_call(method.calls["Single"]) : {};
+                if (method.title === "Stedman Doubles") {
+                    single_def = {
+                        0: "145",
+                        6: "345",
+                    };
+                }
                 // Emit the socketio signal to tell Wheatley what to ring
                 socketio.emit("c_wheatley_row_gen", {
                     tower_id: window.tower_parameters.id,
@@ -1241,11 +1246,10 @@ $(document).ready(function () {
                         stage: method.stage,
                         notation: method.notation,
                         url: method.url,
-                        bob: method.calls ? convert_call(method.calls["Bob"]) : {},
-                        single: method.calls ? convert_call(method.calls["Single"]) : {},
+                        bob: bob_def,
+                        single: single_def,
                     },
                 });
-
                 // Clear the method name box
                 this.method_name = "";
             },
