@@ -2,14 +2,18 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import os
 from app.models import User
+from dotenv import load_dotenv
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+load_dotenv(os.path.join(basedir,'.env'))
 
 BADGE_MAPPING = { 'Tower bell': 'badge-tower.png', 'Handbell': 'badge-hand.png'}
 
 def create_gsheet_client():
     scope = ['https://www.googleapis.com/auth/drive']
-    creds = ServiceAccountCredentials.from_json_keyfile_name('rr_client_secrets.json', scope)
+    creds = ServiceAccountCredentials.from_json_keyfile_name('secrets/' + os.getenv('RR_GSHEETS_API'), scope)
     client = gspread.authorize(creds)
-    return client.open('Ringing Room Patron (Responses)').sheet1
+    return client.open(os.getenv('RR_PATRON_GSHEET')).sheet1
 
 
 def update_db_badges():
