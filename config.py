@@ -96,6 +96,8 @@ class Config(object):
                 'assign-14': ['ctrl+w'],
                 'assign-15': ['ctrl+e'],
                 'assign-16': ['ctrl+r'],
+                'swap-left': [],
+                'swap-right':[],
                 },
              'controllers': {
                  'debounce': 600,

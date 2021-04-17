@@ -63,6 +63,8 @@ $(document).ready(function() {
         'assign-14': { name: 'Assign self to 14' , cat: 'adv', desc: '' },
         'assign-15': { name: 'Assign self to 15' , cat: 'adv', desc: '' },
         'assign-16': { name: 'Assign self to 16' , cat: 'adv', desc: '' },
+        'swap-left': { name: 'Silently swap left' ,cat: 'adv', desc: '' },
+        'swap-right':{ name: 'Silently swap right' ,cat: 'adv', desc: '' },
     };
 
     Vue.component("remove_button", {

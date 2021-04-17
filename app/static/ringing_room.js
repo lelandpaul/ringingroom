@@ -76,6 +76,12 @@ socketio.on("s_bell_rung", function (msg, cb) {
     bell_circle.ring_bell(msg.who_rang);
 });
 
+// A bell was silently swapped between strokes
+socketio.on("s_silent_swap", function (msg, cb) {
+    // console.log('silent swap', msg);
+    bell_circle.$refs.bells[parseInt(msg.who_swapped)-1].set_state_silently(msg.new_bell_state);
+});
+
 // Userlist was set
 socketio.on("s_set_userlist", function (msg, cb) {
     // console.log('s_set_userlist: ',  msg.user_list);
@@ -2695,6 +2701,15 @@ $(document).ready(function () {
             pull_rope_by_hand: function (hand) {
                 var bell_to_ring = this.find_rope_by_hand(hand);
                 this.pull_rope(bell_to_ring);
+            },
+
+            // Silently swap the bell in a given hand
+            silent_swap_by_hand: function (hand) {
+                var bell_to_swap = this.find_rope_by_hand(hand);
+                socketio.emit("c_silent_swap", {
+                    bell: bell_to_swap,
+                    tower_id: cur_tower_id,
+                });
             },
 
             // emit a call

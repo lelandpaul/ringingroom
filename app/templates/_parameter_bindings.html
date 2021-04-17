@@ -53,17 +53,21 @@ _bind_hotkeys = function(bell_obj) {
     // Ring specific bell
     Mousetrap.bind({{user_settings['keybindings'][i|string] | safe}}, ()=>bell_obj.pull_rope({{i}}))
     // Rotate to bell
-    Mousetrap.bind({{user_settings['keybindings']['rotate-' + i|string] | safe}}, ()=>bell_obj.rotate({{i}}))
-        Mousetrap.bind({{user_settings['keybindings']['assign-' +i|string] | safe}}, ()=>bell_obj.$refs.bells[{{(i-1)|string}}].assign_user_by_id({{user_id|int}}));
+    Mousetrap.bind({{user_settings['keybindings']['rotate-' + i|string] | safe}}, 
+            ()=>bell_obj.rotate({{i}}))
+        Mousetrap.bind({{user_settings['keybindings']['assign-' +i|string] | safe}}, 
+            ()=>bell_obj.$refs.bells[{{(i-1)|string}}].assign_user_by_id({{user_id|int}}));
     {% endfor %}
 
     // Ring by hand
     Mousetrap.bind({{user_settings['keybindings']['right'] | safe}},
-                   ()=>{bell_obj.pull_rope_by_hand("right"); return false}, 
-                   'keydown');
+                   ()=>{bell_obj.pull_rope_by_hand("right"); return false}, "keydown");
     Mousetrap.bind({{user_settings['keybindings']['left'] | safe}},
-                   ()=>{bell_obj.pull_rope_by_hand("left"); return false}, 
-                   'keydown');
+                   ()=>{bell_obj.pull_rope_by_hand("left"); return false}, "keydown");
+    Mousetrap.bind({{user_settings['keybindings']['swap-left'] | safe}}, 
+                   ()=>{bell_obj.silent_swap_by_hand("left")});
+    Mousetrap.bind({{user_settings['keybindings']['swap-right'] | safe}}, 
+                   ()=>{bell_obj.silent_swap_by_hand("right")});
 
     // Calls
     Mousetrap.bind({{user_settings['keybindings']['bob'] | safe}}, ()=>bell_obj.make_call("Bob"));
