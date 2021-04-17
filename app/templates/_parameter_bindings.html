@@ -28,6 +28,8 @@ window.tower_parameters = {
     cow_enabled: {{'true' if cow_enabled else 'false'}},
 };
 
+{% if not listen_link %}
+
 window.user_settings = {
         controller_debounce: parseInt({{user_settings['controllers']['debounce']}}),
         controller_handstroke: parseInt({{user_settings['controllers']['handstroke']}}),
@@ -98,7 +100,6 @@ _bind_hotkeys = function(bell_obj) {
     Mousetrap.bind({{user_settings['keybindings']['sorry'] | safe}}, ()=>bell_obj.make_call(window.tower_parameters.cur_user_name + " says sorry."));
 }
 
-
-
+{% endif %}
 
 </script>
