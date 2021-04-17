@@ -2089,7 +2089,6 @@ $(document).ready(function () {
     Vue.component("controllers", {
         data: function () {
             return {
-<<<<<<< HEAD
                 hand_strike: window.user_settings.controller_handstroke,
                 back_strike: window.user_settings.controller_backstroke,
                 debounce: window.user_settings.controller_debounce,
@@ -2097,11 +2096,6 @@ $(document).ready(function () {
                 left_right: window.user_settings.controller_left_right,
                 right_left: window.user_settings.controller_right_left,
                 right_right: window.user_settings.controller_right_right,
-=======
-                hand_strike: 100,
-                back_strike: -600,
-                debounce: 900,
->>>>>>> release-21.13
                 next_ring: 0,
                 has_controller: false,
                 check_controller: null,
