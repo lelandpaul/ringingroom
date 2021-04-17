@@ -2387,7 +2387,6 @@ $(document).ready(function () {
                         }, 1000);
                         instance.set_controllers();
                     });
-
                     instance.check_controller = window.setInterval(function () {
                         if (navigator.getGamepads()[0]) {
                             if (!this.has_controller) $(window).trigger("gamepadconnected");
@@ -2510,6 +2509,7 @@ $(document).ready(function () {
             number_of_bells: 0,
             bells: [],
             rang_bell_recently: [],
+            swapped_bell_recently: [],
             audio: audio_types[window.tower_parameters.audio],
             call_throttled: false,
             tower_name: window.tower_parameters.name,
@@ -2540,6 +2540,7 @@ $(document).ready(function () {
 
                 this.bells = new_bells;
                 this.rang_bell_recently = new Array(new_count).fill(false);
+                this.swapped_bell_recently = new Array(new_count).fill(false);
                 // Request the global state from the server
                 socketio.emit("c_request_global_state", {
                     tower_id: cur_tower_id,
@@ -2706,10 +2707,17 @@ $(document).ready(function () {
             // Silently swap the bell in a given hand
             silent_swap_by_hand: function (hand) {
                 var bell_to_swap = this.find_rope_by_hand(hand);
+                if (this.swapped_bell_recently[bell_to_swap - 1]) {
+                    return;
+                }
                 socketio.emit("c_silent_swap", {
                     bell: bell_to_swap,
                     tower_id: cur_tower_id,
                 });
+                this.swapped_bell_recently[bell_to_swap - 1] = true;
+                setTimeout(() => {
+                    this.swapped_bell_recently[bell_to_swap - 1] = false;
+                }, 250);
             },
 
             // emit a call
