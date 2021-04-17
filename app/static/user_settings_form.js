@@ -47,6 +47,22 @@ $(document).ready(function() {
         'rotate-14': { name: 'Rotate to 14'      , cat: 'adv', desc: '' },
         'rotate-15': { name: 'Rotate to 15'      , cat: 'adv', desc: '' },
         'rotate-16': { name: 'Rotate to 16'      , cat: 'adv', desc: '' },
+        'assign-1':  { name: 'Assign self to 1'  , cat: 'adv', desc: '' },
+        'assign-2':  { name: 'Assign self to 2'  , cat: 'adv', desc: '' },
+        'assign-3':  { name: 'Assign self to 3'  , cat: 'adv', desc: '' },
+        'assign-4':  { name: 'Assign self to 4'  , cat: 'adv', desc: '' },
+        'assign-5':  { name: 'Assign self to 5'  , cat: 'adv', desc: '' },
+        'assign-6':  { name: 'Assign self to 6'  , cat: 'adv', desc: '' },
+        'assign-7':  { name: 'Assign self to 7'  , cat: 'adv', desc: '' },
+        'assign-8':  { name: 'Assign self to 8'  , cat: 'adv', desc: '' },
+        'assign-9':  { name: 'Assign self to 9'  , cat: 'adv', desc: '' },
+        'assign-10': { name: 'Assign self to 10' , cat: 'adv', desc: '' },
+        'assign-11': { name: 'Assign self to 11' , cat: 'adv', desc: '' },
+        'assign-12': { name: 'Assign self to 12' , cat: 'adv', desc: '' },
+        'assign-13': { name: 'Assign self to 13' , cat: 'adv', desc: '' },
+        'assign-14': { name: 'Assign self to 14' , cat: 'adv', desc: '' },
+        'assign-15': { name: 'Assign self to 15' , cat: 'adv', desc: '' },
+        'assign-16': { name: 'Assign self to 16' , cat: 'adv', desc: '' },
     };
 
     Vue.component("remove_button", {
