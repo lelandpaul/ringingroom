@@ -636,6 +636,13 @@ $(document).ready(function () {
             };
         },
 
+        computed: {
+            controller_active: function(){
+                const controllers = this.$root.$refs.controllers;
+                return controllers.has_controller && controllers.active;
+            },
+        },
+
         mounted: function () {
             this.$nextTick(function () {
                 window.addEventListener("focus", this.hide);
@@ -655,7 +662,11 @@ $(document).ready(function () {
         },
 
         template: `
-<h2 v-show="visible" v-if="!window.tower_parameters.listen_link && !window.tower_parameters.anonymous_user" id='focus_display'>
+<h2 v-show="visible" 
+    v-if="!window.tower_parameters.listen_link 
+          && !window.tower_parameters.anonymous_user
+          && !controller_active" 
+          id='focus_display'>
     Click anywhere in Ringing Room to resume ringing.
 </h2>
 `,
@@ -2041,6 +2052,7 @@ $(document).ready(function () {
     Vue.component("controllers", {
         data: function () {
             return {
+<<<<<<< HEAD
                 hand_strike: window.user_settings.controller_handstroke,
                 back_strike: window.user_settings.controller_backstroke,
                 debounce: window.user_settings.controller_debounce,
@@ -2048,6 +2060,11 @@ $(document).ready(function () {
                 left_right: window.user_settings.controller_left_right,
                 right_left: window.user_settings.controller_right_left,
                 right_right: window.user_settings.controller_right_right,
+=======
+                hand_strike: 100,
+                back_strike: -600,
+                debounce: 900,
+>>>>>>> release-21.13
                 next_ring: 0,
                 has_controller: false,
                 check_controller: null,
@@ -2094,7 +2111,6 @@ $(document).ready(function () {
 
             ticktock_controller: function () {
                 if (this.rang_recently) return; // debounce
-                if (!document.hasFocus()) return; // don't ring if window is unfocused
                 var nControllers = navigator.getGamepads().length;
                 for (var myCont = 0; myCont < nControllers; myCont++) {
                     if (!this.controller_index.includes(myCont)) continue;
