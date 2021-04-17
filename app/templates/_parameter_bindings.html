@@ -48,47 +48,24 @@ _bind_hotkeys = function(bell_obj) {
 
     // shift+s to set at hand
     Mousetrap.bind({{user_settings['keybindings']['set_at_hand'] | safe }}, bell_obj.set_bells_at_hand);
+
+    {% for i in range(1,17) %}
     // Ring specific bell
-    Mousetrap.bind({{user_settings['keybindings']['1'] | safe}}, ()=>bell_obj.pull_rope(1))
-    Mousetrap.bind({{user_settings['keybindings']['2'] | safe}}, ()=>bell_obj.pull_rope(2))
-    Mousetrap.bind({{user_settings['keybindings']['3'] | safe}}, ()=>bell_obj.pull_rope(3))
-    Mousetrap.bind({{user_settings['keybindings']['4'] | safe}}, ()=>bell_obj.pull_rope(4))
-    Mousetrap.bind({{user_settings['keybindings']['5'] | safe}}, ()=>bell_obj.pull_rope(5))
-    Mousetrap.bind({{user_settings['keybindings']['6'] | safe}}, ()=>bell_obj.pull_rope(6))
-    Mousetrap.bind({{user_settings['keybindings']['7'] | safe}}, ()=>bell_obj.pull_rope(7))
-    Mousetrap.bind({{user_settings['keybindings']['8'] | safe}}, ()=>bell_obj.pull_rope(8))
-    Mousetrap.bind({{user_settings['keybindings']['9'] | safe}}, ()=>bell_obj.pull_rope(9))
-    Mousetrap.bind({{user_settings['keybindings']['10'] | safe}}, ()=>bell_obj.pull_rope(10))
-    Mousetrap.bind({{user_settings['keybindings']['11'] | safe}}, ()=>bell_obj.pull_rope(11))
-    Mousetrap.bind({{user_settings['keybindings']['12'] | safe}}, ()=>bell_obj.pull_rope(12))
-    Mousetrap.bind({{user_settings['keybindings']['13'] | safe}}, ()=>bell_obj.pull_rope(13))
-    Mousetrap.bind({{user_settings['keybindings']['14'] | safe}}, ()=>bell_obj.pull_rope(14))
-    Mousetrap.bind({{user_settings['keybindings']['15'] | safe}}, ()=>bell_obj.pull_rope(15))
-    Mousetrap.bind({{user_settings['keybindings']['16'] | safe}}, ()=>bell_obj.pull_rope(16))
-    //Rotate to bell
-    Mousetrap.bind({{user_settings['keybindings']['rotate-1'] | safe}}, ()=>bell_obj.rotate(1))
-    Mousetrap.bind({{user_settings['keybindings']['rotate-2'] | safe}}, ()=>bell_obj.rotate(2))
-    Mousetrap.bind({{user_settings['keybindings']['rotate-3'] | safe}}, ()=>bell_obj.rotate(3))
-    Mousetrap.bind({{user_settings['keybindings']['rotate-4'] | safe}}, ()=>bell_obj.rotate(4))
-    Mousetrap.bind({{user_settings['keybindings']['rotate-5'] | safe}}, ()=>bell_obj.rotate(5))
-    Mousetrap.bind({{user_settings['keybindings']['rotate-6'] | safe}}, ()=>bell_obj.rotate(6))
-    Mousetrap.bind({{user_settings['keybindings']['rotate-7'] | safe}}, ()=>bell_obj.rotate(7))
-    Mousetrap.bind({{user_settings['keybindings']['rotate-8'] | safe}}, ()=>bell_obj.rotate(8))
-    Mousetrap.bind({{user_settings['keybindings']['rotate-9'] | safe}}, ()=>bell_obj.rotate(9))
-    Mousetrap.bind({{user_settings['keybindings']['rotate-10'] | safe}}, ()=>bell_obj.rotate(10))
-    Mousetrap.bind({{user_settings['keybindings']['rotate-11'] | safe}}, ()=>bell_obj.rotate(11))
-    Mousetrap.bind({{user_settings['keybindings']['rotate-12'] | safe}}, ()=>bell_obj.rotate(12))
-    Mousetrap.bind({{user_settings['keybindings']['rotate-13'] | safe}}, ()=>bell_obj.rotate(13))
-    Mousetrap.bind({{user_settings['keybindings']['rotate-14'] | safe}}, ()=>bell_obj.rotate(14))
-    Mousetrap.bind({{user_settings['keybindings']['rotate-15'] | safe}}, ()=>bell_obj.rotate(15))
-    Mousetrap.bind({{user_settings['keybindings']['rotate-16'] | safe}}, ()=>bell_obj.rotate(16))
-    // Right hand
+    Mousetrap.bind({{user_settings['keybindings'][i|string] | safe}}, ()=>bell_obj.pull_rope({{i}}))
+    // Rotate to bell
+    Mousetrap.bind({{user_settings['keybindings']['rotate-' + i|string] | safe}}, ()=>bell_obj.rotate({{i}}))
+        Mousetrap.bind({{user_settings['keybindings']['assign-' +i|string] | safe}}, ()=>bell_obj.$refs.bells[{{(i-1)|string}}].assign_user_by_id({{user_id|int}}));
+    {% endfor %}
+
+    // Ring by hand
     Mousetrap.bind({{user_settings['keybindings']['right'] | safe}},
                    ()=>{bell_obj.pull_rope_by_hand("right"); return false}, 
                    'keydown');
     Mousetrap.bind({{user_settings['keybindings']['left'] | safe}},
                    ()=>{bell_obj.pull_rope_by_hand("left"); return false}, 
                    'keydown');
+
+    // Calls
     Mousetrap.bind({{user_settings['keybindings']['bob'] | safe}}, ()=>bell_obj.make_call("Bob"));
     Mousetrap.bind({{user_settings['keybindings']['single'] | safe}}, ()=>bell_obj.make_call("Single"));
     Mousetrap.bind({{user_settings['keybindings']['go'] | safe}}, ()=>bell_obj.make_call("Go"));

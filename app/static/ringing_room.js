@@ -449,10 +449,20 @@ $(document).ready(function () {
                 });
             },
 
+            assign_user_by_id: function(id) {
+                if (window.tower_parameters.anonymous_user) {
+                    return;
+                } // don't assign if not logged in
+                if (this.assigned_user) {
+                    return;
+                } // don't kick people off
+                this.assign_specific_user(id);
+            },
+
             assign_user: function () {
                 if (window.tower_parameters.anonymous_user) {
                     return;
-                } // don't ring if not logged in
+                } // don't assign if not logged in
 
                 if (this.assigned_user) {
                     return;
