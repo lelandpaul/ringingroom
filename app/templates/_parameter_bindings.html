@@ -34,10 +34,17 @@ window.user_settings = {
         controller_debounce: parseInt({{user_settings['controllers']['debounce']}}),
         controller_handstroke: parseInt({{user_settings['controllers']['handstroke']}}),
         controller_backstroke: parseInt({{user_settings['controllers']['backstroke']}}),
-        controller_left_left: "{{user_settings['controllers']['left_left']}}",
-        controller_left_right: "{{user_settings['controllers']['left_right']}}",
-        controller_right_left: "{{user_settings['controllers']['right_left']}}",
-        controller_right_right: "{{user_settings['controllers']['right_right']}}",
+        {% for controller in ['left', 'right'] %}
+            {% for button in ['left', 'right'] %}
+                {% set val = user_settings['controllers'][controller + '_' + button] %}
+                controller_{{controller}}_{{button}}:
+                {% if val == "Silently swap stroke" %}
+                    (bell_obj)=>{bell_obj.silent_swap_by_hand("{{controller}}")},
+                {% else %}
+                    (bell_obj)=>{bell_obj.make_call("{{val}}")},
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
 };
 
 
