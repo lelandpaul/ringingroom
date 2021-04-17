@@ -49,7 +49,6 @@ var leave_room = function () {
     }
     has_left_room = true;
     socketio.emit("c_user_left", {
-        user_name: window.tower_parameters.cur_user_name,
         user_token: window.tower_parameters.user_token,
         anonymous_user: window.tower_parameters.anonymous_user,
         tower_id: cur_tower_id,
@@ -99,6 +98,11 @@ socketio.on("s_user_entered", function (msg, cb) {
 // User left the room
 socketio.on("s_user_left", function (msg, cb) {
     // console.log(msg.username + ' left')
+    // It's possible that we'll receive this when we've just been kicked. If so, redirect
+    console.log(msg)
+    if (msg.kicked && msg.user_id === parseInt(window.tower_parameters.cur_user_id)) {
+        window.location.href = '/';
+    }
     bell_circle.$refs.users.remove_user(msg);
     bell_circle.$refs.bells.forEach((bell, index) => {
         if (bell.assigned_user === msg.user_id) {
@@ -300,7 +304,6 @@ $(document).ready(function () {
             },
 
             left_side: function () {
-                
                 if (this.position == 1) {
                     return false;
                 }
@@ -316,7 +319,7 @@ $(document).ready(function () {
                 return false;
             },
 
-            top_side_anticlockwise: function() {
+            top_side_anticlockwise: function () {
                 if (this.number_of_bells === 4 && 2 <= this.position <= 3) {
                     return true;
                 }
@@ -608,14 +611,14 @@ $(document).ready(function () {
             // a call was received from the server; display it and play audio
             make_call: function (call) {
                 this.display_message(call, 2000);
-                if (call.indexOf('sorry') != -1) {
-                    calls.play('SORRY');
+                if (call.indexOf("sorry") != -1) {
+                    calls.play("SORRY");
                 } else if (call in call_types) {
                     calls.play(call_types[call]);
-                } else if (call.indexOf('Go') == 0) {
-                    return
+                } else if (call.indexOf("Go") == 0) {
+                    return;
                 } else {
-                    calls.play(call_types['Change method']);
+                    calls.play(call_types["Change method"]);
                 }
             },
         },
@@ -957,7 +960,7 @@ $(document).ready(function () {
                 // - The `watch` callback detects the change, and does the following:
                 //   - Uses the new value to set `peal_speed_mins` and `peal_speed_hours` to a valid
                 //     representation
-                //   - A socketio signal is sent with the new peal speed
+                //   - Sends a socketio signal with the new peal speed
                 peal_speed_hours: 2,
                 peal_speed_mins: 55,
                 peal_speed: 175,
@@ -1203,7 +1206,6 @@ $(document).ready(function () {
                     console.warning("No results to send to Wheatley!");
                     return;
                 }
-
                 // A helper function to convert a call from Bob Wallis' data structure:
                 // {
                 //    cover: int,       // The number of rows covered by the call
@@ -1214,7 +1216,7 @@ $(document).ready(function () {
                 //    symbol: string    // The symbol of the call (is '-' for bobs and 's' for singles)
                 // }
                 // into what Wheatley expects (a map of indices to place notations)
-                var convert_call = function (call) {
+                const convert_call = function (call) {
                     if (call === undefined) {
                         return {};
                     }
@@ -1224,10 +1226,17 @@ $(document).ready(function () {
                     }
                     return converted_call;
                 };
-
-                // Log what we're sending Wheatley for ease of debugging
-                // console.log("Setting Wheatley method to " + method.title);
-
+                // Generate the call definitions, with a special case made for Stedman Doubles (for
+                // which the singles defined don't work for slow sixes - see
+                // https://github.com/kneasle/wheatley/issues/171)
+                let bob_def = method.calls ? convert_call(method.calls["Bob"]) : {};
+                let single_def = method.calls ? convert_call(method.calls["Single"]) : {};
+                if (method.title === "Stedman Doubles") {
+                    single_def = {
+                        0: "145",
+                        6: "345",
+                    };
+                }
                 // Emit the socketio signal to tell Wheatley what to ring
                 socketio.emit("c_wheatley_row_gen", {
                     tower_id: window.tower_parameters.id,
@@ -1237,11 +1246,10 @@ $(document).ready(function () {
                         stage: method.stage,
                         notation: method.notation,
                         url: method.url,
-                        bob: method.calls ? convert_call(method.calls["Bob"]) : {},
-                        single: method.calls ? convert_call(method.calls["Single"]) : {},
+                        bob: bob_def,
+                        single: single_def,
                     },
                 });
-
                 // Clear the method name box
                 this.method_name = "";
             },
@@ -1748,6 +1756,7 @@ $(document).ready(function () {
 
         data: function () {
             return {
+                kicking: false,
                 circled_digits: [
                     "①",
                     "②",
@@ -1810,6 +1819,15 @@ $(document).ready(function () {
             assignment_mode_active: function () {
                 return this.$root.$refs.users.assignment_mode;
             },
+
+            kickable: function() {
+                if (this.assignment_mode_active) return false;
+                if (this.$root.$refs.controls.lock_controls) return false;
+                if (!this.$root.$refs.controls.host_mode) return false;
+                if (this.user_id === parseInt(window.tower_parameters.cur_user_id)) return false;
+                if (this.user_id === -1) return false;
+                return true;
+            }
         },
 
         methods: {
@@ -1822,10 +1840,21 @@ $(document).ready(function () {
                 }
                 this.$root.$refs.users.selected_user = this.user_id;
             },
+
+            kick_user: function(){
+                if (!this.kicking) {
+                    console.log('marking kicking');
+                    this.kicking = true;
+                    setTimeout(()=>this.kicking = false, 2000);
+                    return
+                }
+                socketio.emit('c_kick_user', { tower_id: cur_tower_id,
+                                               user_id: this.user_id });
+            }
         },
 
         template: `
-<li class="list-group-item list-group-item-action"
+<li class="list-group-item list-group-item-action d-flex"
     :class="{assignment_active: selected,
              active: selected,
              clickable: assignment_mode_active}"
@@ -1837,6 +1866,14 @@ $(document).ready(function () {
     [[ username ]]
         <span id="user_assigned_bells" class="float-right pt-1" style="font-size: smaller;">
               [[assigned_bell_string]]
+        </span>
+        <span class="ml-auto clickable"
+            v-if="kickable"
+            @click="kick_user"
+            >
+            <small style="vertical-align: text-bottom;" v-if="kicking">Sure?</small>
+            <i v-if="!kicking" class="far fa-window-close"></i>
+            <i v-if="kicking" style="color: #b2276e;" class="fas fa-window-close"></i>
         </span>
 </li>
 `,
@@ -2052,7 +2089,6 @@ $(document).ready(function () {
     Vue.component("controllers", {
         data: function () {
             return {
-<<<<<<< HEAD
                 hand_strike: window.user_settings.controller_handstroke,
                 back_strike: window.user_settings.controller_backstroke,
                 debounce: window.user_settings.controller_debounce,
@@ -2060,11 +2096,6 @@ $(document).ready(function () {
                 left_right: window.user_settings.controller_left_right,
                 right_left: window.user_settings.controller_right_left,
                 right_right: window.user_settings.controller_right_right,
-=======
-                hand_strike: 100,
-                back_strike: -600,
-                debounce: 900,
->>>>>>> release-21.13
                 next_ring: 0,
                 has_controller: false,
                 check_controller: null,
@@ -2120,9 +2151,11 @@ $(document).ready(function () {
                         try {
                             if (Math.max.apply(null, cont.axes.map(Math.abs)) > 0) {
                                 var swing = cont.axes[2] * 2048;
-                                if (swing >= this.hand_strike 
-                                    && curCont.at_hand
-                                    && Date.now() > this.next_ring) {
+                                if (
+                                    swing >= this.hand_strike &&
+                                    curCont.at_hand &&
+                                    Date.now() > this.next_ring
+                                ) {
                                     curCont.at_hand = !curCont.at_hand;
                                     this.assign_cont_to_bell(curCont);
                                     if (curCont.bell) {
@@ -2130,9 +2163,11 @@ $(document).ready(function () {
                                         this.next_ring = Date.now() + debounce;
                                     }
                                 }
-                                if (swing <= this.back_strike 
-                                    && !curCont.at_hand
-                                    && Date.now() > this.next_ring) {
+                                if (
+                                    swing <= this.back_strike &&
+                                    !curCont.at_hand &&
+                                    Date.now() > this.next_ring
+                                ) {
                                     curCont.at_hand = !curCont.at_hand;
                                     this.assign_cont_to_bell(curCont);
                                     if (curCont.bell) {
@@ -2173,7 +2208,6 @@ $(document).ready(function () {
                                     }
                                 }
                             }
-
                         } catch (err) {}
                     }
                 }

@@ -5,7 +5,7 @@ from app import app
 from config import Config
 from app.extensions import db, log
 from app.models import User, UserTowerRelation, get_server_ip, towers
-from app.listeners import socketio
+from app.extensions import socketio
 from flask_login import current_user, login_user, logout_user, login_required
 from app.forms import *
 from app.wheatley import USER_ID as WHEATLEY_USER_ID
@@ -230,6 +230,9 @@ def tower_settings(tower_id):
         # set cowbell
         tower.cowbell_enabled = form.cowbell_enabled.data
 
+        def emit_socket(name, data):
+            socketio.emit(name, data, broadcast=True, room=tower.tower_id)
+
         # ===== DEAL WITH WHEATLEY POTENTIALLY BEING ENABLED OR DISABLED =====
         wheatley_enabled = form.wheatley_enabled.data
         # Add this setting to the database's representation of the tower
@@ -237,37 +240,23 @@ def tower_settings(tower_id):
         # If the enabledness of Wheatley has changed either way, broadcast that to the users of
         # that tower
         if tower.wheatley.enabled != wheatley_enabled:
-            socketio.emit('s_set_wheatley_enabledness', {'enabled': wheatley_enabled},
-                          broadcast=True, room=tower.tower_id)
+            emit_socket('s_set_wheatley_enabledness', {'enabled': wheatley_enabled})
             tower.wheatley.set_enabledness(wheatley_enabled)
             if wheatley_enabled:
                 # If Wheatley is being *enabled*, then update the setting in the tower and tell the
                 # clients that Wheatley has arrived
-                socketio.emit(
+                emit_socket(
                     's_user_entered',
                     {
-                        'user_name': WHEATLEY_USER_NAME,
+                        'username': WHEATLEY_USER_NAME,
                         'user_id': WHEATLEY_USER_ID
                     },
-                    broadcast=True,
-                    include_self=True,
-                    room=tower.tower_id
                 )
-                socketio.emit('s_wheatley_setting', tower.wheatley.settings)
-                socketio.emit('s_wheatley_row_gen', tower.wheatley.row_gen)
+                emit_socket('s_wheatley_setting', tower.wheatley.settings)
+                emit_socket('s_wheatley_row_gen', tower.wheatley.row_gen)
             else:
-                # If Wheatley is being *disabled*, then update the setting in the tower and tell the
-                # clients that Wheatley has left
-                socketio.emit(
-                    's_user_left',
-                    {
-                        'user_name': WHEATLEY_USER_NAME,
-                        'user_id': WHEATLEY_USER_ID
-                    },
-                    broadcast=True,
-                    include_self=True,
-                    room=tower.tower_id
-                )
+                # If Wheatley is being *disabled*, tell the clients that Wheatley has left
+                emit_socket('s_user_left', {'user_id': WHEATLEY_USER_ID})
 
         if form.tower_name.data:
             tower.name = form.tower_name.data

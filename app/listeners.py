@@ -4,7 +4,7 @@ from flask_login import current_user
 from app import app
 from config import Config
 from app.extensions import socketio, log
-from app.models import Tower, towers
+from app.models import Tower, towers, User
 from app.auth import token_login
 from app.email import send_email
 import random
@@ -176,8 +176,8 @@ def on_user_left(json):
         return
 
     tower.remove_user(user_id)
-    emit('s_user_left', {'user_id': current_user.id,
-                         'username': current_user.username },
+    # TODO: 'username' is depricated
+    emit('s_user_left', {'user_id': current_user.id, 'username': current_user.username},
          broadcast=True, include_self=True, room=tower_id)
 
     # Now that the user is gone, check if there are any hosts left. If not, make sure
@@ -187,6 +187,24 @@ def on_user_left(json):
         emit('s_host_mode',{'tower_id': tower_id,
                             'new_mode': False},
              broadcast=True, include_self=True, room=tower_id)
+
+@socketio.on('c_kick_user')
+@token_login
+def on_kick_user(json):
+    log('c_kick_user', json)
+    tower_id = json['tower_id']
+    tower = towers[tower_id]
+    user_id = json['user_id']
+    user = User.query.get(user_id)
+    if user is None:
+        return
+    tower.remove_user(user_id)
+    emit('s_user_left', {'user_id': user_id,
+                         'username': user.username,
+                         'kicked': True},
+         broadcast=True, include_self=True, room=tower_id)
+
+
 
 # # A user disconnected (via timeout)
 # @socketio.on('disconnect')
