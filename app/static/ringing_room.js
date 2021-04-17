@@ -1864,7 +1864,7 @@ $(document).ready(function () {
         },
 
         template: `
-<li class="list-group-item list-group-item-action d-flex"
+<li class="list-group-item list-group-item-action"
     :class="{assignment_active: selected,
              active: selected,
              clickable: assignment_mode_active}"
