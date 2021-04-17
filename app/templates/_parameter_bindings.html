@@ -55,7 +55,7 @@ _bind_hotkeys = function(bell_obj) {
     // Rotate to bell
     Mousetrap.bind({{user_settings['keybindings']['rotate-' + i|string] | safe}}, 
             ()=>bell_obj.rotate({{i}}))
-        Mousetrap.bind({{user_settings['keybindings']['assign-' +i|string] | safe}}, 
+        Mousetrap.bind({{user_settings['keybindings']['catch-' +i|string] | safe}}, 
             ()=>bell_obj.$refs.bells[{{(i-1)|string}}].assign_user_by_id({{user_id|int}}));
     {% endfor %}
 
