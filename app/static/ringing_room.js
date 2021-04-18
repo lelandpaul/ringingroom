@@ -2017,13 +2017,14 @@ $(document).ready(function () {
          >
         <h2 style="display: inline; cursor: pointer;"
                    id="user_display_header"
+                   class="mr-0"
                    data-toggle="collapse"
                    data-target="#user_display_body">
             Users
         </h2>
-        <span class="badge badge-dark mx-2 align-text-bottom"> [[ users.length ]] </span>
+        <span class="badge badge-dark ml-2 align-text-bottom"> [[ users.length ]] </span>
         <span class="float-right">
-            <button class="btn btn-outline-primary w-100"
+            <button class="btn btn-outline-primary w-100 m-0"
                     :class="{active: assignment_mode}"
                     @click="toggle_assignment"
                     >
