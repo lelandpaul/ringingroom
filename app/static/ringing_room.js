@@ -76,6 +76,12 @@ socketio.on("s_bell_rung", function (msg, cb) {
     bell_circle.ring_bell(msg.who_rang);
 });
 
+// A bell was silently swapped between strokes
+socketio.on("s_silent_swap", function (msg, cb) {
+    // console.log('silent swap', msg);
+    bell_circle.$refs.bells[parseInt(msg.who_swapped)-1].set_state_silently(msg.new_bell_state);
+});
+
 // Userlist was set
 socketio.on("s_set_userlist", function (msg, cb) {
     // console.log('s_set_userlist: ',  msg.user_list);
@@ -449,10 +455,20 @@ $(document).ready(function () {
                 });
             },
 
+            assign_user_by_id: function(id) {
+                if (window.tower_parameters.anonymous_user) {
+                    return;
+                } // don't assign if not logged in
+                if (this.assigned_user) {
+                    return;
+                } // don't kick people off
+                this.assign_specific_user(id);
+            },
+
             assign_user: function () {
                 if (window.tower_parameters.anonymous_user) {
                     return;
-                } // don't ring if not logged in
+                } // don't assign if not logged in
 
                 if (this.assigned_user) {
                     return;
@@ -2093,10 +2109,12 @@ $(document).ready(function () {
                 hand_strike: window.user_settings.controller_handstroke,
                 back_strike: window.user_settings.controller_backstroke,
                 debounce: window.user_settings.controller_debounce,
-                left_left: window.user_settings.controller_left_left,
-                left_right: window.user_settings.controller_left_right,
-                right_left: window.user_settings.controller_right_left,
-                right_right: window.user_settings.controller_right_right,
+                buttons: {
+                    left: [ window.user_settings.controller_left_left,
+                            window.user_settings.controller_left_right],
+                    right:[ window.user_settings.controller_right_left,
+                            window.user_settings.controller_right_right]
+                },
                 next_ring: 0,
                 has_controller: false,
                 check_controller: null,
@@ -2194,18 +2212,10 @@ $(document).ready(function () {
                                         (curCont.bell % 2 == 0 &&
                                             this.assigned_bells.includes(curCont.bell - 1));
 
-                                    if (i == 0) {
-                                        if (left_hand) {
-                                            bell_circle.make_call(this.left_left);
-                                        } else {
-                                            bell_circle.make_call(this.right_left);
-                                        }
-                                    } else if (i == 1) {
-                                        if (left_hand) {
-                                            bell_circle.make_call(this.left_right);
-                                        } else {
-                                            bell_circle.make_call(this.right_right);
-                                        }
+                                    if (left_hand){
+                                        this.buttons.left[i](this.$root);
+                                    } else {
+                                        this.buttons.right[i](this.$root);
                                     }
                                 }
                             }
@@ -2372,7 +2382,6 @@ $(document).ready(function () {
                         }, 1000);
                         instance.set_controllers();
                     });
-
                     instance.check_controller = window.setInterval(function () {
                         if (navigator.getGamepads()[0]) {
                             if (!this.has_controller) $(window).trigger("gamepadconnected");
@@ -2495,6 +2504,7 @@ $(document).ready(function () {
             number_of_bells: 0,
             bells: [],
             rang_bell_recently: [],
+            swapped_bell_recently: [],
             audio: audio_types[window.tower_parameters.audio],
             call_throttled: false,
             tower_name: window.tower_parameters.name,
@@ -2525,6 +2535,7 @@ $(document).ready(function () {
 
                 this.bells = new_bells;
                 this.rang_bell_recently = new Array(new_count).fill(false);
+                this.swapped_bell_recently = new Array(new_count).fill(false);
                 // Request the global state from the server
                 socketio.emit("c_request_global_state", {
                     tower_id: cur_tower_id,
@@ -2686,6 +2697,22 @@ $(document).ready(function () {
             pull_rope_by_hand: function (hand) {
                 var bell_to_ring = this.find_rope_by_hand(hand);
                 this.pull_rope(bell_to_ring);
+            },
+
+            // Silently swap the bell in a given hand
+            silent_swap_by_hand: function (hand) {
+                var bell_to_swap = this.find_rope_by_hand(hand);
+                if (this.swapped_bell_recently[bell_to_swap - 1]) {
+                    return;
+                }
+                socketio.emit("c_silent_swap", {
+                    bell: bell_to_swap,
+                    tower_id: cur_tower_id,
+                });
+                this.swapped_bell_recently[bell_to_swap - 1] = true;
+                setTimeout(() => {
+                    this.swapped_bell_recently[bell_to_swap - 1] = false;
+                }, 250);
             },
 
             // emit a call
