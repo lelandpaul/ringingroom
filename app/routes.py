@@ -1,4 +1,4 @@
-from flask import render_template, send_from_directory, abort, flash, redirect, url_for, session, request
+from flask import render_template, send_from_directory, abort, flash, redirect, url_for, session, request, render_template_string
 from flask_login import login_user, logout_user, current_user, login_required
 import app.wheatley as wheatley
 from app import app
@@ -10,6 +10,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from app.forms import *
 from app.wheatley import USER_ID as WHEATLEY_USER_ID
 from app.wheatley import USER_NAME as WHEATLEY_USER_NAME
+from util.parse_help import parse_help
 
 from urllib.parse import urlparse
 import string
@@ -104,7 +105,8 @@ def about():
 
 @app.route('/help')
 def help():
-    return render_template('help.html')
+    help_html = parse_help()
+    return render_template('help.html', content=help_html)
 
 @app.route('/contact')
 def contact():
