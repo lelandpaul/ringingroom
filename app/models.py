@@ -693,6 +693,10 @@ class Tower:
         self.to_TowerDB().cowbell_enabled = new_state
         db.session.commit()
 
+    @property
+    def creator(self):
+        return self.to_TowerDB().creator
+
 
 
 
