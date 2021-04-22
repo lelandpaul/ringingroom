@@ -46,11 +46,11 @@
     <ul class="list-unstyled row mx-n4">
         {% for patron in patrons %}
         <li class="list-item col-4 py-2">
-            {% if patron.badge != None %}
-            <img src="{{url_for('static', filename = 'images/' + patron.badge )}}"
+            {% if patron[1]  %}
+            <img src="{{url_for('static', filename = 'images/' + patron[1] )}}"
                  style="margin-top: -5px;" height="30" width="30" />
             {% endif %}
-            {{ patron.donation_thank_you }}</li>
+            {{ patron[0] }}</li>
         {% endfor %}
     </ul>
 </div>

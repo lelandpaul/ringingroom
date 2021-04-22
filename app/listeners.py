@@ -265,6 +265,21 @@ def on_bell_rung(event_dict):
           "disagree": disagreement},
          broadcast=True, include_self=True, room=tower_id)
 
+# A bell was slightly swapped between strokes
+@socketio.on('c_silent_swap')
+def on_silent_swap(event_dict):
+    cur_bell = event_dict["bell"]
+    tower_id = event_dict["tower_id"]
+    cur_tower = towers[tower_id]
+
+    cur_tower.bell_state[cur_bell - 1] = not cur_tower.bell_state[cur_bell - 1]
+
+    emit('s_silent_swap',
+         {"new_bell_state": cur_tower.bell_state[cur_bell - 1],
+          "who_swapped": cur_bell},
+         broadcast=True, include_self=True, room=tower_id)
+
+
 
 @socketio.on('c_wheatley_setting')
 def on_wheatley_setting_change(json):

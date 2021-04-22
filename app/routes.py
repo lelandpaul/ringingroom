@@ -11,6 +11,7 @@ from app.forms import *
 from app.wheatley import USER_ID as WHEATLEY_USER_ID
 from app.wheatley import USER_NAME as WHEATLEY_USER_NAME
 from util.parse_help import parse_help
+from util.patrons import get_patron_thank_yous
 
 from urllib.parse import urlparse
 import string
@@ -115,11 +116,10 @@ def contact():
 
 @app.route('/donate')
 def donate():
-    patrons = User.query.filter(User.donation_thank_you != None).all()
-    patrons.sort(key=lambda u: u.donation_thank_you)
-    is_a_patron = current_user in patrons
+    patrons = get_patron_thank_yous()
+    is_a_patron = current_user.is_authenticated and current_user.email in patrons
     return render_template('donate.html',
-                            patrons=patrons,
+                            patrons=patrons.values(),
                             is_a_patron=is_a_patron)
 
 @app.route('/blog')
