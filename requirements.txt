@@ -60,3 +60,4 @@ websocket-client==0.57.0
 Werkzeug==1.0.0
 wheatley==0.6.0.b2
 WTForms==2.2.1
+gspread==3.7.0
