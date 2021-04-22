@@ -145,7 +145,7 @@ The Host tab lists all the towers at which you are a [host](#host-mode).
 
 ## Tower Settings
 
-Each tower in Ringing Room has a Tower Settings page. This page is accessible only to the tower creator, and allows that person to perform a number of useful actions, including changing the tower name and deleting the tower entirely. (See [Why can't I access tower settings?](#i-created-this-tower-why-cant-i-access-tower-settigns) if you can't access the settings for a tower you created.) Note that for many of the settings below, you and other ringers will need to refresh the tower page in order to see the changes take effect.
+Each tower in Ringing Room has a Tower Settings page. This page is accessible only to the tower creator, and allows that person to perform a number of useful actions, including changing the tower name and deleting the tower entirely. (See [Why can't I access tower settings?](#i-created-this-tower-why-cant-i-access-tower-settings) if you can't access the settings for a tower you created.) Note that for many of the settings below, you and other ringers will need to refresh the tower page in order to see the changes take effect.
 
 ### Host Mode
 
