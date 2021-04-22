@@ -61,3 +61,4 @@ Werkzeug==1.0.0
 wheatley==0.6.0.b2
 WTForms==2.2.1
 gspread==3.7.0
+oauth2client==4.1.3
