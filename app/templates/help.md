@@ -226,7 +226,7 @@ The **Controllers* tab allows you to control the parameters used by external mot
 The following parameters are available to control:
 - **Debounce**: The minimum time between one stroke and the next, in milliseconds; if the controller detects a second strike within this time it will be ignored. (Default: `600`.)
 - **Handstroke**: The angle at which the controller detects a handstroke; higher numbers indicate a more vertical bell. (Default: `100`.)
-- **Backstroke**: The angle at which the controller detects a backstroke; higher numbers indicate a more vertical bell. (Default: `-600`.)
+- **Backstroke**: The angle at which the controller detects a backstroke; higher numbers indicate a more vertical bell. (Default: `-1200`.)
 - **Controller buttons**: Set which buttons on the controllers perform which actions.
 
 The controller buttons can be set to make calls or to silently swap the stroke of the bell. If you have only one controller attached, it will always be considered a "right controller" and will use those settings; if you have more than one, the controllers will alternate right and left in order from lightest bell to heaviest bell. The controller buttons have the following defaults:

@@ -2160,26 +2160,25 @@ $(document).ready(function () {
             },
 
             ticktock_controller: function () {
-                if (this.rang_recently) return; // debounce
                 var nControllers = navigator.getGamepads().length;
                 for (var myCont = 0; myCont < nControllers; myCont++) {
                     if (!this.controller_index.includes(myCont)) continue;
                     var cont = navigator.getGamepads()[myCont];
                     var curCont = this.controller_list[myCont];
-                    if (curCont) {
+                    if (curCont && !curCont.debounced) {
                         try {
                             if (Math.max.apply(null, cont.axes.map(Math.abs)) > 0) {
                                 var swing = cont.axes[2] * 2048;
                                 if (
                                     swing >= this.hand_strike &&
-                                    curCont.at_hand &&
-                                    Date.now() > this.next_ring
+                                    curCont.at_hand
                                 ) {
                                     curCont.at_hand = !curCont.at_hand;
                                     this.assign_cont_to_bell(curCont);
                                     if (curCont.bell) {
                                         bell_circle.pull_rope(curCont.bell);
-                                        this.next_ring = Date.now() + debounce;
+                                        curCont.debounced = true;
+                                        setTimeout(()=>curCont.debounced = false, this.debounce);
                                     }
                                 }
                                 if (
@@ -2191,7 +2190,8 @@ $(document).ready(function () {
                                     this.assign_cont_to_bell(curCont);
                                     if (curCont.bell) {
                                         bell_circle.pull_rope(curCont.bell);
-                                        this.next_ring = Date.now() + debounce;
+                                        curCont.debounced = true;
+                                        setTimeout(()=>curCont.debounced = false, this.debounce);
                                     }
                                 }
                             }
@@ -2273,6 +2273,7 @@ $(document).ready(function () {
                         type: "",
                         bell: null,
                         at_hand: true,
+                        debounced: false,
                     };
                     if (curCont.id.includes("0ffe") && curCont.connected) {
                         contObj.type = "ActionXL";
