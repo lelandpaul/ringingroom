@@ -185,7 +185,7 @@ input[type=range]::slider-thumb {
 }
 
 
-/* Bells */ 
+/* Bells */
 
 .bell_circle_col {
     z-index: 2;
@@ -341,6 +341,10 @@ input[type=range]::slider-thumb {
                 transform: scaleX(-1);
             }
         }
+
+        &.top {
+            align-items: flex-start;
+        }
     }
 
     &.cowbell {
@@ -414,7 +418,7 @@ input[type=range]::slider-thumb {
 
 #wheatley_row_gen_box_inner {
     // Uncomment to re-add rowgen selector
-    // padding: 5px; 
+    // padding: 5px;
     // border: 1px solid;
     // border-top: none;
     border-bottom-right-radius: 0.25rem;
@@ -473,8 +477,8 @@ input[type=range]::slider-thumb {
 /* On larger screens, permanently open the menu */
 @include media-breakpoint-up(lg){
     html { min-height:100%; }
-    .collapse.tower_controls, .collapse.tower_controls:not(.show) { 
-        display: flex; 
+    .collapse.tower_controls, .collapse.tower_controls:not(.show) {
+        display: flex;
         flex-grow: 1;
     }
     .sidebar_col {
