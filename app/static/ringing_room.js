@@ -639,7 +639,7 @@ $(document).ready(function () {
         computed: {
             controller_active: function(){
                 const controllers = this.$root.$refs.controllers;
-                return controllers.has_controller && controllers.active;
+                return controllers.has_controller;
             },
         },
 
