@@ -2144,6 +2144,10 @@ $(document).ready(function () {
                     "⑮",
                     "⑯",
                 ],
+                debounce_func: function(cont) {
+                    console.log("calling debounce with", cont);
+                    cont.debounced = false
+                },
             };
         },
 
@@ -2178,7 +2182,11 @@ $(document).ready(function () {
                                     if (curCont.bell) {
                                         bell_circle.pull_rope(curCont.bell);
                                         curCont.debounced = true;
-                                        setTimeout(()=>curCont.debounced = false, this.debounce);
+                                        setTimeout(
+                                            function(i){
+                                                i.debounced = false;
+                                            }.bind(this, curCont),
+                                            this.debounce);
                                     }
                                 }
                                 if (
@@ -2191,7 +2199,11 @@ $(document).ready(function () {
                                     if (curCont.bell) {
                                         bell_circle.pull_rope(curCont.bell);
                                         curCont.debounced = true;
-                                        setTimeout(()=>curCont.debounced = false, this.debounce);
+                                        setTimeout(
+                                            function(i){
+                                                i.debounced = false;
+                                            }.bind(this, curCont),
+                                            this.debounce);
                                     }
                                 }
                             }
