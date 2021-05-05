@@ -2298,6 +2298,8 @@ $(document).ready(function () {
                     }
                     this.controller_list[myCont] = contObj;
                 }
+
+                this.has_controller = this.controller_index.length > 0
             },
 
             toggle_controllers: function () {
