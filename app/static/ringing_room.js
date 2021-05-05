@@ -681,10 +681,10 @@ $(document).ready(function () {
         },
 
         template: `
-<h2 v-show="visible" 
-    v-if="!window.tower_parameters.listen_link 
+<h2 v-show="visible"
+    v-if="!window.tower_parameters.listen_link
           && !window.tower_parameters.anonymous_user
-          && !controller_active" 
+          && !controller_active"
           id='focus_display'>
     Click anywhere in Ringing Room to resume ringing.
 </h2>
@@ -1876,7 +1876,7 @@ $(document).ready(function () {
              clickable: assignment_mode_active}"
     @click="select_user"
     >
-    <img v-if="badge" 
+    <img v-if="badge"
          v-bind:class="{invert_colors: selected}"
          class="mt-n1 mr-1" width=30 height=30 v-bind:src="'/static/images/' + badge"/>
     [[ username ]]
@@ -2247,7 +2247,7 @@ $(document).ready(function () {
             },
 
             autoassign_controllers: function () {
-                if (this.controller_index.length > 2) {
+                if (this.controller_index.length === 0 || this.controller_index.length > 2) {
                     // Do nothing: autoassignment isn't well defined with more than two controllers
                     return;
                 }
@@ -2505,7 +2505,7 @@ $(document).ready(function () {
                     // console.log('turning on keypress listening')
                     _bind_hotkeys(bell_circle);
                 }
-                
+
                 $("*").focus(() => {
                     if (document.activeElement.classList.contains("autoblur")) {
                         document.activeElement.blur();
