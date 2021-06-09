@@ -2038,7 +2038,9 @@ $(document).ready(function () {
                    data-target="#user_display_body">
             Users
         </h2>
-        <span class="badge badge-dark ml-2 align-text-bottom"> [[ users.length ]] </span>
+        <span class="badge badge-dark ml-2 align-text-bottom"> 
+            [[ users.includes(-1) ? users.length - 1 : users.length ]] 
+        </span>
         <span class="float-right">
             <button class="btn btn-outline-primary w-100 m-0"
                     :class="{active: assignment_mode}"
