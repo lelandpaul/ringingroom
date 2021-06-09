@@ -28,6 +28,7 @@ def register_extensions(app):
     assets.init_app(app)
     socketio.init_app(app)
     login.init_app(app)
+    login.login_view = 'authenticate'
 
 
 def register_blueprints(app):

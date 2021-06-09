@@ -6,7 +6,6 @@ from config import Config
 from app.extensions import db, log
 from app.models import User, UserTowerRelation, get_server_ip, towers
 from app.extensions import socketio
-from flask_login import current_user, login_user, logout_user, login_required
 from app.forms import *
 from app.wheatley import USER_ID as WHEATLEY_USER_ID
 from app.wheatley import USER_NAME as WHEATLEY_USER_NAME
@@ -88,7 +87,7 @@ def tower(tower_id, decorator=None):
                             user_name = '' if current_user.is_anonymous else current_user.username,
                             user_email = '' if current_user.is_anonymous else current_user.email,
                             user_badge = '' if current_user.is_anonymous else current_user.badge,
-                            user_settings = current_user.get_settings_with_defaults(),
+                            user_settings = Config.DEFAULT_SETTINGS if current_user.is_anonymous else current_user.get_settings_with_defaults(),
                             server_ip=get_server_ip(tower_id),
                             user_token = user_token,
                             host_permissions = current_user.check_permissions(tower_id,'host')\
@@ -139,7 +138,6 @@ def apple_app_site():
     return send_from_directory(app.static_folder, './.well-known/apple-app-site-association')
 
 
-
 @app.route('/authenticate')
 def authenticate():
     login_form = LoginForm()
@@ -150,6 +148,7 @@ def authenticate():
                            registration_form=registration_form,
                            hide_cookie_warning=True,
                            next=next)
+
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -184,6 +183,7 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
+
 @app.route('/register', methods=['POST'])
 def register():
     if current_user.is_authenticated:
@@ -206,13 +206,16 @@ def register():
                            registration_form=registration_form,
                            next=next)
 
+
 @app.route('/my_towers')
+@login_required
 def my_towers():
     # We need to pass in all of the users related towers, marked by the kind of relation they have
     return render_template('my_towers.html',
                            tower_props=current_user.tower_properties)
 
 @app.route('/tower_settings/<int:tower_id>', methods=['GET','POST'])
+@login_required
 def tower_settings(tower_id):
     tower = towers[tower_id]
     tower_db = tower.to_TowerDB()
@@ -369,8 +372,3 @@ def reset_password(token):
 @app.route('/privacy', methods=['GET'])
 def privacy_policy():
     return render_template('privacy_policy.html')
-
-@app.route('/survey', methods=['GET'])
-def survey():
-    return redirect('https://forms.gle/2YrTi2Qt8ptGo7nr7', code=302)
-

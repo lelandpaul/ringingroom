@@ -4,7 +4,7 @@ Welcome to Ringing Room! Ringing Room is a web platform that lets you ring onlin
 
 ## Creating an account / Logging in
 
-You can create an account by clicking [register here](/authenticate) or [Log In / Register](/authenticate) on the front page. You'll need to provide an **email address** (which will be used as your log-in name), a **username** (which is what will be displayed to other users when you're ringing), and a **password**; any of these three can be [changed later](#tower-settings). Once you've created an account, you'll be able to log in from the front page as well as the [Log In / Register](/authenticate) page.
+You can create an account by clicking [register here](/authenticate) or [Log In / Register](/authenticate) on the front page. You'll need to provide an **email address** (which will be used as your log-in name), a **username** (which is what will be displayed to other users when you're ringing), and a **password**; any of these three can be [changed later](#user-settings). You'll also need to click the box to accept the [Privacy Policy](/privacy). After you register, you'll be automatically logged in, and will you'll be able to log in from the front page as well as the [Log In / Register](/authenticate) page in the future. 
 
 You need to be logged in before you can join a tower. You can tell whether you're logged in by looking in the menu bar at the top of the page; if it says your username instead of _Log In / Register_, you're good to go!
 
@@ -22,7 +22,7 @@ There are three ways to enter an existing tower:
 
 1. **Entering the Tower ID number on the front page.** If you've entered the number correctly, you should see the name of your tower show up under the box before you press the _Join_ button. (Note that you can't enter a tower by entering the _name_ of the tower — this will always create a new tower with the same name!)
 2. **Going directly to the tower link.** All towers will be assigned a unique link that will look something like this: _ringingroom.com/TOWER_ID_NUMBER/TOWER_NAME_. You can always get back to the tower just by entering that address in the URL bar of your browser. (The easiest way to invite the rest of your band to the tower is just to send them this link!)
-3. **Selecting the tower from the _User Menu_ or the _[My Towers](/my_towers)_ page:** If you click your username in the menu bar at the top of the page, you'll be presented with a menu. This menu will contain links to your _recently visited_ towers, your _[bookmarked](#bookmarks)_ towers, and the **[My Towers](/my_towers)** page. You can click the name of any tower in the menu or on the **[My Towers](/my_towers)** page to go directly to the tower.
+3. **Selecting the tower from the _User Menu_ or the _[My Towers](/my_towers)_ page:** If you click your username in the menu bar at the top of the page, you'll be presented with a menu. (If you don't see your username but do see _Log In / Register_, you'll need to log in before proceeding.) This menu will contain links to your _[recently visited](#recently-visited)_ towers, your _[bookmarked](#my-towers)_ towers, and the **[My Towers](/my_towers)** page. You can click the name of any tower in the menu or on the **[My Towers](/my_towers)** page to go directly to the tower.
 
 ## Ringing
 
@@ -59,7 +59,7 @@ If you're using a narrow screen, you may need to click the _Controls_ button to 
 2. **Tower size selector**: A row of numbers from 4 up to 12 (or 16 — see [Tower Settings](#tower-settings) for more details). Click on a number to change the number of bells you're ringing.
 3. **Tower / Hand selector**: Toggle whether the tower has ropes & tower bell sounds, or handbells & handbell sounds.
 4. **Set at hand**: This button will immediately set all the bells in the tower at handstroke for everyone.
-5. **Users**: The Users list shows the usernames of all the users currently in the tower. Your own user name will always be listed first. You can click the title of the Users list to collapse or expand it. See below for more details on the Users list.
+5. **Users**: The Users list shows the usernames of all the users currently in the tower. Your own user name will always be listed first (and bolded). You can click the title of the Users list to collapse or expand it. See below for more details on the Users list.
 6. **Chat**: The Chat box allows you to send text messages to anyone else currently in the tower; you can click the title of the Chat box to collapse or expand it. Messages are never stored on the server — this means that the only people who can see your messages are those who are in the tower right at the moment they're sent. Users joining the tower later will not see them. Please make sure to abide by our [Code of Conduct](/code_of_conduct) at all times and be kind to your fellow ringers!
 
 ### Users
@@ -69,13 +69,15 @@ The **Users** display is also used for assigning users to bells:
 1. To enter **Assignment Mode**, click the _Assign bells_ button. Note that you cannot ring while in Assignment Mode.
 2. When you first enter Assignment Mode, your own username will be highlighted, indicating that you're ready to assign yourself to a bell. You can click other usernames to select and then assign those users instead.
 3. While in Assignment Mode, all of the bells will either show the name of the user currently assigned to them or _(none)_ to indicate that no user is assigned. You can click _(none)_ to assign the currently selected user to that bell, or click the _X_ by a name to unassign that bell. If you want to quickly remove all users from their bells, click the _Unassign all_ button in the Users display.
-4. Finally, make sure to _Stop assigning_ button in the Users list to exist Assignment Mode.
+4. Finally, make sure to click the _Stop assigning_ button in the Users list to exist Assignment Mode.
+
+If you are a [host](#host-mode) at the tower, you will an X button to the right of each users' name. This button can be used to remove users from a tower. If you click this button twice, the user will be redirected to the homepage of Ringing Room. (Note that this removal is _temporary_ — nothing prevents the user from immediately re-entering the tower if they so desire. This feature is mostly useful for removing names of users who aren't actually present but didn't click the Leave tower button.)
 
 Note that [Host Mode](#host-mode) affects the operations of some of the Tower Controls; see that section for more details.
 
 ## External Controllers
 
-You can use external motion controllers such as [eBells](https://ebells.co.uk) or ActionXLs directly with Ringing Room. You should see the _Controllers_ box in the [Tower Controls](#tower-controls) whenever you have your controllers connected; if it doesn't appear, try moving on of the controllers to make it send a signal for Ringing Room to detect.
+You can use external motion controllers such as [eBells](https://ebells.co.uk) or ActionXLs directly with Ringing Room. You should see the _Controllers_ box in the [Tower Controls](#tower-controls) whenever you have your controllers connected; if it doesn't appear, try moving one of the controllers to make it send a signal for Ringing Room to detect.
 
 The behavior of the controllers depends on how many controllers you have selected:
 
@@ -90,13 +92,13 @@ There are a number of parameters for controllers that are customizable in [User 
 
 ## Wheatley
 
-Wheatley is a computer ringer for Ringing Room, made by Ben White-Horne and Matthew Johnson and designed to be a _'ninja helper with no ego'_ - i.e. Wheatley will any number of bells to whatever you want to ring, but should fit in as much as possible to what you're ringing.  Wheatley is now available directly inside Ringing Room, without any installation.
+Wheatley is a computer ringer for Ringing Room, made by Ben White-Horne and Matthew Johnson and designed to be a _'ninja helper with no ego'_ - i.e. Wheatley will ring any number of bells to whatever you want to ring, but should fit in as much as possible to what you're ringing.  Wheatley is now available directly inside Ringing Room, without any installation.
 
 ### Enabling Wheatley
 
 Wheatley needs to be enabled on a per-tower basis with the switch in the [Tower Settings](#tower-settings).  Once Wheatley is enabled, two things will happen:
 
-1. A user called "Wheatley" will appear permanently in the [Users](#users) list.
+1. A user called "Wheatley" will appear permanently in the [Users](#tower-controls) list.
 2. A box will appear above the chat with Wheatley's settings.
     
 To ring something with Wheatley, assign Wheatley to any bells that you need filled. You can use the _Fill In_ button in the Wheatley box to quickly assign all unassigned bells to Wheatley.
@@ -119,21 +121,21 @@ A few other options are available in the Wheatley box:
 
 ## My Towers
 
-The [My Towers](/my_towers) page keeps a record of all the towers you visit, bookmark, create, or host. It allows you to quickly return to towers you've used in the past, and also to access [Tower Settings](#tower_settings) for the towers you've created.
+The [My Towers](/my_towers) page keeps a record of all the towers you visit, bookmark, create, or host. It allows you to quickly return to towers you've used in the past, and also to access [Tower Settings](#tower-settings) for the towers you've created.
 
 ### Recent
 
 The first tab on the [My Towers](/my_towers) page shows your _recently visited towers_, sorted reverse-chronologically (so your most recently visited is always at the top). Each row in the list includes the following items from left to right:
 
-1. **[Bookmark](bookmarks) icon:** Click this to toggle whether the tower is bookmarked.
+1. **Bookmark icon:** Click this to toggle whether the tower is bookmarked.
 2. **Tower name:** Click this to go directly to the tower.
 3. **Tower ID and clipboard icon**: Click the icon to copy the tower id to your computer clipboard.
-4. **Settings:** If you are the tower creator, you'll have the button to access the [Tower Settings](#tower-settings) available here.
+4. **Settings:** If you are the tower creator, you can click on Settings to view and change the [Tower Settings](#tower-settings).
 5. **Remove from Recent:** Click this to remove the tower from your list of recently-visited towers. (Cannot be undone.)
 
 ### Bookmarks
 
-Ringing Room provides a facility for you to bookmark towers you return to often. Bookmarked towers will appear at the top of the User Menu (available by clicking your username in the top menu bar from any page on Ringing Room other than a tower page). The bookmark icon  appears on any of the My Towers tabs and on the tower page itself (next to the tower name); click this icon to toggle whether the tower is bookmarked or not.
+Ringing Room provides a facility for you to bookmark towers you return to often. Bookmarked towers will appear at the top of the User Menu (available by clicking your username in the top menu bar from any page on Ringing Room other than a tower page when you are logged in; it will be replaced by _Log In / Register_ if you are not logged in). The bookmark icon  appears on any of the My Towers tabs and on the tower page itself (next to the tower name); click this icon to toggle whether the tower is bookmarked or not.
 
 ### Created
 
@@ -156,13 +158,13 @@ Each tower in Ringing Room has a Tower Settings page. This page is accessible on
 - All ringers may only ring the bells they are assigned to.
 - Only Hosts may assign other ringers to bells. (Anyone can catch hold of open bells.)
 
-In order for Host Mode to be enabled, the tower creator must first go to Tower Settings and switch on the _Permit Host Mode_ feature. If this is enabled, any Hosts will see a _Host Mode_ toggle in the [Tower Controls](#tower-controls) which they can use to turn Host Mode on and off. Host Mode will be automatically disabled if there are no hosts present in the tower.
+To use Host Mode, the tower creator must first go to Tower Settings and switch on the _Host Mode Permitted_ feature. If this is switched to _Yes_, any Hosts will see a _Host Mode_ toggle in the [Tower Controls](#tower-controls) which they can use to turn Host Mode on and off; non-hosts will not see this toggle and instead will see messages describing the function of Host Mode (when it is turned on). Host Mode will be automatically disabled if there are no hosts present in the tower.
 
 The tower creator is always a Host at that tower. Additional Hosts may be added by going to Tower Settings and entering the email address associated with a Ringing Room account in the _Add host by email_ box. A list of Hosts is also displayed, and Hosts can be removed from here as well.
 
-### Enable Wheatley
+### Wheatley Permitted
 
-In order to use [Wheatley](#wheatley) in a tower, you must first go to the Tower Settings and flip the _Enable Wheatley_ switch to the _Yes_ position. Once this is enabled, the Wheatley box will appear in the [Tower Controls](#tower-controls).
+In order to use [Wheatley](#wheatley) in a tower, you must first go to the Tower Settings and flip the _Wheatley Permitted_ switch to the _Yes_ position. Once this is enabled, the Wheatley box will appear in the [Tower Controls](#tower-controls).
 
 ### Additional settings
 
@@ -173,7 +175,7 @@ In order to use [Wheatley](#wheatley) in a tower, you must first go to the Tower
 
 ## User Settings
 
-The **User Settings** page can be accessed by clicking your user name in the top menu bar of any Ringing Room page other than a tower and then selecting User Settings. There are 3 tabs available:
+The **User Settings** page can be accessed by clicking your user name in the top menu bar of any Ringing Room page other than a tower (once you are logged in) and then selecting User Settings. There are 3 tabs available:
 
 1. The **Account** tab contains settings relevant to your account, such as changing your username or password.
 2. The **Keyboard** tab lets you modify the keyboard hotkeys.
@@ -209,27 +211,27 @@ The **Keyboard** tab allows you to customize the keyboard hotkeys used to contro
 - **Go next**: Call "Go next" (Defaults: `g`, `G`)
 - **That's all**: Call "That's all" (Defaults: `h`, `H`)
 - **Stand next**: Call "Stand next" (Defaults: `t`, `T`)
-- **Look to**: Call "Look to" (Defaults: `l`', `L`)
+- **Look to**: Call "Look to" (Defaults: `l`, `L`)
 - **Rounds**: Call "Rounds" (Defaults: `o`, `O`)
 - **Change method**: Call "Change method" (Defaults: `c`, `C`)
 - **Sorry**: Apologize (Defaults: `s`)
-- **1–16**: (Advanced) Ring specific bell (Defaults: `1–9, 0, -, =, q, w, e, r`)
-- **Rotate to 1–16**: (Advanced) Rotate the circle so that a given bell is in the bottom-right (Defaults: `shift + 1–9, 0, -, =, q, w, e, r`)
-- **Catch hold of 1–16**: (Advanced) Assign yourself to the given bell. (Defaults: `ctrl + 1-9, 0, -, =, q, w, e, r`)
-- **Silently swap left**: (Advanced) Silently swap the stroke of your left-hand bell. (Defaults: none)
-- **Silently swap right: (Advanced) Silently swap the stroke of your right-hand bell. (Defaults: none)
+- **Ring bell 1–16**: (Advanced) Ring specific bell (Defaults: `1–9`, `0`, `-`, `=`, `q`, `w`, `e`, `r`)
+- **Rotate to 1–16**: (Advanced) Rotate the circle so that a given bell is in the bottom-right (Defaults: `shift + 1–9`, `0`, `-`, `=`, `q`, `w`, `e`, `r`)
+- **Catch hold of 1–16**: (Advanced) Assign yourself to the given bell. (Defaults: `ctrl + shift + 1-9`, `0`, `-`, `=`, `q`, `w`, `e`, `r` on Windows`, ``cmd + shift+ 1-9`, `0`, `-`, `= ,q`, `e`, `r` on Mac.)
+- **Silently flip left**: (Advanced) Silently flip the stroke of your left-hand bell. (Defaults: `a`, `A`)
+- **Silently flip right**: (Advanced) Silently flip the stroke of your right-hand bell. (Defaults: `;`, `:`)
 
 ### Controller settings
 
-The **Controllers* tab allows you to control the parameters used by external motion controllers such as [eBells](https://ebells.co.uk) or ActionXLs. You can always restore these to default settings by clicking the button at the top of the page.
+The **Controllers** tab allows you to control the parameters used by external motion controllers such as [eBells](https://ebells.co.uk) or ActionXLs. You can always restore these to default settings by clicking the button at the top of the page.
 
 The following parameters are available to control:
 - **Debounce**: The minimum time between one stroke and the next, in milliseconds; if the controller detects a second strike within this time it will be ignored. (Default: `600`.)
-- **Handstroke**: The angle at which the controller detects a handstroke; higher numbers indicate a more vertical bell. (Default: `100`.)
-- **Backstroke**: The angle at which the controller detects a backstroke; higher numbers indicate a more vertical bell. (Default: `-1200`.)
+- **Handstroke**: The point at which the controller detects a handstroke; higher numbers indicate a more vertical bell. (Default: `100`.)
+- **Backstroke**: The point at which the controller detects a backstroke; higher numbers indicate a more vertical bell. (Default: `-1200`.)
 - **Controller buttons**: Set which buttons on the controllers perform which actions.
 
-The controller buttons can be set to make calls or to silently swap the stroke of the bell. If you have only one controller attached, it will always be considered a "right controller" and will use those settings; if you have more than one, the controllers will alternate right and left in order from lightest bell to heaviest bell. The controller buttons have the following defaults:
+The controller buttons can be set to make calls or to silently flip the stroke of the bell. If you have only one controller attached, it will always be considered a "right controller" and will use those settings; if you have more than one, the controllers will alternate right and left in order from lightest bell to heaviest bell. The controller buttons have the following defaults:
 
 - **Left bell**: Left button: `Stand`; right button: `Go`.
 - **Right bell**: Left button: `Single`, right button: `Bob`.

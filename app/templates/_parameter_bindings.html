@@ -39,8 +39,10 @@ window.user_settings = {
             {% for button in ['left', 'right'] %}
                 {% set val = user_settings['controllers'][controller + '_' + button] %}
                 controller_{{controller}}_{{button}}:
-                {% if val == "Silently swap stroke" %}
+                {% if val == "Silently flip stroke" %}
                     (bell_obj)=>{bell_obj.silent_swap_by_hand("{{controller}}")},
+                {% elif val == "(none)" %}
+                    (bell_obj)=>{},
                 {% else %}
                     (bell_obj)=>{bell_obj.make_call("{{val}}")},
                 {% endif %}

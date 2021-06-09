@@ -1839,7 +1839,7 @@ $(document).ready(function () {
             kickable: function() {
                 if (this.assignment_mode_active) return false;
                 if (this.$root.$refs.controls.lock_controls) return false;
-                if (!this.$root.$refs.controls.host_mode) return false;
+                if (!window.tower_parameters.host_permissions) return false;
                 if (this.user_id === parseInt(window.tower_parameters.cur_user_id)) return false;
                 if (this.user_id === -1) return false;
                 return true;
@@ -2219,8 +2219,8 @@ $(document).ready(function () {
                                     // Any bell not part of a sensible handbell pair should be able to call bob & single
                                     //
 
-                                    var left_hand =
-                                        curCont.bell === bell_circle.find_rope_by_hand(LEFT_HAND) ||
+                                    var left_hand = this.assigned_bells ?
+                                        curCont.bell === bell_circle.find_rope_by_hand(LEFT_HAND) :
                                         (curCont.bell % 2 == 0 &&
                                             this.assigned_bells.includes(curCont.bell - 1));
 
@@ -2653,7 +2653,7 @@ $(document).ready(function () {
                     return current_user_bells[0];
                 }
 
-                // CASE 3: Exactly two bells are defined.
+                // CASE 3: Exactly two bells are assigned.
                 // In this case, we should pair them up the shortest possible way, even if this
                 // would wrap over the 'end' of the circle, and assign them as though we are
                 // looking in from the outside of the circle
@@ -2700,6 +2700,13 @@ $(document).ready(function () {
                 if (current_user_bells.length > 2) {
                     // We know that hand is one of `LEFT_HAND` or `RIGHT_HAND` because
                     // otherwise the function would have returned early
+                    if (window.tower_parameters.anticlockwise) {
+                        if (hand === LEFT_HAND) {
+                            return current_user_bells[0];
+                        } else {
+                            return current_user_bells[1];
+                        }
+                    }
                     if (hand === LEFT_HAND) {
                         return current_user_bells[1];
                     } else {
@@ -2941,22 +2948,9 @@ $(document).ready(function () {
                  >
                 <div class="row justify-content-between align-bottom"
                      style="min-height:3.3rem;">
-                    <div class="col-auto">
+                    <div class="col">
                         <volume_control ref="volume"></volume_control>
                     </div>
-                    <div class="col-auto mb-3 mb-sm-0">
-                        <button class="toggle_help btn btn-outline-primary"
-                                data-toggle="collapse"
-                                data-target="#help"
-                                v-if="!window.tower_parameters.listen_link"
-                                @click="toggle_help"
-                                >
-                            Help [[ hidden_help ? '▸' : '▾' ]]
-                        </button>
-                    </div>
-                </div>
-                <div class="help collapse" id="help">
-                    <help ref="help"></help>
                 </div>
                 <tower_controls ref="controls"></tower_controls>
                 <template v-if="!window.tower_parameters.anonymous_user

@@ -3,68 +3,68 @@ $(document).ready(function() {
 
     // Mapping object to contain function names & descriptions
     const function_names = {
-        left:        { name: 'Ring left hand'    , cat: 'bell', desc: '' },
-        right:       { name: 'Ring right hand'   , cat: 'bell', desc: '' },
-        set_at_hand: { name: 'Set bells at hand' , cat: 'bell', desc: '' },
-        bob:         { name: 'Bob'               , cat: 'call', desc: '' },
-        single:      { name: 'Single'            , cat: 'call', desc: '' },
-        go:          { name: 'Go next'           , cat: 'call', desc: '' },
-        all:         { name: "That's all"        , cat: 'call', desc: '' },
-        stand:       { name: "Stand next"        , cat: 'call', desc: '' },
-        look:        { name: "Look to"           , cat: 'call', desc: '' },
-        rounds:      { name: "Rounds"            , cat: 'call', desc: '' },
-        change:      { name: "Change method"     , cat: 'call', desc: '' },
-        sorry:       { name: "Sorry"             , cat: 'call', desc: '' },
-        '1':         { name: '1'                 , cat: 'adv', desc: '' },
-        '2':         { name: '2'                 , cat: 'adv', desc: '' },
-        '3':         { name: '3'                 , cat: 'adv', desc: '' },
-        '4':         { name: '4'                 , cat: 'adv', desc: '' },
-        '5':         { name: '5'                 , cat: 'adv', desc: '' },
-        '6':         { name: '6'                 , cat: 'adv', desc: '' },
-        '7':         { name: '7'                 , cat: 'adv', desc: '' },
-        '8':         { name: '8'                 , cat: 'adv', desc: '' },
-        '9':         { name: '9'                 , cat: 'adv', desc: '' },
-        '10':        { name: '10'                , cat: 'adv', desc: '' },
-        '11':        { name: '11'                , cat: 'adv', desc: '' },
-        '12':        { name: '12'                , cat: 'adv', desc: '' },
-        '13':        { name: '13'                , cat: 'adv', desc: '' },
-        '14':        { name: '14'                , cat: 'adv', desc: '' },
-        '15':        { name: '15'                , cat: 'adv', desc: '' },
-        '16':        { name: '16'                , cat: 'adv', desc: '' },
-        'rotate-1':  { name: 'Rotate to 1'       , cat: 'adv', desc: '' },
-        'rotate-2':  { name: 'Rotate to 2'       , cat: 'adv', desc: '' },
-        'rotate-3':  { name: 'Rotate to 3'       , cat: 'adv', desc: '' },
-        'rotate-4':  { name: 'Rotate to 4'       , cat: 'adv', desc: '' },
-        'rotate-5':  { name: 'Rotate to 5'       , cat: 'adv', desc: '' },
-        'rotate-6':  { name: 'Rotate to 6'       , cat: 'adv', desc: '' },
-        'rotate-7':  { name: 'Rotate to 7'       , cat: 'adv', desc: '' },
-        'rotate-8':  { name: 'Rotate to 8'       , cat: 'adv', desc: '' },
-        'rotate-9':  { name: 'Rotate to 9'       , cat: 'adv', desc: '' },
-        'rotate-10': { name: 'Rotate to 10'      , cat: 'adv', desc: '' },
-        'rotate-11': { name: 'Rotate to 11'      , cat: 'adv', desc: '' },
-        'rotate-12': { name: 'Rotate to 12'      , cat: 'adv', desc: '' },
-        'rotate-13': { name: 'Rotate to 13'      , cat: 'adv', desc: '' },
-        'rotate-14': { name: 'Rotate to 14'      , cat: 'adv', desc: '' },
-        'rotate-15': { name: 'Rotate to 15'      , cat: 'adv', desc: '' },
-        'rotate-16': { name: 'Rotate to 16'      , cat: 'adv', desc: '' },
-        'catch-1':   { name: 'Catch hold of 1'   , cat: 'adv', desc: '' },
-        'catch-2':   { name: 'Catch hold of 2'   , cat: 'adv', desc: '' },
-        'catch-3':   { name: 'Catch hold of 3'   , cat: 'adv', desc: '' },
-        'catch-4':   { name: 'Catch hold of 4'   , cat: 'adv', desc: '' },
-        'catch-5':   { name: 'Catch hold of 5'   , cat: 'adv', desc: '' },
-        'catch-6':   { name: 'Catch hold of 6'   , cat: 'adv', desc: '' },
-        'catch-7':   { name: 'Catch hold of 7'   , cat: 'adv', desc: '' },
-        'catch-8':   { name: 'Catch hold of 8'   , cat: 'adv', desc: '' },
-        'catch-9':   { name: 'Catch hold of 9'   , cat: 'adv', desc: '' },
-        'catch-10':  { name: 'Catch hold of 10'  , cat: 'adv', desc: '' },
-        'catch-11':  { name: 'Catch hold of 11'  , cat: 'adv', desc: '' },
-        'catch-12':  { name: 'Catch hold of 12'  , cat: 'adv', desc: '' },
-        'catch-13':  { name: 'Catch hold of 13'  , cat: 'adv', desc: '' },
-        'catch-14':  { name: 'Catch hold of 14'  , cat: 'adv', desc: '' },
-        'catch-15':  { name: 'Catch hold of 15'  , cat: 'adv', desc: '' },
-        'catch-16':  { name: 'Catch hold of 16'  , cat: 'adv', desc: '' },
-        'swap-left': { name: 'Silently swap left' ,cat: 'adv', desc: '' },
-        'swap-right':{ name: 'Silently swap right' ,cat: 'adv', desc: '' },
+        left:        { id: 1, name: 'Ring left hand'    , cat: 'bell', desc: '' },
+        right:       { id: 2, name: 'Ring right hand'   , cat: 'bell', desc: '' },
+        set_at_hand: { id: 3, name: 'Set bells at hand' , cat: 'bell', desc: '' },
+        bob:         { id: 4, name: 'Bob'               , cat: 'call', desc: '' },
+        single:      { id: 5, name: 'Single'            , cat: 'call', desc: '' },
+        go:          { id: 6, name: 'Go next'           , cat: 'call', desc: '' },
+        all:         { id: 7, name: "That's all"        , cat: 'call', desc: '' },
+        stand:       { id: 8, name: "Stand next"        , cat: 'call', desc: '' },
+        look:        { id: 9, name: "Look to"           , cat: 'call', desc: '' },
+        rounds:      { id: 10, name: "Rounds"            , cat: 'call', desc: '' },
+        change:      { id: 11, name: "Change method"     , cat: 'call', desc: '' },
+        sorry:       { id: 12, name: "Sorry"             , cat: 'call', desc: '' },
+        '1':         { id: 13, name: 'Ring bell 1'                 , cat: 'adv', desc: '' },
+        '2':         { id: 14, name: 'Ring bell 2'                 , cat: 'adv', desc: '' },
+        '3':         { id: 15, name: 'Ring bell 3'                 , cat: 'adv', desc: '' },
+        '4':         { id: 16, name: 'Ring bell 4'                 , cat: 'adv', desc: '' },
+        '5':         { id: 17, name: 'Ring bell 5'                 , cat: 'adv', desc: '' },
+        '6':         { id: 18, name: 'Ring bell 6'                 , cat: 'adv', desc: '' },
+        '7':         { id: 19, name: 'Ring bell 7'                 , cat: 'adv', desc: '' },
+        '8':         { id: 20, name: 'Ring bell 8'                 , cat: 'adv', desc: '' },
+        '9':         { id: 21, name: 'Ring bell 9'                 , cat: 'adv', desc: '' },
+        '10':        { id: 22, name: 'Ring bell 10'                , cat: 'adv', desc: '' },
+        '11':        { id: 23, name: 'Ring bell 11'                , cat: 'adv', desc: '' },
+        '12':        { id: 24, name: 'Ring bell 12'                , cat: 'adv', desc: '' },
+        '13':        { id: 25, name: 'Ring bell 13'                , cat: 'adv', desc: '' },
+        '14':        { id: 26, name: 'Ring bell 14'                , cat: 'adv', desc: '' },
+        '15':        { id: 27, name: 'Ring bell 15'                , cat: 'adv', desc: '' },
+        '16':        { id: 28, name: 'Ring bell 16'                , cat: 'adv', desc: '' },
+        'rotate-1':  { id: 29, name: 'Rotate to 1'       , cat: 'adv', desc: '' },
+        'rotate-2':  { id: 30, name: 'Rotate to 2'       , cat: 'adv', desc: '' },
+        'rotate-3':  { id: 31, name: 'Rotate to 3'       , cat: 'adv', desc: '' },
+        'rotate-4':  { id: 32, name: 'Rotate to 4'       , cat: 'adv', desc: '' },
+        'rotate-5':  { id: 33, name: 'Rotate to 5'       , cat: 'adv', desc: '' },
+        'rotate-6':  { id: 34, name: 'Rotate to 6'       , cat: 'adv', desc: '' },
+        'rotate-7':  { id: 35, name: 'Rotate to 7'       , cat: 'adv', desc: '' },
+        'rotate-8':  { id: 36, name: 'Rotate to 8'       , cat: 'adv', desc: '' },
+        'rotate-9':  { id: 37, name: 'Rotate to 9'       , cat: 'adv', desc: '' },
+        'rotate-10': { id: 38, name: 'Rotate to 10'      , cat: 'adv', desc: '' },
+        'rotate-11': { id: 39, name: 'Rotate to 11'      , cat: 'adv', desc: '' },
+        'rotate-12': { id: 40, name: 'Rotate to 12'      , cat: 'adv', desc: '' },
+        'rotate-13': { id: 41, name: 'Rotate to 13'      , cat: 'adv', desc: '' },
+        'rotate-14': { id: 42, name: 'Rotate to 14'      , cat: 'adv', desc: '' },
+        'rotate-15': { id: 43, name: 'Rotate to 15'      , cat: 'adv', desc: '' },
+        'rotate-16': { id: 44, name: 'Rotate to 16'      , cat: 'adv', desc: '' },
+        'catch-1':   { id: 45, name: 'Catch hold of 1'   , cat: 'adv', desc: '' },
+        'catch-2':   { id: 46, name: 'Catch hold of 2'   , cat: 'adv', desc: '' },
+        'catch-3':   { id: 47, name: 'Catch hold of 3'   , cat: 'adv', desc: '' },
+        'catch-4':   { id: 48, name: 'Catch hold of 4'   , cat: 'adv', desc: '' },
+        'catch-5':   { id: 49, name: 'Catch hold of 5'   , cat: 'adv', desc: '' },
+        'catch-6':   { id: 50, name: 'Catch hold of 6'   , cat: 'adv', desc: '' },
+        'catch-7':   { id: 51, name: 'Catch hold of 7'   , cat: 'adv', desc: '' },
+        'catch-8':   { id: 52, name: 'Catch hold of 8'   , cat: 'adv', desc: '' },
+        'catch-9':   { id: 53, name: 'Catch hold of 9'   , cat: 'adv', desc: '' },
+        'catch-10':  { id: 54, name: 'Catch hold of 10'  , cat: 'adv', desc: '' },
+        'catch-11':  { id: 55, name: 'Catch hold of 11'  , cat: 'adv', desc: '' },
+        'catch-12':  { id: 56, name: 'Catch hold of 12'  , cat: 'adv', desc: '' },
+        'catch-13':  { id: 57, name: 'Catch hold of 13'  , cat: 'adv', desc: '' },
+        'catch-14':  { id: 58, name: 'Catch hold of 14'  , cat: 'adv', desc: '' },
+        'catch-15':  { id: 59, name: 'Catch hold of 15'  , cat: 'adv', desc: '' },
+        'catch-16':  { id: 60, name: 'Catch hold of 16'  , cat: 'adv', desc: '' },
+        'flip-left': { id: 61, name: 'Silently flip left' ,cat: 'bell', desc: '' },
+        'flip-right':{ id: 62, name: 'Silently flip right' ,cat: 'bell', desc: '' },
     };
 
     Vue.component("remove_button", {
@@ -183,14 +183,7 @@ $(document).ready(function() {
                         .filter((func)=>{
                             return this.function_names[func].cat === cat;
                         }).sort((func_a, func_b)=>{
-                            const name_a = this.function_names[func_a].name;
-                            const name_b = this.function_names[func_b].name;
-                            const int_a = parseInt(name_a.slice(-2));
-                            const int_b = parseInt(name_b.slice(-2));
-                            if (Number.isNaN(int_a) || Number.isNaN(int_b)) {
-                                return name_a < name_b;
-                            }
-                            return int_a < int_b;
+                            return func_a.id < func_b.id;
                         });
             },
             unbind: function(key) {
@@ -200,6 +193,7 @@ $(document).ready(function() {
                         this.rows[func].splice(index, 1);
                         if (this.rows[func].length == 0) {
                             this.alert_text = "You just removed or overwrote the only keybinding for '<b>" + function_names[func].name + "</b>'. You won't be able to use that function from the keyboard unless you add a new keybinding.";
+                            setTimeout(()=>this.alert_text=null, 5000);
                         }
                         return this.update(func)
                     }
@@ -326,8 +320,10 @@ $(document).ready(function() {
                 { call: 'Rounds' },
                 { call: 'Single' },
                 { call: 'Sorry' },
-                { call: 'Stand' },
+                { call: 'Stand next' },
                 { call: "That's all" },
+                { call: 'Silently flip stroke'},
+                { call: '(none)'},
             ]
         },
 
@@ -418,7 +414,7 @@ $(document).ready(function() {
                 </div>
                 <div class="row mt-n3 mb-3">
                     <div class="col-12 col-sm-auto">
-                        <small>The angle at which a handstroke is detected. (Higher numbers indicate a more vertical bell.)</small>
+                        <small>The point at which a handstroke is detected. (Higher numbers indicate a more vertical bell.)</small>
                     </div>
                 </div>
                 <div class="form-group row justify-content-between">
@@ -434,7 +430,7 @@ $(document).ready(function() {
                 </div>
                 <div class="row mt-n3 mb-3">
                     <div class="col-12 col-sm-auto">
-                        <small>The angle at which a backstroke is detected. (Higher numbers indicate a more vertical bell.)</small>
+                        <small>The point at which a backstroke is detected. (Higher numbers indicate a more vertical bell.)</small>
                     </div>
                 </div>
                 <h4 class="pt-3"> Left controller buttons </h4>

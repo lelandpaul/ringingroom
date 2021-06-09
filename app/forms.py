@@ -94,12 +94,12 @@ class TowerSettingsForm(FlaskForm):
     tower_name = StringField('Change name',validators=[Optional()])
     add_host = StringField('Add host by email', validators=[Optional(),Email()])
     remove_host = StringField('Remove host', validators=[Optional(),Email()])
-    host_mode_enabled = BooleanField('Host Mode Enabled', validators=[Optional()])
-    additional_sizes_enabled = BooleanField('Additional Sizes Enabled', validators=[Optional()])
+    host_mode_enabled = BooleanField('Host Mode Permitted', validators=[Optional()])
+    additional_sizes_enabled = BooleanField('Additional Sizes Permitted', validators=[Optional()])
     half_muffled = BooleanField('Half-muffled Tower Bells', validators=[Optional()])
     anticlockwise = BooleanField('Anticlockwise Ring', validators=[Optional()])
-    cowbell_enabled = BooleanField('Cowbell Mode Enabled', validators=[Optional()])
-    wheatley_enabled = BooleanField('Wheatley Enabled', validators=[Optional()])
+    cowbell_enabled = BooleanField('Cowbell Mode Permitted', validators=[Optional()])
+    wheatley_enabled = BooleanField('Wheatley Permitted', validators=[Optional()])
     submit = SubmitField('Save Changes')
 
     def validate_add_host(self, new_host_email):
