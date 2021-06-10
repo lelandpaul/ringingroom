@@ -74,9 +74,9 @@ _bind_hotkeys = function(bell_obj) {
                    ()=>{bell_obj.pull_rope_by_hand("right"); return false}, "keydown");
     Mousetrap.bind({{user_settings['keybindings']['left'] | safe}},
                    ()=>{bell_obj.pull_rope_by_hand("left"); return false}, "keydown");
-    Mousetrap.bind({{user_settings['keybindings']['swap-left'] | safe}}, 
+    Mousetrap.bind({{user_settings['keybindings']['flip-left'] | safe}}, 
                    ()=>{bell_obj.silent_swap_by_hand("left")});
-    Mousetrap.bind({{user_settings['keybindings']['swap-right'] | safe}}, 
+    Mousetrap.bind({{user_settings['keybindings']['flip-right'] | safe}}, 
                    ()=>{bell_obj.silent_swap_by_hand("right")});
 
     // Calls
