@@ -103,7 +103,7 @@ class Config(object):
                  'debounce': 600,
                  'handstroke': 100,
                  'backstroke': -1200,
-                 'left_left': 'Stand',
+                 'left_left': 'Stand next',
                  'left_right': 'Go',
                  'right_left': 'Single',
                  'right_right': 'Bob',
