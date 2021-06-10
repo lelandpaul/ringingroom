@@ -183,9 +183,13 @@ $(document).ready(function() {
                         .filter((func)=>{
                             return this.function_names[func].cat === cat;
                         }).sort((func_a, func_b)=>{
-                            return func_a.id < func_b.id;
+                            console.log("sorting: ", 
+                                this.function_names[func_a], this.function_names[func_b], 
+                                this.function_names[func_a].id < this.function_names[func_b].id)
+                            return this.function_names[func_a].id > this.function_names[func_b].id;
                         });
             },
+
             unbind: function(key) {
                 for (const func in this.rows) {
                     const index = this.rows[func].indexOf(key);
