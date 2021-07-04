@@ -96,8 +96,8 @@ class Config(object):
                 'catch-14':  ['meta+shift+w'],
                 'catch-15':  ['meta+shift+e'],
                 'catch-16':  ['meta+shift+r'],
-                'flip-left': ['a, shift+a'],
-                'flip-right':[';, shift+;'],
+                'flip-left': ['a', 'shift+a'],
+                'flip-right':[';', 'shift+;'],
                 },
              'controllers': {
                  'debounce': 600,
