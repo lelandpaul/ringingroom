@@ -627,7 +627,8 @@ $(document).ready(function () {
             // a call was received from the server; display it and play audio
             make_call: function (call) {
                 this.display_message(call, 2000);
-                if (call.indexOf("sorry") != -1) {
+                if (call.indexOf("sorry") != -1 ||
+                    call.indexOf("Sorry") != -1) {
                     calls.play("SORRY");
                 } else if (call in call_types) {
                     calls.play(call_types[call]);
