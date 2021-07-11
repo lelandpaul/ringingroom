@@ -1757,7 +1757,7 @@ $(document).ready(function () {
                min=0
                max=10
                id="volumeSlider"
-               class="volume_control_slider custom-range align-middle"
+               class="volume_control_slider custom-range align-middle autoblur"
                />
     </div>
     <div class="col-2">
@@ -2043,7 +2043,7 @@ $(document).ready(function () {
             [[ users.includes(-1) ? users.length - 1 : users.length ]] 
         </span>
         <span class="float-right">
-            <button class="btn btn-outline-primary w-100 m-0"
+            <button class="btn btn-outline-primary w-100 m-0 autoblur"
                     :class="{active: assignment_mode}"
                     @click="toggle_assignment"
                     >
@@ -2510,7 +2510,9 @@ $(document).ready(function () {
                 }
 
                 $("*").focus(() => {
+                    console.log(document.activeElement);
                     if (document.activeElement.classList.contains("autoblur")) {
+                        console.log("autoblur triggered")
                         document.activeElement.blur();
                     }
                 });
