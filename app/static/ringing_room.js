@@ -79,7 +79,7 @@ socketio.on("s_bell_rung", function (msg, cb) {
 // A bell was silently swapped between strokes
 socketio.on("s_silent_swap", function (msg, cb) {
     // console.log('silent swap', msg);
-    bell_circle.$refs.bells[parseInt(msg.who_swapped)-1].set_state_silently(msg.new_bell_state);
+    bell_circle.$refs.bells[parseInt(msg.who_swapped) - 1].set_state_silently(msg.new_bell_state);
 });
 
 // Userlist was set
@@ -105,9 +105,9 @@ socketio.on("s_user_entered", function (msg, cb) {
 socketio.on("s_user_left", function (msg, cb) {
     // console.log(msg.username + ' left')
     // It's possible that we'll receive this when we've just been kicked. If so, redirect
-    console.log(msg)
+    console.log(msg);
     if (msg.kicked && msg.user_id === parseInt(window.tower_parameters.cur_user_id)) {
-        window.location.href = '/';
+        window.location.href = "/";
     }
     bell_circle.$refs.users.remove_user(msg);
     bell_circle.$refs.bells.forEach((bell, index) => {
@@ -455,7 +455,7 @@ $(document).ready(function () {
                 });
             },
 
-            assign_user_by_id: function(id) {
+            assign_user_by_id: function (id) {
                 if (window.tower_parameters.anonymous_user) {
                     return;
                 } // don't assign if not logged in
@@ -657,7 +657,7 @@ $(document).ready(function () {
         },
 
         computed: {
-            controller_active: function(){
+            controller_active: function () {
                 const controllers = this.$root.$refs.controllers;
                 return controllers.has_controller;
             },
@@ -1073,7 +1073,7 @@ $(document).ready(function () {
             peal_speed: function () {
                 // Clamp the peal speed to a reasonable range
                 const last_peal_speed = this.peal_speed;
-                this.peal_speed = Math.max(Math.min(last_peal_speed, 300), 60);
+                this.peal_speed = Math.max(Math.min(last_peal_speed, 8 * 60), 60);
                 // Send an update to the server if the user **actually** changed the value
                 if (last_peal_speed != this.peal_speed) {
                 }
@@ -1837,14 +1837,14 @@ $(document).ready(function () {
                 return this.$root.$refs.users.assignment_mode;
             },
 
-            kickable: function() {
+            kickable: function () {
                 if (this.assignment_mode_active) return false;
                 if (this.$root.$refs.controls.lock_controls) return false;
                 if (!window.tower_parameters.host_permissions) return false;
                 if (this.user_id === parseInt(window.tower_parameters.cur_user_id)) return false;
                 if (this.user_id === -1) return false;
                 return true;
-            }
+            },
         },
 
         methods: {
@@ -1858,16 +1858,15 @@ $(document).ready(function () {
                 this.$root.$refs.users.selected_user = this.user_id;
             },
 
-            kick_user: function(){
+            kick_user: function () {
                 if (!this.kicking) {
-                    console.log('marking kicking');
+                    console.log("marking kicking");
                     this.kicking = true;
-                    setTimeout(()=>this.kicking = false, 2000);
-                    return
+                    setTimeout(() => (this.kicking = false), 2000);
+                    return;
                 }
-                socketio.emit('c_kick_user', { tower_id: cur_tower_id,
-                                               user_id: this.user_id });
-            }
+                socketio.emit("c_kick_user", { tower_id: cur_tower_id, user_id: this.user_id });
+            },
         },
 
         template: `
@@ -2113,10 +2112,14 @@ $(document).ready(function () {
                 back_strike: window.user_settings.controller_backstroke,
                 debounce: window.user_settings.controller_debounce,
                 buttons: {
-                    left: [ window.user_settings.controller_left_left,
-                            window.user_settings.controller_left_right],
-                    right:[ window.user_settings.controller_right_left,
-                            window.user_settings.controller_right_right]
+                    left: [
+                        window.user_settings.controller_left_left,
+                        window.user_settings.controller_left_right,
+                    ],
+                    right: [
+                        window.user_settings.controller_right_left,
+                        window.user_settings.controller_right_right,
+                    ],
                 },
                 next_ring: 0,
                 has_controller: false,
@@ -2147,9 +2150,9 @@ $(document).ready(function () {
                     "⑮",
                     "⑯",
                 ],
-                debounce_func: function(cont) {
+                debounce_func: function (cont) {
                     console.log("calling debounce with", cont);
-                    cont.debounced = false
+                    cont.debounced = false;
                 },
             };
         },
@@ -2176,20 +2179,18 @@ $(document).ready(function () {
                         try {
                             if (Math.max.apply(null, cont.axes.map(Math.abs)) > 0) {
                                 var swing = cont.axes[2] * 2048;
-                                if (
-                                    swing >= this.hand_strike &&
-                                    curCont.at_hand
-                                ) {
+                                if (swing >= this.hand_strike && curCont.at_hand) {
                                     curCont.at_hand = !curCont.at_hand;
                                     this.assign_cont_to_bell(curCont);
                                     if (curCont.bell) {
                                         bell_circle.pull_rope(curCont.bell);
                                         curCont.debounced = true;
                                         setTimeout(
-                                            function(i){
+                                            function (i) {
                                                 i.debounced = false;
                                             }.bind(this, curCont),
-                                            this.debounce);
+                                            this.debounce
+                                        );
                                     }
                                 }
                                 if (
@@ -2203,10 +2204,11 @@ $(document).ready(function () {
                                         bell_circle.pull_rope(curCont.bell);
                                         curCont.debounced = true;
                                         setTimeout(
-                                            function(i){
+                                            function (i) {
                                                 i.debounced = false;
                                             }.bind(this, curCont),
-                                            this.debounce);
+                                            this.debounce
+                                        );
                                     }
                                 }
                             }
@@ -2222,12 +2224,12 @@ $(document).ready(function () {
                                     // Any bell not part of a sensible handbell pair should be able to call bob & single
                                     //
 
-                                    var left_hand = this.assigned_bells ?
-                                        curCont.bell === bell_circle.find_rope_by_hand(LEFT_HAND) :
-                                        (curCont.bell % 2 == 0 &&
-                                            this.assigned_bells.includes(curCont.bell - 1));
+                                    var left_hand = this.assigned_bells
+                                        ? curCont.bell === bell_circle.find_rope_by_hand(LEFT_HAND)
+                                        : curCont.bell % 2 == 0 &&
+                                          this.assigned_bells.includes(curCont.bell - 1);
 
-                                    if (left_hand){
+                                    if (left_hand) {
                                         this.buttons.left[i](this.$root);
                                     } else {
                                         this.buttons.right[i](this.$root);
@@ -2302,7 +2304,7 @@ $(document).ready(function () {
                     this.controller_list[myCont] = contObj;
                 }
 
-                this.has_controller = this.controller_index.length > 0
+                this.has_controller = this.controller_index.length > 0;
             },
 
             toggle_controllers: function () {
@@ -2516,7 +2518,6 @@ $(document).ready(function () {
                         document.activeElement.blur();
                     }
                 });
-
             });
         },
 
