@@ -93,6 +93,7 @@ import json
 import time
 import os
 import subprocess
+import psutil
 from threading import Thread, Timer
 
 import requests
@@ -379,7 +380,7 @@ class Wheatley:
             # Case 1: No responses were made, so all processes are assumed dead
             self.log("No responses, so killing all processes and spawning new ones")
             # Kill all instances, and create a new one
-            self._kill_all()
+            self.reset()
             self._spawn_new_instance()
         else:
             # Case 2 & 3: Some number of responses were made.  If this is bigger than 1, then
@@ -404,8 +405,12 @@ class Wheatley:
 
     def _kill_all(self):
         self.log("Killing all processes")
-        for i in self._instances:
-            i.kill()
+
+        for proc in psutil.process_iter():
+            process_name = proc.name()
+            if self._tower.tower_id in process_name and "wheatley" in process_name:
+                proc.kill()
+        
 
     def reset(self):
         """ Kill all existing Wheatley processes, as a hard reset. """
