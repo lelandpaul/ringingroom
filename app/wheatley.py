@@ -93,7 +93,6 @@ import json
 import time
 import os
 import subprocess
-import psutil
 from threading import Thread, Timer
 
 import requests
