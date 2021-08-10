@@ -406,10 +406,7 @@ class Wheatley:
     def _kill_all(self):
         self.log("Killing all processes")
 
-        for proc in psutil.process_iter():
-            process_name = proc.name()
-            if self._tower.tower_id in process_name and "wheatley" in process_name:
-                proc.kill()
+        os.system(f'pkill "{self._tower.tower_id}"')
         
 
     def reset(self):
