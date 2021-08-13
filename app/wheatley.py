@@ -405,7 +405,7 @@ class Wheatley:
     def _kill_all(self):
         self.log("Killing all processes")
 
-        subprocess.run(["pkill","-f",str(self._tower.tower_id)])
+        subprocess.run(["pkill","-f",str(self._tower.tower_id)], shell=True)
         
 
     def reset(self):
