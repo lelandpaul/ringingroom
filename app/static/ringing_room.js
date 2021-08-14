@@ -734,6 +734,13 @@ $(document).ready(function () {
                 if (window.tower_parameters.anonymous_user) {
                     return; // don't do anything if not logged in
                 }
+                // Update the peal speed according to this tower size change.  Only the user who
+                // changed the tower size creates a new `c_wheatley_setting` signal for the peal
+                // speed - this way, the server isn't inundated with identical settings changes.
+                const old_size = this.number_of_bells;
+                console.log(`${old_size} -> ${size}`);
+                bell_circle.$refs.wheatley.on_tower_size_change(old_size, size);
+
                 // console.log('setting tower size to ' + size);
                 socketio.emit("c_size_change", {
                     new_size: size,
@@ -799,11 +806,13 @@ $(document).ready(function () {
                        disabled: lock_controls}"
                        @click="set_tower_size(size)"
                        >
+                    <!--
                     <input type="radio"
                            class="autoblur"
                            name="size"
                            :value="size"
                            />
+                    -->
                     [[ size ]]
                 </label>
             </div>
@@ -1141,6 +1150,23 @@ $(document).ready(function () {
                         fixed_striking_interval: this.fixed_striking_interval,
                     },
                 });
+            },
+
+            // Updates the peal speed if the tower size changes, in order to keep the intervals
+            // between bells as consistent as possible
+            on_tower_size_change: function (old_size, new_size) {
+                // Compute the number of 'strikes' contained within a handstroke/backstroke pair of
+                // rows (the `+ 1` is the handstroke gap).  The ratio between these is the ratio
+                // that the peal speed must be adjusted.
+                const two_row_length_old = old_size * 2 + 1;
+                const two_row_length_new = new_size * 2 + 1;
+                const peal_time_ratio = two_row_length_new / two_row_length_old;
+                this.peal_speed = Math.round(this.peal_speed * peal_time_ratio);
+                // This function is called when a user clicks on a new tower size button.  The line
+                // above therefore only changes this user's local view, so we send a
+                // `c_wheatley_setting` signal to sync the new setting with the other users, the RR
+                // server and Wheatley itself.
+                this.on_change_peal_speed();
             },
 
             // Assign all unassigned bells to Wheatley
