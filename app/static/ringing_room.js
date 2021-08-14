@@ -1526,7 +1526,7 @@ $(document).ready(function () {
                :disabled="settings_panel_disabled"
                />
         <label for="up_down_in" title="If checked, Wheatley will go into changes after two rounds.">
-            Ring up-down-in
+            Whole pull and off
         </label>
         <br/>
 
