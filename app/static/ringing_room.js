@@ -70,20 +70,20 @@ window.user_parameters = {
 ////////////////////////
 
 // A bell was rung
-socketio.on("s_bell_rung", function (msg, cb) {
+socketio.on("s_bell_rung", function (msg) {
     // console.log('Received event: ' + msg.global_bell_state + msg.who_rang);
     // if(msg.disagree) {}
     bell_circle.ring_bell(msg.who_rang);
 });
 
 // A bell was silently swapped between strokes
-socketio.on("s_silent_swap", function (msg, cb) {
+socketio.on("s_silent_swap", function (msg) {
     // console.log('silent swap', msg);
     bell_circle.$refs.bells[parseInt(msg.who_swapped) - 1].set_state_silently(msg.new_bell_state);
 });
 
 // Userlist was set
-socketio.on("s_set_userlist", function (msg, cb) {
+socketio.on("s_set_userlist", function (msg) {
     // console.log('s_set_userlist: ',  msg.user_list);
     bell_circle.$refs.users.user_names = msg.user_list;
     msg.user_list.forEach((user, index) => {
@@ -96,13 +96,13 @@ socketio.on("s_set_userlist", function (msg, cb) {
 });
 
 // User entered the room
-socketio.on("s_user_entered", function (msg, cb) {
+socketio.on("s_user_entered", function (msg) {
     // console.log(msg.username + ' entered')
     bell_circle.$refs.users.add_user(msg);
 });
 
 // User left the room
-socketio.on("s_user_left", function (msg, cb) {
+socketio.on("s_user_left", function (msg) {
     // console.log(msg.username + ' left')
     // It's possible that we'll receive this when we've just been kicked. If so, redirect
     console.log(msg);
@@ -118,13 +118,13 @@ socketio.on("s_user_left", function (msg, cb) {
 });
 
 // Number of observers changed
-socketio.on("s_set_observers", function (msg, cb) {
+socketio.on("s_set_observers", function (msg) {
     // console.log('observers: ' + msg.observers);
     bell_circle.$refs.users.observers = msg.observers;
 });
 
 // User was assigned to a bell
-socketio.on("s_assign_user", function (msg, cb) {
+socketio.on("s_assign_user", function (msg) {
     // console.log('Received user assignment: ' + msg.bell + ' ' + msg.user);
     try {
         // This stochastically very error-prone:
@@ -146,13 +146,13 @@ socketio.on("s_assign_user", function (msg, cb) {
 });
 
 // A call was made
-socketio.on("s_call", function (msg, cb) {
+socketio.on("s_call", function (msg) {
     // console.log('Received call: ' + msg.call);
     bell_circle.$refs.display.make_call(msg.call);
 });
 
 // The server told us the number of bells in the tower
-socketio.on("s_size_change", function (msg, cb) {
+socketio.on("s_size_change", function (msg) {
     var new_size = msg.size;
     bell_circle.number_of_bells = new_size;
     // The user may already be assigned to something, so rotate
@@ -163,7 +163,7 @@ socketio.on("s_size_change", function (msg, cb) {
 });
 
 // The server sent us the global state; set all bells accordingly
-socketio.on("s_global_state", function (msg, cb) {
+socketio.on("s_global_state", function (msg) {
     var gstate = msg.global_bell_state;
     for (var i = 0; i < gstate.length; i++) {
         try {
@@ -181,7 +181,7 @@ socketio.on("s_global_state", function (msg, cb) {
 });
 
 // The server told us whether to use handbells or towerbells
-socketio.on("s_audio_change", function (msg, cb) {
+socketio.on("s_audio_change", function (msg) {
     // console.log('changing audio to: ' + msg.new_audio);
     bell_circle.$refs.controls.audio_type = msg.new_audio;
     bell_circle.audio = audio_types[msg.new_audio];
@@ -192,7 +192,7 @@ socketio.on("s_audio_change", function (msg, cb) {
 });
 
 // A chat message was received
-socketio.on("s_msg_sent", function (msg, cb) {
+socketio.on("s_msg_sent", function (msg) {
     bell_circle.$refs.chatbox.messages.push(msg);
     if (msg.email != window.tower_parameters.cur_user_email && !$("#chat_input_box").is(":focus")) {
         bell_circle.unread_messages++;
@@ -231,7 +231,7 @@ if (!window.tower_parameters.listen_link) {
 }
 
 // Host mode was changed
-socketio.on("s_host_mode", function (msg, cb) {
+socketio.on("s_host_mode", function (msg) {
     bell_circle.$refs.controls.host_mode = msg.new_mode;
 });
 
@@ -404,12 +404,11 @@ $(document).ready(function () {
                     stroke: this.stroke,
                     tower_id: cur_tower_id,
                 });
-                var report =
-                    "Bell " +
-                    this.number +
-                    " will ring a " +
-                    (this.stroke ? "handstroke" : "backstroke");
-                // console.log(report);
+                /*
+                console.log(
+                    `Bell ${this.number} will ring at ${this.stroke ? "handstroke" : "backstroke"}`
+                );
+                */
             },
 
             // Ringing event received; now ring the bell
@@ -431,12 +430,11 @@ $(document).ready(function () {
                     // console.log(audio_type + ' ' + this.number_of_bells);
                 }
                 audio_obj.play(bell_mappings[audio_type][this.number_of_bells][this.number - 1]);
-                var report =
-                    "Bell " +
-                    this.number +
-                    " rang a " +
-                    (this.stroke ? "backstroke" : "handstroke");
-                // console.log(report);
+                /*
+                console.log(
+                    `Bell ${this.number} rang a ${this.stroke ? "handstroke" : "backstroke"}`
+                );
+                */
             },
 
             // global_state received; set the bell to the correct stroke
@@ -627,8 +625,7 @@ $(document).ready(function () {
             // a call was received from the server; display it and play audio
             make_call: function (call) {
                 this.display_message(call, 2000);
-                if (call.indexOf("sorry") != -1 ||
-                    call.indexOf("Sorry") != -1) {
+                if (call.indexOf("sorry") != -1 || call.indexOf("Sorry") != -1) {
                     calls.play("SORRY");
                 } else if (call in call_types) {
                     calls.play(call_types[call]);
@@ -735,8 +732,8 @@ $(document).ready(function () {
             // the user clicked a tower-size button
             set_tower_size: function (size) {
                 if (window.tower_parameters.anonymous_user) {
-                    return;
-                } // don't do anything if not logged in
+                    return; // don't do anything if not logged in
+                }
                 // console.log('setting tower size to ' + size);
                 socketio.emit("c_size_change", {
                     new_size: size,
@@ -967,6 +964,7 @@ $(document).ready(function () {
                     title: "Double Norwich Court Bob Major",
                     url: "Double_Norwich_Court_Bob_Major",
                 },
+
                 // Peal speed has 3 values - two which are bound to the input fields, and one
                 // combined value that is the 'ground truth'.  This guaruntees that the display
                 // always represents the correct peal speed in the correct way (i.e. such that
@@ -978,12 +976,14 @@ $(document).ready(function () {
                 //   - Uses the new value to set `peal_speed_mins` and `peal_speed_hours` to a valid
                 //     representation
                 //   - Sends a socketio signal with the new peal speed
-                peal_speed_hours: 2,
-                peal_speed_mins: 55,
+                peal_speed_hours: "2", // (string): Bound to the value of 'hours' UI box
+                peal_speed_mins: "55", // (string): Bound to the value of 'mins' UI box
+                // Number value of the total mins of the peal speed.  Sent over SocketIO and
+                // computed with `peal_speed_hours * 60 + peal_speed_mins`.
                 peal_speed: 175,
 
                 // Row-gen panel configuration
-                row_gen_panel: "method",
+                row_gen_panel: "method", // "method" | "composition": Which tab is open
 
                 method_name: "",
                 autocomplete_options: [],
@@ -1070,13 +1070,10 @@ $(document).ready(function () {
                 }
             },
 
+            // Update the UI whenever the backing `peal_speed` value changes
             peal_speed: function () {
-                // Clamp the peal speed to a reasonable range
-                const last_peal_speed = this.peal_speed;
-                this.peal_speed = Math.max(Math.min(last_peal_speed, 8 * 60), 60);
-                // Send an update to the server if the user **actually** changed the value
-                if (last_peal_speed != this.peal_speed) {
-                }
+                // Clamp the peal speed to a max of 8 hours
+                this.peal_speed = Math.max(Math.min(this.peal_speed, 8 * 60), 60);
                 // Update the controls to the correct representation of the speed
                 this.peal_speed_mins = (this.peal_speed % 60).toString();
                 this.peal_speed_hours = Math.floor(this.peal_speed / 60).toString();
@@ -1085,6 +1082,14 @@ $(document).ready(function () {
 
         methods: {
             /* METHODS CALLED WHEN THE USER CHANGES THE CONTROLS */
+
+            // NOTE: These are called specifically when a **user** changes the controls, not simply
+            // when the variables change (i.e. these aren't 'watcher' callbacks for the underlying
+            // variable).  If these _where_ watchers, then each socket signal received would trigger
+            // the callback, thus sending _another_ socket signal.  This causes an infinite echo
+            // chamber of socket signals, which would effectively immobilise the controls, as well
+            // as causing enormous stress to the Ringing Room server.
+
             on_change_sensitivity: function () {
                 socketio.emit("c_wheatley_setting", {
                     tower_id: cur_tower_id,
@@ -1121,8 +1126,8 @@ $(document).ready(function () {
                 });
             },
 
+            // Assign all unassigned bells to Wheatley
             fill_bells: function () {
-                // Assign all unassigned bells to Wheatley
                 for (const bell of bell_circle.$refs.bells) {
                     if (!bell.assigned_user) {
                         // -1 is Wheatley's user ID (see USER_ID in app/wheatley.py)
@@ -2512,9 +2517,7 @@ $(document).ready(function () {
                 }
 
                 $("*").focus(() => {
-                    console.log(document.activeElement);
                     if (document.activeElement.classList.contains("autoblur")) {
-                        console.log("autoblur triggered")
                         document.activeElement.blur();
                     }
                 });

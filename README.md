@@ -224,9 +224,9 @@ What follows is a incomplete list of events — these should be only the events 
 | `s_bad_token`            | (variable)                                                               | The user send a bad bearer token. (Payload repeats whatever triggered this response.) |
 
 ### Wheatley
-The changes to Wheatley have added a number of extra SocketIO signals, used for keeping Wheatley in sync
-with the rest of Ringing Room.  Some of these signals have custom types (`RowGen` and `Signals`,
-which are described in detail below the table.
+The integration of Wheatley into Ringing Room have added a number of extra SocketIO signals, used
+for keeping Wheatley in sync with the rest of Ringing Room.  Some of these signals have custom types
+(`RowGen` and `Signals`, which are described in detail below the table.
 
 | Event | Payload | Description |
 | --- | --- | --- |
