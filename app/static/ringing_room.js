@@ -1155,6 +1155,9 @@ $(document).ready(function () {
             // Updates the peal speed if the tower size changes, in order to keep the intervals
             // between bells as consistent as possible
             on_tower_size_change: function (old_size, new_size) {
+                if (!this.fixed_striking_interval) {
+                    return; // Don't update peal speed unless `fixed_striking_interval` is set
+                }
                 // Compute the number of 'strikes' contained within a handstroke/backstroke pair of
                 // rows (the `+ 1` is the handstroke gap).  The ratio between these is the ratio
                 // that the peal speed must be adjusted.
