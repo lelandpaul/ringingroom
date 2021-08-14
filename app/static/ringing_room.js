@@ -981,6 +981,14 @@ $(document).ready(function () {
                 // Number value of the total mins of the peal speed.  Sent over SocketIO and
                 // computed with `peal_speed_hours * 60 + peal_speed_mins`.
                 peal_speed: 175,
+                // If `true` then, when the tower size is changed, `peal_speed` will be updated in
+                // order to preserve the gap between bells - i.e. keep the apparent rhythm constant.
+                //
+                // This exists to prevents situations where switching from (e.g.) 6 to 12 bells
+                // causes Wheatley to ring extremely fast (because Wheatley is trying to fit ~2x
+                // more bells into the same amount of time).  If `fixed_striking_interval` is set,
+                // then RR will instead double the peal speed and keep the same apparent speed.
+                fixed_striking_interval: false,
 
                 // Row-gen panel configuration
                 row_gen_panel: "method", // "method" | "composition": Which tab is open
@@ -1126,6 +1134,15 @@ $(document).ready(function () {
                 });
             },
 
+            on_change_fixed_striking_interval: function () {
+                socketio.emit("c_wheatley_setting", {
+                    tower_id: cur_tower_id,
+                    settings: {
+                        fixed_striking_interval: this.fixed_striking_interval,
+                    },
+                });
+            },
+
             // Assign all unassigned bells to Wheatley
             fill_bells: function () {
                 for (const bell of bell_circle.$refs.bells) {
@@ -1157,6 +1174,11 @@ $(document).ready(function () {
                         case "peal_speed":
                             this.peal_speed = value;
                             break;
+                        case "fixed_striking_interval":
+                            this.fixed_striking_interval = value;
+                            break;
+                        default:
+                            console.log(`Unknown Wheatley setting '${key}'`);
                     }
                 }
             },
@@ -1514,6 +1536,18 @@ $(document).ready(function () {
                    step="5"
             />min
         </p>
+        <input type="checkbox"
+               v-model="fixed_striking_interval"
+               v-on:change="on_change_fixed_striking_interval"
+               id="wheatley_fixed_striking_interval"
+               name="fixed_striking_interval"
+               :disabled="settings_panel_disabled"
+               />
+        <label for="fixed_striking_interval"
+               title="When adding/removing bells, change peal speed to keep the same gap between bells">
+            Fixed striking interval
+        </label>
+        <br/>
 
         <hr/>
 
