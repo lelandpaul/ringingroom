@@ -738,7 +738,6 @@ $(document).ready(function () {
                 // changed the tower size creates a new `c_wheatley_setting` signal for the peal
                 // speed - this way, the server isn't inundated with identical settings changes.
                 const old_size = this.number_of_bells;
-                console.log(`${old_size} -> ${size}`);
                 bell_circle.$refs.wheatley.on_tower_size_change(old_size, size);
 
                 // console.log('setting tower size to ' + size);
@@ -806,13 +805,11 @@ $(document).ready(function () {
                        disabled: lock_controls}"
                        @click="set_tower_size(size)"
                        >
-                    <!--
                     <input type="radio"
                            class="autoblur"
                            name="size"
                            :value="size"
                            />
-                    -->
                     [[ size ]]
                 </label>
             </div>
@@ -974,6 +971,10 @@ $(document).ready(function () {
                     url: "Double_Norwich_Court_Bob_Major",
                 },
 
+                // The tower size that Wheatley think the tower has been switched to.  We need to
+                // track this because the addition of autoblur causes two `c_size_change` signals to
+                // be generated (which would otherwise cause the peal speed to change twice).
+                last_tower_size: undefined,
                 // Peal speed has 3 values - two which are bound to the input fields, and one
                 // combined value that is the 'ground truth'.  This guaruntees that the display
                 // always represents the correct peal speed in the correct way (i.e. such that
@@ -1155,6 +1156,11 @@ $(document).ready(function () {
             // Updates the peal speed if the tower size changes, in order to keep the intervals
             // between bells as consistent as possible
             on_tower_size_change: function (old_size, new_size) {
+                if (this.last_tower_size != undefined && new_size == this.last_tower_size) {
+                    return; // Don't update the peal size if we've already received this size change
+                }
+                this.last_tower_size = new_size;
+
                 if (!this.fixed_striking_interval) {
                     return; // Don't update peal speed unless `fixed_striking_interval` is set
                 }
