@@ -261,6 +261,7 @@ class TowerDB(db.Model):
     host_mode_enabled = db.Column(db.Boolean, default=False)
     additional_sizes_enabled = db.Column(db.Boolean, default=False)
     half_muffled = db.Column(db.Boolean, default=False)
+    fully_muffled = db.Column(db.Boolean, default=False)
     wheatley_enabled = db.Column(db.Boolean, default=False)
     wheatley_settings_json = db.Column(db.String(), default="{}")
     anticlockwise = db.Column(db.Boolean, default=False)
@@ -671,6 +672,15 @@ class Tower:
     @half_muffled.setter
     def half_muffled(self, new_state):
         self.to_TowerDB().half_muffled = new_state
+        db.session.commit()
+
+    @property
+    def fully_muffled(self):
+        return self.to_TowerDB().fully_muffled
+
+    @fully_muffled.setter
+    def fully_muffled(self, new_state):
+        self.to_TowerDB().fully_muffled = new_state
         db.session.commit()
 
     @property

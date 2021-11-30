@@ -226,8 +226,16 @@ def tower_settings(tower_id):
         tower.host_mode_enabled = form.host_mode_enabled.data
         # set additional tower sizes
         tower.additional_sizes_enabled = form.additional_sizes_enabled.data
-        # set half-muffled
-        tower.half_muffled = form.half_muffled.data
+        # set muffled status
+        if form.muffled.data == 'half':
+            tower.half_muffled = True
+            tower.fully_muffled = False
+        elif form.muffled.data == 'full':
+            tower.half_muffled = False
+            tower.fully_muffled = True
+        else:
+            tower.half_muffled = False
+            tower.fully_muffled = False
         # set anticlockwise
         tower.anticlockwise = form.anticlockwise.data
         # set cowbell
@@ -294,7 +302,7 @@ def tower_settings(tower_id):
         return redirect(url_for('my_towers'))
     form.host_mode_enabled.data = tower.host_mode_enabled
     form.additional_sizes_enabled.data = tower.additional_sizes_enabled
-    form.half_muffled.data = tower_db.half_muffled
+    form.muffled.data = 'Full' if tower.fully_muffled else 'Half' if tower.half_muffled else 'Open'
     form.anticlockwise.data = tower_db.anticlockwise
     form.cowbell_enabled.data = tower_db.cowbell_enabled
     form.wheatley_enabled.data = tower.wheatley.enabled

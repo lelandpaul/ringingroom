@@ -328,34 +328,44 @@
 
 </div>
 
-{{ form.half_muffled(class="d-none",id="half_muffled_toggle") }}
+{{ form.muffled(class="d-none",id="muffled_toggle") }}
 
 <div class="form-row my3 justify-content-between">
     <div class="col-12 col-md-6 pr-2">
         <div class="form-row my-2">
 
             <div class="col-6 pt-1">
-                <h4>Half-Muffled:</h4>
+                <h4>Muffled:</h4>
             </div>
             <div class="col-6">
 
                 <div class="btn-group btn-block btn-group-toggle align-bottom">
-                    <label class="btn btn-outline-primary {{ 'active' if not form.half_muffled.data }}">
+                    <label class="btn btn-outline-primary {{ 'active' if form.muffled.data == 'Open' }}">
                     <input type="radio"
-                        name="half_muffled_switch"
-                        id="half_muffled_false"
-                        onclick="$('#half_muffled_toggle').prop('checked', false);
+                        name="muffled_switch"
+                        id="muffled_open"
+                        onclick="$('#muffled_toggle').val('open');
                                     $('#submit_name_change').click()"
                         />
-                        No
+                        Open
                     </label>
 
-                    <label class="btn btn-outline-primary {{ 'active' if form.half_muffled.data }}">
-                        Yes
+                    <label class="btn btn-outline-primary {{ 'active' if form.muffled.data == 'Half' }}">
+                        Half
                     <input type="radio"
-                        name="half_muffled_switch"
-                        id="half_muffled_true"
-                        onclick="$('#half_muffled_toggle').prop('checked',true);
+                        name="muffled_switch"
+                        id="muffled_true"
+                        onclick="$('#muffled_toggle').val('half');
+                                    $('#submit_name_change').click()"
+                        />
+                    </label>
+
+                    <label class="btn btn-outline-primary {{ 'active' if form.muffled.data == 'Full' }}">
+                        Full
+                    <input type="radio"
+                        name="muffled_switch"
+                        id="muffled_true"
+                        onclick="$('#muffled_toggle').val('full');
                                     $('#submit_name_change').click()"
                         />
                     </label>

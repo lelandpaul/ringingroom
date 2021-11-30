@@ -22,6 +22,7 @@ window.tower_parameters = {
     host_mode: {{'true' if tower.host_mode else 'false'}},
     host_permissions: {{'true' if host_permissions else 'false'}},
     half_muffled: {{'true' if tower.half_muffled else 'false'}},
+    fully_muffled: {{'true' if tower.fully_muffled else 'false'}},
     anticlockwise: {{'true' if tower.anticlockwise else 'false'}},
     bookmarked: {{'true' if current_user.is_authenticated and current_user.bookmarked(tower.tower_id) else 'false'}},
     listen_link: {{'true' if listen_link else 'false'}},
