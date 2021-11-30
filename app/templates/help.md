@@ -169,7 +169,7 @@ In order to use [Wheatley](#wheatley) in a tower, you must first go to the Tower
 ### Additional settings
 
 - **Additional Sizes**: If this setting is enabled, the [Tower Controls](#tower-controls) will show options for 5, 14, and 16 bells in the tower, in addition to the usual numbers.
-- **Half-Muffled:** If this setting is enabled, when the tower is in tower bell mode the backstrokes will be muffled.
+- Muffled:** This setting has three possible values. If set to **Full**, when the tower is in tower bell mode both strokes will sound muffled. If set to **Half**, when the tower is in tower bell mode only the backstrokes will sound muffled. If set to **Open**, no strokes will sound muffled.
 - **Anticlockwise:** If this setting is enabled, the bells in the tower (both ropes and handbells) will be arranged anticlockwise.
 - **Cowbell**: If this setting is enabled, the tower will have the option to use cowbell sounds & images.
 
