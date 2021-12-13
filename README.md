@@ -224,9 +224,9 @@ What follows is a incomplete list of events — these should be only the events 
 | `s_bad_token`            | (variable)                                                               | The user send a bad bearer token. (Payload repeats whatever triggered this response.) |
 
 ### Wheatley
-The changes to Wheatley have added a number of extra SocketIO signals, used for keeping Wheatley in sync
-with the rest of Ringing Room.  Some of these signals have custom types (`RowGen` and `Signals`,
-which are described in detail below the table.
+The integration of Wheatley into Ringing Room have added a number of extra SocketIO signals, used
+for keeping Wheatley in sync with the rest of Ringing Room.  Some of these signals have custom types
+(`RowGen` and `Signals`, which are described in detail below the table.
 
 | Event | Payload | Description |
 | --- | --- | --- |
@@ -245,10 +245,11 @@ which are described in detail below the table.
 #### The 'Settings' type
 The _Settings_ type is an object with 0 or more of the following properties:
 ```
-sensitivity   : float; 0 <= x <= 1
-use_up_down_in: Bool
-stop_at_rounds: Bool
-peal_speed    : int; x >= 0
+sensitivity             : float; 0 <= x <= 1 (currently unused)
+use_up_down_in          : Bool
+stop_at_rounds          : Bool
+peal_speed              : int; x >= 0
+fixed_striking_interval : Bool (ignored by Wheatley, changes `peal_speed` when the tower size is changed)
 ```
 
 #### The 'RowGen' type
