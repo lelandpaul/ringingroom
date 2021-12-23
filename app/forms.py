@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Optional
 from app.models import User
 
@@ -96,7 +96,7 @@ class TowerSettingsForm(FlaskForm):
     remove_host = StringField('Remove host', validators=[Optional(),Email()])
     host_mode_enabled = BooleanField('Host Mode Permitted', validators=[Optional()])
     additional_sizes_enabled = BooleanField('Additional Sizes Permitted', validators=[Optional()])
-    half_muffled = BooleanField('Half-muffled Tower Bells', validators=[Optional()])
+    muffled = SelectField('Muffled Tower Bells', choices=[('open', 'Open'), ('half', 'Half'), ('full', 'Full')], validators=[Optional()])
     anticlockwise = BooleanField('Anticlockwise Ring', validators=[Optional()])
     cowbell_enabled = BooleanField('Cowbell Mode Permitted', validators=[Optional()])
     wheatley_enabled = BooleanField('Wheatley Permitted', validators=[Optional()])

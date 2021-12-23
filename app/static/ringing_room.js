@@ -417,9 +417,11 @@ $(document).ready(function () {
                 let audio_type;
                 let audio_obj;
                 if (
-                    window.tower_parameters.half_muffled &&
                     this.$root.$refs.controls.audio_type === "Tower" &&
-                    this.stroke
+                    (window.tower_parameters.fully_muffled
+                    || (window.tower_parameters.half_muffled && this.stroke)
+                    )
+                         
                 ) {
                     audio_type = "Muffled";
                     audio_obj = muffled;
