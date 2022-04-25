@@ -42,7 +42,7 @@ This section includes a few other tips & tricks to help you get the most out of 
 -   **Adjust the volume:** The volume slider in the [tower controls](#tower-controls) can be useful for getting the balance of the bells to the voices in your voice-chat program right.
 -   **Leave the tower when you're done:** The _Leave tower_ button will take you back to the [My Towers](#my-towers) page and will remove your name from the list of users in the tower. If you just close the web page, there's a chance your name will remain in the list of users even though you're not there, so it's polite to always use the _Leave tower_ button.
 
-# Advanced features
+# Advanced Features
 
 This section goes over all the features of Ringing Room in more depth.
 
@@ -104,14 +104,24 @@ To ring something with Wheatley, assign Wheatley to any bells that you need fill
 
 Now, you need to tell Wheatley what you want to ring. Wheatley can ring any method you want, and will respond to any calls made through Ringing Room via the hotkeys while ringing.
 
-To start ringing a method with Wheatley:
+### Ringing a Single Method with Wheatley:
 
 1. Click in the text box that says "Start typing method name".
 2. Start typing the name of the method you want to ring. As you type, a list of potential method names will appear (filtered according to the tower size).
 3. Click on the method name you want to ring, or press "Enter" to select the first option.
 4. If everything worked out, the first line of the Wheatley box should say _"After 'Look To', Wheatley will ring &lt;your method name&gt;"_, and Wheatley will ring that method after _Look To_ is called.
 
-A few other options are available in the Wheatley box:
+### Getting Wheatley to Call a Composition:
+
+1. Go to [complib.org](https://complib.org) and find the composition you want to ring.
+2. In the top-right corner, click the chain icon and copy the link that's generated.
+3. Return to Ringing Room and click on the tab in the Wheatley box that says 'Composition' (as
+   opposed to 'Method').
+4. Paste the link you copied into the box that says 'CompLib URL'.
+5. Change the tower size if prompted.  Once correct, the title of the composition will be displayed.
+6. Once you've got the right tower size, click 'Load' and Wheatley will be ready to call that composition.
+
+### Other Controls:
 
 1. _Peal Speed_ controls the speed at which Wheatley rings.
 2. _Ring up-down-in_ controls whether Wheatley rings "handbell-style" — i.e. two blows in rounds and then directly into the method, without waiting for a _Go_ call.
