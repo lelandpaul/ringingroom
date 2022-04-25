@@ -445,6 +445,16 @@ input[type="range"]::slider-thumb {
     }
 }
 
+.wheatley-speed-wheel {
+    background: none;
+    color: inherit;
+    border: none;
+
+    textarea {
+      color: inherit;
+    }
+}
+
 #user_display_header.collapsed::after,
 #wheatley_header.collapsed::after,
 #controllers_header.collapsed::after,

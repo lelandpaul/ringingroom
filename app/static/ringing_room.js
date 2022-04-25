@@ -1680,15 +1680,17 @@ $(document).ready(function () {
         <p style="margin-bottom: 0.6rem;">Peal Speed:
             <input type="number"
                    id="wheatley_peal_speed_hours"
+                   class="wheatley-speed-wheel"
                    v-model="peal_speed_hours"
                    v-on:change="on_change_peal_speed"
-                   style="border: none; width: 1.5em"
+                   style="width: 1.5em;"
             />hr
             <input type="number"
                    id="wheatley_peal_speed_mins"
+                   class="wheatley-speed-wheel"
                    v-model="peal_speed_mins"
                    v-on:change="on_change_peal_speed"
-                   style="border: none; width: 2.1em; text-align: right;"
+                   style="width: 2.1em;"
                    step="5"
             />min
         </p>
