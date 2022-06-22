@@ -34,7 +34,7 @@ Mako==1.1.2
 Markdown==3.2.1
 MarkupSafe==1.1.1
 monotonic==1.5
-numpy==1.19.2
+numpy==1.22.0
 optional-django==0.3.0
 pycparser==2.20
 Pygments==2.7.4
