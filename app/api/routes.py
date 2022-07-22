@@ -256,7 +256,8 @@ def get_tower(tower_id):
         'server_address': get_server_ip(tower_id),
         'additional_sizes_enabled': tower.additional_sizes_enabled,
         'host_mode_permitted': tower.host_mode_enabled,
-        'half_muffled': tower.half_muffled
+        'half_muffled': tower.half_muffled,
+        'fully_muffled': tower.fully_muffled
     }
     return jsonify(data)
 
