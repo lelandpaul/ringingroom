@@ -160,7 +160,7 @@ All other endpoints (except `POST /api/user` for registering new users) require 
 
 ### Tower
 
-`GET /api/tower/<tower_id>`: Gets connection information for the tower, including tower settings. Response JSON includes `tower_id`, `tower_name`, `server_address`, `additional_sizes_enabled`, `host_mode_permitted`, and `half_muffled`.
+`GET /api/tower/<tower_id>`: Gets connection information for the tower, including tower settings. Response JSON includes `tower_id`, `tower_name`, `server_address`, `additional_sizes_enabled`, `host_mode_permitted`, `half_muffled`, and `fully_muffled`.
 
 `POST /api/tower`: Creates a new tower. Request JSON should include `tower_name`. Responds as per `GET /api/tower/<tower_id>`.
 
@@ -168,7 +168,7 @@ All other endpoints (except `POST /api/user` for registering new users) require 
 
 `GET /api/tower/<tower_id>/settings`: Gets tower settings, if the current user has permission to modify them. Response JSON includes `host_mode_enabled`, `tower_id`, `tower_name`, and `hosts`, a list of objects containing `email` & `username`.
 
-`PUT /api/tower/<tower_id>/settings`: Modifies tower settings, if the current user has permission to do so. Request JSON may include `tower_name`, `permit_host_mode`, `additional_sizes_enabled`, `half_muffled`. Responds as per `GET /api/tower/<tower_id>/settings`.
+`PUT /api/tower/<tower_id>/settings`: Modifies tower settings, if the current user has permission to do so. Request JSON may include `tower_name`, `permit_host_mode`, `additional_sizes_enabled`, `half_muffled`, `fully_muffled`. Responds as per `GET /api/tower/<tower_id>/settings`.
 
 `POST /api/tower/<tower_id>/hosts`: Adds new hosts, if the current user has permission to do so. Request JSON must include `new_hosts`, a list of email addresses. Responds as per `GET /api/tower/<tower_id>/settings`.
 

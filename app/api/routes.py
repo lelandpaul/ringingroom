@@ -199,6 +199,7 @@ def change_tower_settings(tower_id):
     new_permit_host = data.get('permit_host_mode')
     new_additional_sizes_enabled = data.get('additional_sizes_enabled')
     new_half_muffled = data.get('half_muffled')
+    new_fully_muffled = data.get('fully_muffled')
     if new_name and new_name != tower.tower_name:
         tower.tower_name = new_name
     if new_permit_host and new_permit_host != tower.permit_host_mode:
@@ -208,6 +209,8 @@ def change_tower_settings(tower_id):
         tower.additional_sizes_enabled = new_additional_sizes_enabled
     if new_half_muffled and new_half_muffled != tower.half_muffled:
         tower.half_muffled = new_half_muffled
+    if new_fully_muffled and new_fully_muffled != tower.fully_muffled:
+        tower.fully_muffled = new_fully_muffled
     db.session.commit()
     response = jsonify(tower.to_dict())
     response.status_code = 200
