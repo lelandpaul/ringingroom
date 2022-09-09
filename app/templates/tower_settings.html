@@ -354,7 +354,7 @@
                         Half
                     <input type="radio"
                         name="muffled_switch"
-                        id="muffled_true"
+                        id="half_muffled"
                         onclick="$('#muffled_toggle').val('half');
                                     $('#submit_name_change').click()"
                         />
@@ -364,8 +364,18 @@
                         Full
                     <input type="radio"
                         name="muffled_switch"
-                        id="muffled_true"
+                        id="muffled"
                         onclick="$('#muffled_toggle').val('full');
+                                    $('#submit_name_change').click()"
+                        />
+                    </label>
+
+                    <label class="btn btn-outline-primary {{ 'active' if form.muffled.data == 'Toll' }}">
+                        Toll
+                    <input type="radio"
+                        name="muffled_switch"
+                        id="toll"
+                        onclick="$('#muffled_toggle').val('toll');
                                     $('#submit_name_change').click()"
                         />
                     </label>
@@ -375,7 +385,7 @@
     </div>
     <div class="col-12 col-md-6 pr-2">
         <small class="form-text pl-3 pr-0" style="text-align:justify;">
-            <p>If set to 'Full', when Tower Bells are selected both strokes will be muffled. if set to 'Half', only the backstrokes will be muffled. (You may need to refresh the tower for this to take effect.)</p>
+            <p>If set to 'Full', when Tower Bells are selected both strokes will be muffled. if set to 'Half', only the backstrokes will be muffled. If set to 'Toll', the bells will be fully muffled but the tenor's backstroke will be open. (You may need to refresh the tower for this to take effect.)</p>
         </small>
     </div>
 

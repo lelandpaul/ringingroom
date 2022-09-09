@@ -416,20 +416,28 @@ $(document).ready(function () {
                 this.stroke = !this.stroke;
                 let audio_type;
                 let audio_obj;
-                if (
-                    this.$root.$refs.controls.audio_type === "Tower" &&
-                    (window.tower_parameters.fully_muffled
-                    || (window.tower_parameters.half_muffled && this.stroke)
-                    )
-                         
-                ) {
-                    audio_type = "Muffled";
-                    audio_obj = muffled;
-                    // console.log(audio_type + ' ' + this.number_of_bells);
+
+                if (this.$root.$refs.controls.audio_type == "Tower") {
+                    if (window.tower_parameters.fully_muffled && window.tower_parameters.half_muffled) {
+                        // Tolling — muffled except tenor backstrokes
+                        if (this.number == this.number_of_bells && this.stroke) {
+                            audio_type = this.$root.$refs.controls.audio_type;
+                            audio_obj = this.audio;
+                        } else {
+                            audio_type = "Muffled";
+                            audio_obj = muffled;
+                        }
+                    } else if ((window.tower_parameters.half_muffled && this.stroke) 
+                              || window.tower_parameters.fully_muffled) {
+                            audio_type = "Muffled";
+                            audio_obj = muffled;
+                    } else {
+                        audio_type = this.$root.$refs.controls.audio_type;
+                        audio_obj = this.audio;
+                    }
                 } else {
                     audio_type = this.$root.$refs.controls.audio_type;
                     audio_obj = this.audio;
-                    // console.log(audio_type + ' ' + this.number_of_bells);
                 }
                 audio_obj.play(bell_mappings[audio_type][this.number_of_bells][this.number - 1]);
                 /*
