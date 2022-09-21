@@ -261,7 +261,7 @@ class TowerDB(db.Model):
     host_mode_enabled = db.Column(db.Boolean, default=False)
     additional_sizes_enabled = db.Column(db.Boolean, default=False)
     half_muffled = db.Column(db.Boolean, default=False)
-    fully_muffled = db.Column(db.Boolean, default=True)
+    fully_muffled = db.Column(db.Boolean, default=False)
     wheatley_enabled = db.Column(db.Boolean, default=False)
     wheatley_settings_json = db.Column(db.String(), default="{}")
     anticlockwise = db.Column(db.Boolean, default=False)
