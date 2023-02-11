@@ -1,61 +1,74 @@
 <div class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle" 
-       href="#" 
-       id="userDropdown"
-       role="button"
-       data-toggle="dropdown"
-       data-offset="30,30"
-       >
-       <i class="fas fa-fw fa-user"></i> {{ current_user.username }}
+    <a
+        class="nav-link dropdown-toggle"
+        href="#"
+        id="userDropdown"
+        role="button"
+        data-toggle="dropdown"
+        data-offset="30,30"
+    >
+        <i class="fas fa-fw fa-user"></i> {{ current_user.username }}
     </a>
-        <div class="dropdown-menu dropdown-menu-right">
-            <h6 class="dropdown-header">Bookmarked towers</h6>
-            {% for tower in current_user.bookmarked_towers(5) %}
-                <a class="dropdown-item d-inline-flex align-items-baseline" 
-                   href="/{{tower.tower_id}}/{{tower.url_safe_name}}">
-                    <span class="mr-auto">{{tower.tower_name}}&nbsp;&nbsp;</span>
-                    <small>{{tower.tower_id}}</small>
-                </a>
-            {% endfor %}
-            <a class="dropdown-item d-inline-flex ml-auto align-items-baseline"
-               href="{{ url_for('my_towers') }}#bookmark"
-               onclick="$('#bookmark_tab').tab('show')">
-                <small>Manage bookmarks</small>
-            </a>
-            <div class="dropdown-divider"></div>
-            <h6 class="dropdown-header">Recently visited towers</h6>
-            {% for tower in current_user.recent_towers(5) %}
-                <a class="dropdown-item d-inline-flex align-items-baseline" 
-                   href="/{{tower.tower_id}}/{{tower.url_safe_name}}">
-                    <span class="mr-auto">{{tower.tower_name}}&nbsp;&nbsp;</span>
-                    <small>{{tower.tower_id}}</small>
-                </a>
-            {% endfor %}
-            {% if current_user.recent_towers()|length ==0 %}
-            <small class="dropdown-item disabled">(No recent towers.)</small>
-            {% endif %}
-            {% if current_user.recent_towers()|length >= 5 %}
-            <a class="dropdown-item d-inline-flex ml-auto align-items-baseline"
-               href="{{ url_for('my_towers') }}#recent"
-               onclick="$('#recent_tab').tab('show')">
-                <small>See more...</small>
-            </a>
-            {% endif %}
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item d-inline-flex align-items-baseline"
-               href="{{ url_for('my_towers') }}">
-                <span class="mr-auto">My Towers</span>
-                <i class="fas fa-bell"></i>
-            </a>
-            <a class="dropdown-item d-inline-flex align-items-baseline" 
-               href="{{url_for('user_settings')}}">
-                <span class="mr-auto">User Settings</span>
-                <i class="fas fa-cog"></i>
-            </a>
-            <a class="dropdown-item d-inline-flex align-items-baseline" 
-               href="{{url_for('logout')}}">
-                <span class="mr-auto">Log Out</span>
-                <i class="fas fa-sign-out-alt"></i>
-            </a>
-        </div>
+    <div class="dropdown-menu dropdown-menu-right">
+        <h6 class="dropdown-header">Bookmarked towers</h6>
+        {% for tower in current_user.bookmarked_towers(5) %}
+        <a
+            class="dropdown-item d-inline-flex align-items-baseline"
+            href="/{{tower.tower_id}}/{{tower.url_safe_name}}"
+        >
+            <span class="mr-auto">{{tower.tower_name}}&nbsp;&nbsp;</span>
+            <small>{{tower.tower_id}}</small>
+        </a>
+        {% endfor %}
+        <a
+            class="dropdown-item d-inline-flex ml-auto align-items-baseline"
+            href="{{ url_for('my_towers') }}#bookmark"
+            onclick="$('#bookmark_tab').tab('show')"
+        >
+            <small>Manage bookmarks</small>
+        </a>
+        <div class="dropdown-divider"></div>
+        <h6 class="dropdown-header">Recently visited towers</h6>
+        {% for tower in current_user.recent_towers(5) %}
+        <a
+            class="dropdown-item d-inline-flex align-items-baseline"
+            href="/{{tower.tower_id}}/{{tower.url_safe_name}}"
+        >
+            <span class="mr-auto">{{tower.tower_name}}&nbsp;&nbsp;</span>
+            <small>{{tower.tower_id}}</small>
+        </a>
+        {% endfor %} {% if current_user.recent_towers()|length ==0 %}
+        <small class="dropdown-item disabled">(No recent towers.)</small>
+        {% endif %} {% if current_user.recent_towers()|length >= 5 %}
+        <a
+            class="dropdown-item d-inline-flex ml-auto align-items-baseline"
+            href="{{ url_for('my_towers') }}#recent"
+            onclick="$('#recent_tab').tab('show')"
+        >
+            <small>See more...</small>
+        </a>
+        {% endif %}
+        <div class="dropdown-divider"></div>
+        <a
+            class="dropdown-item d-inline-flex align-items-baseline"
+            href="{{ url_for('my_towers') }}"
+        >
+            <span class="mr-auto">My Towers</span>
+            <i class="fas fa-bell"></i>
+        </a>
+        <a
+            class="dropdown-item d-inline-flex align-items-baseline"
+            href="{{url_for('user_settings')}}"
+        >
+            <span class="mr-auto">User Settings</span>
+            <i class="fas fa-cog"></i>
+        </a>
+        <a
+            class="dropdown-item d-inline-flex align-items-baseline"
+            href="{{url_for('logout')}}"
+        >
+            <span class="mr-auto">Log Out</span>
+            <i class="fas fa-sign-out-alt"></i>
+        </a>
+    </div>
 </div>

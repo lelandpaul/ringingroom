@@ -4,7 +4,7 @@ Welcome to Ringing Room! Ringing Room is a web platform that lets you ring onlin
 
 ## Creating an account / Logging in
 
-You can create an account by clicking [register here](/authenticate) or [Log In / Register](/authenticate) on the front page. You'll need to provide an **email address** (which will be used as your log-in name), a **username** (which is what will be displayed to other users when you're ringing), and a **password**; any of these three can be [changed later](#user-settings). You'll also need to click the box to accept the [Privacy Policy](/privacy). After you register, you'll be automatically logged in, and will you'll be able to log in from the front page as well as the [Log In / Register](/authenticate) page in the future. 
+You can create an account by clicking [register here](/authenticate) or [Log In / Register](/authenticate) on the front page. You'll need to provide an **email address** (which will be used as your log-in name), a **username** (which is what will be displayed to other users when you're ringing), and a **password**; any of these three can be [changed later](#user-settings). You'll also need to click the box to accept the [Privacy Policy](/privacy). After you register, you'll be automatically logged in, and will you'll be able to log in from the front page as well as the [Log In / Register](/authenticate) page in the future.
 
 You need to be logged in before you can join a tower. You can tell whether you're logged in by looking in the menu bar at the top of the page; if it says your username instead of _Log In / Register_, you're good to go!
 
@@ -26,7 +26,7 @@ There are three ways to enter an existing tower:
 
 ## Ringing
 
-Congratulations, you're in a tower and ready to ring! You should see a circle of either ropes or handbells in the center of the screen; if you click on any of these, it will cause it to ring; anyone else currently in the tower will also see and hear that bell. Most people prefer to ring using the keyboard: By default, the _space bar_ will always ring the bell in the bottom-right corner of the circle, while the _left & right arrow keys_ or the _f & j_ keys will ring the two bells in the bottom left and right (useful for ringing a handbell pair). 
+Congratulations, you're in a tower and ready to ring! You should see a circle of either ropes or handbells in the center of the screen; if you click on any of these, it will cause it to ring; anyone else currently in the tower will also see and hear that bell. Most people prefer to ring using the keyboard: By default, the _space bar_ will always ring the bell in the bottom-right corner of the circle, while the _left & right arrow keys_ or the _f & j_ keys will ring the two bells in the bottom left and right (useful for ringing a handbell pair).
 
 The easiest way to change which bells you're ringing is to **assign yourself** to a bell: In the [Tower Controls](#tower-controls), you'll see a list of all users currently in the tower; click the _Assign bells_ button to enter assignment mode, then click the box next to the bell you want to take hold of. Make sure to press _Stop assigning_ when you're done catching hold and ready to ring.
 
@@ -36,11 +36,11 @@ And that's really all there is to it! The next section includes a few helpful ti
 
 This section includes a few other tips & tricks to help you get the most out of Ringing Room.
 
-- **Use voice-chat:** While Ringing Room does have a built-in [chat](#tower-controls) functionality, most bands find it easiest to use another platform (like Zoom, Discord, or Google Meet) to talk while using the platform.
-- **Use (wired) headphones:** If you're using an audio chat platform, it's important to wear headphones so that your microphone doesn't pick up the sound of your bells — because of transmission delays, other ringers will generally hear your bells at a different time from you, so it can be very distracting to hear them from two sources! If possible, we recommend wired headphones — wireless ones often introduce extra delay and may make it hard to strike your bells.
-- **Use the built-in calls:** Ringing Room does provide built-in calls like _look to_ or _bob_. These can be accessed via [keyboard hotkeys](#user-settings). Some people prefer to use these rather than a voice-chat platform for organizing the ringing, and they're also necessary for controlling [Wheatley](#wheatley), the Ringing Room simulator.
-- **Adjust the volume:** The volume slider in the [tower controls](#tower-controls) can be useful for getting the balance of the bells to the voices in your voice-chat program right.
-- **Leave the tower when you're done:** The _Leave tower_ button will take you back to the [My Towers](#my-towers) page and will remove your name from the list of users in the tower. If you just close the web page, there's a chance your name will remain in the list of users even though you're not there, so it's polite to always use the _Leave tower_ button.
+-   **Use voice-chat:** While Ringing Room does have a built-in [chat](#tower-controls) functionality, most bands find it easiest to use another platform (like Zoom, Discord, or Google Meet) to talk while using the platform.
+-   **Use (wired) headphones:** If you're using an audio chat platform, it's important to wear headphones so that your microphone doesn't pick up the sound of your bells — because of transmission delays, other ringers will generally hear your bells at a different time from you, so it can be very distracting to hear them from two sources! If possible, we recommend wired headphones — wireless ones often introduce extra delay and may make it hard to strike your bells.
+-   **Use the built-in calls:** Ringing Room does provide built-in calls like _look to_ or _bob_. These can be accessed via [keyboard hotkeys](#user-settings). Some people prefer to use these rather than a voice-chat platform for organizing the ringing, and they're also necessary for controlling [Wheatley](#wheatley), the Ringing Room simulator.
+-   **Adjust the volume:** The volume slider in the [tower controls](#tower-controls) can be useful for getting the balance of the bells to the voices in your voice-chat program right.
+-   **Leave the tower when you're done:** The _Leave tower_ button will take you back to the [My Towers](#my-towers) page and will remove your name from the list of users in the tower. If you just close the web page, there's a chance your name will remain in the list of users even though you're not there, so it's polite to always use the _Leave tower_ button.
 
 # Advanced features
 
@@ -81,26 +81,25 @@ You can use external motion controllers such as [eBells](https://ebells.co.uk) o
 
 The behavior of the controllers depends on how many controllers you have selected:
 
-- **1 controller**: The controller will ring the same bell as the _space bar_ — either the bell in the bottom right corner or the lightest bell to which you are assigned.
-- **2 controllers**: The controllers will ring the same bells as the _left & right arrow keys_ — either the bottom two bells or the lightest two bells to which you are assigned. A _Swap_ button will also be displayed at the bottom of the Controller box, which allows you to swap which controller is paired with which bell.
-- **3 or more controllers**: The Controller box will display a list of all the bells to which you are assigned along with the option to _Assign_ bells to controllers. If you click the _Assign_ button next to a bell in the list, then ring a controller, the controller will then pair with that bell and will continue to ring it until either it is reassigned to a different bell or you are unassigned from the bell entirely.
+-   **1 controller**: The controller will ring the same bell as the _space bar_ — either the bell in the bottom right corner or the lightest bell to which you are assigned.
+-   **2 controllers**: The controllers will ring the same bells as the _left & right arrow keys_ — either the bottom two bells or the lightest two bells to which you are assigned. A _Swap_ button will also be displayed at the bottom of the Controller box, which allows you to swap which controller is paired with which bell.
+-   **3 or more controllers**: The Controller box will display a list of all the bells to which you are assigned along with the option to _Assign_ bells to controllers. If you click the _Assign_ button next to a bell in the list, then ring a controller, the controller will then pair with that bell and will continue to ring it until either it is reassigned to a different bell or you are unassigned from the bell entirely.
 
 Finally, at the bottom of the Controller box is a _Disable_ button, which will temporarily disable input from any controllers. This can be useful if you prefer to use motion controllers with external software such as [Handbell Manager](https://handbellmanager.changeringing.co.uk/).
-
 
 There are a number of parameters for controllers that are customizable in [User Settings](#user-settings); see the [Controller Parameters](#controller-parameters) section for more details.
 
 ## Wheatley
 
-Wheatley is a computer ringer for Ringing Room, made by Ben White-Horne and Matthew Johnson and designed to be a _'ninja helper with no ego'_ - i.e. Wheatley will ring any number of bells to whatever you want to ring, but should fit in as much as possible to what you're ringing.  Wheatley is now available directly inside Ringing Room, without any installation.
+Wheatley is a computer ringer for Ringing Room, made by Ben White-Horne and Matthew Johnson and designed to be a _'ninja helper with no ego'_ - i.e. Wheatley will ring any number of bells to whatever you want to ring, but should fit in as much as possible to what you're ringing. Wheatley is now available directly inside Ringing Room, without any installation.
 
 ### Enabling Wheatley
 
-Wheatley needs to be enabled on a per-tower basis with the switch in the [Tower Settings](#tower-settings).  Once Wheatley is enabled, two things will happen:
+Wheatley needs to be enabled on a per-tower basis with the switch in the [Tower Settings](#tower-settings). Once Wheatley is enabled, two things will happen:
 
 1. A user called "Wheatley" will appear permanently in the [Users](#tower-controls) list.
 2. A box will appear above the chat with Wheatley's settings.
-    
+
 To ring something with Wheatley, assign Wheatley to any bells that you need filled. You can use the _Fill In_ button in the Wheatley box to quickly assign all unassigned bells to Wheatley.
 
 Now, you need to tell Wheatley what you want to ring. Wheatley can ring any method you want, and will respond to any calls made through Ringing Room via the hotkeys while ringing.
@@ -108,7 +107,7 @@ Now, you need to tell Wheatley what you want to ring. Wheatley can ring any meth
 To start ringing a method with Wheatley:
 
 1. Click in the text box that says "Start typing method name".
-2. Start typing the name of the method you want to ring.  As you type, a list of potential method names will appear (filtered according to the tower size).
+2. Start typing the name of the method you want to ring. As you type, a list of potential method names will appear (filtered according to the tower size).
 3. Click on the method name you want to ring, or press "Enter" to select the first option.
 4. If everything worked out, the first line of the Wheatley box should say _"After 'Look To', Wheatley will ring &lt;your method name&gt;"_, and Wheatley will ring that method after _Look To_ is called.
 
@@ -135,7 +134,7 @@ The first tab on the [My Towers](/my_towers) page shows your _recently visited t
 
 ### Bookmarks
 
-Ringing Room provides a facility for you to bookmark towers you return to often. Bookmarked towers will appear at the top of the User Menu (available by clicking your username in the top menu bar from any page on Ringing Room other than a tower page when you are logged in; it will be replaced by _Log In / Register_ if you are not logged in). The bookmark icon  appears on any of the My Towers tabs and on the tower page itself (next to the tower name); click this icon to toggle whether the tower is bookmarked or not.
+Ringing Room provides a facility for you to bookmark towers you return to often. Bookmarked towers will appear at the top of the User Menu (available by clicking your username in the top menu bar from any page on Ringing Room other than a tower page when you are logged in; it will be replaced by _Log In / Register_ if you are not logged in). The bookmark icon appears on any of the My Towers tabs and on the tower page itself (next to the tower name); click this icon to toggle whether the tower is bookmarked or not.
 
 ### Created
 
@@ -153,10 +152,10 @@ Each tower in Ringing Room has a Tower Settings page. This page is accessible on
 
 **Host Mode** is a feature that allows ringers to restrict control of a tower during ringing to a small group of people. When a tower is in Host Mode, the following restrictions apply:
 
-- Only Hosts may change the number of bells or switch between handbell & tower bell mode.
-- Non-Hosts may only make calls when assigned to a bell (that is, cannot call from outside the circle).
-- All ringers may only ring the bells they are assigned to.
-- Only Hosts may assign other ringers to bells. (Anyone can catch hold of open bells.)
+-   Only Hosts may change the number of bells or switch between handbell & tower bell mode.
+-   Non-Hosts may only make calls when assigned to a bell (that is, cannot call from outside the circle).
+-   All ringers may only ring the bells they are assigned to.
+-   Only Hosts may assign other ringers to bells. (Anyone can catch hold of open bells.)
 
 To use Host Mode, the tower creator must first go to Tower Settings and switch on the _Host Mode Permitted_ feature. If this is switched to _Yes_, any Hosts will see a _Host Mode_ toggle in the [Tower Controls](#tower-controls) which they can use to turn Host Mode on and off; non-hosts will not see this toggle and instead will see messages describing the function of Host Mode (when it is turned on). Host Mode will be automatically disabled if there are no hosts present in the tower.
 
@@ -168,10 +167,10 @@ In order to use [Wheatley](#wheatley) in a tower, you must first go to the Tower
 
 ### Additional settings
 
-- **Additional Sizes**: If this setting is enabled, the [Tower Controls](#tower-controls) will show options for 5, 14, and 16 bells in the tower, in addition to the usual numbers.
-- **Muffled:** This setting has four possible values. If set to **Full**, when the tower is in tower bell mode both strokes will sound muffled. If set to **Half**, when the tower is in tower bell mode only the backstrokes will sound muffled. If set to **Open**, no strokes will sound muffled. Finally, if set to **Toll**, all bells will be muffled except for the tenor's backstroke.
-- **Anticlockwise:** If this setting is enabled, the bells in the tower (both ropes and handbells) will be arranged anticlockwise.
-- **Cowbell**: If this setting is enabled, the tower will have the option to use cowbell sounds & images.
+-   **Additional Sizes**: If this setting is enabled, the [Tower Controls](#tower-controls) will show options for 5, 14, and 16 bells in the tower, in addition to the usual numbers.
+-   **Muffled:** This setting has four possible values. If set to **Full**, when the tower is in tower bell mode both strokes will sound muffled. If set to **Half**, when the tower is in tower bell mode only the backstrokes will sound muffled. If set to **Open**, no strokes will sound muffled. Finally, if set to **Toll**, all bells will be muffled except for the tenor's backstroke.
+-   **Anticlockwise:** If this setting is enabled, the bells in the tower (both ropes and handbells) will be arranged anticlockwise.
+-   **Cowbell**: If this setting is enabled, the tower will have the option to use cowbell sounds & images.
 
 ## User Settings
 
@@ -197,44 +196,45 @@ Finally, one more setting is available at the top of this page: **Dark Mode** tr
 
 The **Keyboard** tab allows you to customize the keyboard hotkeys used to control Ringing Room in the tower.
 
-- **To remove a hotkey** from a function, click the `X` button by that key.
-- **To add a hotkey to a function**, click the `+` button by that function, then press the key (or key combination) you want to bind to that function.
-- **To restore a function to the default key bindings**, click _Restore defaults_. You can also restore all settings to default by clicking the button at the top of the page.
+-   **To remove a hotkey** from a function, click the `X` button by that key.
+-   **To add a hotkey to a function**, click the `+` button by that function, then press the key (or key combination) you want to bind to that function.
+-   **To restore a function to the default key bindings**, click _Restore defaults_. You can also restore all settings to default by clicking the button at the top of the page.
 
 #### Available hotkey functions
 
-- **Ring left hand**: Ring your left-hand bell — either the bottom-left bell or the second-smallest to which you are assigned (Defaults: `f`, `F`, `left`)
-- **Ring right hand**: Ring your right-hand bell — either the bottom-right bell or the smallest to which you are assigned (Defaults: `space`, `j`, `J`, `right`)
-- **Set at hand**: Set all bells at handstroke (Defaults: `shift+s`)
-- **Bob**: Call "Bob" (Defaults: `b`, `B`)
-- **Single**: Call "Single" (Defaults: `n`, `N`)
-- **Go next**: Call "Go next" (Defaults: `g`, `G`)
-- **That's all**: Call "That's all" (Defaults: `h`, `H`)
-- **Stand next**: Call "Stand next" (Defaults: `t`, `T`)
-- **Look to**: Call "Look to" (Defaults: `l`, `L`)
-- **Rounds**: Call "Rounds" (Defaults: `o`, `O`)
-- **Change method**: Call "Change method" (Defaults: `c`, `C`)
-- **Sorry**: Apologize (Defaults: `s`)
-- **Ring bell 1–16**: (Advanced) Ring specific bell (Defaults: `1–9`, `0`, `-`, `=`, `q`, `w`, `e`, `r`)
-- **Rotate to 1–16**: (Advanced) Rotate the circle so that a given bell is in the bottom-right (Defaults: `shift + 1–9`, `0`, `-`, `=`, `q`, `w`, `e`, `r`)
-- **Catch hold of 1–16**: (Advanced) Assign yourself to the given bell. (Defaults: `ctrl + shift + 1-9`, `0`, `-`, `=`, `q`, `w`, `e`, `r` on Windows`, ``cmd + shift+ 1-9`, `0`, `-`, `= ,q`, `e`, `r` on Mac.)
-- **Silently flip left**: (Advanced) Silently flip the stroke of your left-hand bell. (Defaults: `a`, `A`)
-- **Silently flip right**: (Advanced) Silently flip the stroke of your right-hand bell. (Defaults: `;`, `:`)
+-   **Ring left hand**: Ring your left-hand bell — either the bottom-left bell or the second-smallest to which you are assigned (Defaults: `f`, `F`, `left`)
+-   **Ring right hand**: Ring your right-hand bell — either the bottom-right bell or the smallest to which you are assigned (Defaults: `space`, `j`, `J`, `right`)
+-   **Set at hand**: Set all bells at handstroke (Defaults: `shift+s`)
+-   **Bob**: Call "Bob" (Defaults: `b`, `B`)
+-   **Single**: Call "Single" (Defaults: `n`, `N`)
+-   **Go next**: Call "Go next" (Defaults: `g`, `G`)
+-   **That's all**: Call "That's all" (Defaults: `h`, `H`)
+-   **Stand next**: Call "Stand next" (Defaults: `t`, `T`)
+-   **Look to**: Call "Look to" (Defaults: `l`, `L`)
+-   **Rounds**: Call "Rounds" (Defaults: `o`, `O`)
+-   **Change method**: Call "Change method" (Defaults: `c`, `C`)
+-   **Sorry**: Apologize (Defaults: `s`)
+-   **Ring bell 1–16**: (Advanced) Ring specific bell (Defaults: `1–9`, `0`, `-`, `=`, `q`, `w`, `e`, `r`)
+-   **Rotate to 1–16**: (Advanced) Rotate the circle so that a given bell is in the bottom-right (Defaults: `shift + 1–9`, `0`, `-`, `=`, `q`, `w`, `e`, `r`)
+-   **Catch hold of 1–16**: (Advanced) Assign yourself to the given bell. (Defaults: `ctrl + shift + 1-9`, `0`, `-`, `=`, `q`, `w`, `e`, `r` on Windows` , ``cmd + shift+ 1-9 `, `0`, `-`, `= ,q`, `e`, `r` on Mac.)
+-   **Silently flip left**: (Advanced) Silently flip the stroke of your left-hand bell. (Defaults: `a`, `A`)
+-   **Silently flip right**: (Advanced) Silently flip the stroke of your right-hand bell. (Defaults: `;`, `:`)
 
 ### Controller settings
 
 The **Controllers** tab allows you to control the parameters used by external motion controllers such as [eBells](https://ebells.co.uk) or ActionXLs. You can always restore these to default settings by clicking the button at the top of the page.
 
 The following parameters are available to control:
-- **Debounce**: The minimum time between one stroke and the next, in milliseconds; if the controller detects a second strike within this time it will be ignored. (Default: `600`.)
-- **Handstroke**: The point at which the controller detects a handstroke; higher numbers indicate a more vertical bell. (Default: `100`.)
-- **Backstroke**: The point at which the controller detects a backstroke; higher numbers indicate a more vertical bell. (Default: `-1200`.)
-- **Controller buttons**: Set which buttons on the controllers perform which actions.
+
+-   **Debounce**: The minimum time between one stroke and the next, in milliseconds; if the controller detects a second strike within this time it will be ignored. (Default: `600`.)
+-   **Handstroke**: The point at which the controller detects a handstroke; higher numbers indicate a more vertical bell. (Default: `100`.)
+-   **Backstroke**: The point at which the controller detects a backstroke; higher numbers indicate a more vertical bell. (Default: `-1200`.)
+-   **Controller buttons**: Set which buttons on the controllers perform which actions.
 
 The controller buttons can be set to make calls or to silently flip the stroke of the bell. If you have only one controller attached, it will always be considered a "right controller" and will use those settings; if you have more than one, the controllers will alternate right and left in order from lightest bell to heaviest bell. The controller buttons have the following defaults:
 
-- **Left bell**: Left button: `Stand`; right button: `Go`.
-- **Right bell**: Left button: `Single`, right button: `Bob`.
+-   **Left bell**: Left button: `Stand`; right button: `Go`.
+-   **Right bell**: Left button: `Single`, right button: `Bob`.
 
 ## Additional features
 
@@ -250,10 +250,10 @@ To reach the **Listener Link** for a given tower, simply append `/listen` to the
 
 Ringing Room has a number of different servers around the world; we recommend that you use whichever server is geographically closest to all your band, in order to reduce the latency between your computer and the server. The different servers are reached by prepending a different prefix to the base Ringing Room URL:
 
-- [ringingroom.com](https://ringingroom.com) or [ringingroom.co.uk](https://ringingroom.co.uk): Both URLs direct to the primary Ringing Room server in **London**.
-- [na.ringingroom.com](https://na.ringingroom.com): The North American Ringing Room server in New York. (Note: This server has it's own database — you will need a separate account, and tower IDs may differ.)
-- [sg.ringingroom.com](https://sg.ringingroom.com): The Singapore Ringing Room server. (Note: This server has it's own database — you will need a separate account, and tower IDs may differ.)
-- [anzab.ringingroom.com](https://anzab.ringingroom.com): The Australia & New Zealand server in Sydney. (This server uses the same database as the primary Ringing Room: You can use the same account, and tower IDs will be the same. Make sure that all ringers in a band are using the same server.)
+-   [ringingroom.com](https://ringingroom.com) or [ringingroom.co.uk](https://ringingroom.co.uk): Both URLs direct to the primary Ringing Room server in **London**.
+-   [na.ringingroom.com](https://na.ringingroom.com): The North American Ringing Room server in New York. (Note: This server has it's own database — you will need a separate account, and tower IDs may differ.)
+-   [sg.ringingroom.com](https://sg.ringingroom.com): The Singapore Ringing Room server. (Note: This server has it's own database — you will need a separate account, and tower IDs may differ.)
+-   [anzab.ringingroom.com](https://anzab.ringingroom.com): The Australia & New Zealand server in Sydney. (This server uses the same database as the primary Ringing Room: You can use the same account, and tower IDs will be the same. Make sure that all ringers in a band are using the same server.)
 
 # FAQs
 
@@ -261,9 +261,9 @@ Ringing Room has a number of different servers around the world; we recommend th
 
 Lag is an inherent part of the online ringing experience, unfortunately — it simply takes time for the signals to get from your computer up to the Ringing Room server and back. We find that most people are able to have a good experience on Ringing Room most of the time. However, if you are experiencing a lot of lag there are a few things you can do to help:
 
-- Reduce the number of applications using bandwidth on your local network: Make sure no one on your network is streaming video, and possibly disable video in Zoom or whatever other platform you're using for communicating.
-- Use a wired ethernet connection: If you're struggling with lots of lag, connecting your computer to the internet via ethernet cable (rather than WiFi) can help.
-- Be aware of peak hours: Lag is often worst on weekday evenings.
+-   Reduce the number of applications using bandwidth on your local network: Make sure no one on your network is streaming video, and possibly disable video in Zoom or whatever other platform you're using for communicating.
+-   Use a wired ethernet connection: If you're struggling with lots of lag, connecting your computer to the internet via ethernet cable (rather than WiFi) can help.
+-   Be aware of peak hours: Lag is often worst on weekday evenings.
 
 ## I created this tower; why can't I access tower settings?
 
@@ -275,10 +275,8 @@ In general, Ringing Room works best on a **Mac or Windows PC** and in the **Goog
 
 For iOS devices, there is a [Ringing Room app](https://apps.apple.com/app/ringing-room/id1531929847) developed by Matthew Goodship; we recommend using that app rather than going through the browser.
 
-
 ## Why aren't the hotkeys working for me?
 
 Some browsers handle hotkeys differently. In particular, older versions of Microsoft Edge and all versions of Internet Explorer are not guaranteed to work with Ringing Room by default. However, even in these browsers you should be able to set [custom hotkeys](#user-settings) that may work better.
 
 Additionally, regardless of your browser, there are currently some known issues with how the numpad keys are handled.
-

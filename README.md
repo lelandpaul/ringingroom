@@ -5,17 +5,20 @@ A space where socially-distanced ringers can practice together.
 ## Build instructions
 
 Get the CSS set up with sass:
- - Install dart-sass (e.g. `brew install sass/sass/sass`); https://github.com/sass/dart-sass/releases
- - (Optional) Create & activate a [virtual environment](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/);
- - Install python dependencies `pip install -r requirements.txt`
- - In the project root, run `sass app/static/sass/:app/static/css/`. This will compile the sass to css.
- 
+
+-   Install dart-sass (e.g. `brew install sass/sass/sass`); https://github.com/sass/dart-sass/releases
+-   (Optional) Create & activate a [virtual environment](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/);
+-   Install python dependencies `pip install -r requirements.txt`
+-   In the project root, run `sass app/static/sass/:app/static/css/`. This will compile the sass to css.
+
 Get the DB set up with Flask:
- - In the project root, run `flask db upgrade`
- 
+
+-   In the project root, run `flask db upgrade`
+
 You are now ready to run the server:
- - In the project root, run `flask run`
- - This will give you a local address where you can access the app 
+
+-   In the project root, run `flask run`
+-   This will give you a local address where you can access the app
 
 ### Environment Variables / Feature Flags
 
@@ -24,34 +27,37 @@ They enable the a given feature if they are set to `1`.
 If they are not set or set to anything other than `1`, the feature will be disabled.
 
 #### Feature Flags
-- **RR_ENABLE_WHEATLEY**
 
-  If set to `1` Wheatley will be enabled, otherwise Wheatley will be disabled.
-- **RR_WHEATLEY_METHOD_EXTENSION**
+-   **RR_ENABLE_WHEATLEY**
 
-  If the stage is changed and this is set to `1`, Wheatley will try to load the same method on the
-  new stage.  This is disabled by default, because this check sends a request to Bob Wallis'
-  blueline website which can block the thread for a long time and therefore cause the method change
-  to be too late (if it happens at all).
+    If set to `1` Wheatley will be enabled, otherwise Wheatley will be disabled.
+
+-   **RR_WHEATLEY_METHOD_EXTENSION**
+
+    If the stage is changed and this is set to `1`, Wheatley will try to load the same method on the
+    new stage. This is disabled by default, because this check sends a request to Bob Wallis'
+    blueline website which can block the thread for a long time and therefore cause the method change
+    to be too late (if it happens at all).
 
 #### Other Enviroment Variables
-- **RR_WHEATLEY_PATH**
 
-  Set this if you want to run a version of Wheatley that isn't the latest stable version.
-  This has to point to the file called `run-wheatley` inside the
-  [Wheatley repo](https://github.com/kneasle/wheatley).
+-   **RR_WHEATLEY_PATH**
 
-  For example:
-  ```
-  export RR_WHEATLEY_PATH=/path/to/wheatley/run-wheatley
-  flask run
-  ```
+    Set this if you want to run a version of Wheatley that isn't the latest stable version.
+    This has to point to the file called `run-wheatley` inside the
+    [Wheatley repo](https://github.com/kneasle/wheatley).
 
-- **RR_SOCKETIO_PORT**
+    For example:
+
+    ```
+    export RR_WHEATLEY_PATH=/path/to/wheatley/run-wheatley
+    flask run
+    ```
+
+-   **RR_SOCKETIO_PORT**
 
     Currently used only by Wheatley; defaults to 5000 (the same as Flask), but should be set to
     8080 for a production server.
-
 
 ## API
 
@@ -60,7 +66,7 @@ Ringing Room supplies a basic API for use in 3rd-party apps.
 ### Summary of Endpoints & Methods
 
 | Endpoint                         | Method   | Description                            |
-| ---                              | ---      | ---                                    |
+| -------------------------------- | -------- | -------------------------------------- |
 | `/api/version`                   | `GET`    | Get API version information            |
 | `/api/tokens`                    | `POST`   | Get bearer token                       |
 | `/api/tokens`                    | `DELETE` | Revoke bearer token                    |
@@ -90,9 +96,9 @@ Ringing Room supplies a basic API for use in 3rd-party apps.
 
 `GET /api/version`: Gets version information. Responds with the fields:
 
-- `version`: the overall RR version (which takes the form `YY.WW`, for year and week of release)
-- `api-version`: the api version, which is semantically versioned
-- `socketio-version`: the socketio version, which is semantically versioned
+-   `version`: the overall RR version (which takes the form `YY.WW`, for year and week of release)
+-   `api-version`: the api version, which is semantically versioned
+-   `socketio-version`: the socketio version, which is semantically versioned
 
 ### Authorization
 
@@ -108,7 +114,7 @@ All other endpoints (except `POST /api/user` for registering new users) require 
 
 `PUT /api/user`: Modifies user details Request JSON may include `new_username`, `new_email`, `new_password`. Responds as per `GET /api/user`.
 
-`DELETE /api/user`:  Deletes user.
+`DELETE /api/user`: Deletes user.
 
 `POST /api/user/reset_password`: Must include an `email` field in the request JSON; if that email is associated with an account, an email will be sent to reset the password to that account. (Note: For security reasons, this endpoint will always respond with code 200 OK, no matter what email address was included.)
 
@@ -118,13 +124,13 @@ All other endpoints (except `POST /api/user` for registering new users) require 
 
 `POST /api/user/keybindings`: Update a specific keybinding. Request must include a JSON with a single field named for one of the functions where the value is the complete list of keys bound to that function. Responds as per `GET /api/user/keybindings`.
 
-`DELETE /api/user/keybindings`: Reset either a specific keybinding or all keybindings. Request must include a *string* which is either a) the name of a specific keybinding function or b) the special key `ALL_KEYBINDINGS`. Responds as per `GET /api/user/keybindings`.
+`DELETE /api/user/keybindings`: Reset either a specific keybinding or all keybindings. Request must include a _string_ which is either a) the name of a specific keybinding function or b) the special key `ALL_KEYBINDINGS`. Responds as per `GET /api/user/keybindings`.
 
 `GET /api/user/controllers`: Gets all controller parameters. Responds with a JSON including fields for each parameter. See `config.py` for the default parameters and a list of all fields this will return.
 
 `POST /api/user/controllers`: Update a specific controller parameter. Request must include a JSON with a single field named for one of the controller parameters. Responds as per `GET /api/user/controllers`.
 
-`DELETE /api/user/controllers`: Resets *all* controller parameters. Requet body is ignored. Responds as per `GET /api/user/controllers`.
+`DELETE /api/user/controllers`: Resets _all_ controller parameters. Requet body is ignored. Responds as per `GET /api/user/controllers`.
 
 ### My_Towers
 
@@ -157,7 +163,6 @@ All other endpoints (except `POST /api/user` for registering new users) require 
 
 `DELETE /my_towers/<tower_id>`: Removes the tower from the current user's recent towers. Responds as per `GET /api/my_towers` but with only the details for the requested tower.
 
-
 ### Tower
 
 `GET /api/tower/<tower_id>`: Gets connection information for the tower, including tower settings. Response JSON includes `tower_id`, `tower_name`, `server_address`, `additional_sizes_enabled`, `host_mode_permitted`, `half_muffled`, and `fully_muffled`.
@@ -174,7 +179,6 @@ All other endpoints (except `POST /api/user` for registering new users) require 
 
 `DELETE /api/tower/<tower_id>/hosts`: Remove hosts, if the current user has permission to do so. Request JSON must include `hosts`, a list of email addresses. Responds as per `GET /api/tower/<tower_id>/settings`.
 
-
 ### Connecting to a Tower
 
 All communication between the API consumer and an individual tower should take place through SocketIO. The basic workflow for setting up communication is:
@@ -186,19 +190,19 @@ All communication between the API consumer and an individual tower should take p
 5. Ring!
 6. Emit `c_user_left` when leaving.
 
-
 ### Events
 
 Communication between client & server is handled by Socket.IO events.
 
-Events are prefixed by *origin*:
-- `c_` for client
-- `s_` for server
+Events are prefixed by _origin_:
+
+-   `c_` for client
+-   `s_` for server
 
 What follows is a incomplete list of events — these should be only the events relevant to an API consumer (i.e. where functionality is not duplicated elsewhere).
 
 | Event                    | Payload                                                                  | Description                                                                           |
-| ---                      | ---                                                                      | ---                                                                                   |
+| ------------------------ | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------- |
 | `c_join`                 | `{tower_id: Int, user_token: Str, anonymous_user: Bool}`                 | User joined a tower.                                                                  |
 | `s_user_entered`         | `{user_id: Int, username: Str}`                                          | Server relayed user entering.                                                         |
 | `c_user_left`            | `{user_name: Str, user_token: Str, anonymous_user: Bool, tower_id: Int}` | User left a tower.                                                                    |
@@ -210,8 +214,8 @@ What follows is a incomplete list of events — these should be only the events 
 | `s_bell_rung`            | `{global_bell_state: [Bool], who_rang: Int, disagreement: Bool}`         | Server relayed bell ringing.                                                          |
 | `c_assign_user`          | `{bell: Int, user: Int, tower_id: Int}`                                  | User assigned someone to a bell.                                                      |
 | `s_assign_user`          | `{bell: Int, user: Int}`                                                 | Server sent bell assignment.                                                          |
-| `c_audio_change`         | `{new_audio: ("Tower" \| "Hand"), tower_id: Int}`                         | User changed audio type.                                                              |
-| `s_audio_change`         | `{new_audio: ("Tower" \| "Hand")}`                                        | Server sent audio state.                                                              |
+| `c_audio_change`         | `{new_audio: ("Tower" \| "Hand"), tower_id: Int}`                        | User changed audio type.                                                              |
+| `s_audio_change`         | `{new_audio: ("Tower" \| "Hand")}`                                       | Server sent audio state.                                                              |
 | `c_host_mode`            | `{new_mode: Bool, tower_id: Int}`                                        | User toggled host mode.                                                               |
 | `s_host_mode`            | `{tower_id: Int, new_mode: Bool}`                                        | Server sent host mode.                                                                |
 | `c_size_change`          | `{new_size: Int, tower_id: Int}`                                         | User changed tower size.                                                              |
@@ -224,26 +228,29 @@ What follows is a incomplete list of events — these should be only the events 
 | `s_bad_token`            | (variable)                                                               | The user send a bad bearer token. (Payload repeats whatever triggered this response.) |
 
 ### Wheatley
+
 The integration of Wheatley into Ringing Room have added a number of extra SocketIO signals, used
-for keeping Wheatley in sync with the rest of Ringing Room.  Some of these signals have custom types
+for keeping Wheatley in sync with the rest of Ringing Room. Some of these signals have custom types
 (`RowGen` and `Signals`, which are described in detail below the table.
 
-| Event | Payload | Description |
-| --- | --- | --- |
-| `s_set_wheatley_enabledness` | `{enabled: Bool}` | Emitted by the server to the current users of a tower whenever the "Wheatley enabled" switch is changed in the tower settings |
-| `c_wheatley_setting` | `{tower_id: Int, settings: Settings}` | (from a client) tells Wheatley to change one of its settings |
-| `s_wheatley_setting` | `Settings` | (from the server) tells Wheatley to change one of its settings, and for all the clients to update their views of that setting.  This signal will **not** be sent to the client that emitted the `c_wheatley_setting` signal that triggered it to prevent rubber banding of controls. |
-| `c_wheatley_row_gen` | `{tower_id: Int, row_gen: RowGen}` | (from a client) tells Wheatley to use different Row Generation settings next time a `Look to` is called. |
-| `s_wheatley_row_gen` | `RowGen` | (from the server) tells Wheatley to use a new Row Generator, and for all the clients to update their views of that setting. |
-| `c_wheatley_is_ringing` | `{tower_id: Int, is_ringing: Bool}` | sent from Wheatley to inform the other clients whether or not Wheatley thinks that people are ringing.  This also locks or unlocks the row gen box. |
-| `s_wheatley_is_ringing` | `Bool` | broadcast from the server after Wheatley sends `c_wheatley_is_ringing` |
-| `c_wheatley_stop_touch` | `{tower_id: Int}` | tells the server to broadcast **s_wheatley_stop_touch** |
-| `s_wheatley_stop_touch` | `{}` | broadcast by the server to tell Wheatley to stop ringing |
-| `c_reset_wheatley` | `{tower_id: Int}` | tells the server to kill the current Wheatley instance(s).  Used as a last-ditch way to reset Wheatley if he gets his knickers in a twist. |
-| `c_roll_call` | `{tower_id: Int, instance_id: Int}` | sent by Wheatley instances in reply to `Look To` to say that they are ready to ring |
+| Event                        | Payload                               | Description                                                                                                                                                                                                                                                                         |
+| ---------------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `s_set_wheatley_enabledness` | `{enabled: Bool}`                     | Emitted by the server to the current users of a tower whenever the "Wheatley enabled" switch is changed in the tower settings                                                                                                                                                       |
+| `c_wheatley_setting`         | `{tower_id: Int, settings: Settings}` | (from a client) tells Wheatley to change one of its settings                                                                                                                                                                                                                        |
+| `s_wheatley_setting`         | `Settings`                            | (from the server) tells Wheatley to change one of its settings, and for all the clients to update their views of that setting. This signal will **not** be sent to the client that emitted the `c_wheatley_setting` signal that triggered it to prevent rubber banding of controls. |
+| `c_wheatley_row_gen`         | `{tower_id: Int, row_gen: RowGen}`    | (from a client) tells Wheatley to use different Row Generation settings next time a `Look to` is called.                                                                                                                                                                            |
+| `s_wheatley_row_gen`         | `RowGen`                              | (from the server) tells Wheatley to use a new Row Generator, and for all the clients to update their views of that setting.                                                                                                                                                         |
+| `c_wheatley_is_ringing`      | `{tower_id: Int, is_ringing: Bool}`   | sent from Wheatley to inform the other clients whether or not Wheatley thinks that people are ringing. This also locks or unlocks the row gen box.                                                                                                                                  |
+| `s_wheatley_is_ringing`      | `Bool`                                | broadcast from the server after Wheatley sends `c_wheatley_is_ringing`                                                                                                                                                                                                              |
+| `c_wheatley_stop_touch`      | `{tower_id: Int}`                     | tells the server to broadcast **s_wheatley_stop_touch**                                                                                                                                                                                                                             |
+| `s_wheatley_stop_touch`      | `{}`                                  | broadcast by the server to tell Wheatley to stop ringing                                                                                                                                                                                                                            |
+| `c_reset_wheatley`           | `{tower_id: Int}`                     | tells the server to kill the current Wheatley instance(s). Used as a last-ditch way to reset Wheatley if he gets his knickers in a twist.                                                                                                                                           |
+| `c_roll_call`                | `{tower_id: Int, instance_id: Int}`   | sent by Wheatley instances in reply to `Look To` to say that they are ready to ring                                                                                                                                                                                                 |
 
 #### The 'Settings' type
+
 The _Settings_ type is an object with 0 or more of the following properties:
+
 ```
 sensitivity             : float; 0 <= x <= 1 (currently unused)
 use_up_down_in          : Bool
@@ -253,9 +260,11 @@ fixed_striking_interval : Bool (ignored by Wheatley, changes `peal_speed` when t
 ```
 
 #### The 'RowGen' type
+
 The _RowGen_ type is a JSON representation of the following structured enum
 (it's either a `Method` with a `title`, a `stage`, etc.
 or it's a `Composition` with a `url` and `title`):
+
 ```rust
 enum RowGen {
     Method {
@@ -272,9 +281,11 @@ enum RowGen {
     }
 }
 ```
+
 The `Int`s in the call maps correspond to indices within the lead, and the `String`s are the place notations
-that should be made at that position.  In JSON, the `RowGen` type corresponds to one of the following
+that should be made at that position. In JSON, the `RowGen` type corresponds to one of the following
 objects:
+
 ```
 {
     type: "method",
@@ -292,7 +303,6 @@ objects:
     title: String
 }
 ```
-
 
 ### Directory structure (abbreviated...)
 

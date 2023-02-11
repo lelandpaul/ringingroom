@@ -6,6 +6,7 @@ from logging.handlers import RotatingFileHandler
 from flask import Flask, has_request_context, request, session
 from config import Config
 
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -28,12 +29,13 @@ def register_extensions(app):
     assets.init_app(app)
     socketio.init_app(app)
     login.init_app(app)
-    login.login_view = 'authenticate'
+    login.login_view = "authenticate"
 
 
 def register_blueprints(app):
     from app.api import bp as api_bp
-    app.register_blueprint(api_bp, url_prefix='/api')
+
+    app.register_blueprint(api_bp, url_prefix="/api")
 
 
 # Set up logging
@@ -41,11 +43,11 @@ class RequestFormatter(logging.Formatter):
     def format(self, record):
         if has_request_context():
             if request.referrer:
-                record.url = '/'.join(request.referrer.split('/')[-2:])
+                record.url = "/".join(request.referrer.split("/")[-2:])
             else:
                 record.url = request.url
             try:
-                record.user_id = session['user_id']
+                record.user_id = session["user_id"]
             except:
                 record.user_id = None
         else:
@@ -57,25 +59,24 @@ class RequestFormatter(logging.Formatter):
 
 
 formatter = RequestFormatter(
-    '[%(asctime)s] User %(user_id)s at %(url)s\n'
-    '\t%(message)s'
+    "[%(asctime)s] User %(user_id)s at %(url)s\n" "\t%(message)s"
 )
 
 
 app = create_app()
 
 # Disable the stupid incessant debug logs
-logging.getLogger('werkzeug').setLevel(logging.ERROR)
+logging.getLogger("werkzeug").setLevel(logging.ERROR)
 
-file_handler = RotatingFileHandler('logs/ringingroom.log','a', 1 * 1024 * 1024, 50)
+file_handler = RotatingFileHandler("logs/ringingroom.log", "a", 1 * 1024 * 1024, 50)
 file_handler.setFormatter(formatter)
 app.logger.setLevel(logging.INFO)
 file_handler.setLevel(logging.INFO)
 app.logger.addHandler(file_handler)
-app.logger.info('Ringing Room startup')
+app.logger.info("Ringing Room startup")
 
 
-mimetypes.add_type('text/css', '.css')
-mimetypes.add_type('application/javascript', '.js')
+mimetypes.add_type("text/css", ".css")
+mimetypes.add_type("application/javascript", ".js")
 
 from app import routes, models, listeners, models

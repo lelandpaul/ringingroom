@@ -8,17 +8,17 @@
 
 Add a dark-mode theme toggle with a Bootstrap Custom Switch.
 
-- Uses local storage to save preference
-- Only 262 Bytes minified and gzipped!
+-   Uses local storage to save preference
+-   Only 262 Bytes minified and gzipped!
 
 ## Quick start
 
 Several quick start options are available:
 
-- [Download the latest release](https://github.com/coliff/dark-mode-switch/archive/v1.0.0.zip)
-- Clone the repo `git clone https://github.com/coliff/dark-mode-switch.git`
-- Install with [npm](https://www.npmjs.com/package/dark-mode-switch) `npm install dark-mode-switch`
-- Install with [yarn](https://yarnpkg.com/en/package/dark-mode-switch) `yarn add dark-mode-switch`
+-   [Download the latest release](https://github.com/coliff/dark-mode-switch/archive/v1.0.0.zip)
+-   Clone the repo `git clone https://github.com/coliff/dark-mode-switch.git`
+-   Install with [npm](https://www.npmjs.com/package/dark-mode-switch) `npm install dark-mode-switch`
+-   Install with [yarn](https://yarnpkg.com/en/package/dark-mode-switch) `yarn add dark-mode-switch`
 
 ## Usage
 
@@ -26,8 +26,8 @@ Several quick start options are available:
 
 ```html
 <div class="custom-control custom-switch">
-  <input type="checkbox" class="custom-control-input" id="darkSwitch" />
-  <label class="custom-control-label" for="darkSwitch">Dark Mode</label>
+    <input type="checkbox" class="custom-control-input" id="darkSwitch" />
+    <label class="custom-control-label" for="darkSwitch">Dark Mode</label>
 </div>
 <script src="dark-mode-switch.min.js"></script>
 ```
@@ -40,8 +40,8 @@ Turning dark mode on will add `data-theme="dark"` to the `body` tag. You can use
 
 ```css
 [data-theme="dark"] {
-  background-color: #111 !important;
-  color: #eee;
+    background-color: #111 !important;
+    color: #eee;
 }
 ```
 
