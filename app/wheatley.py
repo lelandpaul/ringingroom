@@ -107,26 +107,34 @@ USER_NAME = "Wheatley"
 # The number of seconds that the server waits for Wheatley instances to reply to a roll call
 ROLL_CALL_TIME = 1
 
+
 def _get_stage_name(num_bells):
     return {
-        3: "Singles", 4: "Minimus",
-        5: "Doubles", 6: "Minor",
-        7: "Triples", 8: "Major",
-        9: "Caters", 10: "Royal",
-        11: "Cinques", 12: "Maximus",
-        13: "Sextuples", 14: "Fourteen",
-        15: "Sextuples", 16: "Sixteen",
+        3: "Singles",
+        4: "Minimus",
+        5: "Doubles",
+        6: "Minor",
+        7: "Triples",
+        8: "Major",
+        9: "Caters",
+        10: "Royal",
+        11: "Cinques",
+        12: "Maximus",
+        13: "Sextuples",
+        14: "Fourteen",
+        15: "Sextuples",
+        16: "Sixteen",
     }[num_bells]
 
 
 def feature_flag() -> bool:
-    """ Determines if the Wheatley feature flag is set. """
-    return os.environ.get('RR_ENABLE_WHEATLEY') == '1'
+    """Determines if the Wheatley feature flag is set."""
+    return os.environ.get("RR_ENABLE_WHEATLEY") == "1"
 
 
 def use_method_extension() -> bool:
-    """ Determines if the Wheatley feature flag is set. """
-    return os.environ.get('RR_WHEATLEY_METHOD_EXTENSION') == '1'
+    """Determines if the Wheatley feature flag is set."""
+    return os.environ.get("RR_WHEATLEY_METHOD_EXTENSION") == "1"
 
 
 class Proc:
@@ -143,7 +151,7 @@ class Proc:
     STATE_CONDEMNED = 2
     # The Wheatley process has been killed
     STATE_DEAD = 2
-    
+
     def __init__(self, tower_id, look_to_time, instance_id):
         self._tower_id = tower_id
         self.instance_id = instance_id
@@ -161,11 +169,11 @@ class Proc:
         self._has_been_closed = False
 
     def log(self, message):
-        """ Function to make a log entry under this Wheatley instance's name """
+        """Function to make a log entry under this Wheatley instance's name"""
         log(f"WHEATLEY:{self._tower_id}:{self.instance_id}:{message}")
 
     def close(self):
-        """ Kill the wheatley instance when this object is deleted. """
+        """Kill the wheatley instance when this object is deleted."""
         # Don't close this Wheatley instance twice
         if self._has_been_closed:
             return
@@ -212,15 +220,15 @@ class Proc:
                 "--port",
                 str(Config.RR_SOCKETIO_PORT),
                 # ... and the right look-to-time ...
-                '--look-to-time',
+                "--look-to-time",
                 str(look_to_time),
                 # ... and this instances instance_id
-                '--id',
-                str(self.instance_id)
+                "--id",
+                str(self.instance_id),
             ],
             # Capture both stdout and stderr (almost all of the logging goes to stderr)
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
+            stderr=subprocess.PIPE,
         )
 
         # Log the process starting and move into the 'running' state
@@ -232,7 +240,7 @@ class Proc:
             if self._wheatley_process.poll() is not None:
                 break
 
-            line = line_bytes.decode('utf-8').rstrip("\n")
+            line = line_bytes.decode("utf-8").rstrip("\n")
             self.log(f"{line}")
 
         # Move into the 'dead' state
@@ -255,16 +263,16 @@ class Wheatley:
 
         # Parse Wheatley's settings out from the database, initialising them to be blank if the
         # database entry is invalid
-        self._settings = db_settings['settings'] if 'settings' in db_settings else {}
-        self._row_gen = db_settings['row_gen'] if 'row_gen' in db_settings else {}
+        self._settings = db_settings["settings"] if "settings" in db_settings else {}
+        self._row_gen = db_settings["row_gen"] if "row_gen" in db_settings else {}
 
         # Populate the settings fields with defaults if they're not already filled
-        if 'sensitivity' not in self._settings:
-            self._settings['sensitivity'] = 0.5
-        if 'use_up_down_in' not in self._settings:
-            self._settings['use_up_down_in'] = False
-        if 'stop_at_rounds' not in self._settings:
-            self._settings['stop_at_rounds'] = False
+        if "sensitivity" not in self._settings:
+            self._settings["sensitivity"] = 0.5
+        if "use_up_down_in" not in self._settings:
+            self._settings["use_up_down_in"] = False
+        if "stop_at_rounds" not in self._settings:
+            self._settings["stop_at_rounds"] = False
 
         # If there is no row_gen defined, default to even-bell Plain Bob on the right number of bells
         if self.row_gen == {}:
@@ -277,14 +285,14 @@ class Wheatley:
         self._last_look_to_time = float("inf")
 
     def log(self, message):
-        """ Function to make a log entry under this Wheatley instance's name """
+        """Function to make a log entry under this Wheatley instance's name"""
         log(f"WHEATLEY:{self._tower.tower_id}:{message}")
 
     # ===== ENABLEDNESS =====
 
     @property
     def enabled(self):
-        """ Returns True if Wheatley is enabled. """
+        """Returns True if Wheatley is enabled."""
         return self._enabled
 
     def set_enabledness(self, value):
@@ -303,11 +311,11 @@ class Wheatley:
 
     @property
     def settings(self):
-        """ Return Wheatley's settings as JSON. """
+        """Return Wheatley's settings as JSON."""
         return self._settings
 
     def update_settings(self, new_settings):
-        """ Merge some changed settings into Wheatley's settings. """
+        """Merge some changed settings into Wheatley's settings."""
         # Copy only the fields from new_settings into the dict
         for key, value in new_settings.items():
             self._settings[key] = value
@@ -316,43 +324,43 @@ class Wheatley:
 
     @property
     def row_gen(self):
-        """ Returns the JSON representation of the row generator that Wheatley will use. """
+        """Returns the JSON representation of the row generator that Wheatley will use."""
         return self._row_gen
 
     @row_gen.setter
     def row_gen(self, value):
-        """ Sets the JSON representation of the row generator that Wheatley will use. """
+        """Sets the JSON representation of the row generator that Wheatley will use."""
         self._row_gen = value
 
     def _set_default_row_gen(self):
-        """ Sets the row generator to some value that is guarunteed to be valid. """
+        """Sets the row generator to some value that is guarunteed to be valid."""
         stage = self._tower.n_bells
         stage_name = _get_stage_name(stage)
         plain_bob_notation = {
-            4: 'x14x14,12',
-            5: '5.1.5.1.5,125',
-            6: 'x16x16x16,12',
-            8: 'x18x18x18x18,12',
-            10: 'x10x10x10x10x10,12',
-            12: 'x1Tx1Tx1Tx1Tx1Tx1T,12',
-            14: 'x1Bx1Bx1Bx1Bx1Bx1Bx1B,12',
-            16: 'x1Dx1Dx1Dx1Dx1Dx1Dx1Dx1D,12'
+            4: "x14x14,12",
+            5: "5.1.5.1.5,125",
+            6: "x16x16x16,12",
+            8: "x18x18x18x18,12",
+            10: "x10x10x10x10x10,12",
+            12: "x1Tx1Tx1Tx1Tx1Tx1T,12",
+            14: "x1Bx1Bx1Bx1Bx1Bx1Bx1B,12",
+            16: "x1Dx1Dx1Dx1Dx1Dx1Dx1Dx1D,12",
         }[stage]
 
         self._row_gen = {
-            'type': 'method',
-            'title': 'Plain Bob ' + stage_name,
-            'url': 'Plain_Bob_' + stage_name,
-            'stage': stage,
-            'notation': plain_bob_notation,
-            'bob': {'0': '14'},
-            'single': {'0': '1234'}
+            "type": "method",
+            "title": "Plain Bob " + stage_name,
+            "url": "Plain_Bob_" + stage_name,
+            "stage": stage,
+            "notation": plain_bob_notation,
+            "bob": {"0": "14"},
+            "single": {"0": "1234"},
         }
 
     # ===== CALLBACKS =====
 
     def on_call(self, call_name):
-        """ Called every time a call is made in this Tower. """
+        """Called every time a call is made in this Tower."""
         if call_name == "Look to" and USER_ID in self._tower.assignments.values():
             self.log("Recieved `Look To` and needs to ring")
             # Deal with the roll call according to the protocol
@@ -374,7 +382,7 @@ class Wheatley:
             return not i.is_dead
 
         self._instances = list(filter(check_alive, self._instances))
-        
+
         if self._roll_call_responses == []:
             # Case 1: No responses were made, so all processes are assumed dead
             self.log("No responses, so killing all processes and spawning new ones")
@@ -384,8 +392,10 @@ class Wheatley:
         else:
             # Case 2 & 3: Some number of responses were made.  If this is bigger than 1, then
             # all processe but the newest reply should be killed.
-            self.log(f"{len(self._roll_call_responses)} responses and {len(self._instances)}"
-                    + f" instances.")
+            self.log(
+                f"{len(self._roll_call_responses)} responses and {len(self._instances)}"
+                + f" instances."
+            )
             assert len(self._roll_call_responses) <= len(self._instances)
             # Kill all instances except the newest one which replied to the roll-call
             newest_active_instance = max(self._roll_call_responses)
@@ -405,33 +415,36 @@ class Wheatley:
     def _kill_all(self):
         self.log("Killing all processes")
 
-        subprocess.run(["/usr/bin/pkill","-f",str(self._tower.tower_id)], shell=False)
-        
+        subprocess.run(["/usr/bin/pkill", "-f", str(self._tower.tower_id)], shell=False)
 
     def reset(self):
-        """ Kill all existing Wheatley processes, as a hard reset. """
+        """Kill all existing Wheatley processes, as a hard reset."""
         self.log("Hard reset")
         self._kill_all()
 
     def on_size_change(self):
-        """ Called whenever the number of bells in the tower is changed. """
+        """Called whenever the number of bells in the tower is changed."""
         new_size = self._tower.n_bells
         # Shift the stage of Wheatley's row generation (defaulting to Plain Bob if the method cannot
         # be shifted)
-        if self._row_gen['type'] == 'method' and use_method_extension():
+        if self._row_gen["type"] == "method" and use_method_extension():
             # If it's a method, we should first check that the method can extend to the new stage.
             # If it can, we update to that method - falling back to even-bell Plain Bob if anything
             # goes wrong.
             # Find the next stage of the method, and its name
-            is_even_bell_method = self._row_gen['stage'] % 2 == 0
-            new_stage_name = _get_stage_name(new_size if is_even_bell_method else new_size - 1)
+            is_even_bell_method = self._row_gen["stage"] % 2 == 0
+            new_stage_name = _get_stage_name(
+                new_size if is_even_bell_method else new_size - 1
+            )
             # Replace the last item in the method's url (which has to be the stage) with the new stage
-            old_url = self._row_gen['url']
+            old_url = self._row_gen["url"]
             url_parts = old_url.split("_")
             url_parts[-1] = new_stage_name
             new_url = "_".join(url_parts)
             # Check if this exists on Bob Wallis' blueline website
-            requested_page = requests.get(f"https://rsw.me.uk/blueline/methods/view/{new_url}.json")
+            requested_page = requests.get(
+                f"https://rsw.me.uk/blueline/methods/view/{new_url}.json"
+            )
             if requested_page.status_code == 200:
                 # Bob Wallis' API always serves a list, even if there's only one method, so we take the
                 # 0th element of that list as our method JSON
@@ -440,32 +453,34 @@ class Wheatley:
                 # the requests will come back in the opposite order and could therefore cause an invalid
                 # method to be displayed.  So, we should return early if setting the row gen would
                 # create an invalid stage
-                if method_json['stage'] not in [new_size - 1, new_size]:
+                if method_json["stage"] not in [new_size - 1, new_size]:
                     return
 
                 # A helper function to convert Bob Wallis' representation of calls into Wheatley's
                 def convert_call(name):
                     # Return early if the JSON doesn't have a field 'calls'
-                    if 'calls' not in method_json:
+                    if "calls" not in method_json:
                         return {}
                     # Extract the call from its name, and early return if it isn't defined
-                    call = method_json['calls'].get(name)
+                    call = method_json["calls"].get(name)
                     if call is None:
                         return {}
                     # Convert the call into a dict from indices to notation
                     converted_call = {}
-                    for i in range(method_json['lengthOfLead'] // call['every']):
-                        converted_call[str(call['from'] + i * call['every'])] = call['notation']
+                    for i in range(method_json["lengthOfLead"] // call["every"]):
+                        converted_call[str(call["from"] + i * call["every"])] = call[
+                            "notation"
+                        ]
                     return converted_call
 
                 self._row_gen = {
-                    'type': 'method',
-                    'title': method_json['title'],
-                    'url': new_url,
-                    'stage': method_json['stage'],
-                    'notation': method_json['notation'],
-                    'bob': convert_call('Bob'),
-                    'single': convert_call('Single')
+                    "type": "method",
+                    "title": method_json["title"],
+                    "url": new_url,
+                    "stage": method_json["stage"],
+                    "notation": method_json["notation"],
+                    "bob": convert_call("Bob"),
+                    "single": convert_call("Single"),
                 }
                 return
 

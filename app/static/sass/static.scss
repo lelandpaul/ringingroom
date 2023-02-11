@@ -38,27 +38,24 @@
     margin-bottom: 0;
 }
 
-
 .centered_block {
     width: 25rem;
     margin-top: max(10rem, 22vh);
-
 }
 
-
-.dropdown-toggle::after{
+.dropdown-toggle::after {
     vertical-align: middle;
 }
 
 // the element that is the Ringing Room brand/logo
 .navbar-brand {
-    font-family: 'Simonetta', cursive;
+    font-family: "Simonetta", cursive;
     font-weight: bold;
 }
 
 // make the navbar a bit higher contrast
 .navbar-dark .navbar-nav .nav-link {
-    color: rgba(255,255,255,0.75);
+    color: rgba(255, 255, 255, 0.75);
     font-weight: 400;
     font-size: 1.25rem;
 }
@@ -82,7 +79,7 @@
 
 // for the top page of Ringing Room
 .title h1 {
-    font-family: 'Simonetta', cursive;
+    font-family: "Simonetta", cursive;
     font-weight: normal;
     text-align: center;
     margin-bottom: 0.6rem;
@@ -94,7 +91,7 @@
 .grid_circle {
     display: relative;
     width: max(49rem, 90vh);
-    position:absolute;
+    position: absolute;
     top: max(25rem, 45vh);
     left: 50%;
     transform: translate(-50%, -50%);
@@ -104,7 +101,6 @@
 #join-message {
     font-size: 1.25rem;
     line-height: 1.75rem;
-
 }
 /* Stuff for the BBC alert */
 
@@ -126,13 +122,11 @@
     .close {
         color: $body-bg;
         text-shadow: none;
-
     }
 }
 
-.toast .toast-body{
-    padding:  0.75rem 1.25rem;
-
+.toast .toast-body {
+    padding: 0.75rem 1.25rem;
 }
 
 .toast .toast-header {
@@ -143,22 +137,21 @@
 @include media-breakpoint-up(md) {
     #toast_column {
         position: fixed;
-        left:unset;
+        left: unset;
         transform: unset;
         right: 1rem;
     }
 }
-@include media-breakpoint-up(xl){
-    #toast_column{
+@include media-breakpoint-up(xl) {
+    #toast_column {
         right: 15vw;
     }
     .toast {
         box-shadow: none;
     }
-
 }
 
-.toast{
+.toast {
     .modal-header {
         background-color: $primary;
         color: #fbfbff;
@@ -168,4 +161,3 @@
         }
     }
 }
-

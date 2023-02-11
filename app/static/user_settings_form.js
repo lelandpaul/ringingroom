@@ -1,77 +1,94 @@
-$(document).ready(function() {
-    Vue.options.delimiters=["[[", "]]"];
+$(document).ready(function () {
+    Vue.options.delimiters = ["[[", "]]"];
 
     // Mapping object to contain function names & descriptions
     const function_names = {
-        left:        { id: 1, name: 'Ring left hand'    , cat: 'bell', desc: '' },
-        right:       { id: 2, name: 'Ring right hand'   , cat: 'bell', desc: '' },
-        set_at_hand: { id: 3, name: 'Set bells at hand' , cat: 'bell', desc: '' },
-        bob:         { id: 4, name: 'Bob'               , cat: 'call', desc: '' },
-        single:      { id: 5, name: 'Single'            , cat: 'call', desc: '' },
-        go:          { id: 6, name: 'Go next'           , cat: 'call', desc: '' },
-        all:         { id: 7, name: "That's all"        , cat: 'call', desc: '' },
-        stand:       { id: 8, name: "Stand next"        , cat: 'call', desc: '' },
-        look:        { id: 9, name: "Look to"           , cat: 'call', desc: '' },
-        rounds:      { id: 10, name: "Rounds"            , cat: 'call', desc: '' },
-        change:      { id: 11, name: "Change method"     , cat: 'call', desc: '' },
-        sorry:       { id: 12, name: "Sorry"             , cat: 'call', desc: '' },
-        '1':         { id: 13, name: 'Ring bell 1'                 , cat: 'adv', desc: '' },
-        '2':         { id: 14, name: 'Ring bell 2'                 , cat: 'adv', desc: '' },
-        '3':         { id: 15, name: 'Ring bell 3'                 , cat: 'adv', desc: '' },
-        '4':         { id: 16, name: 'Ring bell 4'                 , cat: 'adv', desc: '' },
-        '5':         { id: 17, name: 'Ring bell 5'                 , cat: 'adv', desc: '' },
-        '6':         { id: 18, name: 'Ring bell 6'                 , cat: 'adv', desc: '' },
-        '7':         { id: 19, name: 'Ring bell 7'                 , cat: 'adv', desc: '' },
-        '8':         { id: 20, name: 'Ring bell 8'                 , cat: 'adv', desc: '' },
-        '9':         { id: 21, name: 'Ring bell 9'                 , cat: 'adv', desc: '' },
-        '10':        { id: 22, name: 'Ring bell 10'                , cat: 'adv', desc: '' },
-        '11':        { id: 23, name: 'Ring bell 11'                , cat: 'adv', desc: '' },
-        '12':        { id: 24, name: 'Ring bell 12'                , cat: 'adv', desc: '' },
-        '13':        { id: 25, name: 'Ring bell 13'                , cat: 'adv', desc: '' },
-        '14':        { id: 26, name: 'Ring bell 14'                , cat: 'adv', desc: '' },
-        '15':        { id: 27, name: 'Ring bell 15'                , cat: 'adv', desc: '' },
-        '16':        { id: 28, name: 'Ring bell 16'                , cat: 'adv', desc: '' },
-        'rotate-1':  { id: 29, name: 'Rotate to 1'       , cat: 'adv', desc: '' },
-        'rotate-2':  { id: 30, name: 'Rotate to 2'       , cat: 'adv', desc: '' },
-        'rotate-3':  { id: 31, name: 'Rotate to 3'       , cat: 'adv', desc: '' },
-        'rotate-4':  { id: 32, name: 'Rotate to 4'       , cat: 'adv', desc: '' },
-        'rotate-5':  { id: 33, name: 'Rotate to 5'       , cat: 'adv', desc: '' },
-        'rotate-6':  { id: 34, name: 'Rotate to 6'       , cat: 'adv', desc: '' },
-        'rotate-7':  { id: 35, name: 'Rotate to 7'       , cat: 'adv', desc: '' },
-        'rotate-8':  { id: 36, name: 'Rotate to 8'       , cat: 'adv', desc: '' },
-        'rotate-9':  { id: 37, name: 'Rotate to 9'       , cat: 'adv', desc: '' },
-        'rotate-10': { id: 38, name: 'Rotate to 10'      , cat: 'adv', desc: '' },
-        'rotate-11': { id: 39, name: 'Rotate to 11'      , cat: 'adv', desc: '' },
-        'rotate-12': { id: 40, name: 'Rotate to 12'      , cat: 'adv', desc: '' },
-        'rotate-13': { id: 41, name: 'Rotate to 13'      , cat: 'adv', desc: '' },
-        'rotate-14': { id: 42, name: 'Rotate to 14'      , cat: 'adv', desc: '' },
-        'rotate-15': { id: 43, name: 'Rotate to 15'      , cat: 'adv', desc: '' },
-        'rotate-16': { id: 44, name: 'Rotate to 16'      , cat: 'adv', desc: '' },
-        'catch-1':   { id: 45, name: 'Catch hold of 1'   , cat: 'adv', desc: '' },
-        'catch-2':   { id: 46, name: 'Catch hold of 2'   , cat: 'adv', desc: '' },
-        'catch-3':   { id: 47, name: 'Catch hold of 3'   , cat: 'adv', desc: '' },
-        'catch-4':   { id: 48, name: 'Catch hold of 4'   , cat: 'adv', desc: '' },
-        'catch-5':   { id: 49, name: 'Catch hold of 5'   , cat: 'adv', desc: '' },
-        'catch-6':   { id: 50, name: 'Catch hold of 6'   , cat: 'adv', desc: '' },
-        'catch-7':   { id: 51, name: 'Catch hold of 7'   , cat: 'adv', desc: '' },
-        'catch-8':   { id: 52, name: 'Catch hold of 8'   , cat: 'adv', desc: '' },
-        'catch-9':   { id: 53, name: 'Catch hold of 9'   , cat: 'adv', desc: '' },
-        'catch-10':  { id: 54, name: 'Catch hold of 10'  , cat: 'adv', desc: '' },
-        'catch-11':  { id: 55, name: 'Catch hold of 11'  , cat: 'adv', desc: '' },
-        'catch-12':  { id: 56, name: 'Catch hold of 12'  , cat: 'adv', desc: '' },
-        'catch-13':  { id: 57, name: 'Catch hold of 13'  , cat: 'adv', desc: '' },
-        'catch-14':  { id: 58, name: 'Catch hold of 14'  , cat: 'adv', desc: '' },
-        'catch-15':  { id: 59, name: 'Catch hold of 15'  , cat: 'adv', desc: '' },
-        'catch-16':  { id: 60, name: 'Catch hold of 16'  , cat: 'adv', desc: '' },
-        'flip-left': { id: 61, name: 'Silently flip left' ,cat: 'bell', desc: '' },
-        'flip-right':{ id: 62, name: 'Silently flip right' ,cat: 'bell', desc: '' },
+        left: { id: 1, name: "Ring left hand", cat: "bell", desc: "" },
+        right: { id: 2, name: "Ring right hand", cat: "bell", desc: "" },
+        set_at_hand: {
+            id: 3,
+            name: "Set bells at hand",
+            cat: "bell",
+            desc: "",
+        },
+        bob: { id: 4, name: "Bob", cat: "call", desc: "" },
+        single: { id: 5, name: "Single", cat: "call", desc: "" },
+        go: { id: 6, name: "Go next", cat: "call", desc: "" },
+        all: { id: 7, name: "That's all", cat: "call", desc: "" },
+        stand: { id: 8, name: "Stand next", cat: "call", desc: "" },
+        look: { id: 9, name: "Look to", cat: "call", desc: "" },
+        rounds: { id: 10, name: "Rounds", cat: "call", desc: "" },
+        change: { id: 11, name: "Change method", cat: "call", desc: "" },
+        sorry: { id: 12, name: "Sorry", cat: "call", desc: "" },
+        1: { id: 13, name: "Ring bell 1", cat: "adv", desc: "" },
+        2: { id: 14, name: "Ring bell 2", cat: "adv", desc: "" },
+        3: { id: 15, name: "Ring bell 3", cat: "adv", desc: "" },
+        4: { id: 16, name: "Ring bell 4", cat: "adv", desc: "" },
+        5: { id: 17, name: "Ring bell 5", cat: "adv", desc: "" },
+        6: { id: 18, name: "Ring bell 6", cat: "adv", desc: "" },
+        7: { id: 19, name: "Ring bell 7", cat: "adv", desc: "" },
+        8: { id: 20, name: "Ring bell 8", cat: "adv", desc: "" },
+        9: { id: 21, name: "Ring bell 9", cat: "adv", desc: "" },
+        10: { id: 22, name: "Ring bell 10", cat: "adv", desc: "" },
+        11: { id: 23, name: "Ring bell 11", cat: "adv", desc: "" },
+        12: { id: 24, name: "Ring bell 12", cat: "adv", desc: "" },
+        13: { id: 25, name: "Ring bell 13", cat: "adv", desc: "" },
+        14: { id: 26, name: "Ring bell 14", cat: "adv", desc: "" },
+        15: { id: 27, name: "Ring bell 15", cat: "adv", desc: "" },
+        16: { id: 28, name: "Ring bell 16", cat: "adv", desc: "" },
+        "rotate-1": { id: 29, name: "Rotate to 1", cat: "adv", desc: "" },
+        "rotate-2": { id: 30, name: "Rotate to 2", cat: "adv", desc: "" },
+        "rotate-3": { id: 31, name: "Rotate to 3", cat: "adv", desc: "" },
+        "rotate-4": { id: 32, name: "Rotate to 4", cat: "adv", desc: "" },
+        "rotate-5": { id: 33, name: "Rotate to 5", cat: "adv", desc: "" },
+        "rotate-6": { id: 34, name: "Rotate to 6", cat: "adv", desc: "" },
+        "rotate-7": { id: 35, name: "Rotate to 7", cat: "adv", desc: "" },
+        "rotate-8": { id: 36, name: "Rotate to 8", cat: "adv", desc: "" },
+        "rotate-9": { id: 37, name: "Rotate to 9", cat: "adv", desc: "" },
+        "rotate-10": { id: 38, name: "Rotate to 10", cat: "adv", desc: "" },
+        "rotate-11": { id: 39, name: "Rotate to 11", cat: "adv", desc: "" },
+        "rotate-12": { id: 40, name: "Rotate to 12", cat: "adv", desc: "" },
+        "rotate-13": { id: 41, name: "Rotate to 13", cat: "adv", desc: "" },
+        "rotate-14": { id: 42, name: "Rotate to 14", cat: "adv", desc: "" },
+        "rotate-15": { id: 43, name: "Rotate to 15", cat: "adv", desc: "" },
+        "rotate-16": { id: 44, name: "Rotate to 16", cat: "adv", desc: "" },
+        "catch-1": { id: 45, name: "Catch hold of 1", cat: "adv", desc: "" },
+        "catch-2": { id: 46, name: "Catch hold of 2", cat: "adv", desc: "" },
+        "catch-3": { id: 47, name: "Catch hold of 3", cat: "adv", desc: "" },
+        "catch-4": { id: 48, name: "Catch hold of 4", cat: "adv", desc: "" },
+        "catch-5": { id: 49, name: "Catch hold of 5", cat: "adv", desc: "" },
+        "catch-6": { id: 50, name: "Catch hold of 6", cat: "adv", desc: "" },
+        "catch-7": { id: 51, name: "Catch hold of 7", cat: "adv", desc: "" },
+        "catch-8": { id: 52, name: "Catch hold of 8", cat: "adv", desc: "" },
+        "catch-9": { id: 53, name: "Catch hold of 9", cat: "adv", desc: "" },
+        "catch-10": { id: 54, name: "Catch hold of 10", cat: "adv", desc: "" },
+        "catch-11": { id: 55, name: "Catch hold of 11", cat: "adv", desc: "" },
+        "catch-12": { id: 56, name: "Catch hold of 12", cat: "adv", desc: "" },
+        "catch-13": { id: 57, name: "Catch hold of 13", cat: "adv", desc: "" },
+        "catch-14": { id: 58, name: "Catch hold of 14", cat: "adv", desc: "" },
+        "catch-15": { id: 59, name: "Catch hold of 15", cat: "adv", desc: "" },
+        "catch-16": { id: 60, name: "Catch hold of 16", cat: "adv", desc: "" },
+        "flip-left": {
+            id: 61,
+            name: "Silently flip left",
+            cat: "bell",
+            desc: "",
+        },
+        "flip-right": {
+            id: 62,
+            name: "Silently flip right",
+            cat: "bell",
+            desc: "",
+        },
     };
 
     Vue.component("remove_button", {
-        data: function() { return {
-            hover: false,
-        }},
-        template:`
+        data: function () {
+            return {
+                hover: false,
+            };
+        },
+        template: `
             <i class="fa-window-close p-0 m-0 ml-2 clickable"
                 :class="[hover ? 'fas' : 'far']"
                 @mouseover="hover=true"
@@ -85,29 +102,31 @@ $(document).ready(function() {
     Vue.component("function_row", {
         props: ["func", "keys"],
 
-        data: function() { return {
-            recording: false,
-            function_names: function_names,
-        }},
+        data: function () {
+            return {
+                recording: false,
+                function_names: function_names,
+            };
+        },
 
         methods: {
-            remove: function(key){
-                this.$emit('remove', key);
+            remove: function (key) {
+                this.$emit("remove", key);
             },
-            
-            add: function(){
+
+            add: function () {
                 this.recording = true;
                 Mousetrap.record((key) => {
-                    this.$emit('add', this.func, key.join(''));
+                    this.$emit("add", this.func, key.join(""));
                     this.recording = false;
                 });
             },
-            reset: function() {
-                this.$emit('reset', this.func);
+            reset: function () {
+                this.$emit("reset", this.func);
             },
         },
 
-        template:`
+        template: `
             <div class="row my-4">
                 <div class="col-3">
                     [[ function_names[func].name ]]:
@@ -142,7 +161,6 @@ $(document).ready(function() {
         `,
     });
 
-
     const keyboard_form = new Vue({
         el: "#keyboard_form",
 
@@ -151,97 +169,106 @@ $(document).ready(function() {
             function_names: function_names,
             advanced_visible: false,
             alert_text: null,
-
         },
 
         computed: {
-            bell_functions: function(){
-                return this._filter_functions('bell');
+            bell_functions: function () {
+                return this._filter_functions("bell");
             },
-            call_functions: function(){
-                return this._filter_functions('call');
+            call_functions: function () {
+                return this._filter_functions("call");
             },
-            adv_functions: function(){
-                return this._filter_functions('adv');
+            adv_functions: function () {
+                return this._filter_functions("adv");
             },
         },
 
-        mounted: function() {
+        mounted: function () {
             $.ajax({
-                url: '/api/user/keybindings',
-                type: 'GET',
+                url: "/api/user/keybindings",
+                type: "GET",
                 headers: {
-                    "Authorization": "Bearer " + window.user_token,
+                    Authorization: "Bearer " + window.user_token,
                 },
-                success: (response) => this.rows = response,
+                success: (response) => (this.rows = response),
             });
         },
 
         methods: {
-            _filter_functions: function(cat){
+            _filter_functions: function (cat) {
                 return Object.keys(this.function_names)
-                        .filter((func)=>{
-                            return this.function_names[func].cat === cat;
-                        }).sort((func_a, func_b)=>{
-                            console.log("sorting: ", 
-                                this.function_names[func_a], this.function_names[func_b], 
-                                this.function_names[func_a].id < this.function_names[func_b].id)
-                            return this.function_names[func_a].id > this.function_names[func_b].id;
-                        });
+                    .filter((func) => {
+                        return this.function_names[func].cat === cat;
+                    })
+                    .sort((func_a, func_b) => {
+                        console.log(
+                            "sorting: ",
+                            this.function_names[func_a],
+                            this.function_names[func_b],
+                            this.function_names[func_a].id <
+                                this.function_names[func_b].id
+                        );
+                        return (
+                            this.function_names[func_a].id >
+                            this.function_names[func_b].id
+                        );
+                    });
             },
 
-            unbind: function(key) {
+            unbind: function (key) {
                 for (const func in this.rows) {
                     const index = this.rows[func].indexOf(key);
                     if (index > -1) {
                         this.rows[func].splice(index, 1);
                         if (this.rows[func].length == 0) {
-                            this.alert_text = "You just removed or overwrote the only keybinding for '<b>" + function_names[func].name + "</b>'. You won't be able to use that function from the keyboard unless you add a new keybinding.";
-                            setTimeout(()=>this.alert_text=null, 5000);
+                            this.alert_text =
+                                "You just removed or overwrote the only keybinding for '<b>" +
+                                function_names[func].name +
+                                "</b>'. You won't be able to use that function from the keyboard unless you add a new keybinding.";
+                            setTimeout(() => (this.alert_text = null), 5000);
                         }
-                        return this.update(func)
+                        return this.update(func);
                     }
                 }
                 return $.Deferred().resolve().promise();
             },
 
-            bind: function(func, key){
-                this.unbind(key).then(()=>{
-                    this.rows[func].push(key)
-                    this.update(func)
+            bind: function (func, key) {
+                this.unbind(key).then(() => {
+                    this.rows[func].push(key);
+                    this.update(func);
                 });
             },
 
-            update: function(func) {
+            update: function (func) {
                 var data = {};
                 data[func] = this.rows[func];
                 return $.ajax({
-                    url: '/api/user/keybindings',
-                    type: 'POST',
+                    url: "/api/user/keybindings",
+                    type: "POST",
                     data: JSON.stringify(data),
                     headers: {
-                        "Authorization": "Bearer " + window.user_token,
+                        Authorization: "Bearer " + window.user_token,
                     },
-                    contentType: 'application/json',
+                    contentType: "application/json",
                 });
             },
 
-            reset: function(func) {
+            reset: function (func) {
                 return $.ajax({
-                    url: '/api/user/keybindings',
-                    type: 'DELETE',
-                    data: JSON.stringify({'to_reset': func}),
-                    contentType: 'application/json',
+                    url: "/api/user/keybindings",
+                    type: "DELETE",
+                    data: JSON.stringify({ to_reset: func }),
+                    contentType: "application/json",
                     headers: {
-                        "Authorization": "Bearer " + window.user_token,
+                        Authorization: "Bearer " + window.user_token,
                     },
-                    success: (result)=>this.rows=result,
+                    success: (result) => (this.rows = result),
                 });
             },
         },
 
-
-        template:`
+        template: `
         <div id="keyboard-form-container" class="py-3">
             <div class="row py-3">
                 <div class="col-10">
@@ -308,7 +335,7 @@ $(document).ready(function() {
             [[advanced_visible ? 'Hide Advanced' : 'Show advanced' ]]
             </a>
         </div>
-        `
+        `,
     });
 
     const controllers_form = new Vue({
@@ -317,59 +344,59 @@ $(document).ready(function() {
         data: {
             cur_values: {},
             options: [
-                { call: 'Bob' },
-                { call: 'Change method' },
-                { call: 'Go' },
-                { call: 'Look to' },
-                { call: 'Rounds' },
-                { call: 'Single' },
-                { call: 'Sorry' },
-                { call: 'Stand next' },
+                { call: "Bob" },
+                { call: "Change method" },
+                { call: "Go" },
+                { call: "Look to" },
+                { call: "Rounds" },
+                { call: "Single" },
+                { call: "Sorry" },
+                { call: "Stand next" },
                 { call: "That's all" },
-                { call: 'Silently flip stroke'},
-                { call: '(none)'},
-            ]
+                { call: "Silently flip stroke" },
+                { call: "(none)" },
+            ],
         },
 
-        mounted: function() {
+        mounted: function () {
             $.ajax({
-                url: '/api/user/controllers',
-                type: 'GET',
+                url: "/api/user/controllers",
+                type: "GET",
                 headers: {
-                    "Authorization": "Bearer " + window.user_token,
+                    Authorization: "Bearer " + window.user_token,
                 },
-                success: (response) => this.cur_values = response,
+                success: (response) => (this.cur_values = response),
             });
         },
 
         methods: {
-            update: function(param) {
+            update: function (param) {
                 var data = {};
                 data[param] = this.cur_values[param];
                 return $.ajax({
-                    url: '/api/user/controllers',
-                    type: 'POST',
+                    url: "/api/user/controllers",
+                    type: "POST",
                     data: JSON.stringify(data),
                     headers: {
-                        "Authorization": "Bearer " + window.user_token,
+                        Authorization: "Bearer " + window.user_token,
                     },
-                    contentType: 'application/json',
+                    contentType: "application/json",
                 });
             },
 
-            reset: function(func) {
+            reset: function (func) {
                 return $.ajax({
-                    url: '/api/user/controllers',
-                    type: 'DELETE',
+                    url: "/api/user/controllers",
+                    type: "DELETE",
                     headers: {
-                        "Authorization": "Bearer " + window.user_token,
+                        Authorization: "Bearer " + window.user_token,
                     },
-                    success: (result)=>this.cur_values=result,
+                    success: (result) => (this.cur_values = result),
                 });
             },
         },
 
-        template:`
+        template: `
             <div id="controllers-form-container" class="py-2">
             <div class="row py-3">
                 <div class="col-10">
