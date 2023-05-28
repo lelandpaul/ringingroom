@@ -1105,9 +1105,9 @@ $(document).ready(function () {
                 autocomplete_options: [],
                 selected_option: 0,
 
-                complib_id: "",
+                complib_url: "",
                 current_complib_comp: undefined,
-                complib_error: "",
+                complib_message: "",
             };
         },
 
@@ -1170,7 +1170,7 @@ $(document).ready(function () {
                 this.update_method_suggestions(next_value);
             },
 
-            complib_id: function (next_value) {
+            complib_url: function (next_value) {
                 this.update_comp_suggestions(next_value);
             },
 
@@ -1336,7 +1336,7 @@ $(document).ready(function () {
 
             update_number_of_bells: function () {
                 this.update_method_suggestions(this.method_name);
-                this.update_comp_suggestions(this.complib_id);
+                this.update_comp_suggestions(this.complib_url);
             },
 
             update_peal_speed: function () {
@@ -1445,41 +1445,63 @@ $(document).ready(function () {
                 this.method_name = "";
             },
 
-            update_comp_suggestions: function (partial_comp_name) {
-                if (partial_comp_name == "") {
-                    this.current_complib_comp = undefined;
-                    this.complib_error = "Start typing a comp ID...";
+            update_comp_suggestions: function (url_box_contents) {
+                // If the user changed the `Composition` box, then we always invalidate the current
+                // Wheatley comp until CompLib replies to our HTTP request.  This should almost
+                // certainly be so fast that the user doesn't see it.
+                this.current_complib_comp = undefined;
+                // If the box is empty, then clear the error box
+                if (url_box_contents == "") {
+                    this.complib_message = "";
                     return;
                 }
-                if (!/^\d+$/.test(partial_comp_name)) {
-                    this.current_complib_comp = undefined;
-                    this.complib_error = "Please enter a valid number";
+                // Normalise the URL by removing `https://` or `http://` off the front (sometimes
+                // it's missed off when you copy URLs).  We'll add `https://` again before making
+                // HTTP requests
+                const complib_url_without_http = url_box_contents
+                    .replace("https://", "")
+                    .replace("http://", "")
+                    .toLowerCase();
+                const url_segments = complib_url_without_http.split("/");
+                // Do some basic validation of the URL
+                if (!complib_url_without_http.startsWith("complib.org")) {
+                    this.complib_message = "URL doesn't point to 'complib.org'.";
                     return;
                 }
-                // Keep a reference to the correct 'this'
-                let _this = this;
+                if (url_segments.length != 3 || url_segments[1] !== "composition") {
+                    this.complib_message = "URL doesn't point to a composition.";
+                    return;
+                }
 
-                let api_url =
-                    "https://api.complib.org/composition/" + partial_comp_name;
-                let standard_url =
-                    "https://complib.org/composition/" + partial_comp_name;
+                /* Send an HTTP request to `complib.org` to figure out what our composition is
+                 * pointing to */
+
+                this.complib_message = "Waiting for CompLib...";
+                let api_url = "https://api." + complib_url_without_http;
+                let standard_url = "https://" + complib_url_without_http;
+
+                let _this = this; // Keep a reference to the correct 'this'
                 $.getJSON(api_url)
-                    .fail(function (_evt, _jqxhr, state) {
+                    .fail(function (evt) {
                         _this.current_complib_comp = undefined;
-                        switch (state) {
-                            case "Bad Request":
-                                _this.complib_error = "Bad request.";
-                                break;
-                            case "Not Found":
-                                _this.complib_error =
-                                    "#" + partial_comp_name + " doesn't exist.";
-                                break;
-                            case "Unauthorized":
-                                _this.complib_error =
-                                    "#" + partial_comp_name + " is private.";
-                                break;
-                            default:
-                                console.warn("Unknown error: " + state);
+                        // Extract the ID from the URL for use in the error message (the ID spans
+                        // from the last '/' to the next '?').
+                        let last_url_segment = standard_url.substring(standard_url.lastIndexOf("/") + 1);
+                        let complib_id = last_url_segment.split("?")[0];
+
+                        // Present an appropriate error message
+                        if (evt.status == 404) {
+                            // Our old favourite, '404 Not found'
+                            _this.complib_message = "Composition #" + complib_id + " doesn't exist.";
+                        } else if (evt.status == 401) {
+                            // 'Unauthorised'
+                            _this.complib_message = "Composition #" + complib_id + " is private.";
+                        } else if (500 <= evt.status && evt.status < 600) {
+                            // Server error
+                            _this.complib_message = "CompLib server error.";
+                        } else {
+                            // Unknown status
+                            _this.complib_message = `Unknown request status: ${evt.status}`;
                         }
                     })
                     .done(function (data) {
@@ -1494,10 +1516,8 @@ $(document).ready(function () {
                         } else {
                             _this.current_complib_comp = undefined;
                             let required_tower_size =
-                                data.stage % 2 == 0
-                                    ? data.stage
-                                    : data.stage + 1;
-                            _this.complib_error =
+                                data.stage % 2 == 0 ? data.stage : data.stage + 1;
+                            _this.complib_message =
                                 "Comp needs " +
                                 required_tower_size +
                                 " bells, not " +
@@ -1507,9 +1527,9 @@ $(document).ready(function () {
             },
 
             send_next_comp: function () {
-                if (!this.current_complib_comp) {
-                    return;
-                }
+                if (!this.current_complib_comp) return; // Bail if the comp isn't defined
+
+                this.complib_url = ""; // Clear the composition box
 
                 console.log(
                     "Setting Wheatley composition to " +
@@ -1571,7 +1591,7 @@ $(document).ready(function () {
 
         <div id="wheatley_row_gen_box">
             <!-- Wheatley row gen type toggle -->
-            <div class="d-none btn-group btn-block btn-group-toggle">
+            <div class="btn-group btn-block btn-group-toggle">
                 <label class="btn btn-outline-primary"
                        style="border-bottom-left-radius: 0;"
                        :class="{active: row_gen_panel == 'method',
@@ -1598,8 +1618,7 @@ $(document).ready(function () {
                 </label>
             </div>
 
-            <div id="wheatley_row_gen_box_inner"
-                 style="margin-bottom: 1.2rem;">
+            <div id="wheatley_row_gen_box_inner">
                 <!-- Wheatley method tab -->
                 <div v-show="row_gen_panel == 'method'">
                     <div>
@@ -1631,9 +1650,9 @@ $(document).ready(function () {
                             <input type="text"
                                    id="wheatley_comp_id_box"
                                    class="form-control"
-                                   v-model="complib_id"
+                                   v-model="complib_url"
                                    :disabled="row_gen_panel_disabled"
-                                   placeholder="Public CompLib ID"
+                                   placeholder="CompLib URL"
                                    autocomplete="off"
                                    />
                             <div class="input-group-append">
@@ -1648,7 +1667,7 @@ $(document).ready(function () {
                         <div>
                             <p style="margin-bottom: 0;
                                       text-align: center;">
-                                [[ current_complib_comp ? current_complib_comp.title : complib_error ]]
+                                [[ current_complib_comp ? current_complib_comp.title : complib_message ]]
                             </p>
                         </div>
                     </form>
