@@ -1214,45 +1214,35 @@ $(document).ready(function () {
             on_change_sensitivity: function () {
                 socketio.emit("c_wheatley_setting", {
                     tower_id: cur_tower_id,
-                    settings: {
-                        sensitivity: this.sensitivity,
-                    },
+                    settings: { sensitivity: this.sensitivity },
                 });
             },
 
             on_change_use_up_down_in: function () {
                 socketio.emit("c_wheatley_setting", {
                     tower_id: cur_tower_id,
-                    settings: {
-                        use_up_down_in: this.use_up_down_in,
-                    },
+                    settings: { use_up_down_in: this.use_up_down_in },
                 });
             },
 
             on_change_stop_at_rounds: function () {
                 socketio.emit("c_wheatley_setting", {
                     tower_id: cur_tower_id,
-                    settings: {
-                        stop_at_rounds: this.stop_at_rounds,
-                    },
+                    settings: { stop_at_rounds: this.stop_at_rounds },
                 });
             },
 
             on_change_peal_speed: function () {
                 socketio.emit("c_wheatley_setting", {
                     tower_id: cur_tower_id,
-                    settings: {
-                        peal_speed: this.peal_speed,
-                    },
+                    settings: { peal_speed: this.peal_speed },
                 });
             },
 
             on_change_fixed_striking_interval: function () {
                 socketio.emit("c_wheatley_setting", {
                     tower_id: cur_tower_id,
-                    settings: {
-                        fixed_striking_interval: this.fixed_striking_interval,
-                    },
+                    settings: { fixed_striking_interval: this.fixed_striking_interval },
                 });
             },
 
@@ -1713,7 +1703,6 @@ $(document).ready(function () {
         <input type="checkbox"
                v-model="use_up_down_in"
                v-on:change="on_change_use_up_down_in"
-               id="wheatley_up_down_in"
                name="up_down_in"
                :disabled="settings_panel_disabled"
                />
