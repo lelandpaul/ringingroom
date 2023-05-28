@@ -273,6 +273,8 @@ class Wheatley:
             self._settings["use_up_down_in"] = False
         if "stop_at_rounds" not in self._settings:
             self._settings["stop_at_rounds"] = False
+        if "call_compositions" not in self._settings:
+            self._settings["call_compositions"] = True
 
         # If there is no row_gen defined, default to even-bell Plain Bob on the right number of bells
         if self.row_gen == {}:
