@@ -1060,6 +1060,7 @@ $(document).ready(function () {
                 is_ringing: false,
 
                 // User-specifiable settings
+                call_composition: true,
                 sensitivity: 0.6,
                 use_up_down_in: true,
                 stop_at_rounds: true,
@@ -1220,6 +1221,13 @@ $(document).ready(function () {
                 });
             },
 
+            on_change_call_composition: function () {
+                socketio.emit("c_wheatley_setting", {
+                    tower_id: cur_tower_id,
+                    settings: { call_composition: this.call_composition },
+                });
+            },
+
             on_change_use_up_down_in: function () {
                 socketio.emit("c_wheatley_setting", {
                     tower_id: cur_tower_id,
@@ -1305,6 +1313,9 @@ $(document).ready(function () {
                     switch (key) {
                         case "sensitivity":
                             this.sensitivity = value;
+                            break;
+                        case "call_composition":
+                            this.call_composition = value;
                             break;
                         case "use_up_down_in":
                             this.use_up_down_in = value;
@@ -1587,6 +1598,20 @@ $(document).ready(function () {
             </button>
 
             <br/>
+        </div>
+
+        <!-- Up Down In -->
+        <div v-show="row_gen.type == 'composition'">
+            <input type="checkbox"
+                   v-model="call_composition"
+                   v-on:change="on_change_call_composition"
+                   name="call_composition"
+                   />
+            <label for="call_composition" title="If checked, Wheatley will automatically add calls when ringing compositions.">
+                Wheatley make calls
+            </label>
+
+            <hr/>
         </div>
 
         <div id="wheatley_row_gen_box">
