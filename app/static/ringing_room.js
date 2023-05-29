@@ -1466,10 +1466,20 @@ $(document).ready(function () {
                     this.complib_message = "";
                     return;
                 }
+                // Try to determine whether the input is a URL or an ID.  To be consistent with CLI
+                // Wheatley, we say that the input is an ID if it has the form '<number>' or
+                // '<number>?<anything>'.  Otherwise, it is considered a URL.
+                url_box_contents = url_box_contents.trim();
+                if (url_box_contents.match(/^[0-9]+(?:\?.*)?$/)) {
+                    // We think this input is an ID, so turn it into a URL
+                    var complib_url = "https://complib.org/composition/" + url_box_contents;
+                } else {
+                    var complib_url = url_box_contents; // URL box contents is already a URL
+                }
                 // Normalise the URL by removing `https://` or `http://` off the front (sometimes
                 // it's missed off when you copy URLs).  We'll add `https://` again before making
                 // HTTP requests
-                const complib_url_without_http = url_box_contents
+                const complib_url_without_http = complib_url
                     .replace("https://", "")
                     .replace("http://", "")
                     .toLowerCase();
@@ -1479,8 +1489,12 @@ $(document).ready(function () {
                     this.complib_message = "URL doesn't point to 'complib.org'.";
                     return;
                 }
-                if (url_segments.length != 3 || url_segments[1] !== "composition") {
+                if (url_segments.length !== 3 || url_segments[1] !== "composition") {
                     this.complib_message = "URL doesn't point to a composition.";
+                    return;
+                }
+                if (url_segments.length === 3 && url_segments[2] === "") {
+                    this.complib_message = "Composition ID is empty";
                     return;
                 }
 
@@ -1677,7 +1691,7 @@ $(document).ready(function () {
                                    class="form-control"
                                    v-model="complib_url"
                                    :disabled="row_gen_panel_disabled"
-                                   placeholder="CompLib URL"
+                                   placeholder="CompLib URL or ID..."
                                    autocomplete="off"
                                    />
                             <div class="input-group-append">
