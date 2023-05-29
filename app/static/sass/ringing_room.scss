@@ -445,6 +445,10 @@ input[type="range"]::slider-thumb {
     }
 }
 
+.wheatley_error {
+    color: $primary;
+}
+
 #user_display_header.collapsed::after,
 #wheatley_header.collapsed::after,
 #controllers_header.collapsed::after,

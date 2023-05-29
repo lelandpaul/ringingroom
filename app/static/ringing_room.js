@@ -1109,6 +1109,7 @@ $(document).ready(function () {
                 complib_url: "",
                 current_complib_comp: undefined,
                 complib_message: "",
+                complib_message_is_error: false,
             };
         },
 
@@ -1487,14 +1488,17 @@ $(document).ready(function () {
                 // Do some basic validation of the URL
                 if (!complib_url_without_http.startsWith("complib.org")) {
                     this.complib_message = "URL doesn't point to 'complib.org'.";
+                    this.complib_message_is_error = true;
                     return;
                 }
                 if (url_segments.length !== 3 || url_segments[1] !== "composition") {
                     this.complib_message = "URL doesn't point to a composition.";
+                    this.complib_message_is_error = true;
                     return;
                 }
                 if (url_segments.length === 3 && url_segments[2] === "") {
                     this.complib_message = "Composition ID is empty";
+                    this.complib_message_is_error = true;
                     return;
                 }
 
@@ -1502,6 +1506,7 @@ $(document).ready(function () {
                  * pointing to */
 
                 this.complib_message = "Waiting for CompLib...";
+                this.complib_message_is_error = false;
                 let api_url = "https://api." + complib_url_without_http;
                 let standard_url = "https://" + complib_url_without_http;
 
@@ -1515,6 +1520,7 @@ $(document).ready(function () {
                         let complib_id = last_url_segment.split("?")[0];
 
                         // Present an appropriate error message
+                        _this.complib_message_is_error = true;
                         if (evt.status == 404) {
                             // Our old favourite, '404 Not found'
                             _this.complib_message = "Composition #" + complib_id + " doesn't exist.";
@@ -1538,6 +1544,7 @@ $(document).ready(function () {
                                 url: standard_url,
                                 title: data.derivedTitle,
                             };
+                            _this.complib_message_is_error = false;
                         } else {
                             _this.current_complib_comp = undefined;
                             let required_tower_size =
@@ -1547,6 +1554,7 @@ $(document).ready(function () {
                                 required_tower_size +
                                 " bells, not " +
                                 bell_circle.number_of_bells;
+                            _this.complib_message_is_error = true;
                         }
                     });
             },
@@ -1705,7 +1713,8 @@ $(document).ready(function () {
                         </div>
                         <div>
                             <p style="margin-bottom: 0;
-                                      text-align: center;">
+                                      text-align: center;"
+                               :class="{wheatley_error: complib_message_is_error}">
                                 [[ current_complib_comp ? current_complib_comp.title : complib_message ]]
                             </p>
                         </div>
