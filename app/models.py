@@ -21,7 +21,11 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-    towers = db.relationship("UserTowerRelation", back_populates="user")
+    towers = db.relationship(
+            "UserTowerRelation", 
+            back_populates="user",
+            primaryjoin="UserTowerRelation.user_id==User.id"
+    )
     joined = db.Column(db.Date, default=date.today)
     token = db.Column(db.String(32), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
@@ -256,13 +260,18 @@ class User(UserMixin, db.Model):
 
 
 class TowerDB(db.Model):
+    __tablename__ = "towerDB"
     tower_id = db.Column(db.Integer, primary_key=True)
     tower_name = db.Column(db.String(32), index=True)
     created_on = db.Column(db.Date, default=date.today)
     last_access = db.Column(
         db.Date, nullable=False, default=date.today, onupdate=date.today
     )
-    users = db.relationship("UserTowerRelation", back_populates="tower")
+    users = db.relationship(
+            "UserTowerRelation", 
+            back_populates="tower",
+            primaryjoin="UserTowerRelation.tower_id==TowerDB.tower_id"
+    )
     host_mode_enabled = db.Column(db.Boolean, default=False)
     additional_sizes_enabled = db.Column(db.Boolean, default=False)
     half_muffled = db.Column(db.Boolean, default=False)
