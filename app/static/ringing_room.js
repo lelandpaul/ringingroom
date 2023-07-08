@@ -79,9 +79,7 @@ socketio.on("s_bell_rung", function (msg) {
 // A bell was silently swapped between strokes
 socketio.on("s_silent_swap", function (msg) {
     // console.log('silent swap', msg);
-    bell_circle.$refs.bells[parseInt(msg.who_swapped) - 1].set_state_silently(
-        msg.new_bell_state
-    );
+    bell_circle.$refs.bells[parseInt(msg.who_swapped) - 1].set_state_silently(msg.new_bell_state);
 });
 
 // Userlist was set
@@ -108,10 +106,7 @@ socketio.on("s_user_left", function (msg) {
     // console.log(msg.username + ' left')
     // It's possible that we'll receive this when we've just been kicked. If so, redirect
     console.log(msg);
-    if (
-        msg.kicked &&
-        msg.user_id === parseInt(window.tower_parameters.cur_user_id)
-    ) {
+    if (msg.kicked && msg.user_id === parseInt(window.tower_parameters.cur_user_id)) {
         window.location.href = "/";
     }
     bell_circle.$refs.users.remove_user(msg);
@@ -162,10 +157,7 @@ socketio.on("s_size_change", function (msg) {
     bell_circle.number_of_bells = new_size;
     // The user may already be assigned to something, so rotate
     bell_circle.$refs.users.rotate_to_assignment();
-    if (
-        !window.tower_parameters.listen_link &&
-        !window.tower_parameters.anonymous_user
-    ) {
+    if (!window.tower_parameters.listen_link && !window.tower_parameters.anonymous_user) {
         bell_circle.$refs.wheatley.update_number_of_bells();
     }
 });
@@ -195,18 +187,14 @@ socketio.on("s_audio_change", function (msg) {
     bell_circle.audio = audio_types[msg.new_audio];
     // Make sure the volume is set consistently
     //md = msg.new_audio == 'Tower' ? 1 : window.user_parameters.handbell_mod;
-    let md =
-        msg.new_audio == "Hand" ? window.user_parameters.handbell_mod : 1.0;
+    let md = msg.new_audio == "Hand" ? window.user_parameters.handbell_mod : 1.0;
     bell_circle.audio._volume = md * window.user_parameters.bell_volume * 0.1;
 });
 
 // A chat message was received
 socketio.on("s_msg_sent", function (msg) {
     bell_circle.$refs.chatbox.messages.push(msg);
-    if (
-        msg.email != window.tower_parameters.cur_user_email &&
-        !$("#chat_input_box").is(":focus")
-    ) {
+    if (msg.email != window.tower_parameters.cur_user_email && !$("#chat_input_box").is(":focus")) {
         bell_circle.unread_messages++;
     }
     bell_circle.$nextTick(function () {
@@ -218,10 +206,7 @@ if (!window.tower_parameters.listen_link) {
     // Wheatley has been enabled or disabled
     socketio.on("s_set_wheatley_enabledness", function (data) {
         // console.log("Setting Wheatley's enabledness to " + data.enabled);
-        if (
-            !window.tower_parameters.listen_link &&
-            !window.tower_parameters.anonymous_user
-        ) {
+        if (!window.tower_parameters.listen_link && !window.tower_parameters.anonymous_user) {
             bell_circle.$refs.wheatley.enabled = data.enabled;
         }
     });
@@ -303,16 +288,13 @@ $(document).ready(function () {
                     "⑯",
                 ],
                 images: ["handstroke", "backstroke"],
-                assigned_user:
-                    window.tower_parameters.assignments[this.number - 1],
+                assigned_user: window.tower_parameters.assignments[this.number - 1],
             };
         },
 
         computed: {
             image_prefix: function () {
-                return audio_types.image_prefix[
-                    this.$root.$refs.controls.audio_type
-                ];
+                return audio_types.image_prefix[this.$root.$refs.controls.audio_type];
             },
 
             assignment_mode: function () {
@@ -347,52 +329,25 @@ $(document).ready(function () {
                 if (this.number_of_bells === 4 && 2 <= this.position <= 3) {
                     return true;
                 }
-                if (
-                    this.number_of_bells === 5 &&
-                    2 <= this.position &&
-                    this.position <= 5
-                ) {
+                if (this.number_of_bells === 5 && 2 <= this.position && this.position <= 5) {
                     return true;
                 }
-                if (
-                    this.number_of_bells === 6 &&
-                    (this.position === 3 || this.position === 4)
-                ) {
+                if (this.number_of_bells === 6 && (this.position === 3 || this.position === 4)) {
                     return true;
                 }
-                if (
-                    this.number_of_bells === 8 &&
-                    3 <= this.position &&
-                    this.position <= 6
-                ) {
+                if (this.number_of_bells === 8 && 3 <= this.position && this.position <= 6) {
                     return true;
                 }
-                if (
-                    this.number_of_bells === 10 &&
-                    this.position >= 4 &&
-                    this.position <= 7
-                ) {
+                if (this.number_of_bells === 10 && this.position >= 4 && this.position <= 7) {
                     return true;
                 }
-                if (
-                    this.number_of_bells === 12 &&
-                    this.position >= 4 &&
-                    this.position <= 9
-                ) {
+                if (this.number_of_bells === 12 && this.position >= 4 && this.position <= 9) {
                     return true;
                 }
-                if (
-                    this.number_of_bells === 14 &&
-                    this.position >= 5 &&
-                    this.position <= 10
-                ) {
+                if (this.number_of_bells === 14 && this.position >= 5 && this.position <= 10) {
                     return true;
                 }
-                if (
-                    this.number_of_bells === 16 &&
-                    this.position >= 5 &&
-                    this.position <= 12
-                ) {
+                if (this.number_of_bells === 16 && this.position >= 5 && this.position <= 12) {
                     return true;
                 }
             },
@@ -407,45 +362,22 @@ $(document).ready(function () {
                 if (this.number_of_bells === 5 && this.position >= 3) {
                     return true;
                 }
-                if (
-                    this.number_of_bells === 6 &&
-                    (this.position === 4 || this.position === 5)
-                ) {
+                if (this.number_of_bells === 6 && (this.position === 4 || this.position === 5)) {
                     return true;
                 }
-                if (
-                    this.number_of_bells === 8 &&
-                    this.position >= 4 &&
-                    this.position !== 8
-                ) {
+                if (this.number_of_bells === 8 && this.position >= 4 && this.position !== 8) {
                     return true;
                 }
-                if (
-                    this.number_of_bells === 10 &&
-                    this.position >= 5 &&
-                    this.position < 9
-                ) {
+                if (this.number_of_bells === 10 && this.position >= 5 && this.position < 9) {
                     return true;
                 }
-                if (
-                    this.number_of_bells === 12 &&
-                    this.position >= 5 &&
-                    this.position <= 10
-                ) {
+                if (this.number_of_bells === 12 && this.position >= 5 && this.position <= 10) {
                     return true;
                 }
-                if (
-                    this.number_of_bells === 14 &&
-                    this.position >= 7 &&
-                    this.position <= 13
-                ) {
+                if (this.number_of_bells === 14 && this.position >= 7 && this.position <= 13) {
                     return true;
                 }
-                if (
-                    this.number_of_bells === 16 &&
-                    this.position >= 7 &&
-                    this.position <= 14
-                ) {
+                if (this.number_of_bells === 16 && this.position >= 7 && this.position <= 14) {
                     return true;
                 }
             },
@@ -460,10 +392,7 @@ $(document).ready(function () {
                 if (this.assignment_mode) {
                     return;
                 } // disable while assigning
-                if (
-                    this.$root.$refs.controls.host_mode &&
-                    this.assigned_user !== cur_user_id
-                ) {
+                if (this.$root.$refs.controls.host_mode && this.assigned_user !== cur_user_id) {
                     // user is not allowed to ring this bell
                     bell_circle.$refs.display.display_message(
                         "You may only ring your assigned bells."
@@ -494,10 +423,7 @@ $(document).ready(function () {
                         window.tower_parameters.half_muffled
                     ) {
                         // Tolling — muffled except tenor backstrokes
-                        if (
-                            this.number == this.number_of_bells &&
-                            this.stroke
-                        ) {
+                        if (this.number == this.number_of_bells && this.stroke) {
                             audio_type = this.$root.$refs.controls.audio_type;
                             audio_obj = this.audio;
                         } else {
@@ -518,11 +444,7 @@ $(document).ready(function () {
                     audio_type = this.$root.$refs.controls.audio_type;
                     audio_obj = this.audio;
                 }
-                audio_obj.play(
-                    bell_mappings[audio_type][this.number_of_bells][
-                        this.number - 1
-                    ]
-                );
+                audio_obj.play(bell_mappings[audio_type][this.number_of_bells][this.number - 1]);
                 /*
                 console.log(
                     `Bell ${this.number} rang a ${this.stroke ? "handstroke" : "backstroke"}`
@@ -718,10 +640,7 @@ $(document).ready(function () {
             // a call was received from the server; display it and play audio
             make_call: function (call) {
                 this.display_message(call, 2000);
-                if (
-                    call.indexOf("sorry") != -1 ||
-                    call.indexOf("Sorry") != -1
-                ) {
+                if (call.indexOf("sorry") != -1 || call.indexOf("Sorry") != -1) {
                     calls.play("SORRY");
                 } else if (call in call_types) {
                     calls.play(call_types[call]);
@@ -802,9 +721,7 @@ $(document).ready(function () {
             },
 
             lock_controls: function () {
-                return (
-                    this.host_mode && !window.tower_parameters.host_permissions
-                );
+                return this.host_mode && !window.tower_parameters.host_permissions;
             },
         },
 
@@ -1191,15 +1108,10 @@ $(document).ready(function () {
             // Update the UI whenever the backing `peal_speed` value changes
             peal_speed: function () {
                 // Clamp the peal speed to a max of 8 hours
-                this.peal_speed = Math.max(
-                    Math.min(this.peal_speed, 8 * 60),
-                    60
-                );
+                this.peal_speed = Math.max(Math.min(this.peal_speed, 8 * 60), 60);
                 // Update the controls to the correct representation of the speed
                 this.peal_speed_mins = (this.peal_speed % 60).toString();
-                this.peal_speed_hours = Math.floor(
-                    this.peal_speed / 60
-                ).toString();
+                this.peal_speed_hours = Math.floor(this.peal_speed / 60).toString();
             },
         },
 
@@ -1216,9 +1128,7 @@ $(document).ready(function () {
             on_change_sensitivity: function () {
                 socketio.emit("c_wheatley_setting", {
                     tower_id: cur_tower_id,
-                    settings: {
-                        sensitivity: this.sensitivity,
-                    },
+                    settings: { sensitivity: this.sensitivity },
                 });
             },
 
@@ -1232,46 +1142,35 @@ $(document).ready(function () {
             on_change_use_up_down_in: function () {
                 socketio.emit("c_wheatley_setting", {
                     tower_id: cur_tower_id,
-                    settings: {
-                        use_up_down_in: this.use_up_down_in,
-                    },
+                    settings: { use_up_down_in: this.use_up_down_in },
                 });
             },
 
             on_change_stop_at_rounds: function () {
                 socketio.emit("c_wheatley_setting", {
                     tower_id: cur_tower_id,
-                    settings: {
-                        stop_at_rounds: this.stop_at_rounds,
-                    },
+                    settings: { stop_at_rounds: this.stop_at_rounds },
                 });
             },
 
             on_change_peal_speed: function () {
                 socketio.emit("c_wheatley_setting", {
                     tower_id: cur_tower_id,
-                    settings: {
-                        peal_speed: this.peal_speed,
-                    },
+                    settings: { peal_speed: this.peal_speed },
                 });
             },
 
             on_change_fixed_striking_interval: function () {
                 socketio.emit("c_wheatley_setting", {
                     tower_id: cur_tower_id,
-                    settings: {
-                        fixed_striking_interval: this.fixed_striking_interval,
-                    },
+                    settings: { fixed_striking_interval: this.fixed_striking_interval },
                 });
             },
 
             // Updates the peal speed if the tower size changes, in order to keep the intervals
             // between bells as consistent as possible
             on_tower_size_change: function (old_size, new_size) {
-                if (
-                    this.last_tower_size != undefined &&
-                    new_size == this.last_tower_size
-                ) {
+                if (this.last_tower_size != undefined && new_size == this.last_tower_size) {
                     return; // Don't update the peal size if we've already received this size change
                 }
                 this.last_tower_size = new_size;
@@ -1353,8 +1252,7 @@ $(document).ready(function () {
 
             update_peal_speed: function () {
                 this.peal_speed =
-                    parseInt(this.peal_speed_hours) * 60 +
-                    parseInt(this.peal_speed_mins);
+                    parseInt(this.peal_speed_hours) * 60 + parseInt(this.peal_speed_mins);
             },
 
             /* METHODS RELATED TO THE USER UPDATING THE ROW_GEN CONTROLS */
@@ -1420,20 +1318,15 @@ $(document).ready(function () {
                     }
                     let converted_call = {};
                     for (let i = 0; i < method.lengthOfLead / call.every; i++) {
-                        converted_call[call.from + i * call.every] =
-                            call.notation;
+                        converted_call[call.from + i * call.every] = call.notation;
                     }
                     return converted_call;
                 };
                 // Generate the call definitions, with a special case made for Stedman Doubles (for
                 // which the singles defined don't work for slow sixes - see
                 // https://github.com/kneasle/wheatley/issues/171)
-                let bob_def = method.calls
-                    ? convert_call(method.calls["Bob"])
-                    : {};
-                let single_def = method.calls
-                    ? convert_call(method.calls["Single"])
-                    : {};
+                let bob_def = method.calls ? convert_call(method.calls["Bob"]) : {};
+                let single_def = method.calls ? convert_call(method.calls["Single"]) : {};
                 if (method.title === "Stedman Doubles") {
                     single_def = {
                         0: "145",
@@ -1511,6 +1404,7 @@ $(document).ready(function () {
                 let standard_url = "https://" + complib_url_without_http;
 
                 let _this = this; // Keep a reference to the correct 'this'
+
                 $.getJSON(api_url)
                     .fail(function (evt) {
                         _this.current_complib_comp = undefined;
@@ -1564,10 +1458,7 @@ $(document).ready(function () {
 
                 this.complib_url = ""; // Clear the composition box
 
-                console.log(
-                    "Setting Wheatley composition to " +
-                        this.current_complib_comp
-                );
+                console.log("Setting Wheatley composition to " + this.current_complib_comp);
                 socketio.emit("c_wheatley_row_gen", {
                     tower_id: window.tower_parameters.id,
                     row_gen: {
@@ -1747,15 +1638,17 @@ $(document).ready(function () {
         <p style="margin-bottom: 0.6rem;">Peal Speed:
             <input type="number"
                    id="wheatley_peal_speed_hours"
+                   class="wheatley-speed-wheel"
                    v-model="peal_speed_hours"
                    v-on:change="on_change_peal_speed"
-                   style="border: none; width: 1.5em"
+                   style="width: 1.5em;"
             />hr
             <input type="number"
                    id="wheatley_peal_speed_mins"
+                   class="wheatley-speed-wheel"
                    v-model="peal_speed_mins"
                    v-on:change="on_change_peal_speed"
-                   style="border: none; width: 2.1em; text-align: right;"
+                   style="width: 2.1em;"
                    step="5"
             />min
         </p>
@@ -1778,7 +1671,6 @@ $(document).ready(function () {
         <input type="checkbox"
                v-model="use_up_down_in"
                v-on:change="on_change_use_up_down_in"
-               id="wheatley_up_down_in"
                name="up_down_in"
                :disabled="settings_panel_disabled"
                />
@@ -2001,8 +1893,7 @@ $(document).ready(function () {
                     this.$root.$refs.controls.audio_type == "Muffled"
                         ? 1.0
                         : window.user_parameters.handbell_mod;
-                bell_circle.audio._volume =
-                    md * window.user_parameters.bell_volume * 0.1;
+                bell_circle.audio._volume = md * window.user_parameters.bell_volume * 0.1;
                 muffled._volume = md * window.user_parameters.bell_volume * 0.1;
                 calls._volume = md * window.user_parameters.bell_volume * 0.1;
             },
@@ -2104,11 +1995,7 @@ $(document).ready(function () {
                 if (this.assignment_mode_active) return false;
                 if (this.$root.$refs.controls.lock_controls) return false;
                 if (!window.tower_parameters.host_permissions) return false;
-                if (
-                    this.user_id ===
-                    parseInt(window.tower_parameters.cur_user_id)
-                )
-                    return false;
+                if (this.user_id === parseInt(window.tower_parameters.cur_user_id)) return false;
                 if (this.user_id === -1) return false;
                 return true;
             },
@@ -2447,15 +2334,9 @@ $(document).ready(function () {
                     var curCont = this.controller_list[myCont];
                     if (curCont && !curCont.debounced) {
                         try {
-                            if (
-                                Math.max.apply(null, cont.axes.map(Math.abs)) >
-                                0
-                            ) {
+                            if (Math.max.apply(null, cont.axes.map(Math.abs)) > 0) {
                                 var swing = cont.axes[2] * 2048;
-                                if (
-                                    swing >= this.hand_strike &&
-                                    curCont.at_hand
-                                ) {
+                                if (swing >= this.hand_strike && curCont.at_hand) {
                                     curCont.at_hand = !curCont.at_hand;
                                     this.assign_cont_to_bell(curCont);
                                     if (curCont.bell) {
@@ -2501,14 +2382,9 @@ $(document).ready(function () {
                                     //
 
                                     var left_hand = this.assigned_bells
-                                        ? curCont.bell ===
-                                          bell_circle.find_rope_by_hand(
-                                              LEFT_HAND
-                                          )
+                                        ? curCont.bell === bell_circle.find_rope_by_hand(LEFT_HAND)
                                         : curCont.bell % 2 == 0 &&
-                                          this.assigned_bells.includes(
-                                              curCont.bell - 1
-                                          );
+                                          this.assigned_bells.includes(curCont.bell - 1);
 
                                     if (left_hand) {
                                         this.buttons.left[i](this.$root);
@@ -2533,10 +2409,7 @@ $(document).ready(function () {
             },
 
             autoassign_controllers: function () {
-                if (
-                    this.controller_index.length === 0 ||
-                    this.controller_index.length > 2
-                ) {
+                if (this.controller_index.length === 0 || this.controller_index.length > 2) {
                     // Do nothing: autoassignment isn't well defined with more than two controllers
                     return;
                 }
@@ -2548,16 +2421,13 @@ $(document).ready(function () {
                 this.controller_list[first].bell =
                     this.controllers_swapped && second ? left_bell : right_bell;
                 if (second) {
-                    this.controller_list[second].bell = !(
-                        this.controllers_swapped && second
-                    )
+                    this.controller_list[second].bell = !(this.controllers_swapped && second)
                         ? left_bell
                         : right_bell;
                 }
                 this.controllers_will_ring =
                     second && left_bell
-                        ? this.circled_digits[right_bell - 1] +
-                          this.circled_digits[left_bell - 1]
+                        ? this.circled_digits[right_bell - 1] + this.circled_digits[left_bell - 1]
                         : this.circled_digits[right_bell - 1];
             },
 
@@ -2582,15 +2452,9 @@ $(document).ready(function () {
                     if (curCont.id.includes("0ffe") && curCont.connected) {
                         contObj.type = "ActionXL";
                         this.controller_index.push(myCont);
-                    } else if (
-                        curCont.id.includes("1234") &&
-                        curCont.connected
-                    ) {
+                    } else if (curCont.id.includes("1234") && curCont.connected) {
                         contObj.type = "vJoy";
-                    } else if (
-                        curCont.id.includes("2341") &&
-                        curCont.connected
-                    ) {
+                    } else if (curCont.id.includes("2341") && curCont.connected) {
                         contObj.type = "eBell";
                         this.controller_index.push(myCont);
                     }
@@ -2605,10 +2469,7 @@ $(document).ready(function () {
                 if (this.active) {
                     this.set_controllers();
                     window.clearInterval(this.tick_controller);
-                    this.tick_controller = window.setInterval(
-                        this.ticktock_controller,
-                        15
-                    );
+                    this.tick_controller = window.setInterval(this.ticktock_controller, 15);
                     this.notice = "";
                 } else {
                     this.notice = "Disabled";
@@ -2618,10 +2479,7 @@ $(document).ready(function () {
 
             get_assigned_controller_type: function (bell) {
                 for (var key in this.controller_list) {
-                    if (
-                        this.controller_list[key] &&
-                        this.controller_list[key].bell == bell
-                    ) {
+                    if (this.controller_list[key] && this.controller_list[key].bell == bell) {
                         return this.controller_list[key].type;
                     }
                 }
@@ -2692,25 +2550,18 @@ $(document).ready(function () {
                     $(window).on("gamepaddisconnected", function () {
                         window.clearInterval(instance.check_controller);
                         instance.has_controller = false;
-                        instance.check_controller = window.setInterval(
-                            function () {
-                                for (var key in navigator.getGamepads()) {
-                                    if (navigator.getGamepads()[key]) {
-                                        if (!this.has_controller)
-                                            $(window).trigger(
-                                                "gamepadconnected"
-                                            );
-                                    }
+                        instance.check_controller = window.setInterval(function () {
+                            for (var key in navigator.getGamepads()) {
+                                if (navigator.getGamepads()[key]) {
+                                    if (!this.has_controller) $(window).trigger("gamepadconnected");
                                 }
-                            },
-                            1000
-                        );
+                            }
+                        }, 1000);
                         instance.set_controllers();
                     });
                     instance.check_controller = window.setInterval(function () {
                         if (navigator.getGamepads()[0]) {
-                            if (!this.has_controller)
-                                $(window).trigger("gamepadconnected");
+                            if (!this.has_controller) $(window).trigger("gamepadconnected");
                         }
                     }, 1000);
                 } else {
@@ -2926,10 +2777,7 @@ $(document).ready(function () {
                 let current_user_bells = [];
                 for (var i = 0; i < this.$refs.bells.length; i++) {
                     const bell = this.$refs.bells[i];
-                    if (
-                        bell.assigned_user ==
-                        window.tower_parameters.cur_user_id
-                    ) {
+                    if (bell.assigned_user == window.tower_parameters.cur_user_id) {
                         current_user_bells.push(bell.number);
                     }
                 }
@@ -2979,10 +2827,7 @@ $(document).ready(function () {
                     var left_hand_bell;
                     var right_hand_bell;
 
-                    if (
-                        second_bell - first_bell <=
-                        first_bell + this.bells.length - second_bell
-                    ) {
+                    if (second_bell - first_bell <= first_bell + this.bells.length - second_bell) {
                         // The shortest way to pair the bells does not wrap round the 'end' of the
                         // circle
                         left_hand_bell = second_bell;
@@ -3093,8 +2938,7 @@ $(document).ready(function () {
                 for (var bell in this.bells) {
                     // change the position of each bell
                     var number = this.bells[bell]["number"];
-                    this.bells[bell]["position"] =
-                        ((number + offset) % n_b) + 1;
+                    this.bells[bell]["position"] = ((number + offset) % n_b) + 1;
                 }
 
                 // We need the Vue's list to be sorted by position
