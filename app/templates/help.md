@@ -214,7 +214,7 @@ The **Keyboard** tab allows you to customize the keyboard hotkeys used to contro
 -   **Rounds**: Call "Rounds" (Defaults: `o`, `O`)
 -   **Change method**: Call "Change method" (Defaults: `c`, `C`)
 -   **Sorry**: Apologize (Defaults: `s`)
-- **Mouse Mode**: Enable a [mouse-only accessibility mode](#mouse-mode) (Defaults: none)
+- **Mouse Mode**: Enable a [mouse-only accessibility mode](#additional-features) (Defaults: none)
 -   **Ring bell 1–16**: (Advanced) Ring specific bell (Defaults: `1–9`, `0`, `-`, `=`, `q`, `w`, `e`, `r`)
 -   **Rotate to 1–16**: (Advanced) Rotate the circle so that a given bell is in the bottom-right (Defaults: `shift + 1–9`, `0`, `-`, `=`, `q`, `w`, `e`, `r`)
 -   **Catch hold of 1–16**: (Advanced) Assign yourself to the given bell. (Defaults: `ctrl + shift + 1-9`, `0`, `-`, `=`, `q`, `w`, `e`, `r` on Windows` , ``cmd + shift+ 1-9 `, `0`, `-`, `= ,q`, `e`, `r` on Mac.)

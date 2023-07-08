@@ -80,7 +80,7 @@ $(document).ready(function () {
             cat: "bell",
             desc: "",
         },
-        "overlay": { id: 63, name: "Toggle mouse mode", cat: "acc", desc: "" },
+        "overlay": { id: 63, name: "Toggle Mouse Mode", cat: "acc", desc: "" },
     };
 
     Vue.component("remove_button", {
