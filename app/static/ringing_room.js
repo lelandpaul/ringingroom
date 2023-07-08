@@ -2773,6 +2773,7 @@ $(document).ready(function () {
             host_mode: window.tower_parameters.host_mode,
             bookmarked: window.tower_parameters.bookmarked,
             anticlockwise: window.tower_parameters.anticlockwise,
+            accessibility_overlay: false,
         },
 
         watch: {
@@ -3085,11 +3086,26 @@ $(document).ready(function () {
             leave_tower: function () {
                 leave_room();
             },
+
+            toggle_accessibility_overlay: function () {
+                this.accessibility_overlay = !this.accessibility_overlay;
+            },
         },
 
         template: `
 <div id="bell_circle_wrapper">
-    <div class="row flex-lg-nowrap" id="sidebar_col_row">
+    <div v-if="accessibility_overlay" 
+         id="accessibility_overlay"
+         class="text-right clickable_div"
+         @click="pull_rope_by_hand('right')"
+         >
+        <p id="overlay_warning">
+            Accessibility mode enabled.<br/>
+            Click anywhere to ring.
+            Press <b>[[ user_settings.accessibility_overlay_hotkey ]]</b> to deactivate.
+        </p>
+    </div>
+    <div class="row flex-lg-nowrap" id="sidebar_col_row" :class="{disabled: accessibility_overlay}">
         <div class="col-12 col-lg-4 sidebar_col">
             <!-- sidebar col -->
             <div class="tower_header">

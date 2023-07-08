@@ -80,6 +80,7 @@ $(document).ready(function () {
             cat: "bell",
             desc: "",
         },
+        "overlay": { id: 63, name: "Toggle accessibility overlay", cat: "adv", desc: "" },
     };
 
     Vue.component("remove_button", {
