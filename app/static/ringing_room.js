@@ -1564,6 +1564,7 @@ $(document).ready(function () {
                             <input type="text"
                                    id="wheatley_method_name_box"
                                    class="form-control"
+                                   style="border-top-left-radius: 0; border-top-right-radius: 0;"
                                    v-model="method_name"
                                    placeholder="Start typing method name..."
                                    :disabled="row_gen_panel_disabled"
@@ -1588,6 +1589,7 @@ $(document).ready(function () {
                             <input type="text"
                                    id="wheatley_comp_id_box"
                                    class="form-control"
+                                   style="border-top-left-radius: 0;"
                                    v-model="complib_url"
                                    :disabled="row_gen_panel_disabled"
                                    placeholder="CompLib URL or ID..."
@@ -1595,6 +1597,7 @@ $(document).ready(function () {
                                    />
                             <div class="input-group-append">
                                 <input class="btn btn-outline-primary"
+                                       style="border-top-right-radius: 0;"
                                        type="submit"
                                        :class="{disabled: row_gen_panel_disabled}"
                                        :disabled="row_gen_panel_disabled || !current_complib_comp"
