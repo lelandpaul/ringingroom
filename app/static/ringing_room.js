@@ -3100,7 +3100,7 @@ $(document).ready(function () {
          @click="pull_rope_by_hand('right')"
          >
         <p id="overlay_warning">
-            Accessibility mode enabled.<br/>
+            Mouse mode enabled.<br/>
             Click anywhere to ring.
             Press <b>[[ user_settings.accessibility_overlay_hotkey ]]</b> to deactivate.
         </p>
