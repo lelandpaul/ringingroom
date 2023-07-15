@@ -4,7 +4,7 @@ certifi==2023.5.7
 cffi==1.15.0
 chardet==5.1.0
 click>=7.1.1
-cryptography==41.0.1
+cryptography==41.0.2
 cssmin==0.2.0
 dnspython==2.3.0
 dominate==2.8.0
