@@ -1521,7 +1521,7 @@ $(document).ready(function () {
                    name="call_composition"
                    />
             <label for="call_composition" title="If checked, Wheatley will automatically add calls when ringing compositions.">
-                Wheatley make calls
+                Wheatley makes calls
             </label>
 
             <hr/>
