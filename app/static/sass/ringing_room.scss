@@ -415,12 +415,12 @@ input[type="range"]::slider-thumb {
 }
 
 #wheatley_row_gen_box_inner {
-    // Uncomment to re-add rowgen selector
-    // padding: 5px;
-    // border: 1px solid;
-    // border-top: none;
+    padding: 5px;
+    border: 1px solid $primary;
+    border-top: none;
     border-bottom-right-radius: 0.25rem;
     border-bottom-left-radius: 0.25rem;
+    margin-bottom: 1.2rem;
 }
 
 #wheatley_method_suggestion_box {
@@ -445,14 +445,9 @@ input[type="range"]::slider-thumb {
     }
 }
 
-.wheatley-speed-wheel {
-    background: none;
-    color: inherit;
-    border: none;
+.wheatley_error {
+    color: $primary;
 
-    textarea {
-      color: inherit;
-    }
 }
 
 #user_display_header.collapsed::after,

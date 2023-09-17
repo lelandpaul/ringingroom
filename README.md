@@ -256,6 +256,8 @@ sensitivity             : float; 0 <= x <= 1 (currently unused)
 use_up_down_in          : Bool
 stop_at_rounds          : Bool
 peal_speed              : int; x >= 0
+call_composition        : Bool
+
 fixed_striking_interval : Bool (ignored by Wheatley, changes `peal_speed` when the tower size is changed)
 ```
 
