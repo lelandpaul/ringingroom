@@ -80,6 +80,7 @@ $(document).ready(function () {
             cat: "bell",
             desc: "",
         },
+        "overlay": { id: 63, name: "Toggle Mouse Mode", cat: "acc", desc: "" },
     };
 
     Vue.component("remove_button", {
@@ -177,6 +178,9 @@ $(document).ready(function () {
             },
             call_functions: function () {
                 return this._filter_functions("call");
+            },
+            acc_functions: function() {
+                return this._filter_functions("acc");
             },
             adv_functions: function () {
                 return this._filter_functions("adv");
@@ -311,6 +315,16 @@ $(document).ready(function () {
             <div id="keybinds_calls">
                 <h3>Calls</h3>
                 <function_row v-for="func in call_functions"
+                    v-bind:func="func"
+                    v-bind:keys="rows[func]"
+                    @remove="(k)=>unbind(k)"
+                    @add="(f,k)=>bind(f,k)"
+                    @reset="(f)=>reset(f)"
+                    ></function_row>
+            </div>
+            <div id="keybinds_accessibility">
+                <h3>Accessibility</h3>
+                <function_row v-for="func in acc_functions"
                     v-bind:func="func"
                     v-bind:keys="rows[func]"
                     @remove="(k)=>unbind(k)"

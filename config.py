@@ -99,6 +99,7 @@ class Config(object):
             "catch-16": ["meta+shift+r"],
             "flip-left": ["a", "shift+a"],
             "flip-right": [";", "shift+;"],
+            "overlay": [],
         },
         "controllers": {
             "debounce": 600,

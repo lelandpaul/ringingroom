@@ -214,6 +214,7 @@ The **Keyboard** tab allows you to customize the keyboard hotkeys used to contro
 -   **Rounds**: Call "Rounds" (Defaults: `o`, `O`)
 -   **Change method**: Call "Change method" (Defaults: `c`, `C`)
 -   **Sorry**: Apologize (Defaults: `s`)
+- **Mouse Mode**: Enable a [mouse-only accessibility mode](#additional-features) (Defaults: none)
 -   **Ring bell 1–16**: (Advanced) Ring specific bell (Defaults: `1–9`, `0`, `-`, `=`, `q`, `w`, `e`, `r`)
 -   **Rotate to 1–16**: (Advanced) Rotate the circle so that a given bell is in the bottom-right (Defaults: `shift + 1–9`, `0`, `-`, `=`, `q`, `w`, `e`, `r`)
 -   **Catch hold of 1–16**: (Advanced) Assign yourself to the given bell. (Defaults: `ctrl + shift + 1-9`, `0`, `-`, `=`, `q`, `w`, `e`, `r` on Windows` , ``cmd + shift+ 1-9 `, `0`, `-`, `= ,q`, `e`, `r` on Mac.)
@@ -236,9 +237,14 @@ The controller buttons can be set to make calls or to silently flip the stroke o
 -   **Left bell**: Left button: `Stand`; right button: `Go`.
 -   **Right bell**: Left button: `Single`, right button: `Bob`.
 
+
 ## Additional features
 
 There are a few miscellaneous features that don't fit elsewhere.
+
+### Mouse Mode
+
+Mouse Mode is an accessibility feature that allows you to click anywhere on the screen to ring your bell, rather than needing to use a hotkey or click specifically on the rope. To use Mouse Mode, first set a keyboard hotkey for it under [User Settings](#user-settings). Once in a tower, press this hotkey to enable Mouse Mode. The tower controls will fade out slightly and message will appear at the bottom of the screen confirming that you've entered Mouse Mode. Clicking on the screen will ring the bell in the bottom-right of the circle (if you're not assigned to any bells) or your lowest-numbered assigned bell. Press the same hotkey again to disable Mouse Mode.
 
 ### Listener links
 
