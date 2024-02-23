@@ -289,7 +289,7 @@ def tower_settings(tower_id):
         tower.cowbell_enabled = form.cowbell_enabled.data
 
         def emit_socket(name, data):
-            socketio.emit(name, data, broadcast=True, room=tower.tower_id)
+            socketio.emit(name, data, to=tower.tower_id)
 
         # ===== DEAL WITH WHEATLEY POTENTIALLY BEING ENABLED OR DISABLED =====
         wheatley_enabled = form.wheatley_enabled.data
