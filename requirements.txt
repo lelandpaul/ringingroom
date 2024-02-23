@@ -8,6 +8,7 @@ cryptography==42.0.4
 cssmin==0.2.0
 dnspython==2.3.0
 dominate==2.8.0
+email-validator==2.0.0.post2
 eventlet==0.33.3
 Flask==2.3.2
 Flask-Assets==2.0
