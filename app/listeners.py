@@ -358,7 +358,7 @@ def on_wheatley_row_gen_change(json):
 def on_wheatley_is_ringing_change(json):
     emit(
         "s_wheatley_is_ringing",
-        json["is_ringing"],
+        {"is_ringing": json["is_ringing"]},
         broadcast=True,
         room=json["tower_id"],
     )
@@ -372,7 +372,7 @@ def on_wheatley_stop_touch(json):
 @socketio.on("c_reset_wheatley")
 def on_reset_wheatley(json):
     towers[json["tower_id"]].wheatley.reset()
-    emit("s_wheatley_is_ringing", False, broadcast=True, room=json["tower_id"])
+    emit("s_wheatley_is_ringing", {"is_ringing": False}, broadcast=True, room=json["tower_id"])
 
 
 @socketio.on("c_roll_call")

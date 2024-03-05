@@ -1242,7 +1242,7 @@ $(document).ready(function () {
             },
 
             update_is_ringing: function (new_value) {
-                this.is_ringing = new_value;
+                this.is_ringing = new_value.is_ringing;
             },
 
             update_number_of_bells: function () {
