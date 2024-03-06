@@ -1,40 +1,37 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block app_content %}
+<p>
+    We decided to create the Ringing Room in order to facilitate continued
+    engagement with ringing during the coronavirus crisis and are deeply honored
+    by the enthusiasm and support the community has shown us. {% if is_a_patron
+    %}
+</p>
+<p>
+    <b>It looks like you already support us on Patreon — thank you so much!</b>
 
-{% block app_content %}
-			<p>
-                We decided to create the Ringing Room in order to facilitate continued engagement with ringing
-                during the coronavirus crisis and are deeply honored by the enthusiasm and support the community
-                has shown us. 
+    {% else %} If you'd like to help us keep the site up and running into the
+    future, the best way to support us is on Patreon:
+</p>
 
-                {% if is_a_patron %}
-            </p>
-            <p>
+<div class="d-flex justify-content-center my-3">
+    <a href="https://patreon.com/ringingroom" class="btn btn-primary">
+        <i class="fab fa-patreon mr-2"></i>
+        Become a Patron!
+    </a>
+</div>
 
-            <b>It looks like you already support us on Patreon — thank you so much!</b>
+<p>
+    We also accept donations Venmo and Paypal:
+    <a href="https://paypal.me/ringingroom">paypal.me/ringingroom</a>.
+</p>
 
-                {% else %}
+{% endif %}
 
-                If you'd like to help us keep the site up and running into the future, the best way
-                to support us is on Patreon:
-            </p>
-
-            <div class="d-flex justify-content-center my-3">
-                <a href="https://patreon.com/ringingroom" class="btn btn-primary">
-                    <i class="fab fa-patreon mr-2"></i>
-                    Become a Patron!
-                </a>
-            </div>
-
-            <p>
-                We also accept donations Venmo and Paypal: <a href="https://paypal.me/ringingroom">paypal.me/ringingroom</a>.
-            </p>
-
-            {% endif %}
-
-            <p>
-            We strongly encourage all who ring on this platform to support 
-            <a href="https://bb.ringingworld.co.uk/donate.php"><i>The Ringing World</i></a>.
-            </p>
+<p>
+    We strongly encourage all who ring on this platform to support
+    <a href="https://bb.ringingworld.co.uk/donate.php"
+        ><i>The Ringing World</i></a
+    >.
+</p>
 
 {% if patrons %}
 
@@ -46,15 +43,17 @@
     <ul class="list-unstyled row mx-n4">
         {% for patron in patrons %}
         <li class="list-item col-4 py-2">
-            {% if patron[1]  %}
-            <img src="{{url_for('static', filename = 'images/' + patron[1] )}}"
-                 style="margin-top: -5px;" height="30" width="30" />
-            {% endif %}
-            {{ patron[0] }}</li>
+            {% if patron[1] %}
+            <img
+                src="{{url_for('static', filename = 'images/' + patron[1] )}}"
+                style="margin-top: -5px"
+                height="30"
+                width="30"
+            />
+            {% endif %} {{ patron[0] }}
+        </li>
         {% endfor %}
     </ul>
 </div>
-
-
 
 {% endblock %}

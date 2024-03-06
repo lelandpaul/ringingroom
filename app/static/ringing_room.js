@@ -418,7 +418,10 @@ $(document).ready(function () {
                 let audio_obj;
 
                 if (this.$root.$refs.controls.audio_type == "Tower") {
-                    if (window.tower_parameters.fully_muffled && window.tower_parameters.half_muffled) {
+                    if (
+                        window.tower_parameters.fully_muffled &&
+                        window.tower_parameters.half_muffled
+                    ) {
                         // Tolling — muffled except tenor backstrokes
                         if (this.number == this.number_of_bells && this.stroke) {
                             audio_type = this.$root.$refs.controls.audio_type;
@@ -427,10 +430,12 @@ $(document).ready(function () {
                             audio_type = "Muffled";
                             audio_obj = muffled;
                         }
-                    } else if ((window.tower_parameters.half_muffled && this.stroke) 
-                              || window.tower_parameters.fully_muffled) {
-                            audio_type = "Muffled";
-                            audio_obj = muffled;
+                    } else if (
+                        (window.tower_parameters.half_muffled && this.stroke) ||
+                        window.tower_parameters.fully_muffled
+                    ) {
+                        audio_type = "Muffled";
+                        audio_obj = muffled;
                     } else {
                         audio_type = this.$root.$refs.controls.audio_type;
                         audio_obj = this.audio;
@@ -972,6 +977,7 @@ $(document).ready(function () {
                 is_ringing: false,
 
                 // User-specifiable settings
+                call_composition: true,
                 sensitivity: 0.6,
                 use_up_down_in: true,
                 stop_at_rounds: true,
@@ -1017,9 +1023,10 @@ $(document).ready(function () {
                 autocomplete_options: [],
                 selected_option: 0,
 
-                complib_id: "",
+                complib_url: "",
                 current_complib_comp: undefined,
-                complib_error: "",
+                complib_message: "",
+                complib_message_is_error: false,
             };
         },
 
@@ -1082,7 +1089,7 @@ $(document).ready(function () {
                 this.update_method_suggestions(next_value);
             },
 
-            complib_id: function (next_value) {
+            complib_url: function (next_value) {
                 this.update_comp_suggestions(next_value);
             },
 
@@ -1121,45 +1128,42 @@ $(document).ready(function () {
             on_change_sensitivity: function () {
                 socketio.emit("c_wheatley_setting", {
                     tower_id: cur_tower_id,
-                    settings: {
-                        sensitivity: this.sensitivity,
-                    },
+                    settings: { sensitivity: this.sensitivity },
+                });
+            },
+
+            on_change_call_composition: function () {
+                socketio.emit("c_wheatley_setting", {
+                    tower_id: cur_tower_id,
+                    settings: { call_composition: this.call_composition },
                 });
             },
 
             on_change_use_up_down_in: function () {
                 socketio.emit("c_wheatley_setting", {
                     tower_id: cur_tower_id,
-                    settings: {
-                        use_up_down_in: this.use_up_down_in,
-                    },
+                    settings: { use_up_down_in: this.use_up_down_in },
                 });
             },
 
             on_change_stop_at_rounds: function () {
                 socketio.emit("c_wheatley_setting", {
                     tower_id: cur_tower_id,
-                    settings: {
-                        stop_at_rounds: this.stop_at_rounds,
-                    },
+                    settings: { stop_at_rounds: this.stop_at_rounds },
                 });
             },
 
             on_change_peal_speed: function () {
                 socketio.emit("c_wheatley_setting", {
                     tower_id: cur_tower_id,
-                    settings: {
-                        peal_speed: this.peal_speed,
-                    },
+                    settings: { peal_speed: this.peal_speed },
                 });
             },
 
             on_change_fixed_striking_interval: function () {
                 socketio.emit("c_wheatley_setting", {
                     tower_id: cur_tower_id,
-                    settings: {
-                        fixed_striking_interval: this.fixed_striking_interval,
-                    },
+                    settings: { fixed_striking_interval: this.fixed_striking_interval },
                 });
             },
 
@@ -1210,6 +1214,9 @@ $(document).ready(function () {
                         case "sensitivity":
                             this.sensitivity = value;
                             break;
+                        case "call_composition":
+                            this.call_composition = value;
+                            break;
                         case "use_up_down_in":
                             this.use_up_down_in = value;
                             break;
@@ -1235,12 +1242,12 @@ $(document).ready(function () {
             },
 
             update_is_ringing: function (new_value) {
-                this.is_ringing = new_value;
+                this.is_ringing = new_value.is_ringing;
             },
 
             update_number_of_bells: function () {
                 this.update_method_suggestions(this.method_name);
-                this.update_comp_suggestions(this.complib_id);
+                this.update_comp_suggestions(this.complib_url);
             },
 
             update_peal_speed: function () {
@@ -1343,37 +1350,83 @@ $(document).ready(function () {
                 this.method_name = "";
             },
 
-            update_comp_suggestions: function (partial_comp_name) {
-                if (partial_comp_name == "") {
-                    this.current_complib_comp = undefined;
-                    this.complib_error = "Start typing a comp ID...";
+            update_comp_suggestions: function (url_box_contents) {
+                // If the user changed the `Composition` box, then we always invalidate the current
+                // Wheatley comp until CompLib replies to our HTTP request.  This should almost
+                // certainly be so fast that the user doesn't see it.
+                this.current_complib_comp = undefined;
+                // If the box is empty, then clear the error box
+                if (url_box_contents == "") {
+                    this.complib_message = "";
                     return;
                 }
-                if (!/^\d+$/.test(partial_comp_name)) {
-                    this.current_complib_comp = undefined;
-                    this.complib_error = "Please enter a valid number";
+                // Try to determine whether the input is a URL or an ID.  To be consistent with CLI
+                // Wheatley, we say that the input is an ID if it has the form '<number>' or
+                // '<number>?<anything>'.  Otherwise, it is considered a URL.
+                url_box_contents = url_box_contents.trim();
+                if (url_box_contents.match(/^[0-9]+(?:\?.*)?$/)) {
+                    // We think this input is an ID, so turn it into a URL
+                    var complib_url = "https://complib.org/composition/" + url_box_contents;
+                } else {
+                    var complib_url = url_box_contents; // URL box contents is already a URL
+                }
+                // Normalise the URL by removing `https://` or `http://` off the front (sometimes
+                // it's missed off when you copy URLs).  We'll add `https://` again before making
+                // HTTP requests
+                const complib_url_without_http = complib_url
+                    .replace("https://", "")
+                    .replace("http://", "")
+                    .toLowerCase();
+                const url_segments = complib_url_without_http.split("/");
+                // Do some basic validation of the URL
+                if (!complib_url_without_http.startsWith("complib.org")) {
+                    this.complib_message = "URL doesn't point to 'complib.org'.";
+                    this.complib_message_is_error = true;
                     return;
                 }
-                // Keep a reference to the correct 'this'
-                let _this = this;
+                if (url_segments.length !== 3 || url_segments[1] !== "composition") {
+                    this.complib_message = "URL doesn't point to a composition.";
+                    this.complib_message_is_error = true;
+                    return;
+                }
+                if (url_segments.length === 3 && url_segments[2] === "") {
+                    this.complib_message = "Composition ID is empty";
+                    this.complib_message_is_error = true;
+                    return;
+                }
 
-                let api_url = "https://api.complib.org/composition/" + partial_comp_name;
-                let standard_url = "https://complib.org/composition/" + partial_comp_name;
+                /* Send an HTTP request to `complib.org` to figure out what our composition is
+                 * pointing to */
+
+                this.complib_message = "Waiting for CompLib...";
+                this.complib_message_is_error = false;
+                let api_url = "https://api." + complib_url_without_http;
+                let standard_url = "https://" + complib_url_without_http;
+
+                let _this = this; // Keep a reference to the correct 'this'
+
                 $.getJSON(api_url)
-                    .fail(function (_evt, _jqxhr, state) {
+                    .fail(function (evt) {
                         _this.current_complib_comp = undefined;
-                        switch (state) {
-                            case "Bad Request":
-                                _this.complib_error = "Bad request.";
-                                break;
-                            case "Not Found":
-                                _this.complib_error = "#" + partial_comp_name + " doesn't exist.";
-                                break;
-                            case "Unauthorized":
-                                _this.complib_error = "#" + partial_comp_name + " is private.";
-                                break;
-                            default:
-                                console.warn("Unknown error: " + state);
+                        // Extract the ID from the URL for use in the error message (the ID spans
+                        // from the last '/' to the next '?').
+                        let last_url_segment = standard_url.substring(standard_url.lastIndexOf("/") + 1);
+                        let complib_id = last_url_segment.split("?")[0];
+
+                        // Present an appropriate error message
+                        _this.complib_message_is_error = true;
+                        if (evt.status == 404) {
+                            // Our old favourite, '404 Not found'
+                            _this.complib_message = "Composition #" + complib_id + " doesn't exist.";
+                        } else if (evt.status == 401) {
+                            // 'Unauthorised'
+                            _this.complib_message = "Composition #" + complib_id + " is private.";
+                        } else if (500 <= evt.status && evt.status < 600) {
+                            // Server error
+                            _this.complib_message = "CompLib server error.";
+                        } else {
+                            // Unknown status
+                            _this.complib_message = `Unknown request status: ${evt.status}`;
                         }
                     })
                     .done(function (data) {
@@ -1385,23 +1438,25 @@ $(document).ready(function () {
                                 url: standard_url,
                                 title: data.derivedTitle,
                             };
+                            _this.complib_message_is_error = false;
                         } else {
                             _this.current_complib_comp = undefined;
                             let required_tower_size =
                                 data.stage % 2 == 0 ? data.stage : data.stage + 1;
-                            _this.complib_error =
+                            _this.complib_message =
                                 "Comp needs " +
                                 required_tower_size +
                                 " bells, not " +
                                 bell_circle.number_of_bells;
+                            _this.complib_message_is_error = true;
                         }
                     });
             },
 
             send_next_comp: function () {
-                if (!this.current_complib_comp) {
-                    return;
-                }
+                if (!this.current_complib_comp) return; // Bail if the comp isn't defined
+
+                this.complib_url = ""; // Clear the composition box
 
                 console.log("Setting Wheatley composition to " + this.current_complib_comp);
                 socketio.emit("c_wheatley_row_gen", {
@@ -1458,9 +1513,23 @@ $(document).ready(function () {
             <br/>
         </div>
 
+        <!-- Up Down In -->
+        <div v-show="row_gen.type == 'composition'">
+            <input type="checkbox"
+                   v-model="call_composition"
+                   v-on:change="on_change_call_composition"
+                   name="call_composition"
+                   />
+            <label for="call_composition" title="If checked, Wheatley will automatically add calls when ringing compositions.">
+                Wheatley makes calls
+            </label>
+
+            <hr/>
+        </div>
+
         <div id="wheatley_row_gen_box">
             <!-- Wheatley row gen type toggle -->
-            <div class="d-none btn-group btn-block btn-group-toggle">
+            <div class="btn-group btn-block btn-group-toggle">
                 <label class="btn btn-outline-primary"
                        style="border-bottom-left-radius: 0;"
                        :class="{active: row_gen_panel == 'method',
@@ -1487,8 +1556,7 @@ $(document).ready(function () {
                 </label>
             </div>
 
-            <div id="wheatley_row_gen_box_inner"
-                 style="margin-bottom: 1.2rem;">
+            <div id="wheatley_row_gen_box_inner">
                 <!-- Wheatley method tab -->
                 <div v-show="row_gen_panel == 'method'">
                     <div>
@@ -1496,6 +1564,7 @@ $(document).ready(function () {
                             <input type="text"
                                    id="wheatley_method_name_box"
                                    class="form-control"
+                                   style="border-top-left-radius: 0; border-top-right-radius: 0;"
                                    v-model="method_name"
                                    placeholder="Start typing method name..."
                                    :disabled="row_gen_panel_disabled"
@@ -1520,13 +1589,15 @@ $(document).ready(function () {
                             <input type="text"
                                    id="wheatley_comp_id_box"
                                    class="form-control"
-                                   v-model="complib_id"
+                                   style="border-top-left-radius: 0;"
+                                   v-model="complib_url"
                                    :disabled="row_gen_panel_disabled"
-                                   placeholder="Public CompLib ID"
+                                   placeholder="CompLib URL or ID..."
                                    autocomplete="off"
                                    />
                             <div class="input-group-append">
                                 <input class="btn btn-outline-primary"
+                                       style="border-top-right-radius: 0;"
                                        type="submit"
                                        :class="{disabled: row_gen_panel_disabled}"
                                        :disabled="row_gen_panel_disabled || !current_complib_comp"
@@ -1536,8 +1607,9 @@ $(document).ready(function () {
                         </div>
                         <div>
                             <p style="margin-bottom: 0;
-                                      text-align: center;">
-                                [[ current_complib_comp ? current_complib_comp.title : complib_error ]]
+                                      text-align: center;"
+                               :class="{wheatley_error: complib_message_is_error}">
+                                [[ current_complib_comp ? current_complib_comp.title : complib_message ]]
                             </p>
                         </div>
                     </form>
@@ -1569,15 +1641,17 @@ $(document).ready(function () {
         <p style="margin-bottom: 0.6rem;">Peal Speed:
             <input type="number"
                    id="wheatley_peal_speed_hours"
+                   class="wheatley-speed-wheel"
                    v-model="peal_speed_hours"
                    v-on:change="on_change_peal_speed"
-                   style="border: none; width: 1.5em"
+                   style="width: 1.5em;"
             />hr
             <input type="number"
                    id="wheatley_peal_speed_mins"
+                   class="wheatley-speed-wheel"
                    v-model="peal_speed_mins"
                    v-on:change="on_change_peal_speed"
-                   style="border: none; width: 2.1em; text-align: right;"
+                   style="width: 2.1em;"
                    step="5"
             />min
         </p>
@@ -1600,7 +1674,6 @@ $(document).ready(function () {
         <input type="checkbox"
                v-model="use_up_down_in"
                v-on:change="on_change_use_up_down_in"
-               id="wheatley_up_down_in"
                name="up_down_in"
                :disabled="settings_panel_disabled"
                />
@@ -1949,7 +2022,10 @@ $(document).ready(function () {
                     setTimeout(() => (this.kicking = false), 2000);
                     return;
                 }
-                socketio.emit("c_kick_user", { tower_id: cur_tower_id, user_id: this.user_id });
+                socketio.emit("c_kick_user", {
+                    tower_id: cur_tower_id,
+                    user_id: this.user_id,
+                });
             },
         },
 
@@ -2618,6 +2694,7 @@ $(document).ready(function () {
             host_mode: window.tower_parameters.host_mode,
             bookmarked: window.tower_parameters.bookmarked,
             anticlockwise: window.tower_parameters.anticlockwise,
+            accessibility_overlay: false,
         },
 
         watch: {
@@ -2923,11 +3000,26 @@ $(document).ready(function () {
             leave_tower: function () {
                 leave_room();
             },
+
+            toggle_accessibility_overlay: function () {
+                this.accessibility_overlay = !this.accessibility_overlay;
+            },
         },
 
         template: `
 <div id="bell_circle_wrapper">
-    <div class="row flex-lg-nowrap" id="sidebar_col_row">
+    <div v-if="accessibility_overlay" 
+         id="accessibility_overlay"
+         class="text-right clickable_div"
+         @click="pull_rope_by_hand('right')"
+         >
+        <p id="overlay_warning">
+            Mouse Mode enabled.<br/>
+            Click anywhere to ring.
+            Press <b>[[ user_settings.accessibility_overlay_hotkey ]]</b> to deactivate.
+        </p>
+    </div>
+    <div class="row flex-lg-nowrap" id="sidebar_col_row" :class="{disabled: accessibility_overlay}">
         <div class="col-12 col-lg-4 sidebar_col">
             <!-- sidebar col -->
             <div class="tower_header">

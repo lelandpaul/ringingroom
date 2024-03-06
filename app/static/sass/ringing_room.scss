@@ -1,12 +1,10 @@
 @import "global_design";
 @import "circle";
 
-
 body {
-  overflow-x: hidden;
-  height: 125vh;
+    overflow-x: hidden;
+    height: 125vh;
 }
-
 
 /* Tower Controls */
 
@@ -25,43 +23,44 @@ body {
 
 /* Volume control style */
 
-input[type=range] {
-  -webkit-appearance: none;
+input[type="range"] {
+    -webkit-appearance: none;
 }
 /* Special styling for WebKit/Blink */
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  background-color: $primary;
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background-color: $primary;
 }
 
 /* All the same stuff for Firefox */
-input[type=range]::-moz-range-thumb {
-  background-color: $primary;
+input[type="range"]::-moz-range-thumb {
+    background-color: $primary;
 }
 
 /* All the same stuff for IE */
-input[type=range]::-ms-thumb {
-  background-color: $primary;
+input[type="range"]::-ms-thumb {
+    background-color: $primary;
 }
 
 // Force chrome to render the up-down arrows for Wheatley's peal speed
-input[type=number]::-webkit-inner-spin-button {
-    opacity: 1
+input[type="number"]::-webkit-inner-spin-button {
+    opacity: 1;
 }
 
 // tower name positioning
 #tower_name {
-    font-family: 'Simonetta', cursive;
+    font-family: "Simonetta", cursive;
     white-space: nowrap;
     max-width: 25rem;
 }
-
 
 .tower_header .row:last-child {
     padding-bottom: 0.5rem;
 }
 
-.toggle_controls { visibility: visible; }
+.toggle_controls {
+    visibility: visible;
+}
 
 // positioning for tower controls
 .tower_controls {
@@ -88,14 +87,19 @@ input[type=number]::-webkit-inner-spin-button {
     padding-right: 1.5rem;
 }
 
-.row .row { /* don't add extra padding on embedded grids */
+.row .row {
+    /* don't add extra padding on embedded grids */
     padding-left: 0;
     padding-right: 0;
 }
 
-.row h1 { margin: 0; }
+.row h1 {
+    margin: 0;
+}
 
-.row h3 { margin: 0; }
+.row h3 {
+    margin: 0;
+}
 
 hr {
     margin-top: 0.5rem;
@@ -113,27 +117,26 @@ hr {
 }
 
 /* Special styling for WebKit/Blink */
-input[type=range]::slider-thumb {
-  color: $primary;
-  background-color: $primary;
+input[type="range"]::slider-thumb {
+    color: $primary;
+    background-color: $primary;
 }
 
 .user_list {
-  display: table;
-  border-width: 3px;
-  border-left-style: solid;
-  padding-left: 0px;
-  margin-top: 0px;
-  margin-left: 1rem;
-  margin-top: 0.5rem;
-
+    display: table;
+    border-width: 3px;
+    border-left-style: solid;
+    padding-left: 0px;
+    margin-top: 0px;
+    margin-left: 1rem;
+    margin-top: 0.5rem;
 }
 
 .user_list li {
-  display: table;
-  margin-left: 1rem;
-  list-style-type: none;
-  font-size: larger;
+    display: table;
+    margin-left: 1rem;
+    list-style-type: none;
+    font-size: larger;
 }
 
 #user_assigned_bells {
@@ -172,10 +175,8 @@ input[type=range]::slider-thumb {
 }
 
 .toggle_assign {
-  cursor: pointer;
+    cursor: pointer;
 }
-
-
 
 /* Help */
 
@@ -185,27 +186,25 @@ input[type=range]::slider-thumb {
     margin-right: 1.5rem;
 }
 
-
 /* Bells */
 
 .bell_circle_col {
     z-index: 2;
 }
 
-.bell_circle_col.background{
-    z-index:-1;
+.bell_circle_col.background {
+    z-index: -1;
 }
 
 .bell.no_ring img {
     cursor: unset;
 }
 
-
 .unclickable_div {
     pointer-events: none;
 }
 
-.clickable_div{
+.clickable_div {
     pointer-events: auto;
 }
 
@@ -227,7 +226,8 @@ input[type=range]::slider-thumb {
 .btn.unassign:hover {
 }
 
-.btn_number, .btn_unassign {
+.btn_number,
+.btn_unassign {
     z-index: 100;
     width: 1.75rem;
     max-width: 1.75rem;
@@ -239,7 +239,9 @@ input[type=range]::slider-thumb {
     border-color: $secondary;
 }
 
-.btn_number.treble:hover, .btn_number.treble:active, .btn_number.treble:focus,
+.btn_number.treble:hover,
+.btn_number.treble:active,
+.btn_number.treble:focus,
 .btn-primary.treble:not(:disabled):not(.disabled):active {
     color: $body-bg;
     background-color: $primary;
@@ -247,14 +249,13 @@ input[type=range]::slider-thumb {
     box-shadow: none;
 }
 
-
-.btn-outline-secondary.btn_number:not(:disabled):not(.disabled).active{
+.btn-outline-secondary.btn_number:not(:disabled):not(.disabled).active {
     color: $secondary;
     background-color: inherit;
     border-color: $secondary;
 }
 
-.btn-outline-primary.btn_number:not(:disabled):not(.disabled).active{
+.btn-outline-primary.btn_number:not(:disabled):not(.disabled).active {
     color: $primary;
     background-color: inherit;
     border-color: $primary;
@@ -262,20 +263,20 @@ input[type=range]::slider-thumb {
 
 .btn-primary.btn_number:not(:disabled):not(.disabled).active:focus,
 .btn-outline-secondary.btn_number:not(:disabled):not(.disabled).active:focus,
-.btn-outline-primary.btn_number:not(:disabled):not(.disabled).active:focus{
+.btn-outline-primary.btn_number:not(:disabled):not(.disabled).active:focus {
     box-shadow: none;
 }
 
 .btn-primary.btn_assigned_user.disabled,
 .btn-outline-secondary.btn_assigned_user.disabled,
-.btn-outline-primary.btn_assigned_user.disabled{
+.btn-outline-primary.btn_assigned_user.disabled {
     opacity: 1;
     cursor: inherit;
 }
 
 .btn-primary.btn_assigned_user.disabled:focus,
 .btn-outline-secondary.btn_assigned_user.disabled:focus,
-.btn-outline-primary.btn_assigned_user.disabled:focus{
+.btn-outline-primary.btn_assigned_user.disabled:focus {
     box-shadow: none;
 }
 
@@ -307,8 +308,7 @@ input[type=range]::slider-thumb {
     cursor: pointer;
 }
 
-
-.bell_img.assignment_mode{
+.bell_img.assignment_mode {
     opacity: 0.4;
 }
 
@@ -316,13 +316,12 @@ input[type=range]::slider-thumb {
     cursor: pointer;
 }
 
-.user_cartouche{
+.user_cartouche {
     width: 6rem;
     min-width: 6rem;
     height: 2rem;
     display: flex;
 }
-
 
 .bell {
     padding: 0;
@@ -378,21 +377,19 @@ input[type=range]::slider-thumb {
         &.right {
             flex-direction: row-reverse;
         }
-        &.top{
+        &.top {
             align-items: flex-start;
         }
     }
 
-    &.left .user_cartouche{
+    &.left .user_cartouche {
         direction: rtl;
         flex-direction: row-reverse;
         justify-content: flex-end;
     }
 }
 
-
 /* Chatbox */
-
 
 .msg_username {
     font-weight: bold;
@@ -418,12 +415,12 @@ input[type=range]::slider-thumb {
 }
 
 #wheatley_row_gen_box_inner {
-    // Uncomment to re-add rowgen selector
-    // padding: 5px;
-    // border: 1px solid;
-    // border-top: none;
+    padding: 5px;
+    border: 1px solid $primary;
+    border-top: none;
     border-bottom-right-radius: 0.25rem;
     border-bottom-left-radius: 0.25rem;
+    margin-bottom: 1.2rem;
 }
 
 #wheatley_method_suggestion_box {
@@ -433,7 +430,7 @@ input[type=range]::slider-thumb {
     width: 100%;
     background-color: #ddd;
     border-radius: 0.25rem;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
 
     a {
         display: block;
@@ -448,19 +445,24 @@ input[type=range]::slider-thumb {
     }
 }
 
+.wheatley_error {
+    color: $primary;
+
+}
+
 #user_display_header.collapsed::after,
 #wheatley_header.collapsed::after,
 #controllers_header.collapsed::after,
-#chat_header.collapsed::after{
-    content: '▸';
+#chat_header.collapsed::after {
+    content: "▸";
     font-size: 1.5rem;
 }
 
 #user_display_header::after,
 #wheatley_header::after,
 #controllers_header::after,
-#chat_header::after{
-    content: '▾';
+#chat_header::after {
+    content: "▾";
     font-size: 1.5rem;
 }
 
@@ -473,12 +475,36 @@ input[type=range]::slider-thumb {
     cursor: auto;
 }
 
+.disabled .sidebar_col {
+    opacity: 0.5;
+}
+
+#accessibility_overlay {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    overflow-x: hidden; /* Disable horizontal scroll */
+}
+
+#overlay_warning {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    padding-right: 1.5rem;
+}
+
 /* Scary mixin land */
 
 /* On larger screens, permanently open the menu */
-@include media-breakpoint-up(lg){
-    html { min-height:100%; }
-    .collapse.tower_controls, .collapse.tower_controls:not(.show) {
+@include media-breakpoint-up(lg) {
+    html {
+        min-height: 100%;
+    }
+    .collapse.tower_controls,
+    .collapse.tower_controls:not(.show) {
         display: flex;
         flex-grow: 1;
     }
@@ -491,7 +517,7 @@ input[type=range]::slider-thumb {
         height: 100%;
     }
 
-    .tower_controls{
+    .tower_controls {
         height: 30rem;
     }
     .help {
@@ -502,5 +528,3 @@ input[type=range]::slider-thumb {
         max-width: 20rem;
     }
 }
-
-

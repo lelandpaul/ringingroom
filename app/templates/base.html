@@ -36,7 +36,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script src="https://kit.fontawesome.com/b8eb96aee8.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue@2.6.11/dist/vue.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
+    <script src="https://www.unpkg.com/socket.io-client@4.7.1/dist/socket.io.min.js"></script>
     {% assets "css_static" %}
     <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}"></script>
     {% endassets %}
@@ -99,8 +99,6 @@
                                         href="{{ url_for('donate') }}">Donate</a></li>
                 <li class="nav-item"><a class="nav-link"
                                         href="https://ringingroom.redbubble.com">Store</a></li>
-                <li class="nav-item"><a class="nav-link"
-                                        href="{{ url_for('carols') }}">Carols</a></li>
                 <!-- <li class="nav-item"><a class="nav-link"
                     href="{{ url_for('blog') }}">Blog</a></li> -->
             </ul>

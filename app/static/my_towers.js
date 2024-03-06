@@ -3,7 +3,7 @@
 ///////////
 
 // Don't log unless needed
-var logger = function() {
+var logger = (function () {
     var oldConsoleLog = null;
     var pub = {};
 
@@ -12,16 +12,16 @@ var logger = function() {
             return;
         }
 
-        window['console']['log'] = oldConsoleLog;
+        window["console"]["log"] = oldConsoleLog;
     };
 
     pub.disableLogger = function disableLogger() {
         oldConsoleLog = console.log;
-        window['console']['log'] = function() {};
+        window["console"]["log"] = function () {};
     };
 
     return pub;
-}();
+})();
 // logger.disableLogger()
 
 // Set up socketio instance
@@ -32,25 +32,25 @@ var socketio = io();
 /* VUE */
 /////////
 
-Vue.options.delimiters = ['[[', ']]']; // make sure Vue doesn't interfere with jinja
+Vue.options.delimiters = ["[[", "]]"]; // make sure Vue doesn't interfere with jinja
 
 // all vue objects needs to be defined within this block, so that the jinja templates are rendered first
-$(document).ready(function() {
-
+$(document).ready(function () {
     Vue.component("tower_row", {
-        props: ['tower', 'tab'],
+        props: ["tower", "tab"],
 
         methods: {
-            toggle_bookmark: function() {
-                socketio.emit('c_toggle_bookmark', {'tower_id': this.tower.tower_id});
+            toggle_bookmark: function () {
+                socketio.emit("c_toggle_bookmark", {
+                    tower_id: this.tower.tower_id,
+                });
                 this.tower.bookmark = !this.tower.bookmark;
-                $('[data-toggle="tooltip"]').tooltip('hide');
+                $('[data-toggle="tooltip"]').tooltip("hide");
             },
 
-            copy_id: function() {
-
+            copy_id: function () {
                 setTimeout(() => {
-                    $('.id_clipboard_tooltip').tooltip('hide')
+                    $(".id_clipboard_tooltip").tooltip("hide");
                 }, 1000);
                 var dummy = document.createElement("textarea");
                 document.body.appendChild(dummy);
@@ -60,10 +60,10 @@ $(document).ready(function() {
                 document.body.removeChild(dummy);
             },
 
-            remove_recent: function() {
-                socketio.emit('c_remove_recent', this.tower.tower_id);
+            remove_recent: function () {
+                socketio.emit("c_remove_recent", this.tower.tower_id);
                 this.tower.recent = false;
-            }
+            },
         },
         template: `
     <tr>
@@ -115,52 +115,55 @@ $(document).ready(function() {
             </button>
         </td>
     </tr>
-    `
+    `,
     });
-
-
-
-
 
     my_towers = new Vue({
         el: "#my_towers",
 
         data: {
-
             towers: window.tower_rels,
-
         },
 
         computed: {
-
-            no_recent: function() {
-                return this.towers.reduce((acc, cur) => cur.recent ? ++acc : acc, 0);
+            no_recent: function () {
+                return this.towers.reduce(
+                    (acc, cur) => (cur.recent ? ++acc : acc),
+                    0
+                );
             },
 
-            no_created: function() {
-                return this.towers.reduce((acc, cur) => cur.creator ? ++acc : acc, 0);
+            no_created: function () {
+                return this.towers.reduce(
+                    (acc, cur) => (cur.creator ? ++acc : acc),
+                    0
+                );
             },
 
-            no_bookmark: function() {
-                return this.towers.reduce((acc, cur) => cur.bookmark ? ++acc : acc, 0);
+            no_bookmark: function () {
+                return this.towers.reduce(
+                    (acc, cur) => (cur.bookmark ? ++acc : acc),
+                    0
+                );
             },
 
-            no_host: function() {
-                return this.towers.reduce((acc, cur) => cur.host ? ++acc : acc, 0);
-            }
-
+            no_host: function () {
+                return this.towers.reduce(
+                    (acc, cur) => (cur.host ? ++acc : acc),
+                    0
+                );
+            },
         },
 
-        mounted: function() {
-            this.$nextTick(function() {
+        mounted: function () {
+            this.$nextTick(function () {
                 // Javascript to enable link to tab
                 var url = document.location.toString();
-                if (url.match('#')) {
-                    $('#' + url.split('#')[1] + '_tab').tab('show');
+                if (url.match("#")) {
+                    $("#" + url.split("#")[1] + "_tab").tab("show");
                 }
-                window.scrollTo(0, 0)
+                window.scrollTo(0, 0);
                 $('[data-toggle="tooltip"]').tooltip();
-
             });
         },
 
@@ -324,8 +327,6 @@ $(document).ready(function() {
 
 </div>
 </div>
-`
+`,
     });
-
-
 }); // end document.ready

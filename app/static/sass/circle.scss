@@ -5,130 +5,154 @@
 @import "global_design";
 
 @mixin on-circle($item-count, $circle-size) {
-  width:  $circle-size;
-  height: $circle-size;
-  border-radius: 50%;
+    width: $circle-size;
+    height: $circle-size;
+    border-radius: 50%;
 
-  > .bell {
-    position: absolute;
-    z-index: -1;
-    top:  50%; 
-    left: 50%;
-  
-    $angle: (360 / $item-count);
-	$rot: 0; // initialize for scope
+    > .bell {
+        position: absolute;
+        z-index: -1;
+        top: 50%;
+        left: 50%;
 
-    @if $item-count == 4 { $rot: 1*$angle/2; }
-    @if $item-count == 5 { $rot: 3*$angle/4; }
-	@if $item-count == 6 { $rot: 1*$angle; }
-	@if $item-count == 8 { $rot: 3*$angle/2; }
-	@if $item-count == 10 { $rot: 2*$angle; }
-	@if $item-count == 12 { $rot: 5*$angle/2; }
-    @if $item-count == 14 { $rot: 3*$angle; }
-    @if $item-count == 16 { $rot: 7*$angle/2; }
+        $angle: (360 / $item-count);
+        $rot: 0; // initialize for scope
 
-
-	@for $i from 1 through $item-count {
-      &:nth-of-type(#{$i}) {
-        &.left {
-            transform: translate(-50%,-60%)
-                       rotate($rot * 1deg) 
-                       translate($circle-size / 2) 
-                       rotate($rot * -1deg)
-                       translate(-50%,15%);
-            &.top {
-                transform: translate(-50%,-50%)
-                           rotate($rot * 1deg) 
-                           translate($circle-size / 2) 
-                           rotate($rot * -1deg)
-                           translate(-50%,-15%);
-            }
+        @if $item-count == 4 {
+            $rot: 1 * $angle/2;
         }
-        transform: 
-          translate(-50%, -60%)
-          rotate($rot * 1deg) 
-          translate($circle-size / 2) 
-          rotate($rot * -1deg)
-          translate(50%,15%);
-            &.top {
-                transform: translate(-50%,-50%)
-                           rotate($rot * 1deg) 
-                           translate($circle-size / 2) 
-                           rotate($rot * -1deg)
-                           translate(50%,-15%);
+        @if $item-count == 5 {
+            $rot: 3 * $angle/4;
+        }
+        @if $item-count == 6 {
+            $rot: 1 * $angle;
+        }
+        @if $item-count == 8 {
+            $rot: 3 * $angle/2;
+        }
+        @if $item-count == 10 {
+            $rot: 2 * $angle;
+        }
+        @if $item-count == 12 {
+            $rot: 5 * $angle/2;
+        }
+        @if $item-count == 14 {
+            $rot: 3 * $angle;
+        }
+        @if $item-count == 16 {
+            $rot: 7 * $angle/2;
+        }
+
+        @for $i from 1 through $item-count {
+            &:nth-of-type(#{$i}) {
+                &.left {
+                    transform: translate(-50%, -60%)
+                        rotate($rot * 1deg)
+                        translate($circle-size / 2)
+                        rotate($rot * -1deg)
+                        translate(-50%, 15%);
+                    &.top {
+                        transform: translate(-50%, -50%)
+                            rotate($rot * 1deg)
+                            translate($circle-size / 2)
+                            rotate($rot * -1deg)
+                            translate(-50%, -15%);
+                    }
+                }
+                transform: translate(-50%, -60%)
+                    rotate($rot * 1deg)
+                    translate($circle-size / 2)
+                    rotate($rot * -1deg)
+                    translate(50%, 15%);
+                &.top {
+                    transform: translate(-50%, -50%)
+                        rotate($rot * 1deg)
+                        translate($circle-size / 2)
+                        rotate($rot * -1deg)
+                        translate(50%, -15%);
+                }
             }
 
-      }
-
-      $rot: $rot + $angle;
-    }
+            $rot: $rot + $angle;
+        }
     }
 }
 
 @mixin on-circle-anticlockwise($item-count, $circle-size) {
-  width:  $circle-size;
-  height: $circle-size;
-  border-radius: 50%;
+    width: $circle-size;
+    height: $circle-size;
+    border-radius: 50%;
 
-  > .bell {
-    position: absolute;
-    z-index: -1;
-    top:  50%; 
-    left: 50%;
-  
-    $angle: (360 / $item-count);
-	$rot: 360; // initialize for scope
+    > .bell {
+        position: absolute;
+        z-index: -1;
+        top: 50%;
+        left: 50%;
 
-    @if $item-count == 4 { $rot: 1*$angle/2; }
-    @if $item-count == 5 { $rot: 3*$angle/4; }
-	@if $item-count == 6 { $rot: 1*$angle; }
-	@if $item-count == 8 { $rot: 3*$angle/2; }
-	@if $item-count == 10 { $rot: 2*$angle; }
-	@if $item-count == 12 { $rot: 5*$angle/2; }
-    @if $item-count == 14 { $rot: 3*$angle; }
-    @if $item-count == 16 { $rot: 7*$angle/2; }
+        $angle: (360 / $item-count);
+        $rot: 360; // initialize for scope
 
-
-	@for $i from 1 through $item-count {
-      &:nth-of-type(#{$i}) {
-        &.left {
-            transform: translate(-50%,-60%)
-                       rotate($rot * 1deg) 
-                       translate($circle-size / 2) 
-                       rotate($rot * -1deg)
-                       translate(-50%,15%);
-            &.top {
-                transform: translate(-50%,-50%)
-                           rotate($rot * 1deg) 
-                           translate($circle-size / 2) 
-                           rotate($rot * -1deg)
-                           translate(-50%,-15%);
-            }
+        @if $item-count == 4 {
+            $rot: 1 * $angle/2;
         }
-        transform: 
-          translate(-50%, -60%)
-          rotate($rot * 1deg) 
-          translate($circle-size / 2) 
-          rotate($rot * -1deg)
-          translate(50%,15%);
-            &.top {
-                transform: translate(-50%,-50%)
-                           rotate($rot * 1deg) 
-                           translate($circle-size / 2) 
-                           rotate($rot * -1deg)
-                           translate(50%,-15%);
+        @if $item-count == 5 {
+            $rot: 3 * $angle/4;
+        }
+        @if $item-count == 6 {
+            $rot: 1 * $angle;
+        }
+        @if $item-count == 8 {
+            $rot: 3 * $angle/2;
+        }
+        @if $item-count == 10 {
+            $rot: 2 * $angle;
+        }
+        @if $item-count == 12 {
+            $rot: 5 * $angle/2;
+        }
+        @if $item-count == 14 {
+            $rot: 3 * $angle;
+        }
+        @if $item-count == 16 {
+            $rot: 7 * $angle/2;
+        }
+
+        @for $i from 1 through $item-count {
+            &:nth-of-type(#{$i}) {
+                &.left {
+                    transform: translate(-50%, -60%)
+                        rotate($rot * 1deg)
+                        translate($circle-size / 2)
+                        rotate($rot * -1deg)
+                        translate(-50%, 15%);
+                    &.top {
+                        transform: translate(-50%, -50%)
+                            rotate($rot * 1deg)
+                            translate($circle-size / 2)
+                            rotate($rot * -1deg)
+                            translate(-50%, -15%);
+                    }
+                }
+                transform: translate(-50%, -60%)
+                    rotate($rot * 1deg)
+                    translate($circle-size / 2)
+                    rotate($rot * -1deg)
+                    translate(50%, 15%);
+                &.top {
+                    transform: translate(-50%, -50%)
+                        rotate($rot * 1deg)
+                        translate($circle-size / 2)
+                        rotate($rot * -1deg)
+                        translate(50%, -15%);
+                }
             }
 
-      }
-
-      $rot: $rot - $angle;
-    }
+            $rot: $rot - $angle;
+        }
     }
 }
 
-
 @mixin bell_circle($media-circ-size, $media-lr-offset, $media-tb-offset) {
-
     /* Call display */
 
     #call_display {
@@ -137,7 +161,7 @@
         height: 4em;
         top: 50%;
         left: 50%;
-        transform: translate(-50%,-50%);
+        transform: translate(-50%, -50%);
     }
 
     #focus_display {
@@ -147,44 +171,75 @@
         left: 50%;
         width: 80%;
         padding: 10%;
-        transform: translate(-50%,0);
+        transform: translate(-50%, 0);
         background-color: $text-color;
         color: $body-bg;
     }
 
-
     .bell_circle {
-      $circ-size: $media-circ-size;
+        $circ-size: $media-circ-size;
 
-      position: absolute;
-      top: $media-tb-offset;
-      left: $media-lr-offset;
-      transform: translate(-50%, -50%);
+        position: absolute;
+        top: $media-tb-offset;
+        left: $media-lr-offset;
+        transform: translate(-50%, -50%);
 
-      &.four   { @include on-circle(4, $circ-size); }
-      &.five   { @include on-circle(5, $circ-size); }
-      &.six    { @include on-circle(6, $circ-size); }
-      &.eight  { @include on-circle(8, $circ-size); }
-      &.ten    { @include on-circle(10, $circ-size); }
-      &.twelve { @include on-circle(12, $circ-size); }
-      &.fourteen { @include on-circle(14, $circ-size + 3rem); }
-      &.sixteen { @include on-circle(16, $circ-size + 3rem); }
+        &.four {
+            @include on-circle(4, $circ-size);
+        }
+        &.five {
+            @include on-circle(5, $circ-size);
+        }
+        &.six {
+            @include on-circle(6, $circ-size);
+        }
+        &.eight {
+            @include on-circle(8, $circ-size);
+        }
+        &.ten {
+            @include on-circle(10, $circ-size);
+        }
+        &.twelve {
+            @include on-circle(12, $circ-size);
+        }
+        &.fourteen {
+            @include on-circle(14, $circ-size + 3rem);
+        }
+        &.sixteen {
+            @include on-circle(16, $circ-size + 3rem);
+        }
 
-      &.anticlockwise.four   { @include on-circle-anticlockwise(4, $circ-size); }
-      &.anticlockwise.five   { @include on-circle-anticlockwise(5, $circ-size); }
-      &.anticlockwise.six    { @include on-circle-anticlockwise(6, $circ-size); }
-      &.anticlockwise.eight  { @include on-circle-anticlockwise(8, $circ-size); }
-      &.anticlockwise.ten    { @include on-circle-anticlockwise(10, $circ-size); }
-      &.anticlockwise.twelve { @include on-circle-anticlockwise(12, $circ-size); }
-      &.anticlockwise.fourteen { @include on-circle-anticlockwise(14, $circ-size + 3rem); }
-      &.anticlockwise.sixteen { @include on-circle-anticlockwise(16, $circ-size + 3rem); }
+        &.anticlockwise.four {
+            @include on-circle-anticlockwise(4, $circ-size);
+        }
+        &.anticlockwise.five {
+            @include on-circle-anticlockwise(5, $circ-size);
+        }
+        &.anticlockwise.six {
+            @include on-circle-anticlockwise(6, $circ-size);
+        }
+        &.anticlockwise.eight {
+            @include on-circle-anticlockwise(8, $circ-size);
+        }
+        &.anticlockwise.ten {
+            @include on-circle-anticlockwise(10, $circ-size);
+        }
+        &.anticlockwise.twelve {
+            @include on-circle-anticlockwise(12, $circ-size);
+        }
+        &.anticlockwise.fourteen {
+            @include on-circle-anticlockwise(14, $circ-size + 3rem);
+        }
+        &.anticlockwise.sixteen {
+            @include on-circle-anticlockwise(16, $circ-size + 3rem);
+        }
     }
 }
 
 @include media-breakpoint-up(xs) {
-    @include bell_circle(20rem,50vw,30vh);
-    @supports (width: max(5px,5px)){
-        @include bell_circle(20rem,50vw,max(30vh,15rem));
+    @include bell_circle(20rem, 50vw, 30vh);
+    @supports (width: max(5px, 5px)) {
+        @include bell_circle(20rem, 50vw, max(30vh, 15rem));
     }
     .handbell .bell_img {
         height: 5rem;
@@ -193,7 +248,9 @@
     .towerbell .bell_img {
         height: 7rem;
     }
-    .twelve, .fourteen, .sixteen {
+    .twelve,
+    .fourteen,
+    .sixteen {
         .handbell .bell_img {
             height: 4rem;
             width: 4rem;
@@ -206,16 +263,16 @@
 }
 
 @include media-breakpoint-up(sm) {
-    @include bell_circle(25rem,50vw, 35vh);
-    @supports (width: max(5px,5px)){
-        @include bell_circle(25rem,50vw,max(35vh,20rem));
+    @include bell_circle(25rem, 50vw, 35vh);
+    @supports (width: max(5px, 5px)) {
+        @include bell_circle(25rem, 50vw, max(35vh, 20rem));
     }
 }
 
 @include media-breakpoint-up(md) {
-    @include bell_circle(30rem,50vw, 40vh);
-    @supports (width: max(5px,5px)){
-        @include bell_circle(30rem,50vw,max(40vh,24rem));
+    @include bell_circle(30rem, 50vw, 40vh);
+    @supports (width: max(5px, 5px)) {
+        @include bell_circle(30rem, 50vw, max(40vh, 24rem));
     }
     .bell .handbell {
         justify-content: flex-end;
@@ -227,7 +284,9 @@
     .towerbell .bell_img {
         height: 10rem;
     }
-    .twelve, .fourteen, .sixteen {
+    .twelve,
+    .fourteen,
+    .sixteen {
         .handbell .bell_img {
             height: 5rem;
             width: 5rem;
@@ -240,14 +299,15 @@
 }
 
 @include media-breakpoint-up(lg) {
-    @include bell_circle(28rem,32vw,50vh);
-    @supports (width: max(5px,5px)){
-        @include bell_circle(28rem,32vw, max(24rem,50vh));
+    @include bell_circle(28rem, 32vw, 50vh);
+    @supports (width: max(5px, 5px)) {
+        @include bell_circle(28rem, 32vw, max(24rem, 50vh));
     }
     .towerbell .bell_img {
         height: 10rem;
     }
-    .twelve, .fourteen {
+    .twelve,
+    .fourteen {
         .handbell .bell_img {
             height: 6rem;
             width: 6rem;
@@ -265,9 +325,9 @@
 }
 
 @include media-breakpoint-up(xl) {
-    @include bell_circle(34rem,30vw,50vh);
-    @supports (width: max(5px,5px)){
-        @include bell_circle(34rem,30vw,max(27rem,50vh));
+    @include bell_circle(34rem, 30vw, 50vh);
+    @supports (width: max(5px, 5px)) {
+        @include bell_circle(34rem, 30vw, max(27rem, 50vh));
     }
     .twelve .towerbell .bell_img {
         height: 10rem;

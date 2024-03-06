@@ -1,31 +1,20 @@
-{% extends 'base.html' %}
-
-{% block app_content %}
+{% extends 'base.html' %} {% block app_content %}
 
 <!-- Set the list of relations as a global variable for the Vue to access -->
 <script>
     window.tower_rels = [ {% for tower in tower_props %}{{tower|tojson|safe}},{%endfor%}];
 </script>
 
-
 <h1>My Towers</h1>
-
 
 <div id="my_towers"></div>
 
-{% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <ul>
-        {% for message in messages %}
-        <li>{{ message }}</li>
-        {% endfor %}
-    </ul>
-{% endif %}
-{% endwith %}
-
-{% assets "js_my_towers" %}
+{% with messages = get_flashed_messages() %} {% if messages %}
+<ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %} {% endwith %} {% assets "js_my_towers" %}
 <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-{% endassets %}
-
-
-{% endblock %}
+{% endassets %} {% endblock %}

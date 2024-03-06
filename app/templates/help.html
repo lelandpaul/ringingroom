@@ -1,16 +1,10 @@
-{% extends 'base.html' %}
-
-{% block app_content %}
-
+{% extends 'base.html' %} {% block app_content %}
 
 <div class="row">
-
     <div class="col-md-3">
         <nav id="toc" class="sticky-top" data-toggle="toc"></nav>
     </div>
-    <div class="col help-content">
-        {{content|safe}}
-    </div>
+    <div class="col help-content">{{content|safe}}</div>
 </div>
 
 {% endblock %}
