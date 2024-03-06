@@ -116,6 +116,7 @@ class User(UserMixin, db.Model):
             # Just creating this is enough to add it to the database with
             # relevant relations
             rel = UserTowerRelation(user=self, tower=tower)
+            db.session.add(rel)
 
         return rel
 
