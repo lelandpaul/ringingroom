@@ -90,7 +90,7 @@ class User(UserMixin, db.Model):
             {"reset_password": self.id, "exp": time() + expires_in},
             Config.SECRET_KEY,
             algorithm="HS256",
-        ).decode("utf-8")
+        )
 
     @staticmethod
     def verify_reset_password_token(token):
