@@ -48,7 +48,7 @@ python-engineio==4.5.1
 python-http-client==3.3.7
 python-socketio==5.8.0
 PyYAML==6.0
-requests==2.31.0
+requests==2.32.0
 sendgrid==6.10.0
 six==1.16.0
 SQLAlchemy==2.0.18
