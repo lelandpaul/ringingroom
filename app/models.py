@@ -90,7 +90,7 @@ class User(UserMixin, db.Model):
             {"reset_password": self.id, "exp": time() + expires_in},
             Config.SECRET_KEY,
             algorithm="HS256",
-        ).decode("utf-8")
+        )
 
     @staticmethod
     def verify_reset_password_token(token):
@@ -116,6 +116,7 @@ class User(UserMixin, db.Model):
             # Just creating this is enough to add it to the database with
             # relevant relations
             rel = UserTowerRelation(user=self, tower=tower)
+            db.session.add(rel)
 
         return rel
 
