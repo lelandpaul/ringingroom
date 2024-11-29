@@ -6,7 +6,7 @@ chardet==5.1.0
 click>=7.1.1
 cryptography==42.0.4
 cssmin==0.2.0
-dnspython==2.3.0
+dnspython==2.6.1
 dominate==2.8.0
 email-validator==2.1.0.post1
 eventlet==0.33.3
