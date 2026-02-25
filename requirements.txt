@@ -63,3 +63,4 @@ WTForms==3.0.1
 gspread==3.7.0
 oauth2client==4.1.3
 wheatley>=0.8.0b1
+postmarker==1.0

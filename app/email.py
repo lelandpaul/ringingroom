@@ -1,22 +1,17 @@
 from flask import render_template
 
-# using SendGrid's Python Library
-# https://github.com/sendgrid/sendgrid-python
 import os
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
-
+from postmarker.core import PostmarkClient
 
 def send_email(subject, recipient, text_body, html_body):
-    message = Mail(
-        from_email="admin@ringingroom.com",
-        to_emails=recipient,
-        subject=subject,
-        html_content=html_body,
+    token = os.getenv("POSTMARK_API_TOKEN")
+    pm = PostmarkClient(server_token=token)
+    pm.emails.send(
+        From='admin@ringingroom.com',
+        To=recipient,
+        Subject=subject,
+        HtmlBody=html_body
     )
-    sg = SendGridAPIClient(os.getenv("SENDGRID_API_KEY"))
-    response = sg.send(message)
-
 
 def send_password_reset_email(user):
     token = user.get_reset_password_token()
