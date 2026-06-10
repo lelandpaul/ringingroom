@@ -42,6 +42,9 @@
         @if $item-count == 16 {
             $rot: 7 * $angle/2;
         }
+        @if $item-count == 18 {
+            $rot: 7 * $angle/2;
+        }
 
         @for $i from 1 through $item-count {
             &:nth-of-type(#{$i}) {
@@ -114,6 +117,9 @@
             $rot: 3 * $angle;
         }
         @if $item-count == 16 {
+            $rot: 7 * $angle/2;
+        }
+        @if $item-count == 18 {
             $rot: 7 * $angle/2;
         }
 
