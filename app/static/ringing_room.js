@@ -1283,7 +1283,8 @@ $(document).ready(function () {
                         "&stage=" +
                         (bell_circle.number_of_bells - 1) +
                         "," +
-                        bell_circle.number_of_bells;
+                        bell_circle.number_of_bells +
+                        "&fields=title,abbreviation,url,classification,stage,notation,       ruleOffs,calls,callingPositions,cccbrId,lengthOfLead";
                     $.getJSON(query_url, function (data) {
                         // Set the method suggestions to the first 5 methods, but only if if
                         // this response is from a query with the correct method name (this
@@ -3179,6 +3180,7 @@ $(document).ready(function () {
                                 number_of_bells == 12 ? 'twelve'   : '',
                                 number_of_bells == 14 ? 'fourteen' : '',
                                 number_of_bells == 16 ? 'sixteen'  : '',
+                                number_of_bells == 18 ? 'eighteen'  : '',
                                 anticlockwise ? 'anticlockwise' : '']">
                 <call_display v-bind:audio="audio" ref="display"></call_display>
                 <focus_display ref="focus"></focus_display>
