@@ -215,7 +215,7 @@
             @include on-circle(16, $circ-size + 3rem);
         }
         &.eighteen {
-            @include on-circle(16, $circ-size + 3rem);
+            @include on-circle(18, $circ-size + 3rem);
         }
 
         &.anticlockwise.four {
@@ -243,7 +243,7 @@
             @include on-circle-anticlockwise(16, $circ-size + 3rem);
         }
         &.anticlockwise.eighteen {
-            @include on-circle-anticlockwise(16, $circ-size + 3rem);
+            @include on-circle-anticlockwise(18, $circ-size + 3rem);
         }
     }
 }
