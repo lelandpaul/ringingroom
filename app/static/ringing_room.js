@@ -286,6 +286,8 @@ $(document).ready(function () {
                     "⑭",
                     "⑮",
                     "⑯",
+                    "⑰",
+                    "⑱",
                 ],
                 images: ["handstroke", "backstroke"],
                 assigned_user: window.tower_parameters.assignments[this.number - 1],
@@ -350,6 +352,9 @@ $(document).ready(function () {
                 if (this.number_of_bells === 16 && this.position >= 5 && this.position <= 12) {
                     return true;
                 }
+                if (this.number_of_bells === 18 && this.position >= 5 && this.position <= 14) {
+                    return true;
+                }
             },
 
             top_side: function () {
@@ -378,6 +383,9 @@ $(document).ready(function () {
                     return true;
                 }
                 if (this.number_of_bells === 16 && this.position >= 7 && this.position <= 14) {
+                    return true;
+                }
+                if (this.number_of_bells === 18 && this.position >= 7 && this.position <= 15) {
                     return true;
                 }
             },

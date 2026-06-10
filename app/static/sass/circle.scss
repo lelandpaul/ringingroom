@@ -208,6 +208,9 @@
         &.sixteen {
             @include on-circle(16, $circ-size + 3rem);
         }
+        &.eighteen {
+            @include on-circle(16, $circ-size + 3rem);
+        }
 
         &.anticlockwise.four {
             @include on-circle-anticlockwise(4, $circ-size);
@@ -233,6 +236,9 @@
         &.anticlockwise.sixteen {
             @include on-circle-anticlockwise(16, $circ-size + 3rem);
         }
+        &.anticlockwise.eighteen {
+            @include on-circle-anticlockwise(16, $circ-size + 3rem);
+        }
     }
 }
 
@@ -250,7 +256,8 @@
     }
     .twelve,
     .fourteen,
-    .sixteen {
+    .sixteen,
+    .eighteen {
         .handbell .bell_img {
             height: 4rem;
             width: 4rem;
@@ -286,7 +293,8 @@
     }
     .twelve,
     .fourteen,
-    .sixteen {
+    .sixteen,
+    .eighteen {
         .handbell .bell_img {
             height: 5rem;
             width: 5rem;
@@ -318,7 +326,8 @@
         }
     }
 
-    .sixteen .handbell .bell_img {
+    .sixteen .handbell .bell_img, 
+    .eighteen .handbell .bell_img {
         height: 5rem;
         width: 5rem;
     }
@@ -332,7 +341,9 @@
     .twelve .towerbell .bell_img {
         height: 10rem;
     }
-    .sixteen .handbell .bell_img {
+    .sixteen .handbell .bell_img,
+    .eighteen .handbell .bell_img,
+    {
         height: 6rem;
         width: 6rem;
     }
