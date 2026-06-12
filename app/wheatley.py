@@ -124,6 +124,7 @@ def _get_stage_name(num_bells):
         14: "Fourteen",
         15: "Sextuples",
         16: "Sixteen",
+        18: "Eighteen",
     }[num_bells]
 
 
@@ -347,6 +348,7 @@ class Wheatley:
             12: "x1Tx1Tx1Tx1Tx1Tx1T,12",
             14: "x1Bx1Bx1Bx1Bx1Bx1Bx1B,12",
             16: "x1Dx1Dx1Dx1Dx1Dx1Dx1Dx1D,12",
+            18: "x1Gx1Gx1Gx1Gx1Gx1Gx1Gx1Gx1G,12",
         }[stage]
 
         self._row_gen = {
