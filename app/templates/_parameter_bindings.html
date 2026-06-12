@@ -65,7 +65,7 @@
         // shift+s to set at hand
         Mousetrap.bind({{user_settings['keybindings']['set_at_hand'] | safe }}, bell_obj.set_bells_at_hand);
 
-        {% for i in range(1,17) %}
+        {% for i in range(1,19) %}
         // Ring specific bell
         Mousetrap.bind({{user_settings['keybindings'][i|string] | safe}}, ()=>bell_obj.pull_rope({{i}}))
         // Rotate to bell
