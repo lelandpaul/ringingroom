@@ -120,7 +120,7 @@
             $rot: 7 * $angle/2;
         }
         @if $item-count == 18 {
-            $rot: 7 * $angle/2;
+            $rot: 8 * $angle/2;
         }
 
         @for $i from 1 through $item-count {
